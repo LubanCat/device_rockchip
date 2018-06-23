@@ -1,0 +1,141 @@
+#! /bin/bash
+DEVICE_DIR=$(cd `dirname $0`; pwd)
+if [ -h $0 ]
+then
+	CMD=$(readlink $0)
+	DEVICE_DIR=$(dirname $CMD)
+fi
+cd $DEVICE_DIR
+cd ../../..
+TOP_DIR=$(pwd)
+
+CFG_BUILDROOT=`sed -n '/CFG_BUILDROOT.*:=/p' $DEVICE_DIR/BoardConfig.mk | grep -v "^#"`
+CFG_BUILDROOT=${CFG_BUILDROOT##*=}
+CFG_BUILDROOT=${CFG_BUILDROOT%%#*}
+CFG_BUILDROOT="`echo ${CFG_BUILDROOT}|tr -s ' '`"
+echo "buildroot config: $CFG_BUILDROOT"
+
+CFG_RECOVERY=`sed -n '/CFG_RECOVERY.*:=/p' $DEVICE_DIR/BoardConfig.mk | grep -v "^#"`
+CFG_RECOVERY=${CFG_RECOVERY##*=}
+CFG_RECOVERY=${CFG_RECOVERY%%#*}
+CFG_RECOVERY="`echo ${CFG_RECOVERY}|tr -s ' '`"
+echo "recovery config: $CFG_RECOVERY"
+
+CFG_PCBA=`sed -n '/CFG_PCBA.*:=/p' $DEVICE_DIR/BoardConfig.mk | grep -v "^#"`
+CFG_PCBA=${CFG_PCBA##*=}
+CFG_PCBA=${CFG_PCBA%%#*}
+CFG_PCBA="`echo ${CFG_PCBA}|tr -s ' '`"
+echo "pcba config: $CFG_PCBA"
+
+ROCKDEV=$TOP_DIR/rockdev
+KERNEL=$TOP_DIR/kernel
+DEBIAN=$TOP_DIR/rootfs
+YOCTO=$TOP_DIR/yocto
+UBOOT=$TOP_DIR/u-boot
+BUILDROOT=$TOP_DIR/buildroot
+OEM_DIR=$DEVICE_DIR/oem
+# oem image fs type, support ext2 squashfs
+OEM_TYPE=ext2
+ROCKIMG=$DEVICE_DIR/rockimg
+PARAMETER=$ROCKIMG/gpt-nand-aispeech.txt
+USERDATA_IMG=$ROCKIMG/userdata.img
+MISC_IMG=$ROCKIMG/misc.img
+ROOTFS_IMG_BUILDROOT=$BUILDROOT/output/$CFG_BUILDROOT/images/rootfs.squashfs
+ROOTFS_IMG_DEBIAN=$DEBIAN/linaro-rootfs.img
+ROOTFS_IMG_YOCTO=$YOCTO/rootfs.img
+RECOVERY_IMG=$BUILDROOT/output/$CFG_RECOVERY/images/recovery.img
+PCBA_IMG=$BUILDROOT/output/$CFG_PCBA/images/pcba.img
+TRUST_IMG=$UBOOT/trust.img
+UBOOT_IMG=$UBOOT/uboot.img
+BOOT_IMG=$KERNEL/boot.img
+LOADER_BIN=$UBOOT/*_loader_*.bin
+echo "buildroot rootfs: $ROOTFS_IMG_BUILDROOT"
+echo "recovery image: $RECOVERY_IMG"
+echo "pcba image: $PCBA_IMG"
+
+rm -rf $ROCKDEV
+mkdir -p $ROCKDEV
+
+if [ ! -n "$1" ]
+then
+	echo "build buildroot type rootfs as default"
+	ROOTFS_TYPE=buildroot
+else
+	ROOTFS_TYPE="$1"
+fi
+
+if [ $ROOTFS_TYPE = debian ]
+then
+        echo -n "create rootfs.img and parameter.txt..."
+        ln -s -f $ROOTFS_IMG_DEBIAN $ROCKDEV/rootfs.img
+        ln -s -f $PARAMETER_DEBIAN $ROCKDEV/parameter.txt
+        echo "done."
+fi
+
+if [ $ROOTFS_TYPE = buildroot ]
+then
+        echo -n "create rootfs.img and parameter.txt..."
+        ln -s -f $ROOTFS_IMG_BUILDROOT $ROCKDEV/rootfs.img
+        ln -s -f $PARAMETER $ROCKDEV/parameter.txt
+        echo "done"
+fi
+
+if [ $ROOTFS_TYPE = yocto ]
+then
+	echo -n "create rootfs.img and parameter.txt..."
+	ln -s -f $ROOTFS_IMG_YOCTO $ROCKDEV/rootfs.img
+        ln -s -f $PARAMETER $ROCKDEV/parameter.txt
+	echo "done"
+
+fi
+
+if [ -f $RECOVERY_IMG ]
+then
+        echo -n "create recovery.img..."
+        ln -s -f $RECOVERY_IMG $ROCKDEV/recovery.img
+        echo "done."
+fi
+
+if [ -f $MISC_IMG ]
+then
+        echo -n "create misc.img..."
+        ln -s -f $MISC_IMG $ROCKDEV/misc.img
+        echo "done."
+fi
+
+if [ -f $OEM_DIR ]
+then
+        echo -n "create oem.img..."
+	$DEVICE_DIR/mk-oem.sh $OEM_TYPE $OEM_DIR $ROCKDEV/oem.img
+        echo "done."
+fi
+
+if [ -f $UBOOT_IMG ]
+then
+        echo -n "create uboot.img..."
+        ln -s -f $UBOOT_IMG $ROCKDEV/uboot.img
+        echo "done."
+fi
+
+if [ -f $TRUST_IMG ]
+then
+        echo -n "create trust.img..."
+        ln -s -f $TRUST_IMG $ROCKDEV/trust.img
+        echo "done."
+fi
+
+if [ -f $LOADER_BIN ]
+then
+        echo -n "create loader..."
+        ln -s -f $LOADER_BIN $ROCKDEV/MiniLoaderAll.bin
+        echo "done."
+fi
+
+if [ -f $BOOT_IMG ]
+then
+        echo -n "create boot.img..."
+        ln -s -f $BOOT_IMG $ROCKDEV/boot.img
+        echo "done."
+fi
+
+echo -e "\e[36m Image: image in $ROCKDEV is ready \e[0m"
