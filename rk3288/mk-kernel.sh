@@ -1,6 +1,12 @@
 #!/bin/bash
 
-cd kernel && make ARCH=arm rockchip_linux_defconfig && make ARCH=arm rk3288-evb-rk808-linux.img -j12 && cd -
+#
+# Do a parallel build with multiple jobs, based on the number of CPUs online
+# in this system: 'make -j8' on a 8-CPU system, etc.
+#
+JOBS=$(grep -c ^processor /proc/cpuinfo)
+
+cd kernel && make ARCH=arm rockchip_linux_defconfig && make ARCH=arm rk3288-evb-rk808-linux.img -j$JOBS && cd -
 
 if [ $? -eq 0 ]; then
     echo "====Build kernel ok!===="

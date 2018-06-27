@@ -2,7 +2,7 @@
 #buildroot defconfig
 LUNCH=rockchip_rk3288
 #build jobs
-JOBS=12
+JOBS=$(grep -c ^processor /proc/cpuinfo)
 TOP_DIR=$(pwd)
 source buildroot/build/envsetup.sh $LUNCH
 TARGET_PRODUCT=`get_target_board_type $LUNCH`
@@ -13,7 +13,7 @@ echo "$BUILD_CONFIG"
 ROOTFS_IMAGE=buildroot/output/$BUILD_CONFIG/images/rootfs.img
 # build rootfs
 echo "====Start build rootfs===="
-make
+make -j$JOBS
 if [ $? -eq 0 ]; then
     echo "====Build rootfs ok!===="
 else
