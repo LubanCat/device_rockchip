@@ -47,6 +47,38 @@ void clean_silence_frame() {
 void do_system_sleep() {
     system("echo mem > /sys/power/state");
 }
+#define VAD_WAKEUP_LEVEL_MIN 0
+#define VAD_WAKEUP_LEVEL_MAX 5
+#define VAD_WAKEUP_TIME_MAX 10
+int m_vad_wakeup_time = 0;
+int m_vad_wakeup_level = 0;
+void set_vad_level(int level) {
+    if(level > VAD_WAKEUP_LEVEL_MAX) {
+        m_vad_wakeup_level = VAD_WAKEUP_LEVEL_MAX;
+    }
+
+    printf("set vad level:%d\n",level);
+    switch(level) {
+        case 0:
+            system("echo 0x60 0x40ff01C2 > /sys/kernel/debug/vad/reg");
+            break;
+        case 1:
+            system("echo 0x60 0x40ff0200 > /sys/kernel/debug/vad/reg");
+            break;
+        case 2:
+            system("echo 0x60 0x40ff0250 > /sys/kernel/debug/vad/reg");
+            break;
+        case 3:
+            system("echo 0x60 0x40ff0270 > /sys/kernel/debug/vad/reg");
+            break;
+        case 4:
+            system("echo 0x60 0x40ff0300 > /sys/kernel/debug/vad/reg");
+            break;
+        case 5:
+            system("echo 0x60 0x40ff0350 > /sys/kernel/debug/vad/reg");
+            break;
+    }
+}
 /*
      * 1. volume.set
      * 2. play.list.update
@@ -189,6 +221,10 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
     else if (!strcmp(topic, "local_wakeup.result")) {
         end_dialog = 0;
         play_manager_f("status.set", "pause");
+        m_vad_wakeup_time = 0;
+        m_vad_wakeup_level = VAD_WAKEUP_LEVEL_MIN;
+        set_vad_level(m_vad_wakeup_level);
+
     }
     else if (!strcmp(topic, "sys.dm.end")) {
         // 对话退出
@@ -362,6 +398,13 @@ bool sleep_check(void) {
             m_is_tts_playing, music_playing);
     if (music_playing) {
         clean_silence_frame();
+        m_vad_wakeup_time = 0;
+    } else {
+        m_vad_wakeup_time++;
+        if(m_vad_wakeup_time > VAD_WAKEUP_TIME_MAX) {
+            m_vad_wakeup_time = 0;
+            set_vad_level(m_vad_wakeup_level++);
+        }
     }
     if ((inactive_frames > voice_inactive_max_count) \
         && !m_is_dialog && !music_playing)
@@ -393,6 +436,7 @@ void *vad_detect_func(void* arg) {
     clean_silence_frame();
     while(true) {
         if (sleep_check()) {
+            m_vad_wakeup_time = 0;
             fprintf(stderr,"voice inactive timeout,go to sleep\n");
             dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"sleep\"}");
             wait_device_mode_timeout_ms(30);
