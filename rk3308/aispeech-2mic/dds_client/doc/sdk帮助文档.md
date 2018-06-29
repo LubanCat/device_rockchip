@@ -47,6 +47,8 @@ void dds_client_release(struct dds_client *ds);
 
 ```
 
+**下面的接口必须在 `dds_client_init ` 和 	`dds_client_start` 正确返回之后才能正确执行。**
+
 ```
 向 sdk 内部发送消息: 
 
@@ -140,7 +142,7 @@ text: 需要合成的文本
 ```
 
 ```
-关闭唤醒，此接口会终止当前的对话。
+关闭唤醒，如果在语音对话过程中调用此接口，会在这条对话自然结束之后才会禁止唤醒。
 
 int dds_client_disable_wakeup(struct dds_client *ds);
 
@@ -166,6 +168,73 @@ ds: sdk 实例指针
 ```
 
 ```
+设置用户唤醒词
+
+int dds_client_update_customword(struct dds_client *ds, 
+const char *word);
+
+参数说明: 
+ds: sdk 实例指针
+word: 唤醒词配置，格式是 json string，说明如下: 
+
+	{
+            "greetingFile":"path:../res/tts/help.mp3", 可选
+            "greeting": "我在，有什么可以帮你", 可选
+            "pinyin": "ni hao xiao chi", 必选
+            "name": "你好小驰", 必选
+            "threshold": 0.127 必选
+        }
+
+此函数成功返回后，唤醒词的相关配置会更新到 config.json 文件。 
+对于客户端异常断电可能导致 config.json 文件破坏的话， 需要开发者自己来避免，
+比如采用备份文件的机制。 
+
+```
+
+```
+获取当前的唤醒词
+
+char* dds_client_get_wakeupwords(struct dds_client *ds);
+
+参数说明: 
+ds: sdk 实例指针
+
+此函数返回字符串指针， 开发者需要主动释放内存。 返回字符串为json格式，如下: 
+
+{
+	"majorword": [{
+		"greetingFile": "path:../res/tts/help.mp3",
+		"greeting": "我在，有什么可以帮你",
+		"pinyin": "ni hao xiao le",
+		"name": "你好小乐",
+		"threshold": 0.144000
+	}],
+	"minorword": [{
+		"greetingFile": "path:../res/tts/help.mp3",
+		"greeting": "我在，有什么可以帮你",
+		"pinyin": "ni hao xiao chi",
+		"name": "你好小驰",
+		"threshold": 0.127000
+	}],
+	"cmdword": [{
+		"pinyin": "jiang di yin liang",
+		"threshold": 0.100000,
+		"action": "decrease.volume",
+		"name": "降低音量"
+	}],
+	"customword": [{
+		"pinyin": "ni hao tiam mao",
+		"name": "你好天猫",
+		"threshold": 0.200000
+	}]
+}
+
+majorword 为主唤醒词，minorword 为副唤醒词， cmdword 为命令词，
+customword 为用户定义唤醒词。 其实就是 config.json 文件里面的配置。
+
+```
+
+```
 
 // 获取当前的 tts 发音人，出错返回 NULL
 char *dds_client_get_speaker(struct dds_client *ds);
@@ -186,7 +255,6 @@ int dds_client_set_speed(struct dds_client *ds, float speed);
 int dds_client_set_volume(struct dds_client *ds, int vol);
 
 ```
-
 
 **sdk回调消息接口**
 
@@ -287,6 +355,13 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 
 <tr>
 	<td> ddsLintener </td>
+	<td> sys.client.error  </td>
+	<td> 表示客户端出现异常情况 </td>
+	<td> json string "{"error":"ttsError"}" 目前 error 字段的取值一共有: ttsError, ddsNetworkError, vadSlienceTimeout</td>
+</tr>
+
+<tr>
+	<td> ddsLintener </td>
 	<td> command://xx  </td>
 	<td> 在dui平台上配置的 command 指令 </td>
 	<td> json string </td>
@@ -306,6 +381,9 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 ```
 
 {
+	"sdk": {
+		"configPath":"./config.json"
+	},
 	"auth": {
 		"productId": "278569448",
 		"deviceProfile": ""
@@ -348,15 +426,23 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 		"majorword": [{
             "greetingFile":"path:./res/tts/help.mp3",
 			"greeting": "我在，有什么可以帮你",
-			"pinyin": "ni hao xiao chi",
-			"name": "你好小驰",
-			"threshold": 0.127
-		}, {
-            "greetingFile":"path:./res/tts/help.mp3",
-			"greeting": "我在，有什么可以帮你",
 			"pinyin": "ni hao xiao le",
 			"name": "你好小乐",
 			"threshold": 0.144
+		}],
+		"minorword": [{
+            "greetingFile":"path:./res/tts/help.mp3",
+			"greeting": "我在，有什么可以帮你",
+			"pinyin": "ni hao xiao chi",
+			"name": "你好小驰",
+			"threshold": 0.127
+		}],
+		"minorword": [{
+            "greetingFile":"path:./res/tts/help.mp3",
+			"greeting": "我在，有什么可以帮你",
+			"pinyin": "ni hao xiao bu",
+			"name": "你好小步",
+			"threshold": 0.127
 		}],
 		"cmdword": [{
 			"pinyin": "jiang di yin liang",
@@ -366,7 +452,12 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 		}]
 	},
 	"abnormal": {
-		"netErrorHint":"path:../res/tts/net.mp3"
+		"netErrorHint":"path:../res/tts/net.mp3",
+		"ttsErrorHint":"path:../res/tts/tts_error.mp3"
+	},
+	"debug": {
+		"recAudioDumpFile":"",
+		"bfAudioDumpFile":""
 	}
 }
 ```
@@ -377,6 +468,20 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 	<th>类型</th>
 	<th>含义</th>
 	<th>是否必须</th>
+</tr>
+
+<tr>
+	<td> sdk </td>
+	<td> json 对象 </td>
+	<td> 客户端的一些配置 </td>
+	<td>必选</td>
+</tr>
+
+<tr>
+	<td> sdk.configPath </td>
+	<td> string </td>
+	<td> 配置文件路径 </td>
+	<td>必选</td>
 </tr>
 
 <tr>
@@ -593,15 +698,30 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 <tr>
 	<td> wakeup.majorword </td>
 	<td> json 数组 </td>
-	<td> 唤醒词的相关配置</td>
+	<td> 主唤醒词的相关配置</td>
 	<td>必选</td>
 </tr>
+
+<tr>
+	<td> wakeup.minorword </td>
+	<td> json 数组 </td>
+	<td> 副唤醒词的相关配置</td>
+	<td>可选</td>
+</tr>
+
+<tr>
+	<td> wakeup.customword </td>
+	<td> json 数组 </td>
+	<td> 用户定义唤醒词的相关配置</td>
+	<td>可选</td>
+</tr>
+
 
 <tr>
 	<td> wakeup.cmdword </td>
 	<td> json 数组 </td>
 	<td> 快捷唤醒词配置 </td>
-	<td>必选</td>
+	<td>可选</td>
 </tr>
 
 <tr>
@@ -615,6 +735,32 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
 	<td> abnormal.netErrorHint </td>
 	<td> string </td>
 	<td> 网络错误下的提示音，需要配置成本地文件，网络不好的情况下云端合成也用不了。 </td>
+	<td>可选</td>
+</tr>
+
+<tr>
+	<td> abnormal.ttsErrorHint </td>
+	<td> string </td>
+	<td> 云端tts合成播放错误情况下的的提示音，需要配置成本地文件。 </td>
+	<td>可选</td>
+</tr>
+
+<tr>
+	<td> debug</td>
+	<td> json 对象 </td>
+	<td> 保存音频的配置选项 </td>
+	<td>可选</td>
+</tr>
+<tr>
+	<td> debug.recAudioDumpFile</td>
+	<td> string </td>
+	<td> 原始录音保存文件路径 </td>
+	<td>可选</td>
+</tr>
+<tr>
+	<td> debug.bfAudioDumpFile</td>
+	<td> string </td>
+	<td> beamforming算法输出的音频文件路径 </td>
 	<td>可选</td>
 </tr>
 
