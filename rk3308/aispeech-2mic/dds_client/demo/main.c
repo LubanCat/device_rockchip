@@ -17,30 +17,32 @@
 #include <time.h>
 #include "dds_client.h"
 #include "button.h"
+#include "busserver.h"
 #include "cJSON.h"
 #include <stdbool.h>
-int is_enable_wakeup = 1;
 struct dds_client *dc = NULL;
 bool m_is_dialog = false;
-bool m_is_tts_playing = false;
-pthread_mutex_t mylock=PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t mycond=PTHREAD_COND_INITIALIZER;
+int is_enable_wakeup = 1;
+
 extern int music_player_init(char *dev);
 extern int music_player_start();
 extern bool music_is_playing(void);
-extern void play_manager_f(const char *cmd, const char *data);
+extern void play_manager_f(const char *cmd, const char *data, char **user_data);
 void handle_doa_result(int doa);
+static send_tts_update_topic ();
 
 #define WAIT_WAKEUP_SYSTEM_CMD      "./aispeech_led -m on 4"
 #define RUNNING_ASR_SYSTEM_CMD      "./aispeech_led -m scroll -b 4 2 -s 100"
 #define WAIT_DM_OUT_SYSTEM_CMD      "./aispeech_led -m scroll -b 4 2 -s 100"
 #define RUNNING_TTS_SYSTEM_CMD      "./aispeech_led -m on -b  2 2"
 #define DISABLE_WAKEUP_SYSTEM_CMD   "./aispeech_led -m on -b  2 1"
-
+pthread_mutex_t mylock=PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t mycond=PTHREAD_COND_INITIALIZER;
 void led_off() {
     printf("%s\n", __func__);
     system("./aispeech_led -m on 4");
 }
+
 void clean_silence_frame() {
     system("echo 0 > /sys/module/snd_soc_rockchip_vad/parameters/voice_inactive_frames");
 }
@@ -79,6 +81,8 @@ void set_vad_level(int level) {
             break;
     }
 }
+
+
 /*
      * 1. volume.set
      * 2. play.list.update
@@ -96,8 +100,8 @@ void set_vad_level(int level) {
 void dds_cb(const char *topic, const char *topic_data, void *user) {
     static int end_dialog = 0;
 
-    printf("####### dds cb receive topic: %s\n", topic);
-    printf("####### dds cb receive topic_data: %s\n", topic_data);
+    printf("dds cb receive topic: %s\n", topic);
+    printf("dds cb receive topic_data: %s\n", topic_data);
 
     if (!strcmp(topic, "dm.output")) {
         cJSON *root = cJSON_Parse(topic_data);
@@ -109,7 +113,7 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
             cJSON *count = cJSON_GetObjectItem(widget, "count");
             if (count && count->valueint > 0) {
                 char *out = cJSON_PrintUnformatted(widget);
-                play_manager_f("play.list.update", out);
+                play_manager_f("play.list.update", out, NULL);
                 free(out);
             }
         }
@@ -119,7 +123,7 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
             end_dialog = 1;
         }
         else end_dialog = 0;
-  
+        
         system(WAIT_WAKEUP_SYSTEM_CMD);
         clean_silence_frame();
         m_is_dialog = false;
@@ -136,62 +140,100 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
     }
 
     else if (!strcmp(topic, "command://spk.speaker.close")) {
-        play_manager_f("play.list.clear", NULL);
+        play_manager_f("play.list.clear", NULL, NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.single")) {
-        play_manager_f("mode.set", "single");
+        play_manager_f("mode.set", "single", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.sequence")) {
-        play_manager_f("mode.set", "sequence");
+        play_manager_f("mode.set", "sequence", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.random")) {
-        play_manager_f("mode.set", "random");
+        play_manager_f("mode.set", "random", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.loop")) {
-        play_manager_f("mode.set", "loop");
+        play_manager_f("mode.set", "loop", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.pause")) {
-        play_manager_f("status.set", "pause");
+        play_manager_f("status.set", "pause", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.continue")) {
-        play_manager_f("status.set", "resume");
+        play_manager_f("status.set", "resume", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.stop")) {
-        play_manager_f("play.list.clear", NULL);
+        play_manager_f("play.list.clear", NULL, NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.replay")) {
-        play_manager_f("status.set", "replay");
+        play_manager_f("status.set", "replay", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"APICommandResult\":\"success\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.prev")) {
-        play_manager_f("change.set", "prev");
+        play_manager_f("change.set", "prev", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"count\":\"more\", \"skillName\":\"speakerChinaPlay\", \"title\":\"\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.next")) {
-        play_manager_f("change.set", "next");
+        play_manager_f("change.set", "next", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"count\":\"more\", \"skillName\":\"speakerChinaPlay\", \"title\":\"\"}}");
     }
     else if (!strcmp(topic, "native://mediacontrol.media.change")) {
-        play_manager_f("change.set", "change");
+        play_manager_f("change.set", "change", NULL);
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"count\":\"more\", \"skillName\":\"speakerChinaPlay\", \"title\":\"\"}}");
+    }
+    else if (!strcmp(topic, "native://query.music.info")) {
+        char *data = NULL;
+        play_manager_f("music.info", NULL, &data);
+        if (data) {
+            cJSON *root = cJSON_Parse(data);
+            char resp[512] = {0};
+            cJSON *title = cJSON_GetObjectItem(root, "title");
+            cJSON *subTitle = cJSON_GetObjectItem(root, "subTitle");
+            cJSON *label = cJSON_GetObjectItem(root, "label");
+            sprintf(resp, "{\"duiWidget\":\"text\", \"extra\":{\"title\":\"%s\", \"subTitle\":\"%s\", \"label\":\"%s\"}}", title->valuestring, subTitle->valuestring, label->valuestring);
+
+            dds_client_resp_nativeapi(dc, topic, resp);
+            free(data);
+            cJSON_Delete(root);
+        }
+        else {
+            dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{}}");
+        }
+    }
+    else if (!strcmp(topic, "native://query.story.info")) {
+        char *data = NULL;
+        play_manager_f("music.info", NULL, &data);
+        if (data) {
+            cJSON *root = cJSON_Parse(data);
+            char resp[512] = {0};
+            cJSON *title = cJSON_GetObjectItem(root, "title");
+            sprintf(resp, "{\"duiWidget\":\"text\", \"extra\":{\"title\":\"%s\"}}", title->valuestring);
+            dds_client_resp_nativeapi(dc, topic, resp);
+            free(data);
+            cJSON_Delete(root);
+        }
+        else {
+            dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{}}");
+        }
     }
     else if (!strcmp(topic, "command://spk.speaker.voice")) {
         cJSON *root = cJSON_Parse(topic_data);
         cJSON *voice = cJSON_GetObjectItem(root, "voice");
         if (voice) {
-            play_manager_f("volume.set", voice->valuestring);
+            play_manager_f("volume.set", voice->valuestring, NULL);
         }
-        play_manager_f("status.set", "resume");
+        play_manager_f("status.set", "resume", NULL);
+        // speak
+        music_player_play("../res/tts/vol.mp3");
         cJSON_Delete(root);
     }
+
     else if (!strcmp(topic, "native://alarm.set")) {
         dds_client_resp_nativeapi(dc, topic, "{\"duiWidget\":\"text\", \"extra\":{\"text\":\"已为您设置闹钟\"}}");
     }
@@ -220,22 +262,20 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
  
     else if (!strcmp(topic, "local_wakeup.result")) {
         end_dialog = 0;
-        play_manager_f("status.set", "pause");
+        play_manager_f("status.set", "pause", NULL);
         m_vad_wakeup_time = 0;
         m_vad_wakeup_level = VAD_WAKEUP_LEVEL_MIN;
         set_vad_level(m_vad_wakeup_level);
-
     }
     else if (!strcmp(topic, "sys.dm.end")) {
         // 对话退出
-        play_manager_f("play.list.check", NULL);
+        play_manager_f("play.list.check", NULL, NULL);
         system(WAIT_WAKEUP_SYSTEM_CMD);
         clean_silence_frame();
         m_is_dialog = false;
         if (!is_enable_wakeup) {
             system(DISABLE_WAKEUP_SYSTEM_CMD);
         }
-        printf("sys.dm.end out \n");
     }
     else if (!strcmp(topic, "sys.tts.begin")) {
         clean_silence_frame();
@@ -245,17 +285,18 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
     else if (!strcmp(topic, "sys.vad.end")) {
     }
     else if (!strcmp(topic, "sys.asr.begin")) {
-        //system(RUNNING_ASR_SYSTEM_CMD);
+        system(RUNNING_ASR_SYSTEM_CMD);
         clean_silence_frame();
         m_is_dialog = true;
     }
-    else if (!strcmp(topic, "device.mode.return")) {
-        pthread_cond_signal(&mycond);
-    }
 }
-
 void handle_doa_result(int doa) {
     printf("handle_doa_result doa is %d\n", doa);
+#if DUAL_MIC
+    system("./aispeech_led -m on 1");
+    return;
+#else 
+#ifdef RK3308_BOARD_V11
 	static char *doa_led_table[12] = {
 		"./aispeech_led  -m single -i 2 0",
 		"./aispeech_led  -m single -i 3 0",
@@ -270,6 +311,23 @@ void handle_doa_result(int doa) {
 		"./aispeech_led  -m single -i 0 0",
 		"./aispeech_led  -m single -i 1 0"
 	};
+
+#elif defined(RK3308_BOARD_V10)
+    static char *doa_led_table[12] = { 
+        "./aispeech_led  -m single -i 7 0",
+        "./aispeech_led  -m single -i 8 0",
+        "./aispeech_led  -m single -i 9 0",
+        "./aispeech_led  -m single -i 10 0",
+        "./aispeech_led  -m single -i 11 0",
+        "./aispeech_led  -m single -i 0 0",
+        "./aispeech_led  -m single -i 1 0",
+        "./aispeech_led  -m single -i 2 0",
+        "./aispeech_led  -m single -i 3 0",
+        "./aispeech_led  -m single -i 4 0",
+        "./aispeech_led  -m single -i 5 0",
+        "./aispeech_led  -m single -i 6 0"
+    };
+#endif
 
 	if (doa >= 0) {
 		if (doa >=345 || doa < 15) {
@@ -299,6 +357,8 @@ void handle_doa_result(int doa) {
 		}
 	}
     else printf("=== doa result is wrong\n");
+
+#endif
 }
 
 
@@ -320,26 +380,27 @@ void button_cb(button_event_t ev, void *userdata) {
 
     if (ev == BUTTON_EVENT_VOLUME_ADD) {
         //短按触发
-        play_manager_f("volume.set", "+");
+        play_manager_f("volume.set", "+", NULL);
     }
     else if (ev == BUTTON_EVENT_VOLUME_SUB) {
         //短按触发
-        play_manager_f("volume.set", "-");
+        play_manager_f("volume.set", "-", NULL);
     }
     else if (ev == BUTTON_EVENT_PREV) {
         //长按每隔1.5秒触发一次
-        play_manager_f("change.set", "prev");
-        play_manager_f("play.list.check", NULL);
+        play_manager_f("change.set", "prev", NULL);
+        play_manager_f("play.list.check", NULL, NULL);
     }
     else if (ev == BUTTON_EVENT_NEXT) {
         //长按每隔1.5秒触发一次
-        play_manager_f("change.set", "next");
-        play_manager_f("play.list.check", NULL);
+        play_manager_f("change.set", "next", NULL);
+        play_manager_f("play.list.check", NULL, NULL);
     }
     else if (ev == BUTTON_EVENT_PLAY_PAUSE) {
         //短按触发
-        play_manager_f("status.set", "step");
-    } else if (ev == BUTTON_EVENT_MUTE_UNMUTE) {
+        play_manager_f("status.set", "step", NULL);
+    }
+    else if (ev == BUTTON_EVENT_MUTE_UNMUTE) {
         // mute 
         if (is_enable_wakeup) {
             is_enable_wakeup = 0;
@@ -355,6 +416,132 @@ void button_cb(button_event_t ev, void *userdata) {
     }
 }
 
+void mqtt_cb(const char *topic, const char *topic_data, int data_len, void *user) {
+    printf("mqtt_cb receive: %s: %.*s\n", topic, data_len, topic_data);
+
+    cJSON *root = cJSON_Parse(topic_data);
+    assert(root != NULL);
+    cJSON *volume, *music, *tts;
+    volume = cJSON_GetObjectItem(root, "volume");
+    music = cJSON_GetObjectItem(root, "music");
+    tts = cJSON_GetObjectItem(root, "tts");
+    if (volume) {
+        // 音量设置
+        play_manager_f("volume.set", volume->valuestring, NULL);
+    }
+    if (music) {
+        // 音乐设置
+        cJSON *data;
+        cJSON *change, *status, *mode, *currentIndex;
+        data = cJSON_Parse(music->valuestring);
+        assert(data != NULL);
+        change = cJSON_GetObjectItem(data, "change");
+        if (change) {
+            static char change_cmd[3][10] = {
+                {"nothing"},
+                {"prev"},
+                {"next"}
+            };
+            play_manager_f("change.set", change_cmd[change->valueint], NULL);
+            play_manager_f("play.list.check", NULL, NULL);
+        }
+        status = cJSON_GetObjectItem(data, "status");
+        if (status) {
+            static char status_cmd[3][10] = {
+                {"nothing"},
+                {"resume"},
+                {"pause"}
+            };
+            play_manager_f("status.set", status_cmd[status->valueint], NULL);
+        }
+        mode = cJSON_GetObjectItem(data, "mode");
+        if (mode) {
+            static char mode_cmd[5][10] = {
+                {"nothing"},
+                {"sequence"},
+                {"random"},
+                {"single"},
+                {"loop"}
+            };
+            play_manager_f("mode.set", mode_cmd[mode->valueint], NULL);
+        }
+
+        currentIndex = cJSON_GetObjectItem(data, "currentIndex");
+        if (currentIndex) {
+            char index[8];
+            sprintf(index, "%d", currentIndex->valueint);
+            play_manager_f("play.choose.update", index, NULL);
+        }
+
+        cJSON_Delete(data);
+    }
+    if (tts) {
+        cJSON *data;
+        cJSON *current;
+        data = cJSON_Parse(data->valuestring);
+        assert(data != NULL);
+        current = cJSON_GetObjectItem(data, "current");
+        if (current) {
+            cJSON *voice = cJSON_GetObjectItem(current, "voiceId");
+            dds_client_set_speaker(dc, voice->valuestring);
+            dds_client_speak(dc, "该轮到我上场了");
+            send_tts_update_topic();
+        }
+        cJSON_Delete(data);
+    }
+    cJSON_Delete(root);
+}
+
+static send_tts_update_topic () {
+	static char *tts_label[8] = {"甜美女生",
+		"沉稳纲叔",
+		"淡定葛爷",
+		"邻家女声",
+		"标准男声",
+		"可爱童声",
+		"标准女声",
+		NULL};
+
+	static char *tts_voiceId[8] = {"zhilingf", "gdgm", "geyou", "hyanif", "xijunm",
+		"qianranf", "lucyf", NULL};
+    
+    cJSON *root, *root2, *array, *temp, *current;
+    root = cJSON_CreateObject();
+    root2 = cJSON_CreateObject();
+    
+    array = cJSON_CreateArray();
+    for (int i = 0; tts_voiceId[i]; i++) {
+        temp = cJSON_CreateObject();
+        cJSON_AddStringToObject(temp, "voiceId", tts_voiceId[i]);
+        cJSON_AddStringToObject(temp, "label", tts_label[i]);
+        cJSON_AddItemToArray(array, temp);
+    }
+    cJSON_AddItemToObject(root, "list", array);
+    
+    current = cJSON_CreateObject();
+    char *speaker = dds_client_get_speaker(dc);
+    int volume = dds_client_get_volume(dc);
+    float speed = dds_client_get_speed(dc);
+
+    cJSON_AddStringToObject(current, "voiceId", speaker);
+    cJSON_AddNumberToObject(current, "volume", volume);
+    cJSON_AddNumberToObject(current, "speed", speed);
+
+    cJSON_AddItemToObject(root, "current", current);
+
+    char *tts = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    
+    cJSON_AddStringToObject(root2, "tts", tts);
+    char *out = cJSON_PrintUnformatted(root2);
+    
+    printf("send_tts_update_topic is %s\n", out);
+    busserver_send_msg("ui.control.topics.response", out);
+
+    free(tts);
+    free(out);
+}
+
 void *button_routine(void *user) {
     button_config_t config = {
         .dev = "/dev/input/event0", // v11: event0 | v10: event1
@@ -368,6 +555,10 @@ void *button_routine(void *user) {
     return (void *)0;
 }
 
+void *busserver_routine(void *user) {
+    busserver_run("0.0.0.0:50001", mqtt_cb, NULL);
+    return (void *)0;
+}
 const unsigned int voice_inactive_max_count = 16000 * 5; //16k, 3 seconds
 unsigned int read_voice_inactive_frames(void)
 {
@@ -393,9 +584,8 @@ bool sleep_check(void) {
     unsigned int inactive_frames = read_voice_inactive_frames();
     bool music_playing = music_is_playing();
 
-    printf("inactive frames %d, max %d, dialog %d, tts %d, music %d\n",
-            inactive_frames, voice_inactive_max_count, m_is_dialog, 
-            m_is_tts_playing, music_playing);
+    printf("inactive frames %d, max %d, dialog %d, music %d\n",
+            inactive_frames, voice_inactive_max_count, m_is_dialog, music_playing);
     if (music_playing) {
         clean_silence_frame();
         m_vad_wakeup_time = 0;
@@ -450,7 +640,6 @@ void *vad_detect_func(void* arg) {
     }
 }
 
-
 int main () {
     int ret;
     char config[1024 * 5];
@@ -475,6 +664,11 @@ int main () {
     // 2. start the music player
     music_player_start();
 
+    // 3. run the busserver
+    pthread_t tid;
+    ret = pthread_create(&tid, NULL, busserver_routine, NULL);
+    assert(ret != -1);
+
     // 3. run the dds client
     dc = dds_client_init(config);
     assert(dc != NULL);
@@ -489,13 +683,25 @@ int main () {
     // 5. system init
     system("amixer cset name='Master Playback Volume' 70");
     system("chmod +x aispeech_led");
-
-
     pthread_t softvad_detect;
     pthread_create(&softvad_detect,NULL,vad_detect_func,NULL);
-    
+#if 0    
+#ifdef PDM_MIC
+    system("amixer -c 0 cset name='ADC ALC Group 0 Left Volume' 20");
+    system("amixer -c 0 cset name='ADC ALC Group 0 Right Volume' 20");
+#else
+    system("amixer -c 0 cset name='ADC ALC Group 0 Left Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 0 Right Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 1 Left Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 1 Right Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 2 Left Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 2 Right Volume' 28");
+    system("amixer -c 0 cset name='ADC ALC Group 3 Left Volume' 18");                                                                   
+    system("amixer -c 0 cset name='ADC ALC Group 3 Right Volume' 18");
+#endif
+#endif
+    //send_tts_update_topic();
     led_off();//led init
-
     select(0, 0, 0, 0, 0);
 
     dds_client_release(dc);

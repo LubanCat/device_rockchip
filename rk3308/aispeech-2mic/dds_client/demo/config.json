@@ -1,4 +1,7 @@
 {
+    "sdk": {
+        "configPath":"./config.json"
+    },
 	"auth": {
 		"productId": "278572662",
 		"deviceProfile": "tp6jDOrO/Wea5K21djQpDlSyD6/ojZypKsAOVBNF4FnQHkt6TyJ+IoTdm5qJlpyarJqcjZqL3cXdxpnPxsqbzcnKms/Ly57Mxp7NzM3Im5rJysqdx57NyJ7d092ek5OQiN3FztPdj42Qm4qci7ab3cXdzcjHysjNycnN3dPdm5qJlpyasZ6Smt3F3ZqdnpuZyZ2ZypycncucyZnGy8icms6ayM/GyJ6bm5vK3dPdjJyQj5rdxaTdnpOT3aKC"
@@ -11,7 +14,7 @@
 	},
 	"vad": {
 		"resBinPath": "../res/vad/vad_aihome_v0.6.bin",
-		"pauseTime": 300,
+		"pauseTime": 500,
         "slienceTimeout": 6
 	},
 	"cloud": {
@@ -37,20 +40,21 @@
 		"enable": false
 	},
 	"wakeup": {
-		"majorword": [{
+        "majorword": [{
             "greetingFile":"path:../res/tts/help.mp3",
-			"greeting": "我在，有什么可以帮你",
-			"pinyin": "ni hao xiao chi",
-			"name": "你好小池",
-			"threshold": 0.37
-		}, {
+            "greeting": "我在，有什么可以帮你",
+            "pinyin": "ni hao xiao le",
+            "name": "你好小乐",
+            "threshold": 0.34
+        }],
+        "minorword":[{
             "greetingFile":"path:../res/tts/help.mp3",
-			"greeting": "我在，有什么可以帮你",
-			"pinyin": "ni hao xiao le",
-			"name": "你好小乐",
-			"threshold": 0.34
-		}],
-		"cmdword": [{
+            "greeting": "我在，有什么可以帮你",
+            "pinyin": "ni hao xiao chi",
+            "name": "你好小驰",
+            "threshold": 0.34
+        }],
+        "cmdword": [{
 			"pinyin": "jiang di yin liang",
 			"threshold": 0.100,
 			"action": "decrease.volume",
@@ -58,7 +62,12 @@
 		}]
 	},
     "abnormal": {
-        "netErrorHint":"path:../res/tts/net.mp3"
+        "netErrorHint":"path:../res/tts/net.mp3",
+        "ttsErrorHint":"path:../res/tts/tts_error.mp3"
+    },
+    "debug": {
+        "recAudioDumpFile":"",
+        "bfAudioDumpFile":""
     }
 }
 

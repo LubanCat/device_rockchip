@@ -6,7 +6,7 @@ tinymix set "ADC ALC Group 2 Right Volume" 18
 arecord -c 4 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
 rm /tmp/test.pcm                                                
 #echo 0x60 0x40ff0050 > /sys/kernel/debug/vad/reg
-echo 0x60 0x40ff04b0 > /sys/kernel/debug/vad/reg
+echo 0x60 0x40ff0190 > /sys/kernel/debug/vad/reg
 echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
 
 ln -s /oem/aispeech_softap_lite /data/aispeech_softap_lite
