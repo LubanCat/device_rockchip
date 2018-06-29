@@ -12,8 +12,11 @@ TOP_DIR=$(pwd)
 
 source $TOP_DIR/BoardConfig.mk
 echo "recovery config: $CFG_RECOVERY"
-
+if [ $ARCH == arm64 ];then
 KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm64/boot/Image
+elif [ $ARCH == arm ];then
+KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm/boot/zImage
+fi
 KERNEL_DTB=$TOP_DIR/kernel/resource.img
 MK_KERNEL=$DEVICE_DIR/mk-kernel.sh
 
