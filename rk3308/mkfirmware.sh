@@ -101,7 +101,7 @@ then
         cp -a $MISC_IMG_PATH $IMAGE_OUT_PATH/misc.img
         echo "done."
 else
-        echo "$KERNEL_PATH/boot.img not fount!"
+        echo "$MISC_IMG_PATH not fount!"
 fi
 
 if [ -f $RECOVERY_IMG_PATH ]
@@ -110,7 +110,7 @@ then
         cp -a $RECOVERY_IMG_PATH $IMAGE_OUT_PATH/recovery.img
         echo "done."
 else
-        echo "$KERNEL_PATH/boot.img not fount!"
+        echo "$RECOVERY_IMG_PATH not fount!"
 fi
 
 if [ -f $PARAMETER ]
