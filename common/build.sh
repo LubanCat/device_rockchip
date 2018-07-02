@@ -47,10 +47,6 @@ function build_kernel(){
 	# build kernel
 	echo "====Start build kernel===="
 	cd kernel && make ARCH=$ARCH distclean && make ARCH=$ARCH $KERNEL_DEFCONFIG && make ARCH=$ARCH $KERNEL_DTS.img -j$JOBS && cd -
-    # arm use zboot.img
-    if [ $ARCH == arm ]; then
-        cp kernel/zboot.img kernel/boot.img
-    fi
 	if [ $? -eq 0 ]; then
 		echo "====Build kernel ok!===="
 	else

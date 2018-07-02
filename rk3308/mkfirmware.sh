@@ -47,7 +47,9 @@ echo "Package userdata.img now"
 	${PACKAGE_DATA_TOOL} -d ${PRODUCT_PATH}/userdata -G 2 -R 1 -B 2048 -I 0 -o ${IMAGE_OUT_PATH}/userdata.img
 echo "Package userdata.img Done..."
 
-if [ "${FLASH_TYPE}" == "nand" ];then
+if [ $ARCH == arm ];then
+	PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit.txt
+elif [ "${FLASH_TYPE}" == "nand" ];then
 	if [ "${OEM_PATH}" == "aispeech" ];then
 		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-aispeech.txt
 	else
@@ -89,7 +91,12 @@ fi
 if [ -f $KERNEL_PATH/boot.img ]
 then
         echo -n "create boot.img..."
-        cp -a $KERNEL_PATH/boot.img $IMAGE_OUT_PATH/boot.img
+		# arm use zboot.img
+		if [ $ARCH == arm ];then
+			cp -a $KERNEL_PATH/zboot.img $IMAGE_OUT_PATH/boot.img
+		else
+			cp -a $KERNEL_PATH/boot.img $IMAGE_OUT_PATH/boot.img
+		fi
         echo "done."
 else
         echo "$KERNEL_PATH/boot.img not fount!"
@@ -117,7 +124,6 @@ if [ -f $PARAMETER ]
 then
         echo -n "create parameter..."
         cp -a $PARAMETER $IMAGE_OUT_PATH/parameter.txt
-		cp -a $PRODUCT_PATH/rockimg/gpt-nand-32bit.txt $IMAGE_OUT_PATH/parameter_32bit.txt
         echo "done."
 else
         echo "$PARAMETER not fount!"
