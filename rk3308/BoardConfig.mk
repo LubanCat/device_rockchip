@@ -19,7 +19,8 @@ CFG_RECOVERY=rockchip_rk3308_recovery
 CFG_PCBA=rockchip_rk3308_pcba
 # Build jobs
 JOBS=12
-
+# Yocto machine
+YOCTO_MACHINE=rockchip-rk3308-evb
 #=========================
 # Platform Target
 #=========================
