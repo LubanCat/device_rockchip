@@ -1,6 +1,23 @@
 #! /bin/bash
 
-source BoardConfig.mk
+DEVICE_DIR=$(cd `dirname $0`; pwd)
+if [ -h $0 ]
+then
+        CMD=$(readlink $0)
+        DEVICE_DIR=$(dirname $CMD)
+fi
+cd $DEVICE_DIR
+cd ../../..
+TOP_DIR=$(pwd)
+
+if [ ! -n "$1" ]
+then
+BOARD_CONFIG=$DEVICE_DIR/BoardConfig.mk
+else
+BOARD_CONFIG="$1"
+fi
+
+source $BOARD_CONFIG
 
 # Config
 SDK_ROOT=${PWD}
