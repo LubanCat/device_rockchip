@@ -13,7 +13,8 @@ ROOTFS_IMG_PATH=$(pwd)/buildroot/output/rockchip_rk3399/images/rootfs.ext4
 RECOVERY_PATH=$(pwd)/buildroot/output/rockchip_rk3399_recovery/images/recovery.img
 TRUST_PATH=$UBOOT_PATH/trust.img
 BOOT_PATH=$KERNEL_PATH/boot.img
-LOADER_PATH=$UBOOT_PATH/*_loader_*.bin
+LOADER_PATH=$UBOOT_PATH/*_loader_v*.bin
+SPINOR_LOADER_PATH=$UBOOT_PATH/*_loader_spinor_v*.bin
 ROOTFS_TYPE=
 mkdir -p $IMAGE_OUT_PATH
 if [ ! -n "$1" ]
@@ -105,6 +106,17 @@ then
 else
 	echo -e "\e[31m error: $UBOOT_PATH/*loader_*.bin not found,or there are multiple loaders! Please make it from $UBOOT_PATH first! \e[0m"
 	rm $LOADER_PATH
+	exit 0
+fi
+
+if [ -f $SPINOR_LOADER_PATH ]
+then
+        echo -n "create spinor loader..."
+        ln -s -f $SPINOR_LOADER_PATH $IMAGE_OUT_PATH/MiniLoaderAll_SpiNor.bin
+        echo "done."
+else
+	echo -e "\e[31m error: $SPINOR_UBOOT_PATH/*loader_spinor_*.bin not found,or there are multiple loaders! Please make it from $SPINOR_UBOOT_PATH first! \e[0m"
+	rm $SPINOR_LOADER_PATH
 	exit 0
 fi
 
