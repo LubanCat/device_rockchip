@@ -40,3 +40,4 @@ FLASH_TYPE=nand
 
 #OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
 OEM_PATH=oem
+MIC_NUM=6

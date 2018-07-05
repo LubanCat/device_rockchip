@@ -53,10 +53,28 @@ if [ ! -f $KERNEL_PATH/kernel.img -o ! -f $KERNEL_PATH/boot.img ];then
 fi
 
 echo "Package oem.img now"
-if [ "${OEM_PARTITION_TYPE}" == "ext2" ];then
-    ${PACKAGE_DATA_TOOL} -d ${PRODUCT_PATH}/${OEM_PATH} -G 2 -R 1 -B 2048 -I 0 -o ${IMAGE_OUT_PATH}/oem.img
+if [ "${OEM_PATH}" == "dueros"  ];then
+	if [ $ARCH == arm ];then
+		TARGET_ARM_TYPE=arm32
+	else
+		TARGET_ARM_TYPE=arm64
+	fi
+    OEM_CONTENT_PATH=${IMAGE_OUT_PATH}/.oem
+    rm -rf ${OEM_CONTENT_PATH}
+    mkdir -p ${OEM_CONTENT_PATH}
+    find ${PRODUCT_PATH}/${OEM_PATH} -maxdepth 1 -not -name "arm*" \
+        -not -wholename "${PRODUCT_PATH}/${OEM_PATH}" \
+        -exec sh -c 'cp -rf ${0} ${1}' "{}" ${OEM_CONTENT_PATH} \;
+    cp -rf ${PRODUCT_PATH}/${OEM_PATH}/${TARGET_ARM_TYPE}/baidu_spil_rk3308_${MIC_NUM}mic ${OEM_CONTENT_PATH}/baidu_spil_rk3308
+	echo "copy ${TARGET_ARM_TYPE} with ${MIC_NUM}mic."
 else
-    ${MKSQUASHFS_TOOL} ${PRODUCT_PATH}/${OEM_PATH} ${IMAGE_OUT_PATH}/oem.img -noappend -comp gzip
+    OEM_CONTENT_PATH=${PRODUCT_PATH}/${OEM_PATH}
+fi
+
+if [ "${OEM_PARTITION_TYPE}" == "ext2" ];then
+    ${PACKAGE_DATA_TOOL} -d ${OEM_CONTENT_PATH} -G 2 -R 1 -B 2048 -I 0 -o ${IMAGE_OUT_PATH}/oem.img
+else
+    ${MKSQUASHFS_TOOL} ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img -noappend -comp gzip
 fi
 echo "Package data.img [image type: ${OEM_PARTITION_TYPE}] Done..."
 

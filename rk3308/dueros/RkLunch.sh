@@ -1,3 +1,10 @@
+# vad
+# arecord -D vad -c 8 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
+# rm /tmp/test.pcm
+# echo 0x60 0x40ff0040 > /sys/kernel/debug/vad/reg
+# echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
+# mkdir -p /data/local/ipc
+
 cd /data/
 
 # for ai-va demo
