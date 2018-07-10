@@ -31,7 +31,12 @@ usage()
 	echo "ros                -build ros rootfs"
 	echo "debian             -build debian rootfs"
 	echo "pcba               -build pcba"
+	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
+	echo "cleanall           -clean uboot, kernel, rootfs, recovery"
+	echo "firmware           -pack all the image we need to boot up system"
+	echo "updateimg          -pack update image"
+	echo "save               -save images, patches, commands used to debug"
 	echo "default            -build all modules"
 }
 
@@ -151,13 +156,17 @@ function build_all(){
 	echo "TARGET_RECOVERY_CONFIG=$CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$CFG_PCBA"
 	echo "============================================"
-	# clean uboot and kernel before build all
-	#cd $TOP_DIR/u-boot/ && make distclean && cd -
-	#cd $TOP_DIR/kernel && make distclean && cd -
 	build_uboot
 	build_kernel
 	build_rootfs
 	build_recovery
+}
+
+function clean_all(){
+	echo "clean uboot, kernel, rootfs, recovery"
+	cd $TOP_DIR/u-boot/ && make distclean && cd -
+	cd $TOP_DIR/kernel && make distclean && cd -
+	rm -rf buildroot/out
 }
 
 function build_firmware(){
@@ -172,9 +181,8 @@ function build_firmware(){
 }
 
 function build_updateimg(){
-	IMAGE_PATH=$TOP_DIR/rockdev/Image-$TARGET_PRODUCT
+	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
-	cp -f $IMAGE_PATH/* $PACK_TOOL_DIR/rockdev/Image/
 
 	echo "Make update.img"
 	cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
@@ -184,11 +192,10 @@ function build_updateimg(){
 	   echo "Make update image failed!"
 	   exit 1
 	fi
-	mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/
 }
 
 function build_save(){
-	IMAGE_PATH=$TOP_DIR/rockdev/Image-$TARGET_PRODUCT
+	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d.%H%M)
 	STUB_PATH=Image/"$KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
@@ -254,6 +261,12 @@ elif [ $BUILD_TARGET == firmware ];then
     exit 0
 elif [ $BUILD_TARGET == save ];then
     build_save
+    exit 0
+elif [ $BUILD_TARGET == cleanall ];then
+    clean_all
+    exit 0
+elif [ $BUILD_TARGET == --help ] || [ $BUILD_TARGET == help ] || [ $BUILD_TARGET == -h ];then
+    usage
     exit 0
 elif [ $BUILD_TARGET != allsave ];then
 	echo "Can't found build config, please check again"
