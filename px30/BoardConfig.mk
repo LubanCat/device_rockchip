@@ -8,9 +8,9 @@ ARCH=arm64
 # Uboot defconfig
 UBOOT_DEFCONFIG=evb-px30
 # Kernel defconfig
-KERNEL_DEFCONFIG=rockchip_linux_defconfig
+KERNEL_DEFCONFIG=px30_linux_defconfig
 # Kernel dts
-KERNEL_DTS=px30-evb-ddr3-v10
+KERNEL_DTS=px30-evb-ddr3-v10-linux
 # Buildroot config
 CFG_BUILDROOT=rockchip_px30
 # Recovery config
