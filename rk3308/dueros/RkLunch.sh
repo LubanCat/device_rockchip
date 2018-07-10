@@ -3,7 +3,6 @@
 # rm /tmp/test.pcm
 # echo 0x60 0x40ff0040 > /sys/kernel/debug/vad/reg
 # echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
-# mkdir -p /data/local/ipc
 
 cd /data/
 
@@ -21,6 +20,7 @@ ifconfig lo 127.0.0.1 netmask 255.255.255.0
 killall dhcpcd
 killall hostapd
 killall dnsmasq
+killall ueventd
 
 aplay /usr/appresources/startup.wav &
 
@@ -30,3 +30,5 @@ aplay /usr/appresources/startup.wav &
 
 # start dueros
 /oem/dueros_service.sh start
+
+/oem/watch_dueros_service.sh &

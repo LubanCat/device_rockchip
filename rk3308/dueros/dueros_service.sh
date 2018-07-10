@@ -4,7 +4,7 @@
 
 case "$1" in
   start)
-        echo "Starting $0..."
+	echo "Starting $0..."
 
 	# start audio preProcess
 	ln -s /oem/baidu_spil_rk3308/* /data/ -f
@@ -19,18 +19,22 @@ case "$1" in
 	ln -s /usr/lib . -f
 	ln -s /usr/appresources . -f
 	ln -s /oem/duer/* . -f
-	./duer_linux & 
-        ;;
+	./duer_linux &
+	;;
   stop)
-        echo "Stop $0..."
-        killall alsa_audio_main_service
+	echo "Stop $0..."
+	killall alsa_audio_main_service
 	killall duer_linux
-        ;;
+	;;
   restart|reload)
-        ;;
+	killall alsa_audio_main_service
+	killall duer_linux
+	cd /data && ./alsa_audio_main_service 6mic_loopback &
+	cd /data/duer && ./duer_linux &
+	;;
   *)
-        echo "Usage: $0 {start|stop|restart}"
-        exit 1
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
 esac
 
 exit $?
