@@ -548,7 +548,7 @@ int main () {
     //pthread_create(&tid2, NULL, button_routine, NULL);
 
     // 5. system init
-    system("amixer cset name='Master Playback Volume' 70");
+    system("amixer cset name='Master Playback Volume' 90%");
     system("chmod +x aispeech_led");
 
     system("tinymix set 28  3");
@@ -560,6 +560,8 @@ int main () {
     system("tinymix set 35  18");
 
     send_tts_update_topic();
+    
+    system("amixer cset name='Master Playback Volume' 90%");
 
     select(0, 0, 0, 0, 0);
 

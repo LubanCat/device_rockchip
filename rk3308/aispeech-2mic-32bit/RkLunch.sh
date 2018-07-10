@@ -34,23 +34,15 @@ export  AISPEECH_START_CONNECT_MP3="/data/aispeech_softap_lite/audio/start_conne
 
 export  PATH=/bin:/sbin:/usr/bin:/usr/sbin:/userdata:/userdata/bin:/data/bin:/data/bin/rk_pcba_test:/data/aispeech_softap_lite/bin
 
-#if [ -f ${AISPEECH_WIFI_CFG} ]; then
+if [ -f ${AISPEECH_WIFI_CFG} ]; then
     #aispeech_player ${AISPEECH_WIFI_OK_MP3}
-#    aispeech_led  -m on 6
-#    wpa_supplicant -B -i wlan0 -c ${AISPEECH_WIFI_CFG} &
-#    dhcpcd &
-#    aispeech_player ${AISPEECH_DO_CONNECT_MP3}
-#else
-#    aispeech_player ${AISPEECH_NEED_CONNECT_MP3} &
-#    aispeech_led -m breath 1 -s 500
-#    ifconfig wlan0 down 
-#    aispeech_softap_server -s aiengine -p 12345678 start &
-#fi
-#aispeech_startup &
-
-#/data/wifi_monitor.sh &
-
-wpa_supplicant -B -i wlan0 -c /data/wpa_supplicant.conf
-
-cd /oem/dds_client/demo/
-./demo_main &
+    wpa_supplicant -B -i wlan0 -c ${AISPEECH_WIFI_CFG} &
+    dhcpcd &
+    aispeech_player ${AISPEECH_DO_CONNECT_MP3}
+else
+    aispeech_player ${AISPEECH_NEED_CONNECT_MP3} &
+    aispeech_softap_server -s aiengine -p 12345678 start &
+fi
+aispeech_startup &
+/data/wifi_monitor.sh &
+amixer cset name='Master Playback Volume' 90%
