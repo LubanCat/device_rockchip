@@ -10,7 +10,7 @@ USER_DATA_IMG_PATH=$DEVICE_IMG_PATH/userdata.img
 MISC_IMG_PATH=$DEVICE_IMG_PATH/wipe_all-misc.img
 ROOTFS_IMG_PATH=$(pwd)/buildroot/output/rockchip_px3se/images/rootfs.ext4
 RECOVERY_PATH=$(pwd)/buildroot/output/rockchip_px3se_recovery/images/recovery.img
-TRUST_PATH=$UBOOT_PATH/trust_emmc.img
+TRUST_PATH=$UBOOT_PATH/trust.img
 BOOT_PATH=$KERNEL_PATH/zboot.img
 LOADER_PATH=$UBOOT_PATH/*_loader_*.bin
 
