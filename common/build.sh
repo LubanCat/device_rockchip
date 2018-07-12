@@ -152,6 +152,7 @@ function build_all(){
 	echo "TARGET_PLATFORM=$TARGET_PRODUCT"
 	echo "TARGET_UBOOT_CONFIG=$UBOOT_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$KERNEL_DEFCONFIG"
+	echo "TARGET_KERNEL_DTS=$KERNEL_DTS"
 	echo "TARGET_BUILDROOT_CONFIG=$CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$CFG_PCBA"
@@ -186,6 +187,7 @@ function build_updateimg(){
 
 	echo "Make update.img"
 	cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+	mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH
 	if [ $? -eq 0 ]; then
 	   echo "Make update image ok!"
 	else
