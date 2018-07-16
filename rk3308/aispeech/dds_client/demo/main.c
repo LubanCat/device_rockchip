@@ -369,11 +369,12 @@ bool sleep_check(void) {
     return false;
 }
 
-void wait_device_mode_timeout_ms(int microseconds)
+int wait_device_mode_timeout_ms(int microseconds)
 {
     struct timeval tv;
     long long absmsec;
     struct timespec abstime;
+    int ret;
 
     gettimeofday(&tv, NULL);
     absmsec = tv.tv_sec * 1000ll + tv.tv_usec / 1000ll;
@@ -384,12 +385,14 @@ void wait_device_mode_timeout_ms(int microseconds)
 
     printf("#### public sleep mode ####");
     pthread_mutex_lock(&mylock);
-    pthread_cond_timedwait(&mycond, &mylock, &abstime);
+    ret = pthread_cond_timedwait(&mycond, &mylock, &abstime);
     pthread_mutex_unlock(&mylock);
     printf("#### return sleep mode succeed ####");
+    return ret;
 }
 
 void *vad_detect_func(void* arg) {
+    int ret = 0;
     clean_silence_frame();
     while(true) {
         if (sleep_check()) {
@@ -400,7 +403,10 @@ void *vad_detect_func(void* arg) {
             clean_silence_frame();
             do_system_sleep();
             printf("resume >>>>\n");
-            dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"normal\"}");
+            do {
+                dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"normal\"}");
+                ret = wait_device_mode_timeout_ms(300);
+            } while(ret!=0);
         }
         usleep(1000*1000);
     }
