@@ -19,10 +19,9 @@
 #include "button.h"
 #include "busserver.h"
 #include "cJSON.h"
-
+#include <stdbool.h>
 struct dds_client *dc = NULL;
 int is_enable_wakeup = 1;
-
 extern int music_player_init(char *dev);
 extern int music_player_start();
 extern void play_manager_f(const char *cmd, const char *data, char **user_data);
@@ -35,7 +34,56 @@ static send_tts_update_topic ();
 #define RUNNING_TTS_SYSTEM_CMD      "./aispeech_led -m on -b  2 2"
 #define DISABLE_WAKEUP_SYSTEM_CMD   "./aispeech_led -m on -b  2 1"
 
+bool m_is_dialog = false;
+bool m_is_tts_playing = false;
+pthread_mutex_t mylock=PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t mycond=PTHREAD_COND_INITIALIZER;
+extern bool music_is_playing(void);
 
+void clean_silence_frame() {
+    system("echo 0 > /sys/module/snd_soc_rockchip_vad/parameters/voice_inactive_frames");
+}
+void do_system_sleep() {
+    system("echo mem > /sys/power/state");
+}
+#define VAD_WAKEUP_LEVEL_MIN 0 
+#define VAD_WAKEUP_LEVEL_MAX 5 
+#define VAD_WAKEUP_TIME_MAX 10
+int m_vad_wakeup_time = 0;
+int m_vad_wakeup_level = 0;
+void set_vad_level(int level) {
+    if(level > VAD_WAKEUP_LEVEL_MAX) {
+        m_vad_wakeup_level = VAD_WAKEUP_LEVEL_MAX;
+    }
+
+    printf("set vad level:%d\n",level);
+    switch(level) {
+        case 0:
+            system("echo 0x60 0x40ff0190 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x000e2020 > /sys/kernel/debug/vad/reg");
+            break;
+        case 1:
+            system("echo 0x60 0x40ff01C0 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x000e2020 > /sys/kernel/debug/vad/reg");
+            break;
+        case 2:
+            system("echo 0x60 0x40ff0200 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x000e2020 > /sys/kernel/debug/vad/reg");
+            break;
+        case 3:
+            system("echo 0x60 0x40ff0300 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x000e2020 > /sys/kernel/debug/vad/reg");
+            break;
+        case 4:
+            system("echo 0x60 0x40ff0400 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x000e2020 > /sys/kernel/debug/vad/reg");
+            break;
+        case 5:
+            system("echo 0x60 0x40ff0400 > /sys/kernel/debug/vad/reg");
+            system("echo 0x5c 0x00102080 > /sys/kernel/debug/vad/reg");
+            break;
+    }
+}
 /*
      * 1. volume.set
      * 2. play.list.update
@@ -55,6 +103,9 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
 
     printf("dds cb receive topic: %s\n", topic);
     printf("dds cb receive topic_data: %s\n", topic_data);
+
+    clean_silence_frame();//clean vad frame
+    m_vad_wakeup_time = 0;
 
     if (!strcmp(topic, "dm.output")) {
         cJSON *root = cJSON_Parse(topic_data);
@@ -78,6 +129,7 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
         else end_dialog = 0;
         
         //system(WAIT_WAKEUP_SYSTEM_CMD);
+        m_is_dialog = false;
         cJSON_Delete(root);
     }
 	else if (!strcmp(topic, "doa.result")) {
@@ -212,25 +264,34 @@ void dds_cb(const char *topic, const char *topic_data, void *user) {
  
     else if (!strcmp(topic, "local_wakeup.result")) {
         end_dialog = 0;
+        m_is_tts_playing = false;
         play_manager_f("status.set", "pause", NULL);
     }
     else if (!strcmp(topic, "sys.dm.end")) {
         // 对话退出
         play_manager_f("play.list.check", NULL, NULL);
+        m_is_tts_playing = false;
         //system(WAIT_WAKEUP_SYSTEM_CMD);
+        m_is_dialog = false;
         if (!is_enable_wakeup) {
             //system(DISABLE_WAKEUP_SYSTEM_CMD);
         }
     }
     else if (!strcmp(topic, "sys.tts.begin")) {
+        m_is_tts_playing = true;
         //system(RUNNING_TTS_SYSTEM_CMD);
     }
     else if (!strcmp(topic, "sys.tts.end")) {
+        m_is_tts_playing = false;
     }
     else if (!strcmp(topic, "sys.vad.end")) {
     }
     else if (!strcmp(topic, "sys.asr.begin")) {
         //system(RUNNING_ASR_SYSTEM_CMD);
+        m_is_dialog = true;
+    }
+    else if (!strcmp(topic, "device.mode.return")) {
+        pthread_cond_signal(&mycond);
     }
 }
 
@@ -506,7 +567,91 @@ void *busserver_routine(void *user) {
     busserver_run("0.0.0.0:50001", mqtt_cb, NULL);
     return (void *)0;
 }
+const unsigned int voice_inactive_max_count = 16000 * 5; //16k, 3 seconds
+unsigned int read_voice_inactive_frames(void)
+{
+	FILE *fp;
+	char buf[100];
+	unsigned int frames = 0;
 
+	fp = popen("cat /sys/module/snd_soc_rockchip_vad/parameters/voice_inactive_frames", "r");
+	if(!fp) {
+		perror("popen");
+		exit(EXIT_FAILURE);
+	}
+	memset(buf, 0, sizeof(buf));
+	if (fgets(buf, sizeof(buf) - 1, fp) != 0 ) {
+		sscanf(buf, "%ul", &frames);
+		//printf("%s frames %lu\n", buf, frames);
+	}
+	pclose(fp);
+	return frames;
+}
+
+bool sleep_check(void) {
+    unsigned int inactive_frames = read_voice_inactive_frames();
+    m_vad_wakeup_time++;
+    if(m_vad_wakeup_time > VAD_WAKEUP_TIME_MAX) {
+        m_vad_wakeup_time = 0;
+        set_vad_level(m_vad_wakeup_level++);
+    }
+    bool music_playing = music_is_playing();
+
+    printf("inactive frames %d, max %d, dialog %d, tts %d, music %d\n",
+            inactive_frames, voice_inactive_max_count, m_is_dialog, 
+            m_is_tts_playing, music_playing);
+    if (music_playing) {
+        clean_silence_frame();
+    }
+    if ((inactive_frames > voice_inactive_max_count) \
+        && !m_is_dialog && !music_playing) 
+        return true;
+    return false;
+}
+
+int wait_device_mode_timeout_ms(int microseconds)
+{
+    struct timeval tv;
+    long long absmsec;
+    struct timespec abstime;
+    int ret;
+
+    gettimeofday(&tv, NULL);
+    absmsec = tv.tv_sec * 1000ll + tv.tv_usec / 1000ll;
+    absmsec += microseconds;
+
+    abstime.tv_sec = absmsec / 1000ll;
+    abstime.tv_nsec = absmsec % 1000ll * 1000000ll;
+
+    printf("#### public sleep mode ####");
+    pthread_mutex_lock(&mylock);
+    ret = pthread_cond_timedwait(&mycond, &mylock, &abstime);
+    pthread_mutex_unlock(&mylock);
+    printf("#### return sleep mode succeed ####");
+    return ret;
+}
+
+void *vad_detect_func(void* arg) {
+    int ret = 0;
+    clean_silence_frame();
+    while(true) {
+        if (sleep_check()) {
+            fprintf(stderr,"voice inactive timeout,go to sleep\n");
+            dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"sleep\"}");
+            wait_device_mode_timeout_ms(30);
+            printf("pause >>>>\n");
+            clean_silence_frame();
+            m_vad_wakeup_time = 0;
+            do_system_sleep();
+            printf("resume >>>>\n");
+            do {
+                dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"normal\"}");
+                ret = wait_device_mode_timeout_ms(300);
+            } while(ret!=0);
+        }
+        usleep(1000*1000);
+    }
+}
 int main () {
     int ret;
     char config[1024 * 5];
@@ -562,7 +707,8 @@ int main () {
     send_tts_update_topic();
     
     system("amixer cset name='Master Playback Volume' 90%");
-
+    pthread_t softvad_detect;
+    pthread_create(&softvad_detect,NULL,vad_detect_func,NULL);
     select(0, 0, 0, 0, 0);
 
     dds_client_release(dc);

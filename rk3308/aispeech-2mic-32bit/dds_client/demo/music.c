@@ -17,6 +17,7 @@
 #include "cJSON.h"
 #include <unistd.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 audio_player_t *aplayer = NULL;
 float vol_multiplier = 0.5;
@@ -27,11 +28,24 @@ pthread_mutex_t music_mutex;
 int play_judge_f(int index, int count, int mode);
 
 void play_manager_f(const char *cmd, const char *data, char **user_data);
+static int g_player_ev = AUDIO_PLAYER_EV_END;
+
+bool music_is_playing(void) {
+    if (g_player_ev == AUDIO_PLAYER_EV_END ||
+        g_player_ev == AUDIO_PLAYER_EV_ERROR ||
+        g_player_ev == AUDIO_PLAYER_EV_STOPPED)
+        return false;
+    else
+        return true;
+}
 
 static int play_callback(void *userdata, int ev) {
+    printf("++++++%s: ev %d\n", __func__, ev);
     if (ev == AUDIO_PLAYER_EV_END) {
         player_is_end = 1;
     }
+
+    g_player_ev = ev;
     return 0;
 }
 
