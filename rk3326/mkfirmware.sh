@@ -8,7 +8,7 @@ PARAMETER_PATH=$DEVICE_IMG_PATH/parameter.txt
 OEM_IMG_PATH=$DEVICE_IMG_PATH/oem.img
 USER_DATA_IMG_PATH=$DEVICE_IMG_PATH/userdata.img
 MISC_IMG_PATH=$DEVICE_IMG_PATH/wipe_all-misc.img
-ROOTFS_IMG_PATH=$(pwd)/buildroot/output/rockchip_rk3326/images/rootfs.ext4
+ROOTFS_IMG_PATH=$(pwd)/buildroot/output/rockchip_rk3326/images/rootfs.squashfs
 RECOVERY_PATH=$(pwd)/buildroot/output/rockchip_rk3326_recovery/images/recovery.img
 mkdir -p $IMAGE_OUT_PATH
 if [ ! -n "$1" ]

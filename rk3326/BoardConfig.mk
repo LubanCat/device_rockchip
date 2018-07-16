@@ -10,7 +10,7 @@ UBOOT_DEFCONFIG=evb-rk3326
 # Kernel defconfig
 KERNEL_DEFCONFIG=rk3326_linux_defconfig
 # Kernel dts
-KERNEL_DTS=rk3326-evb-linux-lp3-v10
+KERNEL_DTS=rk3326-evb-lp3-v10-linux
 # Buildroot config
 CFG_BUILDROOT=rockchip_rk3326
 # Recovery config
@@ -28,7 +28,7 @@ TARGET_PRODUCT=rk3326
 
 # Set rootfs type, see buildroot.
 # ext4 squashfs
-ROOTFS_TYPE=ext4
+ROOTFS_TYPE=squashfs
 
 # Set data partition type.
 # ext2 squashfs
