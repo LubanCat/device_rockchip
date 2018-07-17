@@ -1,43 +1,41 @@
 #!/bin/bash
 
-DEVICE_DIR=$(cd `dirname $0`; pwd)
+COMMON_DIR=$(cd `dirname $0`; pwd)
 if [ -h $0 ]
 then
         CMD=$(readlink $0)
-        DEVICE_DIR=$(dirname $CMD)
-fi
-cd $DEVICE_DIR
-cd ../../..
-TOP_DIR=$(pwd)
-
-if [ ! -n "$1" ]
-then
-	FS_TYPE=ext2
-else
-	FS_TYPE="$1"
+        COMMON_DIR=$(dirname $CMD)
 fi
 
-if [ ! -n "$2" ]
+if [ -n "$1" ]
 then
-	OEM_DIR=$DEVICE_DIR/oem
+	OEM_DIR="$1"
 else
-	OEM_DIR="$2"
+	exit 1
 fi
 
-if [ ! -n "$3" ]
+if [ -n "$2" ]
 then
-	OEM_IMG=$TOP_DIR/rockdev/oem.img
+	OEM_IMG="$2"
 else
-	OEM_IMG="$3"
+	exit 1
+fi
+
+if [ -n "$3" ]
+then
+        FS_TYPE="$3"
+else
+	exit 1
 fi
 
 if [ $FS_TYPE = ext2 ]
 then
-	$DEVICE_DIR/mke2img.sh $OEM_DIR $OEM_IMG
+	$COMMON_DIR/mke2img.sh $OEM_DIR $OEM_IMG
 
-fi
-
-if [ $FS_TYPE = squashfs ]
+elif [ $FS_TYPE = squashfs ]
 then
-	mksquashfs $OEM_DIR $OEM_IMG  -noappend -comp gzip
+	mksquashfs $OEM_DIR $OEM_IMG -noappend -comp gzip
+else
+	echo "file system: $FS_TYPE not support."
+	exit1
 fi
