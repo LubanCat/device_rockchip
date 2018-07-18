@@ -27,7 +27,8 @@ then
 else
 	exit 1
 fi
-
+#echo "OEM_IMG:$OEM_IMG"
+#echo "FS_TYPE:$FS_TYPE"
 if [ $FS_TYPE = ext2 ]
 then
 	$COMMON_DIR/mke2img.sh $OEM_DIR $OEM_IMG
@@ -37,5 +38,5 @@ then
 	mksquashfs $OEM_DIR $OEM_IMG -noappend -comp gzip
 else
 	echo "file system: $FS_TYPE not support."
-	exit1
+	exit 1
 fi
