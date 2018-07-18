@@ -120,7 +120,7 @@ then
         ln -s -f $SPINOR_LOADER $ROCKDEV/MiniLoaderAll_SpiNor.bin
         echo "done."
 else
-	rm $SPINOR_LOADER_PATH
+	rm $SPINOR_LOADER_PATH 2>/dev/null
 fi
 
 if [ -f $BOOT_PATH ]
