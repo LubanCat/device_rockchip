@@ -30,17 +30,9 @@ KERNEL_PATH=${SDK_ROOT}/kernel
 UBOOT_PATH=${SDK_ROOT}/u-boot
 MISC_IMG_PATH=$PRODUCT_PATH/rockimg/misc.img
 RECOVERY_IMG_PATH=${SDK_ROOT}/buildroot/output/rockchip_rk3308_recovery/images/recovery.img
-PACKAGE_DATA_TOOL_PATH="$(pwd)/buildroot/output/$BUILD_CONFIG/host/usr/bin:$(pwd)/buildroot/output/$BUILD_CONFIG/host/usr/sbin" 
-PACKAGE_DATA_TOOL=${SDK_ROOT}/buildroot/output/$BUILD_CONFIG/host/usr/bin/mke2img
-MKSQUASHFS_TOOL=${SDK_ROOT}/buildroot/output/$BUILD_CONFIG/host/usr/bin/mksquashfs
+MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
 MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/userdata_empty
-export PATH=$PATH:${PACKAGE_DATA_TOOL_PATH}
-
-if [ ! -f ${PACKAGE_DATA_TOOL} ];then
-	echo "Please Make Buildroot First!!!"
-	exit -1
-fi
 
 rm -rf $IMAGE_OUT_PATH
 mkdir -p $IMAGE_OUT_PATH
@@ -73,11 +65,8 @@ else
     OEM_CONTENT_PATH=${PRODUCT_PATH}/${OEM_PATH}
 fi
 
-if [ "${OEM_PARTITION_TYPE}" == "ext2" ];then
-    ${PACKAGE_DATA_TOOL} -d ${OEM_CONTENT_PATH} -G 2 -R 1 -B 2048 -I 0 -o ${IMAGE_OUT_PATH}/oem.img
-else
-    ${MKSQUASHFS_TOOL} ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img -noappend -comp gzip
-fi
+$MKOEM ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img ${OEM_PARTITION_TYPE}
+
 echo "Package data.img [image type: ${OEM_PARTITION_TYPE}] Done..."
 
 echo "Package userdata.img now"
