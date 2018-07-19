@@ -33,6 +33,8 @@ RECOVERY_IMG_PATH=${SDK_ROOT}/buildroot/output/rockchip_rk3308_recovery/images/r
 PACKAGE_DATA_TOOL_PATH="$(pwd)/buildroot/output/$BUILD_CONFIG/host/usr/bin:$(pwd)/buildroot/output/$BUILD_CONFIG/host/usr/sbin" 
 PACKAGE_DATA_TOOL=${SDK_ROOT}/buildroot/output/$BUILD_CONFIG/host/usr/bin/mke2img
 MKSQUASHFS_TOOL=${SDK_ROOT}/buildroot/output/$BUILD_CONFIG/host/usr/bin/mksquashfs
+MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
+USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/userdata_empty
 export PATH=$PATH:${PACKAGE_DATA_TOOL_PATH}
 
 if [ ! -f ${PACKAGE_DATA_TOOL} ];then
@@ -79,7 +81,7 @@ fi
 echo "Package data.img [image type: ${OEM_PARTITION_TYPE}] Done..."
 
 echo "Package userdata.img now"
-	${PACKAGE_DATA_TOOL} -d ${PRODUCT_PATH}/userdata -G 2 -R 1 -B 2048 -I 0 -o ${IMAGE_OUT_PATH}/userdata.img
+	$MKUSERDATA $USER_DATA_DIR ${IMAGE_OUT_PATH}/userdata.img ext2
 echo "Package userdata.img Done..."
 
 if [ $ARCH == arm ];then
