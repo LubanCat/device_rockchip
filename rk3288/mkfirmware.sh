@@ -13,8 +13,8 @@ TOP_DIR=$(pwd)
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 ROOTFS_PATH=$(pwd)/rootfs
-PARAMETER_DEBIAN=$DEVICE_DIR/parameter.txt
-PARAMETER_BUILDROOT=$DEVICE_DIR/parameter.txt
+PARAMETER_DEBIAN=$TOP_DIR/$DEVICE_DIR/parameter-debian.txt
+PARAMETER_BUILDROOT=$TOP_DIR/$DEVICE_DIR/parameter-buildroot.txt
 OEM_DIR=$TOP_DIR/device/rockchip/oem/oem_normal
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/userdata_normal
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/wipe_all-misc.img
@@ -24,7 +24,7 @@ TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/boot.img
 LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
-SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
+#SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
 MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
 MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
 ROOTFS_TYPE=
@@ -41,7 +41,7 @@ if [ $ROOTFS_TYPE = debian ]
 then
 	echo -n "create rootfs.img and parameter.txt..."
 	ln -s -f $ROOTFS_PATH/linaro-rootfs.img $ROCKDEV/rootfs.img
-	ln -s -f $PARAMETER $ROCKDEV/parameter.txt
+	ln -s -f $PARAMETER_DEBIAN $ROCKDEV/parameter.txt
 	echo "done."
 else
 	echo -n "create rootfs.img and parameter.txt..."
