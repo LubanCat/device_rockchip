@@ -10,26 +10,15 @@ cd $DEVICE_DIR
 cd ../../..
 TOP_DIR=$(pwd)
 
-if [ ! -n "$1" ]
-then
-BOARD_CONFIG=$DEVICE_DIR/BoardConfig.mk
-else
-BOARD_CONFIG="$1"
-fi
-
-source $BOARD_CONFIG
-
+source $TOP_DIR/device/rockchip/.BoardConfig.mk
 # Config
-SDK_ROOT=${PWD}
-BUILD_CONFIG=$CFG_BUILDROOT
-echo "$BUILD_CONFIG"
-PRODUCT_PATH=${SDK_ROOT}/device/rockchip/${TARGET_PRODUCT}
-BUILDROOT_PATH=${SDK_ROOT}/buildroot
-IMAGE_OUT_PATH=${SDK_ROOT}/rockdev
-KERNEL_PATH=${SDK_ROOT}/kernel
-UBOOT_PATH=${SDK_ROOT}/u-boot
-MISC_IMG_PATH=$PRODUCT_PATH/rockimg/misc.img
-RECOVERY_IMG_PATH=${SDK_ROOT}/buildroot/output/rockchip_rk3308_recovery/images/recovery.img
+PRODUCT_PATH=$TOP_DIR/device/rockchip/${TARGET_PRODUCT}
+BUILDROOT_PATH=$TOP_DIR/buildroot
+IMAGE_OUT_PATH=$TOP_DIR/rockdev
+KERNEL_PATH=$TOP_DIR/kernel
+UBOOT_PATH=$TOP_DIR/u-boot
+MISC_IMG_PATH=$TOP_DIR/device/rockchip/rockimg/wipe_all-misc.img
+RECOVERY_IMG_PATH=$TOP_DIR/buildroot/output/$CFG_RECOVERY/images/recovery.img
 MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
 MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/userdata_empty
@@ -38,7 +27,7 @@ rm -rf $IMAGE_OUT_PATH
 mkdir -p $IMAGE_OUT_PATH
 
 echo "Package rootfs.img now"
-cp $(pwd)/buildroot/output/$BUILD_CONFIG/images/rootfs.${ROOTFS_TYPE} $IMAGE_OUT_PATH/rootfs.img
+cp $(pwd)/buildroot/output/$CFG_BUILDROOT/images/rootfs.${ROOTFS_TYPE} $IMAGE_OUT_PATH/rootfs.img
 echo "Package rootfs Done..."
 
 if [ ! -f $KERNEL_PATH/kernel.img -o ! -f $KERNEL_PATH/boot.img ];then
@@ -67,7 +56,7 @@ fi
 
 $MKOEM ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img ${OEM_PARTITION_TYPE}
 
-echo "Package data.img [image type: ${OEM_PARTITION_TYPE}] Done..."
+echo "Package oem.img [image type: ${OEM_PARTITION_TYPE}] Done..."
 
 echo "Package userdata.img now"
 	$MKUSERDATA $USER_DATA_DIR ${IMAGE_OUT_PATH}/userdata.img ext2
