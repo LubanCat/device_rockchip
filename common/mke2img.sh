@@ -2,9 +2,7 @@
 
 SRC=$1
 DST=$2
-SIZE=$(du -h -BM -s $SRC | awk '{print int($1)}')
-SIZE=`expr $SIZE + 1`
-# echo "create image size=${SIZE}M"
-dd if=/dev/zero of=$DST bs=1M count=$SIZE>/dev/null 2>&1
-mke2fs -F -t ext2 $DST >/dev/null 2>&1
-mke2fs -F -d $SRC $DST >/dev/null 2>&1
+SIZE=$(du -h -BM -s $SRC | awk '{print int($1)*1000}')
+SIZE=`expr $SIZE + 1000`
+# echo "create image size=${SIZE}K"
+genext2fs -B 1024 -b $SIZE -d $SRC $DST
