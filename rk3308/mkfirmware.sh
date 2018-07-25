@@ -55,13 +55,11 @@ else
 fi
 
 $MKOEM ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img ${OEM_PARTITION_TYPE}
-e2fsck -fy ${IMAGE_OUT_PATH}/oem.img
 
 echo "Package oem.img [image type: ${OEM_PARTITION_TYPE}] Done..."
 
 echo "Package userdata.img now"
 	$MKUSERDATA $USER_DATA_DIR ${IMAGE_OUT_PATH}/userdata.img ext2
-        e2fsck -fy ${IMAGE_OUT_PATH}/userdata.img
 echo "Package userdata.img Done..."
 
 if [ $ARCH == arm ];then
