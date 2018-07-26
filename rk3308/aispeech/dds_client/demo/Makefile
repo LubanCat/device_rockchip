@@ -4,7 +4,10 @@ LOCAL_SRC_DIRS 		     += json
 LOCAL_SRC_DIRS 		     += button 
 
 LOCAL_CFLAGS 	:= -rdynamic -g -O0 -Wall -DMG_ENABLE_THREADS  -Wno-unused-variable -fPIC
-LOCAL_CFLAGS 	+= -I.. -Ijson/ -Ibutton
+LOCAL_CFLAGS 	+= -I.. -Ijson/ -Ibutton -Ibusserver/mongoose -Ibusserver/src
+LOCAL_CFLAGS 	+= -DRK3308_BOARD_V11
+LOCAL_CFLAGS 	+= -DPDM_MIC # for v11
+#
 
 LOCAL_LDFLAGS += -Wl,-rpath,../
 LOCAL_LDFLAGS += -L../ -ldds_client
@@ -26,7 +29,7 @@ CC = ../../../../../../buildroot/output/rockchip_rk3308_release/host/usr/bin/aar
 
 CFLAGS += $(LOCAL_CFLAGS)
 
-demo_main:  main.o music.o json/cJSON.o button/button_api.o
+demo_main:  main.o music.o json/cJSON.o button/button_api.o busserver/src/busserver.o busserver/mongoose/mongoose.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LOCAL_LDFLAGS) -lm
 
 clean:
