@@ -592,6 +592,7 @@ void *vad_detect_func(void* arg) {
             printf("pause >>>>\n");
             clean_silence_frame();
             do_system_sleep();
+            usleep(30 * 1000);
             printf("resume >>>>\n");
             dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"normal\"}");
             wait_device_mode_timeout_ms(30);
