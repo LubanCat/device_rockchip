@@ -1,5 +1,5 @@
 /*================================================================
-*   Copyright (C) 2018 FREEDOM Ltd. All rights reserved.
+*   Copyright (C) 2018 AISPEECH Ltd. All rights reserved.
 *   
 *   文件名称：music.c
 *   创 建 者：chenjie.gu
@@ -20,13 +20,14 @@
 #include <stdbool.h>
 
 audio_player_t *aplayer = NULL;
-float vol_multiplier = 0.4;
+float vol_multiplier = 0.5;
+int vol_system = 70;
 int player_is_end = 0;
 pthread_mutex_t music_mutex;
 
 int play_judge_f(int index, int count, int mode);
-void play_manager_f(const char *cmd, const char *data);
 
+void play_manager_f(const char *cmd, const char *data, char **user_data);
 static int g_player_ev = AUDIO_PLAYER_EV_END;
 
 bool music_is_playing(void) {
@@ -52,7 +53,7 @@ void *player_routine(void *user) {
     while (1) {
         if (player_is_end) {
             player_is_end = 0;
-            play_manager_f("player.end", NULL);
+            play_manager_f("player.end", NULL, NULL);
         }
         usleep(100 * 1000);
     }
@@ -60,9 +61,11 @@ void *player_routine(void *user) {
 }
 
 int music_player_init(char *dev) {
-    aplayer = audio_player_new(dev, play_callback, NULL);
+    aplayer = audio_player_new(play_callback, NULL);
+    audio_player_set_device(aplayer, dev);
     audio_player_set_channel_volume(aplayer, vol_multiplier);
     pthread_mutex_init(&music_mutex, NULL);
+    system("amixer cset name='Master Playback Volume' 70");
     return 0;
 }
 
@@ -78,13 +81,51 @@ int music_player_start() {
     return 0;
 }
 
-void play_manager_f(const char *cmd, const char *data) {
+static void send_vol_update_topic (int vol) {
+    printf("send_vol_update_topic vol is %d\n", vol);
+    char out[128] = {0};
+    sprintf(out, "{\"volume\":\"%d\"}", vol);
+    printf("send_vol_update_topic is %s\n", out);
+    busserver_send_msg("ui.control.topics.response", out);
+}
+
+static void send_music_update_topic(int change, int status, int mode, int index, cJSON *list) {
+    printf("send_music_update_topic %d %d %d %d %p\n", change, status, mode, index, list);
+    char *out;
+    cJSON *root, *root2;
+    char *music;
+
+    root = cJSON_CreateObject();
+    root2 = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "change", change);
+    cJSON_AddNumberToObject(root, "status", status);
+    cJSON_AddNumberToObject(root, "mode", mode);
+    cJSON_AddNumberToObject(root, "currentIndex", index);
+    if (list) {
+        cJSON *tmp = cJSON_GetObjectItem(list, "content");
+        cJSON_AddItemReferenceToObject(root, "list", tmp);
+    }
+    
+    music = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+    
+    cJSON_AddStringToObject(root2, "music", music);
+    out = cJSON_PrintUnformatted(root2);
+    cJSON_Delete(root2);
+
+    printf("send_music_update_topic is %s\n", out);
+    busserver_send_msg("ui.control.topics.response", out);
+    free(music);
+    free(out);
+}
+
+void play_manager_f(const char *cmd, const char *data, char **user_data) {
 
     /*
      * 1. volume.set
      * 2. play.list.update
      * 3. play.list.clear
-     * 4. play.list.get
+	 * 4. play.list.get
      * 5. status.set
      * 6. change.set
      * 7. mode.set
@@ -92,6 +133,7 @@ void play_manager_f(const char *cmd, const char *data) {
      * 9. play.collect.choose
      * 10. play.uncollect.choose
      * 11. player.end
+	 * 12. music.info
      */
 
     enum PLAY_MODE {
@@ -99,7 +141,7 @@ void play_manager_f(const char *cmd, const char *data) {
     };
     
     enum PLAY_STATUS {
-        idle, pause, playing
+        idle, playing, pause
     };
 
     static enum PLAY_MODE mode = sequence;
@@ -116,30 +158,23 @@ void play_manager_f(const char *cmd, const char *data) {
     if (!strcmp(cmd, "volume.set")) {
         // 设置音量
         if (!strcmp(data, "+")) {
-            vol_multiplier += 0.05;
-            if (vol_multiplier > 1.0) vol_multiplier = 0.99; 
-            audio_player_set_channel_volume(aplayer, vol_multiplier);
-            
-            printf("set vol_multiplier to %f\n", vol_multiplier);
-            printf("set vol to %d\n", (int)(vol_multiplier * 100.0));
+            vol_system += 10;
+            if (vol_system > 100) vol_system = 100;
         }
 
         else if (!strcmp(data, "-")) {
-            vol_multiplier -= 0.05;
-            if (vol_multiplier < 0.01) vol_multiplier = 0.01;
-
-            audio_player_set_channel_volume(aplayer, vol_multiplier);
-            printf("set vol_multiplier to %f\n", vol_multiplier);
-            printf("set vol to %d\n", (int)(vol_multiplier * 100.0));
+            vol_system -= 10;
+            if (vol_system < 0) vol_system = 0;
         }
         else {
-            int vol = atoi(data);
-            vol_multiplier = vol / 100.0;
-
-            audio_player_set_channel_volume(aplayer, vol_multiplier);
-            printf("set vol_multiplier to %f\n", vol_multiplier);
-            printf("set vol to %d\n", (int)(vol_multiplier * 100.0));
+            vol_system = atoi(data);
         }
+
+        char cmd[64] = {0};
+        sprintf(cmd, "amixer cset name='Master Playback Volume' %d", vol_system);
+        system(cmd);
+        printf("set vol to %d\n", vol_system);
+        send_vol_update_topic(vol_system);
     }
 
     else if (!strcmp(cmd, "play.list.clear")) {
@@ -152,9 +187,19 @@ void play_manager_f(const char *cmd, const char *data) {
         old_index = 0;
         count = 0;
         status = idle;
+        send_music_update_topic(0, status, mode, index, NULL);
     }
 
     else if (!strcmp(cmd, "play.list.get")) {
+    }
+    else if (!strcmp(cmd, "music.info")) {
+        if (root) {
+            cJSON *temp, *music;
+            music = cJSON_GetObjectItem(root, "content");
+            temp = cJSON_GetArrayItem(music, index);
+            *user_data = cJSON_Print(temp);
+        }
+        else *user_data = NULL;
     }
     else if (!strcmp(cmd, "play.list.check")) {
         // 开始真正播放
@@ -176,7 +221,9 @@ void play_manager_f(const char *cmd, const char *data) {
                 status = playing;
                 audio_player_resume(aplayer);
             }
+            send_music_update_topic(0, status, mode, index, root);
         }
+        else send_music_update_topic(0, status, mode, index, NULL);
     }
     else if (!strcmp(cmd, "play.list.update")) {
         // 更新播放列表
@@ -204,14 +251,6 @@ void play_manager_f(const char *cmd, const char *data) {
         }
         else if (!strcmp(data, "replay") && status == pause) {
             status = playing;
-
-            cJSON *temp, *music;
-            music = cJSON_GetObjectItem(root, "content");
-            temp = cJSON_GetArrayItem(music, index);
-            temp = cJSON_GetObjectItem(temp, "linkUrl");
-            printf("ready to play url is %s\n", temp->valuestring);
-            audio_player_stop(aplayer);
-            audio_player_play(aplayer, temp->valuestring);
         }
         else if (!strcmp(data, "step")) {
             if (status == playing) {
@@ -223,6 +262,7 @@ void play_manager_f(const char *cmd, const char *data) {
                 audio_player_resume(aplayer);
             }
         }
+        send_music_update_topic(0, status, mode, index, root);
     }
     else if (!strcmp(cmd, "mode.set")) {
         // 播放模式
@@ -230,6 +270,7 @@ void play_manager_f(const char *cmd, const char *data) {
         else if (!strcmp(data, "random")) mode = random;
         else if (!strcmp(data, "single")) mode = single;
         else if (!strcmp(data, "loop")) mode = loop;
+        send_music_update_topic(0, status, mode, index, root);
     }
     else if (!strcmp(cmd, "change.set")) {
         // 歌曲切换
@@ -266,33 +307,16 @@ void play_manager_f(const char *cmd, const char *data) {
     }
     else if (!strcmp(cmd, "play.choose.update")) {
         // 播放特定歌曲
-        // TODO: update
-        int find = 0;
-        int i = 0;
-        cJSON *temp = cJSON_Parse(data);
+        old_index = index;
+        index = atoi(data);
+        cJSON *temp, *music;
+        music = cJSON_GetObjectItem(root, "content");
+        temp = cJSON_GetArrayItem(music, index);
         temp = cJSON_GetObjectItem(temp, "linkUrl");
-
-        cJSON *music = cJSON_GetObjectItem(root, "content");
-        cJSON *xx;
-        for (i = 0; i < count; i++) {
-            xx = cJSON_GetArrayItem(music, i);
-            xx = cJSON_GetObjectItem(xx, "linkUrl");
-            if (!strcmp(xx->valuestring, temp->valuestring)) {
-                find = 1;
-                break;
-            }
-        }
-        if (find) {
-            old_index = index;
-            index = i;
-            printf("ready to play url is %s\n", temp->valuestring);
-            audio_player_stop(aplayer);
-            audio_player_play(aplayer, temp->valuestring);
-        }
-        else {
-            // 播放歌曲不在播放列表里面
-            printf("wwwwwwwwwwwwwwwwwwwwwwwwwww\n");
-        }
+        printf("ready to play url is %s\n", temp->valuestring);
+        audio_player_stop(aplayer);
+        audio_player_play(aplayer, temp->valuestring);
+        send_music_update_topic(0, status, mode, index, root);
     }
     else if (!strcmp(cmd, "play.collect.choose")) {
         // 收藏歌曲
@@ -317,6 +341,7 @@ void play_manager_f(const char *cmd, const char *data) {
             old_index = 0;
             count = 0;
             status = idle;
+            send_music_update_topic(0, status, mode, index, NULL);
         }
         else {
             // 播放指定的音频
@@ -327,6 +352,7 @@ void play_manager_f(const char *cmd, const char *data) {
             printf("ready to play url is %s\n", temp->valuestring);
             audio_player_stop(aplayer);
             audio_player_play(aplayer, temp->valuestring);
+            send_music_update_topic(0, status, mode, index, root);
         }
     }
 

@@ -15,14 +15,15 @@ extern "C"
 {
 #endif
 
-#define DDS_CLIENT_VERSION           "DDS_CLIENT 0.1.7"
+#define DDS_CLIENT_VERSION           "DDS_CLIENT 0.2.1"
 
-#define DDS_CLIENT_TTS_ZHILING      "zhilingf"
-#define DDS_CLIENT_TTS_GDG          "gdgm"
-#define DDS_CLIENT_TTS_GEYOU        "geyou"
-#define DDS_CLIENT_TTS_HYANIF       "hyanif"
-#define DDS_CLIENT_TTS_XIJUNM       "xijunm"
-#define DDS_CLIENT_TTS_QIANRAN      "qianranf"
+#define DDS_CLIENT_TTS_ZHILING      "zhilingf"      // 甜美女神
+#define DDS_CLIENT_TTS_GDG          "gdgm"          // 沉稳纲叔
+#define DDS_CLIENT_TTS_GEYOU        "geyou"         // 淡定葛爷
+#define DDS_CLIENT_TTS_HYANIF       "hyanif"        // 邻家女声
+#define DDS_CLIENT_TTS_XIJUNM       "xijunm"        // 标准男声
+#define DDS_CLIENT_TTS_QIANRAN      "qianranf"      // 可爱童声
+#define DDS_CLIENT_TTS_LUCYF        "lucyf"         // 标准女声
 
 #define DDS_CLIENT_USER_EV_BASE		        1000
 #define DDS_CLIENT_USER_DEVICE_MODE         1001
@@ -81,6 +82,8 @@ int dds_client_set_volume(struct dds_client *ds, int vol);
  */
 int dds_client_disable_wakeup(struct dds_client *ds);
 int dds_client_enable_wakeup(struct dds_client *ds);
+int dds_client_update_customword(struct dds_client *ds, const char *word);
+char* dds_client_get_wakeupwords(struct dds_client *ds);
 
 #ifdef __cplusplus
 }

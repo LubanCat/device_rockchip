@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#define RK3308_BOARD_V11
+
 struct button{
     pthread_t pid;
     int fd;
@@ -29,7 +29,7 @@ typedef enum {
     PHY_BUTTON_CODE_VOLUME_SUB = 114,
 
     //只支持短按
-    PHY_BUTTON_CODE_MUTE = KEY_MICMUTE,
+    PHY_BUTTON_CODE_MUTE = 248,
 
     //只支持短按
     PHY_BUTTON_CODE_PLAY_PAUSE = 207,
