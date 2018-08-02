@@ -63,10 +63,16 @@ echo "Package userdata.img now"
 echo "Package userdata.img Done..."
 
 if [ $ARCH == arm ];then
-	PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit.txt
+	if [ "${OEM_PATH}" == "dueros" ];then
+		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit-dueros.txt
+	else
+		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit.txt
+	fi
 elif [ "${FLASH_TYPE}" == "nand" ];then
 	if [ "${OEM_PATH}" == "aispeech" ];then
 		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-aispeech.txt
+	elif [ "${OEM_PATH}" == "dueros" ];then
+		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-dueros.txt
 	else
 		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand.txt
 	fi

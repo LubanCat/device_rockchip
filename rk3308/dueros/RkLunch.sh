@@ -22,7 +22,7 @@ killall hostapd
 killall dnsmasq
 killall ueventd
 
-aplay /usr/appresources/startup.wav &
+aplay /oem/duer/appresources/startup.wav &
 
 #wpa_supplicant -B -i wlan0 -c /data/cfg/wpa_supplicant.conf
 #sleep 3

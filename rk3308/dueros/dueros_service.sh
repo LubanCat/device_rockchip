@@ -14,11 +14,12 @@ case "$1" in
 	./alsa_audio_main_service 6mic_loopback &
 
 	# start dueros
-	mkdir -p /data/duer && cd /data/duer
-	ln -s /usr/duer_linux . -f
-	ln -s /usr/lib . -f
-	ln -s /usr/appresources . -f
-	ln -s /oem/duer/* . -f
+	ln -snf /oem/duer /data/duer
+#	mkdir -p /data/duer && cd /data/duer
+#	ln -s /usr/duer_linux . -f
+#	ln -s /usr/lib . -f
+#	ln -s /usr/appresources . -f
+#	ln -s /oem/duer/* . -f
 	./duer_linux &
 	;;
   stop)
