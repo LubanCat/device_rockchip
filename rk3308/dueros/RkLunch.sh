@@ -4,6 +4,8 @@
 # echo 0x60 0x40ff0040 > /sys/kernel/debug/vad/reg
 # echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
 
+echo 1 > /proc/sys/vm/overcommit_memory
+
 cd /data/
 
 # for ai-va demo
