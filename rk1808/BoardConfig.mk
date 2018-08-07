@@ -6,25 +6,25 @@
 # Target arch
 ARCH=arm64
 # Uboot defconfig
-UBOOT_DEFCONFIG=evb-px30
+UBOOT_DEFCONFIG=evb-rk1808
 # Kernel defconfig
-KERNEL_DEFCONFIG=px30_linux_defconfig
+KERNEL_DEFCONFIG=rk1808_linux_defconfig
 # Kernel dts
-KERNEL_DTS=px30-evb-ddr3-v10-linux
+KERNEL_DTS=rk1808-evb-linux
 # Buildroot config
-CFG_BUILDROOT=rockchip_px30
+CFG_BUILDROOT=rockchip_rk1808
 # Recovery config
-CFG_RECOVERY=rockchip_px30_recovery
+CFG_RECOVERY=rockchip_rk1808_recovery
 # Pcba config
-CFG_PCBA=rockchip_px30_pcba
+CFG_PCBA=rockchip_rk1808_pcba
 # Build jobs
 JOBS=12
 # Yocto machine
-YOCTO_MACHINE=rockchip-px30-evb
+YOCTO_MACHINE=rockchip-rk1808-evb
 #=========================
 # Platform Target
 #=========================
-TARGET_PRODUCT=px30
+TARGET_PRODUCT=rk1808
 
 # Set rootfs type, see buildroot.
 # ext4 squashfs
