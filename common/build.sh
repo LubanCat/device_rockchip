@@ -78,7 +78,7 @@ function build_buildroot(){
 	echo "==========Start build buildroot=========="
 	echo "TARGET_BUILDROOT_CONFIG=$CFG_BUILDROOT"
 	echo "========================================="
-	$COMMON_DIR/mk-buildroot.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build builroot" $COMMON_DIR/mk-buildroot.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "====Build buildroot ok!===="
 	else
@@ -96,7 +96,7 @@ function build_ros(){
 	echo "======Start build yocto======"
 	echo "YOCTO_MACHINE=$YOCTO_MACHINE"
 	echo "============================="
-	$COMMON_DIR/mk-ros.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build ros" $COMMON_DIR/mk-ros.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "====Build ros ok!===="
 	else
@@ -112,7 +112,7 @@ function build_yocto(){
 function build_debian(){
         # build debian
         echo "====Start build debian===="
-	$COMMON_DIR/mk-debian.sh
+	/usr/bin/time -f "you take %E to build debian" $COMMON_DIR/mk-debian.sh
         if [ $? -eq 0 ]; then
                 echo "====Build debian ok!===="
         else
@@ -126,7 +126,7 @@ function build_recovery(){
 	echo "==========Start build recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$CFG_RECOVERY"
 	echo "========================================"
-	$COMMON_DIR/mk-recovery.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build recovery" $COMMON_DIR/mk-recovery.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "====Build recovery ok!===="
 	else
@@ -140,7 +140,7 @@ function build_pcba(){
 	echo "==========Start build pcba=========="
 	echo "TARGET_PCBA_CONFIG=$CFG_PCBA"
 	echo "===================================="
-	$COMMON_DIR/mk-pcba.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build pcba" $COMMON_DIR/mk-pcba.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "====Build pcba ok!===="
 	else
