@@ -1,11 +1,11 @@
 #!/bin/sh
 
-sleep 3
+sleep 5
 
 while true;do
-    pid=`ps aux | grep duer_linux | grep -v grep | busybox awk '{print \$1}'`
-    if [ "$pid" = "" ];then
-        echo "duer_linux died, restart it."
+    pid_num=`pidof duer_linux alsa_audio_main_service | wc -w`
+    if [ $pid_num -ne 2 ] ;then
+        echo "duer_linux|alsa_audio_main_service died, restart it."
         /oem/dueros_service.sh restart
     fi
     sleep 2

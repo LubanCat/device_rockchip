@@ -1,10 +1,22 @@
+# set 1 if you need coredump
+export dueros_debug=0
+
 # vad
+
 # arecord -D vad -c 8 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
 # rm /tmp/test.pcm
 # echo 0x60 0x40ff0040 > /sys/kernel/debug/vad/reg
 # echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
 
 echo 1 > /proc/sys/vm/overcommit_memory
+
+# zram swap
+
+# echo 2 > /sys/block/zram0/max_comp_streams
+# echo lz4 > /sys/block/zram0/comp_algorithm
+# echo 16M > /sys/block/zram0/disksize
+# mkswap /dev/zram0
+# swapon /dev/zram0
 
 cd /data/
 
@@ -33,4 +45,6 @@ aplay /oem/duer/appresources/startup.wav &
 # start dueros
 /oem/dueros_service.sh start
 
+if [ $dueros_debug -eq 0 ]; then
 /oem/watch_dueros_service.sh &
+fi
