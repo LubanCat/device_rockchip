@@ -6,7 +6,7 @@ softap_stop()
 {
     echo softap_stoping
 
-    killall dnsmasq || echo dnsmasq-exit
+    killall dui || echo dui-exit
     ip addr delete 192.168.1.1 dev p2p0 || echo ip-addr-delete
     killall hostapd || echo hostapd-exit
     ifconfig p2p0 down || echo p2p0 
@@ -18,7 +18,7 @@ dds_start()
 {
     softap_stop
     #echo dds_start
-    pidof demo_main || $PROCESS start
+    pidof dui || $PROCESS start
     
     gst-play-1.0 /data/aispeech_softap_lite/audio/connect_ok.mp3 
 }
@@ -30,7 +30,7 @@ dds_stop()
 }
 wifiReadyAction()
 {
-    pidof demo_main || $PROCESS start
+    pidof dui || $PROCESS start
 }
 wifiUpAction()
 {
