@@ -18,7 +18,7 @@
             "wakeupBinPath":"./res/wakeup_aifar_comm_20180104.bin",
             "beamformingBinPath":"./res/UDA_asr_chan2-2-mic2_30mm_20180504.bin",
             "env":"words=ni hao xiao le,ni hao xiao chi;thresh=0.34,0.3;major=1,0;",
-            "rollBack":100
+            "rollBack":200
         },
         "wakeupWord":["ni hao xiao le", "ni hao xiao chi"],
         "wakeupAudio":["./audio/wakeup.mp3", "./audio/minor_wakeup.mp3"]
@@ -26,7 +26,7 @@
     "vad":{
         "cfg":{
             "resBinPath":"./res/vad_aihome_v0.7.bin",
-            "pauseTime":300
+            "pauseTime":200
         },
         "startTimeoutPrompt":"./audio/vad_start_timeout2.mp3"
     },
