@@ -5,15 +5,15 @@
 case "$1" in
   start)
         echo "Starting $0..."
-        cd /oem/dds_client && ./dui dui_cfg.json &
+        cd /oem/dds_client && ./dui_fespl dui_fespl.json &
         ;;
   stop)
         echo "Stop $0..."
-        killall dui
+        killall dui_fespl
         ;;
   restart|reload)
-        killall dui
-        cd /oem/dds_client && ./dui dui_cfg.json &
+        killall dui_fespl
+        cd /oem/dds_client && ./dui_fespl dui_fespl.json &
         ;;
   *)
         echo "Usage: $0 {start|stop|restart}"
