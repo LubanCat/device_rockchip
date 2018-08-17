@@ -1,42 +1,35 @@
 #!/bin/bash
 
-#=========================
-# Compile Config
-#=========================
 # Target arch
-ARCH=arm
+export RK_ARCH=arm
 # Uboot defconfig
-UBOOT_DEFCONFIG=evb-aarch32-rk3308
+export RK_UBOOT_DEFCONFIG=evb-aarch32-rk3308
 # Kernel defconfig
-KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
+export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
 # Kernel dts
-KERNEL_DTS=rk3308-voice-module-board-v10-aarch32
+export RK_KERNEL_DTS=rk3308-voice-module-board-v10-aarch32
+# boot image type
+export RK_BOOT_IMG=zboot.img
 # Buildroot config
-CFG_BUILDROOT=rockchip_rk3308_32_release
+export RK_CFG_BUILDROOT=rockchip_rk3308_32_release
 # Recovery config
-CFG_RECOVERY=rockchip_rk3308_recovery
+export RK_CFG_RECOVERY=rockchip_rk3308_recovery
 # Pcba config
-CFG_PCBA=rockchip_rk3308_pcba
+export RK_CFG_PCBA=rockchip_rk3308_pcba
 # Build jobs
-JOBS=12
-
-#=========================
-# Platform Target
-#=========================
-TARGET_PRODUCT=rk3308
-
-# Set rootfs type, see buildroot.
-# ext4 squashfs
-ROOTFS_TYPE=squashfs
-
-# Set data partition type.
-# ext2 squashfs
-OEM_PARTITION_TYPE=ext2
-
-# Set flash type.
-# support <emmc, nand, spi_nand, spi_nor>
-FLASH_TYPE=nand
-
-#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD
-OEM_PATH=oem
+export RK_JOBS=12
+# target chip
+export RK_TARGET_PRODUCT=rk3308
+# Set rootfs type, including ext2 ext4 squashfs
+export RK_ROOTFS_TYPE=squashfs
+# Set oem partition type, including ext2 squashfs
+export RK_OEM_FS_TYPE=ext2
+# Set userdata partition type, including ext2, fat
+export RK_USERDATA_FS_TYPE=ext2
+# Set flash type. support <emmc, nand, spi_nand, spi_nor>
+export RK_STORAGE_TYPE=emmc
+#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
+export RK_OEM_DIR=oem
+#userdata config
+export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6

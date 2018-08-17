@@ -1,42 +1,34 @@
 #!/bin/bash
 
-#=========================
-# Compile Config
-#=========================
 # Target arch
-ARCH=arm64
+export RK_ARCH=arm64
 # Uboot defconfig
-UBOOT_DEFCONFIG=evb-rk3326
+export RK_UBOOT_DEFCONFIG=evb-rk3326
 # Kernel defconfig
-KERNEL_DEFCONFIG=rk3326_linux_defconfig
+export RK_KERNEL_DEFCONFIG=rk3326_linux_defconfig
 # Kernel dts
-KERNEL_DTS=rk3326-evb-lp3-v10-linux
+export RK_KERNEL_DTS=rk3326-evb-lp3-v10-linux
+# boot image type
+export RK_BOOT_IMG=boot.img
 # Buildroot config
-CFG_BUILDROOT=rockchip_rk3326
+export RK_CFG_BUILDROOT=rockchip_rk3326
 # Recovery config
-CFG_RECOVERY=rockchip_rk3326_recovery
+export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # Pcba config
-CFG_PCBA=rockchip_rk3326_pcba
+export RK_CFG_PCBA=rockchip_rk3326_pcba
 # Build jobs
-JOBS=12
-# Yocto machine
-YOCTO_MACHINE=rockchip-rk3326-evb
-#=========================
-# Platform Target
-#=========================
-TARGET_PRODUCT=rk3326
-
-# Set rootfs type, see buildroot.
-# ext4 squashfs
-ROOTFS_TYPE=squashfs
-
-# Set data partition type.
-# ext2 squashfs
-OEM_PARTITION_TYPE=ext2
-
-# Set flash type.
-# support <emmc, nand, spi_nand, spi_nor>
-FLASH_TYPE=emmc
-
+export RK_JOBS=12
+# target chip
+export RK_TARGET_PRODUCT=rk3326
+# Set rootfs type, including ext2 ext4 squashfs
+export RK_ROOTFS_TYPE=ext4
+# Set oem partition type, including ext2 squashfs
+export RK_OEM_FS_TYPE=ext2
+# Set userdata partition type, including ext2, fat
+export RK_USERDATA_FS_TYPE=ext2
+# Set flash type. support <emmc, nand, spi_nand, spi_nor>
+export RK_STORAGE_TYPE=emmc
 #OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
-OEM_PATH=oem
+export RK_OEM_DIR=oem_normal
+#userdata config
+export RK_USERDATA_DIR=userdata_normal

@@ -43,12 +43,12 @@ usage()
 function build_uboot(){
 	# build uboot
 	echo "============Start build uboot============"
-	echo "TARGET_UBOOT_CONFIG=$UBOOT_DEFCONFIG"
+	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "========================================="
 	if [ -f u-boot/*_loader_*.bin ]; then
 		rm u-boot/*_loader_*.bin
 	fi
-	cd u-boot && ./make.sh $UBOOT_DEFCONFIG && cd -
+	cd u-boot && ./make.sh $RK_UBOOT_DEFCONFIG && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build uboot ok!===="
 	else
@@ -60,11 +60,11 @@ function build_uboot(){
 function build_kernel(){
 	# build kernel
 	echo "============Start build kernel============"
-	echo "TARGET_ARCH          =$ARCH"
-	echo "TARGET_KERNEL_CONFIG =$KERNEL_DEFCONFIG"
-	echo "TARGET_KERNEL_DTS    =$KERNEL_DTS"
+	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
+	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
 	echo "=========================================="
-	cd $TOP_DIR/kernel && make ARCH=$ARCH $KERNEL_DEFCONFIG && make ARCH=$ARCH $KERNEL_DTS.img -j$JOBS && cd -
+	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG && make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$JOBS && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build kernel ok!===="
 	else
@@ -76,7 +76,7 @@ function build_kernel(){
 function build_buildroot(){
 	# build buildroot
 	echo "==========Start build buildroot=========="
-	echo "TARGET_BUILDROOT_CONFIG=$CFG_BUILDROOT"
+	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "========================================="
 	/usr/bin/time -f "you take %E to build builroot" $COMMON_DIR/mk-buildroot.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
@@ -124,7 +124,7 @@ function build_debian(){
 function build_recovery(){
 	# build recovery
 	echo "==========Start build recovery=========="
-	echo "TARGET_RECOVERY_CONFIG=$CFG_RECOVERY"
+	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
 	/usr/bin/time -f "you take %E to build recovery" $COMMON_DIR/mk-recovery.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
@@ -138,7 +138,7 @@ function build_recovery(){
 function build_pcba(){
 	# build pcba
 	echo "==========Start build pcba=========="
-	echo "TARGET_PCBA_CONFIG=$CFG_PCBA"
+	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "===================================="
 	/usr/bin/time -f "you take %E to build pcba" $COMMON_DIR/mk-pcba.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
@@ -151,14 +151,14 @@ function build_pcba(){
 
 function build_all(){
 	echo "============================================"
-	echo "TARGET_ARCH=$ARCH"
-	echo "TARGET_PLATFORM=$TARGET_PRODUCT"
-	echo "TARGET_UBOOT_CONFIG=$UBOOT_DEFCONFIG"
-	echo "TARGET_KERNEL_CONFIG=$KERNEL_DEFCONFIG"
-	echo "TARGET_KERNEL_DTS=$KERNEL_DTS"
-	echo "TARGET_BUILDROOT_CONFIG=$CFG_BUILDROOT"
-	echo "TARGET_RECOVERY_CONFIG=$CFG_RECOVERY"
-	echo "TARGET_PCBA_CONFIG=$CFG_PCBA"
+	echo "TARGET_ARCH=$RK_ARCH"
+	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
+	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
+	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
+	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS"
+	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
+	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
+	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "============================================"
 	build_uboot
 	build_kernel
@@ -202,7 +202,7 @@ function build_updateimg(){
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=Image/"$KERNEL_DTS"_"$DATE"_RELEASE_TEST
+	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
@@ -220,9 +220,9 @@ function build_save(){
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
 	#Save build command info
-	echo "UBOOT:  defconfig: $UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
-	echo "KERNEL: defconfig: $KERNEL_DEFCONFIG, dts: $KERNEL_DTS" >> $STUB_PATH/build_cmd_info
-	echo "BUILDROOT: $CFG_BUILDROOT" >> $STUB_PATH/build_cmd_info
+	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
+	echo "KERNEL: defconfig: $RK_KERNEL_DEFCONFIG, dts: $RK_KERNEL_DTS" >> $STUB_PATH/build_cmd_info
+	echo "BUILDROOT: $RK_CFG_BUILDROOT" >> $STUB_PATH/build_cmd_info
 
 }
 #=========================

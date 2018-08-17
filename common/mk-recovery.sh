@@ -13,9 +13,9 @@ TOP_DIR=$(pwd)
 BOARD_CONFIG=$1
 source $BOARD_CONFIG
 echo "recovery config: $CFG_RECOVERY"
-if [ $ARCH == arm64 ];then
+if [ $RK_ARCH == arm64 ];then
 KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm64/boot/Image
-elif [ $ARCH == arm ];then
+elif [ $RK_ARCH == arm ];then
 KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm/boot/zImage
 fi
 KERNEL_DTB=$TOP_DIR/kernel/resource.img
@@ -34,10 +34,9 @@ else
 	fi
 fi
 
-source $TOP_DIR/buildroot/build/envsetup.sh $CFG_RECOVERY
-BUILD_CONFIG=`get_defconfig_name`
-RAMDISK_IMAGE=$TOP_DIR/buildroot/output/$BUILD_CONFIG/images/rootfs.cpio.gz
-RECOVERY_IMAGE=$TOP_DIR/buildroot/output/$BUILD_CONFIG/images/recovery.img
+source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RECOVERY
+RAMDISK_IMAGE=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/rootfs.cpio.gz
+RECOVERY_IMAGE=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 
 # build recovery
 echo "====Start build recovery===="

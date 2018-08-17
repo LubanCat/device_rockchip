@@ -1,3 +1,4 @@
+#!/bin/bash
 
 UPGRADETOOL=$(pwd)/tools/linux/Linux_Upgrade_Tool/Linux_Upgrade_Tool/upgrade_tool
 ROCKDEV_DIR=$(pwd)/rockdev
@@ -22,7 +23,7 @@ fi
 
 if [ $FLASH_TYPE = all ]
 then
-        sudo $UPGRADETOOL ul $LOADER
+	sudo $UPGRADETOOL ul $LOADER
 	sudo $UPGRADETOOL di -p $PARAMETER
 	sudo $UPGRADETOOL di -uboot $UBOOT
 	sudo $UPGRADETOOL di -trust $TRUST
@@ -37,6 +38,7 @@ fi
 if [ $FLASH_TYPE = loader ]
 then
 	sudo $UPGRADETOOL ul $LOADER
+	exit 0
 fi
 
 if [ $FLASH_TYPE = parameter ]

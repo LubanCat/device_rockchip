@@ -11,7 +11,7 @@ cd ../../..
 TOP_DIR=$(pwd)
 BOARD_CONFIG=$1
 source $BOARD_CONFIG
-CONF=$TOP_DIR/device/rockchip/$TARGET_PRODUCT/yocto/build/conf
+CONF=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/yocto/build/conf
 
 cd $TOP_DIR/kernel && git branch master 1>/dev/null 2>/dev/null && cd -
 cd $TOP_DIR/yocto && . ./oe-init-build-env $TOP_DIR/yocto/build && cp $CONF/* $TOP_DIR/yocto/build/conf/ && bitbake core-image-ros-roscore -c do_image_ext4 && cd -
