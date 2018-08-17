@@ -36,7 +36,13 @@ killall hostapd
 killall dnsmasq
 killall ueventd
 
+DUEROS_ALSASTATE_FILE=/data/cfg/asound.state
+if [ -r $DUEROS_ALSASTATE_FILE  ]; then
+    alsactl restore --file=$DUEROS_ALSASTATE_FILE
+fi
 aplay /oem/duer/appresources/startup.wav &
+
+#alsactl -b daemon --file=$DUEROS_ALSASTATE_FILE
 
 #wpa_supplicant -B -i wlan0 -c /data/cfg/wpa_supplicant.conf
 #sleep 3
