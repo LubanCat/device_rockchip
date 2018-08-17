@@ -10,6 +10,8 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 export RK_KERNEL_DTS=rk3229-evb-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
+# parameter for GPT table
+export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3229
 # Recovery config
@@ -22,6 +24,8 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3229
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
+# rootfs image path
+export RK_ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
