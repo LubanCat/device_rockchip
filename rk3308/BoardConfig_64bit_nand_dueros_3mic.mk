@@ -33,7 +33,7 @@ export RK_USERDATA_FS_TYPE=ext2
 # Set flash type. support <emmc, nand, spi_nand, spi_nor>
 export RK_STORAGE_TYPE=emmc
 #OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
-export RK_OEM_DIR=dueros
+export RK_OEM_DIR=baidu_spil_rk3308_64bit_3mic
 #userdata config
 export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
