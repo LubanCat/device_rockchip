@@ -36,25 +36,9 @@ if [ ! -f $KERNEL_PATH/kernel.img -o ! -f $KERNEL_PATH/boot.img ];then
 fi
 
 echo "Package oem.img now"
-if [ "${RK_OEM_DIR}" == "dueros"  ];then
-	if [ $RK_ARCH == arm ];then
-		TARGET_ARM_TYPE=arm32
-	else
-		TARGET_ARM_TYPE=arm64
-	fi
-    OEM_CONTENT_PATH=${IMAGE_OUT_PATH}/.oem
-    rm -rf ${OEM_CONTENT_PATH}
-    mkdir -p ${OEM_CONTENT_PATH}
-    find ${PRODUCT_PATH}/${RK_OEM_DIR} -maxdepth 1 -not -name "arm*" \
-        -not -wholename "${PRODUCT_PATH}/${RK_OEM_DIR}" \
-        -exec sh -c 'cp -rf ${0} ${1}' "{}" ${OEM_CONTENT_PATH} \;
-    cp -rf ${PRODUCT_PATH}/${RK_OEM_DIR}/${TARGET_ARM_TYPE}/baidu_spil_rk3308_${MIC_NUM}mic ${OEM_CONTENT_PATH}/baidu_spil_rk3308
-	echo "copy ${TARGET_ARM_TYPE} with ${MIC_NUM}mic."
-else
-    OEM_CONTENT_PATH=${PRODUCT_PATH}/${RK_OEM_DIR}
-fi
-
-$MKOEM ${OEM_CONTENT_PATH} ${IMAGE_OUT_PATH}/oem.img ${RK_OEM_FS_TYPE}
+rm -rf $TOP_DIR/device/rockchip/oem/.oem/*
+cp -r -L $TOP_DIR/device/rockchip/oem/${RK_OEM_DIR}/* $TOP_DIR/device/rockchip/oem/.oem/
+$MKOEM $TOP_DIR/device/rockchip/oem/.oem ${IMAGE_OUT_PATH}/oem.img ${RK_OEM_FS_TYPE}
 
 echo "Package oem.img [image type: ${RK_OEM_FS_TYPE}] Done..."
 
