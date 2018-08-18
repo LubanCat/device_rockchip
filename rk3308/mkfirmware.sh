@@ -62,23 +62,7 @@ echo "Package userdata.img now"
 	$MKUSERDATA $USER_DATA_DIR ${IMAGE_OUT_PATH}/userdata.img ext2
 echo "Package userdata.img Done..."
 
-if [ $RK_ARCH == arm ];then
-	if [ "${RK_OEM_DIR}" == "dueros" ];then
-		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit-dueros.txt
-	else
-		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-32bit.txt
-	fi
-elif [ "${FLASH_TYPE}" == "nand" ];then
-	if [ "${RK_OEM_DIR}" == "aispeech" ];then
-		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-aispeech.txt
-	elif [ "${RK_OEM_DIR}" == "dueros" ];then
-		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand-dueros.txt
-	else
-		PARAMETER=$PRODUCT_PATH/rockimg/gpt-nand.txt
-	fi
-else
-	PARAMETER=$PRODUCT_PATH/rockimg/gpt-emmc.txt
-fi
+PARAMETER=$PRODUCT_PATH/$RK_PARAMETER
 
 if [ -f $UBOOT_PATH/uboot.img ]
 then
