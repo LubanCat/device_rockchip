@@ -113,7 +113,9 @@ function build_yocto(){
 function build_debian(){
         # build debian
         echo "====Start build debian===="
-	/usr/bin/time -f "you take %E to build debian" $COMMON_DIR/mk-debian.sh
+	echo "TARGET_ARCH          =$RK_ARCH"
+        echo "RK_ENABLE_MODULE     =$RK_ENABLE_MODULE"
+	/usr/bin/time -f "you take %E to build debian" $COMMON_DIR/mk-debian.sh $RK_ENABLE_MODULE
         if [ $? -eq 0 ]; then
                 echo "====Build debian ok!===="
         else
