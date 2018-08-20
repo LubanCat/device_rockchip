@@ -13,7 +13,7 @@ export RK_BOOT_IMG=zboot.img
 # parameter for GPT table
 export RK_PARAMETER=parameter-nand.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_px3se_nand
+export RK_CFG_BUILDROOT=rockchip_px3se
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px3se_recovery
 # Pcba config
