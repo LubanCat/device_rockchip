@@ -225,6 +225,13 @@ function build_save(){
 	echo "BUILDROOT: $RK_CFG_BUILDROOT" >> $STUB_PATH/build_cmd_info
 
 }
+
+function build_all_save(){
+	build_all
+	build_firmware
+	build_updateimg
+	build_save
+}
 #=========================
 # build target
 #=========================
@@ -273,17 +280,11 @@ elif [ $BUILD_TARGET == cleanall ];then
 elif [ $BUILD_TARGET == --help ] || [ $BUILD_TARGET == help ] || [ $BUILD_TARGET == -h ];then
     usage
     exit 0
-elif [ $BUILD_TARGET != allsave ];then
-	echo "Can't found build config, please check again"
-	usage
-	exit 1
+elif [ $BUILD_TARGET == allsave ];then
+    build_all_save
+    exit 0
+else
+    echo "Can't found build config, please check again"
+    usage
+    exit 1
 fi
-
-
-#============================================================
-# default build all modules, make all image and save stuff
-#============================================================
-build_all
-build_firmware
-build_updateimg
-build_save
