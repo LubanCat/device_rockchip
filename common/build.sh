@@ -18,6 +18,7 @@ if [ ! -n "$1" ];then
 	BUILD_TARGET=allsave
 else
 	BUILD_TARGET="$1"
+	NEW_BOARD_CONFIG=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$1
 fi
 
 usage()
@@ -283,6 +284,9 @@ elif [ $BUILD_TARGET == --help ] || [ $BUILD_TARGET == help ] || [ $BUILD_TARGET
 elif [ $BUILD_TARGET == allsave ];then
     build_all_save
     exit 0
+elif [ -f $NEW_BOARD_CONFIG ];then
+    rm -f $BOARD_CONFIG
+    ln -s $NEW_BOARD_CONFIG $BOARD_CONFIG
 else
     echo "Can't found build config, please check again"
     usage
