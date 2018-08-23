@@ -25,7 +25,7 @@
         "samplerate":16000,
         "bits":16,
         "channels":8,
-        "device": "6mic_loopback"
+        "device": "hw:0,0"
     },
     "player": {
         "device": "default"
