@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # Target arch
-export RK_ARCH=arm
+export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=evb-aarch32-rk3308
+export RK_UBOOT_DEFCONFIG=evb-rk3308
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
+export RK_KERNEL_DEFCONFIG=rk3308_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3308-voice-module-board-v10-aarch32
+export RK_KERNEL_DTS=rk3308-evb-dmic-pdm-v11
 # boot image type
-export RK_BOOT_IMG=zboot.img
+export RK_BOOT_IMG=boot.img
 # parameter for GPT table
-export RK_PARAMETER=parameter-nand-32bit-aispeech.txt
+export RK_PARAMETER=parameter-64bit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3308_32_release
+export RK_CFG_BUILDROOT=rockchip_rk3308_release
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3308_recovery
 # Pcba config
@@ -31,9 +31,9 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 # Set flash type. support <emmc, nand, spi_nand, spi_nor>
-export RK_STORAGE_TYPE=emmc
-#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
-export RK_OEM_DIR=aispeech-2mic-32bit
+export RK_STORAGE_TYPE=nand
+#OEM config: /oem/dueros/aispeech-6mic-64bit/aispeech-2mic-64bit/aispeech-4mic-32bit/aispeech-2mic-32bit/aispeech-2mic-kongtiao-32bit/iflytekSDK/CaeDemo_VAD/smart_voice
+export RK_OEM_DIR=dueros
 #userdata config
 export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
