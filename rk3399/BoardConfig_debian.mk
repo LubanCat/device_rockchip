@@ -25,7 +25,7 @@ export RK_TARGET_PRODUCT=rk3399
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
-export RK_ROOTFS_IMG=rootfs/linaro-rootfs.img
+export RK_ROOTFS_IMG=distro/rootfs.img
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
@@ -36,3 +36,5 @@ export RK_STORAGE_TYPE=emmc
 export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
+#choose enable module
+export RK_ENABLE_MODULE="--wifi --audio"
