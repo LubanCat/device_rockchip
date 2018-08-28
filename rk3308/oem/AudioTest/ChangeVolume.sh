@@ -1,7 +1,27 @@
 #!/bin/bash
-rm /tmp/ChangeVolume_$1_$2.wav
+
+device=$1_
+                        
+case "$1" in                   
+        hw:0,0)                
+          device=hw_0_0_       
+          ;;                   
+        hw:1,0)                
+          device=hw_1_0_       
+          ;;                   
+        hw:7,0,0)                                                                                                  
+          device=hw_7_0_0_                                                                                         
+          ;;                                                                                                       
+        hw:7,1,0)                                                                                                  
+          device=hw_7_1_0_                                                                                         
+          ;;                                                                                                       
+esac        
+
+mkdir /tmp/ChangeVolume
+
+rm /tmp/ChangeVolume/$device$2.wav
 gst-play-1.0 ./Track01.mp3&
-arecord -D $1 -c $2 -r 16000 -d 10000  --period-size 128 --buffer-size 65536 -f S16_LE /tmp/ChangeVolume_$1_$2.wav&
+arecord -D $1 -c $2 -r 16000 -d 10000  --period-size 128 --buffer-size 65536 -f S16_LE /tmp/ChangeVolume/$device$2.wav&
 for((i=0;i<=50;i++));  
 do   
 k=$(expr $i \* 2); 
