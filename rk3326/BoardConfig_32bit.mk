@@ -13,7 +13,7 @@ export RK_BOOT_IMG=boot.img
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3326_64
+export RK_CFG_BUILDROOT=rockchip_rk3326_32
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # Pcba config
