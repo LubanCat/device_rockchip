@@ -1,5 +1,6 @@
 #audio-input-gain: left shift bit
 export ALSA_LIB_ADD_GAIN=4
+amixer cset name='vad switch' 1
 arecord -D 6mic_loopback -c 8 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
 rm /tmp/test.pcm                                                
 echo 0x60 0x40ff0050 > /sys/kernel/debug/vad/reg
