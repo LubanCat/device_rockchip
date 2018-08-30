@@ -2,9 +2,10 @@
 
 SRC=$1
 DST=$2
-SIZE=$(du -h -BM -s $SRC | awk '{print int($1)*1024}')
-SIZE=`expr $SIZE + $SIZE / 20`
-echo "create image size=${SIZE}K"
-echo "genext2fs -b $SIZE -d $SRC $DST"
-genext2fs -b $SIZE -d $SRC $DST
+SIZE=`du -s --apparent-size $SRC | cut --fields=1`
+SIZE=`expr '(' '(' $SIZE / 1024 ')' + 3 ')' '*' 1024 `
+inode_counti=`expr '(' $SIZE / 4 ')'`
+echo "SIZE = $SIZE"
+echo "genext2fs -b $SIZE -N $inode_counti -d $SRC $DST"
+genext2fs -b $SIZE -N $inode_counti -d $SRC $DST
 e2fsck -fy $DST
