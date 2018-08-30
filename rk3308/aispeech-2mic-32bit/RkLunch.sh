@@ -1,7 +1,9 @@
+amixer cset name='vad switch' 1
+
 echo 0x60 0x40ff0050 > /sys/kernel/debug/vad/reg
 echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
 
-arecord -D 2mic_loopback -c 8 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
+arecord -D 2mic_loopback -c 3 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
 rm /tmp/test.pcm                             
 
 ln -s /oem/aispeech_softap_lite /data/aispeech_softap_lite

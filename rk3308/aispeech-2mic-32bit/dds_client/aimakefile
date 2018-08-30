@@ -9,7 +9,7 @@ LOCAL_SRC_FILES 		 += ./example/main.c
 LOCAL_MODULE := dui_$(MIC_TYPE)
 
 LOCAL_CFLAGS := -Wall -O2
-LOCAL_CFLAGS += -DSAVE_AUDIO
+#LOCAL_CFLAGS += -DSAVE_AUDIO
 ifeq ($(MIC_TYPE), fespa)
 LOCAL_CFLAGS += -DWAKEUP_FESPA
 else ifeq ($(MIC_TYPE), fespl)
