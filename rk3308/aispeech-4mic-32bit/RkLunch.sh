@@ -1,8 +1,8 @@
-arecord -D vad -c 8 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
-rm /tmp/test.pcm                                                
+amixer cset name='vad switch' 1
 echo 0x60 0x40ff0050 > /sys/kernel/debug/vad/reg
 echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
-
+arecord -D 4mic_loopback -c 5 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
+rm /tmp/test.pcm  
 ln -s /oem/aispeech_softap_lite /data/aispeech_softap_lite
 ln -s /oem/wifi_monitor.sh /data/
 ln -s /oem/dds_client /data/dds_client

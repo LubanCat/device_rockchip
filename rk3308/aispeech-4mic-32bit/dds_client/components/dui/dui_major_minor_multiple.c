@@ -31,7 +31,7 @@
 static FILE *input_fd, *output_fd;
 #endif
 
-const char *dui_msg_table[] = { 
+const char *dui_msg_table[] = {
     "RECORDER_CMD_START",
     "RECORDER_CMD_STOP",
     "PLAYER_CMD_PLAY",
@@ -195,7 +195,7 @@ static void recorder_run(void *args) {
                 .channels = g_cfg.recorder.channels,
                 .samplerate = g_cfg.recorder.samplerate,
                 .device = g_cfg.recorder.device
-            };  
+            };
             recorder_handle_t recorder = recorder_open(&cfg);
             assert(recorder != NULL);
             int block = cfg.bits * cfg.channels / 8;
@@ -216,7 +216,7 @@ static void recorder_run(void *args) {
 #elif defined(WAKEUP_FESPL)
             system("tinymix set 28  3");
             system("tinymix set 36  12");
-            system("tinymix set 29  3");                                            
+            system("tinymix set 29  3");
             system("tinymix set 37  12");
             system("tinymix set 26  3");
             system("tinymix set 35  5");
@@ -227,7 +227,7 @@ static void recorder_run(void *args) {
             os_queue_send(user_listen_queue, &m);
             int frames, read_bytes;
             while (1) {
-                frames = recorder_read(recorder, read_buf, cfg.period_size); 
+                frames = recorder_read(recorder, read_buf, cfg.period_size);
                 if (frames > 0) {
                     read_bytes = frames * block;
                     //OS_LOG_I(recorder, "read bytes: %d", read_bytes);
@@ -259,7 +259,7 @@ static void player_run(void *args) {
     bool cancel = false;
     while (1) {
         memset(&item, 0, sizeof(item));
-        ret = os_queue_receive(player_queue, &m);     
+        ret = os_queue_receive(player_queue, &m);
         if (ret == -1) break;
         OS_LOG_I(player, "%s", dui_msg_table[m.type]);
 
@@ -343,7 +343,7 @@ static bool is_same_word(const char *s1, const char *s2) {
 			s2++;
 		}
 	}
-	return true; 
+	return true;
 }
 
 #ifdef WAKEUP_FESPA
@@ -426,7 +426,7 @@ static void vad_run(void *args) {
             int read_bytes;
 
             OS_LOG_I(vad, "START");
-            gettimeofday(&start_time, NULL); 
+            gettimeofday(&start_time, NULL);
             while (1) {
                 read_bytes = os_stream_read(vad_stream, read_buf, read_buf_size);
                 if (read_bytes == -1) {
@@ -463,7 +463,7 @@ static void vad_run(void *args) {
                 if (info.status == 2) {
                     //终止VAD输入缓冲写入
                     duilite_vad_stop(vad_engine);
-                    
+
                     //os_stream_finish(dds_stream);
                     os_stream_stop(vad_stream);
 
@@ -717,7 +717,7 @@ static void speech_to_wait_for_wakeup(void *args) {
     //终止VAD数据缓冲写入
     os_stream_stop(vad_stream);
     os_stream_stop(dds_stream);
-    dui_msg_t m;                                                                                                                        
+    dui_msg_t m;
     memset(&m, 0, sizeof(m));
     m.type = PLAYER_CMD_PLAY;
     m.player.mode = PLAYER_MODE_PROMPT;
@@ -725,7 +725,7 @@ static void speech_to_wait_for_wakeup(void *args) {
     m.player.native = true;
     m.player.need_free = false;
     m.player.end_session = true;
-    os_queue_send(player_queue, &m); 
+    os_queue_send(player_queue, &m);
     OS_LOG_I(process, "=====");
 }
 
@@ -956,7 +956,7 @@ static char *msg_type_set[] = {
     "DDS_EV_OUT_ERROR",
     "DDS_EV_OUT_ASR_RESULT",
     "DDS_EV_OUT_DUI_RESPONSE",
-    "DDS_EV_OUT_DUI_LOGIN" 
+    "DDS_EV_OUT_DUI_LOGIN"
 };
 
 static int process_tts(struct dds_msg *msg) {
@@ -1141,7 +1141,7 @@ static int dui_parse_cfg(const char *cfg) {
     //auth
     cJSON *auth_js = cJSON_GetObjectItem(js, "auth");
     char *auth = cJSON_Print(auth_js);
-    duilite_library_load(auth); 
+    duilite_library_load(auth);
     free(auth);
 
     //recorder
@@ -1206,8 +1206,8 @@ static int dui_parse_cfg(const char *cfg) {
 
 int dui_library_init(const char *cfg, user_listen_cb listen) {
 #ifdef SAVE_AUDIO
-    input_fd = fopen("/tmp/1.pcm", "wb");
-    output_fd = fopen("/tmp/2.pcm", "wb");
+    input_fd = fopen("/userdata/1.pcm", "wb");
+    output_fd = fopen("/userdata/2.pcm", "wb");
 #endif
     if (0 != dui_parse_cfg(cfg)) return -1;
     os_log_init(NULL);
@@ -1243,7 +1243,7 @@ int dui_library_init(const char *cfg, user_listen_cb listen) {
     //500ms缓冲
     int recorder_stream_size = 5 * g_cfg.recorder.channels * (g_cfg.recorder.bits / 8) * (g_cfg.recorder.samplerate / 10);
     wakeup_stream = os_stream_create(recorder_stream_size);
-    
+
     //200ms缓冲
     int vad_stream_size = 2 * (g_cfg.recorder.bits / 8) * (g_cfg.recorder.samplerate / 10);
     vad_stream = os_stream_create(vad_stream_size);
@@ -1262,11 +1262,11 @@ int dui_library_init(const char *cfg, user_listen_cb listen) {
     //唤醒线程
     c.run = wakeup_run;
     wakeup_task = os_thread_create(&c);
-    
+
     //vad线程
     c.run = vad_run;
     vad_task = os_thread_create(&c);
-    
+
     //处理线程
     c.run = process_run;
     process_task = os_thread_create(&c);
