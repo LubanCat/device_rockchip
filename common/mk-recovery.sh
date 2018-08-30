@@ -15,6 +15,9 @@ source $BOARD_CONFIG
 echo "recovery config: $CFG_RECOVERY"
 if [ $RK_ARCH == arm64 ];then
 KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm64/boot/Image
+    if [ $RK_TARGET_PRODUCT == rk3308 ];then
+    KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm64/boot/Image.lz4
+    fi
 elif [ $RK_ARCH == arm ];then
 KERNEL_IMAGE=$TOP_DIR/kernel/arch/arm/boot/zImage
 fi

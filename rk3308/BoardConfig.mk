@@ -9,7 +9,7 @@ export RK_KERNEL_DEFCONFIG=rk3308_linux_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk3308-evb-dmic-pdm-v11
 # boot image type
-export RK_BOOT_IMG=boot.img
+export RK_BOOT_IMG=zboot.img
 # parameter for GPT table
 export RK_PARAMETER=parameter-64bit.txt
 # Buildroot config
