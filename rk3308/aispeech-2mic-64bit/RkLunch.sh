@@ -3,11 +3,15 @@ tinymix set "ADC MIC Group 2 Left Volume" 3
 tinymix set "ADC MIC Group 2 Right Volume" 3
 tinymix set "ADC ALC Group 2 Left Volume" 18
 tinymix set "ADC ALC Group 2 Right Volume" 18
-arecord -c 4 -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
-rm /tmp/test.pcm                                                
+
+amixer cset name='vad switch' 1
 #echo 0x60 0x40ff0050 > /sys/kernel/debug/vad/reg
 echo 0x60 0x40ff0190 > /sys/kernel/debug/vad/reg
 echo 0x5c 0x000e2080 > /sys/kernel/debug/vad/reg
+
+arecord -D 2mic_loopback -c 3  -r 16000 -f S16_LE -d 1 -t raw /tmp/test.pcm
+rm /tmp/test.pcm                                                
+
 
 ln -s /oem/aispeech_softap_lite /data/aispeech_softap_lite
 ln -s /oem/wifi_monitor.sh /data/
