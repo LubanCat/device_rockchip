@@ -41,6 +41,7 @@ if [ -r $DUEROS_ALSASTATE_FILE  ]; then
     alsactl restore --file=$DUEROS_ALSASTATE_FILE
 fi
 aplay /oem/duer/appresources/startup.wav &
+sleep 2 # at 3th second, dueros will do mp3 decoding which consume high cpu
 
 #alsactl -b daemon --file=$DUEROS_ALSASTATE_FILE
 
