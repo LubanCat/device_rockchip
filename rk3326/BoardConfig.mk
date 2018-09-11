@@ -23,7 +23,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk3326
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
+export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
 export RK_ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 # Set oem partition type, including ext2 squashfs
