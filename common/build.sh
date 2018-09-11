@@ -28,6 +28,7 @@ usage()
 	echo "kernel             -build kernel"
 	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
+	echo "ramboot            -build ramboot image"
 	echo "yocto              -build yocto rootfs, currently build ros as default"
 	echo "ros                -build ros rootfs"
 	echo "debian             -build debian rootfs"
@@ -84,6 +85,20 @@ function build_buildroot(){
 		echo "====Build buildroot ok!===="
 	else
 		echo "====Build buildroot failed!===="
+		exit 1
+	fi
+}
+
+function build_ramboot(){
+	# build ramboot image
+        echo "=========Start build ramboot========="
+        echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
+        echo "====================================="
+	/usr/bin/time -f "you take %E to build ramboot" $COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT
+	if [ $? -eq 0 ]; then
+		echo "====Build ramboot ok!===="
+	else
+		echo "====Build ramboot failed!===="
 		exit 1
 	fi
 }
@@ -162,11 +177,13 @@ function build_all(){
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
+	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
 	build_uboot
 	build_kernel
 	build_rootfs
 	build_recovery
+	build_ramboot
 }
 
 function clean_all(){
@@ -252,6 +269,9 @@ elif [ $BUILD_TARGET == buildroot ];then
     exit 0
 elif [ $BUILD_TARGET == recovery ];then
     build_recovery
+    exit 0
+elif [ $BUILD_TARGET == ramboot ];then
+    build_ramboot
     exit 0
 elif [ $BUILD_TARGET == pcba ];then
     build_pcba
