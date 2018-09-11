@@ -16,6 +16,8 @@ export RK_PARAMETER=parameter-debian.txt
 export RK_CFG_BUILDROOT=rockchip_px30
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px30_recovery
+# ramboot config
+export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_px30_pcba
 # Build jobs
@@ -36,3 +38,7 @@ export RK_STORAGE_TYPE=emmc
 export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
+#misc image
+export RK_MISC=wipe_all-misc.img
+#choose enable distro module
+export RK_DISTRO_MODULE=

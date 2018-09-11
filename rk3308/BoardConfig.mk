@@ -16,6 +16,8 @@ export RK_PARAMETER=parameter-64bit.txt
 export RK_CFG_BUILDROOT=rockchip_rk3308_release
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3308_recovery
+# ramboot config
+export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3308_pcba
 # Build jobs
@@ -37,3 +39,7 @@ export RK_OEM_DIR=oem
 #userdata config
 export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
+#misc image
+export RK_MISC=wipe_all-misc.img
+#choose enable distro module
+export RK_DISTRO_MODULE=
