@@ -129,7 +129,7 @@ function build_recovery(){
 	echo "==========Start build recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
-	/usr/bin/time -f "you take %E to build recovery" $COMMON_DIR/mk-recovery.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build recovery" $COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY
 	if [ $? -eq 0 ]; then
 		echo "====Build recovery ok!===="
 	else
@@ -143,7 +143,7 @@ function build_pcba(){
 	echo "==========Start build pcba=========="
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "===================================="
-	/usr/bin/time -f "you take %E to build pcba" $COMMON_DIR/mk-pcba.sh $BOARD_CONFIG
+	/usr/bin/time -f "you take %E to build pcba" $COMMON_DIR/mk-pcba.sh pcba.img $RK_CFG_PCBA
 	if [ $? -eq 0 ]; then
 		echo "====Build pcba ok!===="
 	else
