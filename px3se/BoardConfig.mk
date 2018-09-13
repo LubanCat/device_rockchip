@@ -10,6 +10,8 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 export RK_KERNEL_DTS=px3se-evb
 # boot image type
 export RK_BOOT_IMG=zboot.img
+# kernel image path
+export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config

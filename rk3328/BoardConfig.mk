@@ -10,6 +10,8 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 export RK_KERNEL_DTS=rk3328-evb-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
+# kernel image path
+export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config

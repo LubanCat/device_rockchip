@@ -10,6 +10,8 @@ export RK_KERNEL_DEFCONFIG=rk3326_linux_defconfig
 export RK_KERNEL_DTS=rk3326-evb-lp3-v10-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
+# kernel image path
+export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
