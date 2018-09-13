@@ -11,6 +11,11 @@ cd ../../..
 TOP_DIR=$(pwd)
 BOARD_CONFIG=$1
 source $BOARD_CONFIG
+if [ -z $RK_CFG_BUILDROOT ]
+then
+        echo "RK_CFG_BUILDROOT is empty, skip building buildroot rootfs!"
+        exit 0
+fi
 source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
 make
 if [ $? -ne 0 ]; then
