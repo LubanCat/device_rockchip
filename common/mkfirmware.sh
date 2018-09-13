@@ -17,6 +17,7 @@ OEM_DIR=$TOP_DIR/device/rockchip/oem/$RK_OEM_DIR
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
+RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
@@ -145,4 +146,15 @@ then
 	fi
 fi
 
+if [ $RK_CFG_RAMBOOT ]
+then
+	if [ -f $RAMBOOT_IMG ]
+	then
+	        echo -n "create boot.img..."
+	        ln -s -f $RAMBOOT_IMG $ROCKDEV/boot.img
+	        echo "done."
+	else
+		echo "warning: $RAMBOOT_IMG not found!"
+	fi
+fi
 echo -e "\e[36m Image: image in rockdev is ready \e[0m"
