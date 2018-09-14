@@ -3,11 +3,11 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=evb-rk1808
+export RK_UBOOT_DEFCONFIG=rk1808
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk1808_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk1808-evb-linux
+export RK_KERNEL_DTS=rk1808-evb-v10
 # boot image type
 export RK_BOOT_IMG=boot.img
 # parameter for GPT table
