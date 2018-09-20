@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 DEVICE_DIR=$(cd `dirname $0`; pwd)
 if [ -h $0 ]
 then
