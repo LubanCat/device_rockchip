@@ -49,6 +49,12 @@ void clean_silence_frame() {
 void do_system_sleep() {
     system("echo mem > /sys/power/state");
 }
+void do_wifi_suspend_prepare() {
+    system("dhd_priv setsuspendmode 1");
+}
+void do_wifi_resume_prepare() {
+    system("dhd_priv setsuspendmode 0");
+}
 #define VAD_WAKEUP_LEVEL_MIN 0
 #define VAD_WAKEUP_LEVEL_MAX 5
 #define VAD_WAKEUP_TIME_MAX 10
@@ -632,7 +638,11 @@ void *vad_detect_func(void* arg) {
             wait_device_mode_timeout_ms(30);
             printf("pause >>>>\n");
             clean_silence_frame();
+
+            do_wifi_suspend_prepare();
             do_system_sleep();
+            do_wifi_resume_prepare();
+
             printf("resume >>>>\n");
             dds_client_publish(dc, DDS_CLIENT_USER_DEVICE_MODE, "{\"mode\":\"normal\"}");
         }
