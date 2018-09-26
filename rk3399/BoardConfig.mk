@@ -3,11 +3,11 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3399
+export RK_UBOOT_DEFCONFIG=evb-rk3399
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3399-rock960-ab
+export RK_KERNEL_DTS=rk3399-sapphire-excavator-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
