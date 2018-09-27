@@ -41,7 +41,7 @@ case "$1" in
 	./alsa_audio_main_service 6mic_loopback &
 
 	# start dueros
-	mkdir -p /data/duer && cd /data/duer
+	mkdir -p /data/duer/test && cd /data/duer
 	ln -snf /oem/duer/* ./
 	./duer_linux &
 	;;

@@ -49,6 +49,8 @@ sleep 2 # at 3th second, dueros will do mp3 decoding which consume high cpu
 #sleep 3
 #dhcpcd &
 
+/oem/scripts/start_ntp.sh &
+
 # start dueros
 /oem/dueros_service.sh start
 

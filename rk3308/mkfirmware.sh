@@ -42,10 +42,10 @@ if [ "${RK_OEM_DIR}" == "dueros"  ];then
 	OEM_DIR=${ROCKDEV}/.oem
 	rm -rf ${OEM_DIR}
 	mkdir -p ${OEM_DIR}
-	find ${PRODUCT_PATH}/${RK_OEM_DIR} -maxdepth 1 -not -name "arm*" \
+	find ${PRODUCT_PATH}/${RK_OEM_DIR} -maxdepth 1 -not -name "spil" \
         	-not -wholename "${PRODUCT_PATH}/${RK_OEM_DIR}" \
-        	-exec sh -c 'cp -rf ${0} ${1}' "{}" ${OEM_DIR} \;
-	cp -rf ${PRODUCT_PATH}/${RK_OEM_DIR}/${TARGET_ARM_TYPE}/baidu_spil_rk3308_${MIC_NUM}mic ${OEM_DIR}/baidu_spil_rk3308
+        	-exec sh -c 'cp -arf ${0} ${1}' "{}" ${OEM_DIR} \;
+	cp -rf ${PRODUCT_PATH}/${RK_OEM_DIR}/spil/${TARGET_ARM_TYPE}/baidu_spil_rk3308_${MIC_NUM}mic ${OEM_DIR}/baidu_spil_rk3308
 	echo "copy ${TARGET_ARM_TYPE} with ${MIC_NUM}mic."
 else
 	OEM_DIR=${PRODUCT_PATH}/${RK_OEM_DIR}
