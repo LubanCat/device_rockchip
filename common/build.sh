@@ -108,21 +108,10 @@ function build_rootfs(){
 }
 
 function build_ros(){
-	# build ros
-	echo "======Start build yocto======"
-	echo "YOCTO_MACHINE=$YOCTO_MACHINE"
-	echo "============================="
-	/usr/bin/time -f "you take %E to build ros" $COMMON_DIR/mk-ros.sh $BOARD_CONFIG
-	if [ $? -eq 0 ]; then
-		echo "====Build ros ok!===="
-	else
-		echo "====Build ros failed!===="
-		exit 1
-	fi
+	build_buildroot
 }
 
 function build_yocto(){
-	build_ros
 }
 
 function build_debian(){
