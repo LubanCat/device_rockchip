@@ -112,6 +112,7 @@ function build_ros(){
 }
 
 function build_yocto(){
+	echo "we don't support yocto at this time"
 }
 
 function build_debian(){
