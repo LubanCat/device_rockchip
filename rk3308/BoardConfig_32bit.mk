@@ -11,7 +11,7 @@ export RK_KERNEL_DTS=rk3308-voice-module-board-v10-aarch32
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image.lz4
+export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-32bit.txt
 # Buildroot config
