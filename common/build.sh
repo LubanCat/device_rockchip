@@ -112,7 +112,6 @@ function build_ros(){
 }
 
 function build_yocto(){
-	build_ros
 }
 
 function build_debian(){
