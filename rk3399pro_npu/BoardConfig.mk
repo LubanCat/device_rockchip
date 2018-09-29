@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3399pro-npu
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk3399pro_npu_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3399pro_npu_evb_v10
+export RK_KERNEL_DTS=rk3399pro-npu-evb-v10
 # boot image type
 export RK_BOOT_IMG=
 # kernel image path
