@@ -184,8 +184,15 @@ function clean_all(){
 }
 
 function build_firmware(){
+	HOST_DIR=$TOP_DIR/buildroot/output/host
+	if [ -d "$TARGET_OUTPUT_DIR" ];then
+		HOST_DIR=$TARGET_OUTPUT_DIR/host
+	fi
+
+	HOST_PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin
+
 	# mkfirmware.sh to genarate image
-	./mkfirmware.sh $BOARD_CONFIG
+	PATH=$HOST_PATH:$PATH ./mkfirmware.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 	    echo "Make image ok!"
 	else
