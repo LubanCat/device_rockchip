@@ -52,6 +52,7 @@ void do_system_sleep() {
 }
 void do_wifi_suspend_prepare() {
     system("dhd_priv setsuspendmode 1");
+    usleep(200*1000);
 }
 void do_wifi_resume_prepare() {
     system("dhd_priv setsuspendmode 0");
