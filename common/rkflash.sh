@@ -1,7 +1,14 @@
 #!/bin/bash
 
-UPGRADETOOL=$(pwd)/tools/linux/Linux_Upgrade_Tool/Linux_Upgrade_Tool/upgrade_tool
-ROCKDEV_DIR=$(pwd)/rockdev
+COMMON_DIR=$(cd `dirname $0`; pwd)
+if [ -h $0 ]
+then
+        CMD=$(realpath $0)
+        COMMON_DIR=$(dirname $CMD)
+fi
+TOP_DIR=$COMMON_DIR/../../..
+UPGRADETOOL=$TOP_DIR/tools/linux/Linux_Upgrade_Tool/Linux_Upgrade_Tool/upgrade_tool
+ROCKDEV_DIR=$TOP_DIR/rockdev
 LOADER=$ROCKDEV_DIR/MiniLoaderAll.bin
 PARAMETER=$ROCKDEV_DIR/parameter.txt
 UBOOT=$ROCKDEV_DIR/uboot.img
