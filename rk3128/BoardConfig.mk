@@ -10,6 +10,8 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 export RK_KERNEL_DTS=rk3128-fireprime
 # boot image type
 export RK_BOOT_IMG=zboot.img
+# kernel image path
+export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
@@ -36,3 +38,5 @@ export RK_STORAGE_TYPE=emmc
 export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
+#misc image
+export RK_MISC=wipe_all-misc.img
