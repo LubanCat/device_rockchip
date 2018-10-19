@@ -1,15 +1,8 @@
 #!/bin/bash
 
-COMMON_DIR=$(cd `dirname $0`; pwd)
-if [ -h $0 ]
-then
-        CMD=$(readlink $0)
-        COMMON_DIR=$(dirname $CMD)
-fi
-cd $COMMON_DIR
-cd ../../..
-TOP_DIR=$(pwd)
-COMMON_DIR=$TOP_DIR/device/rockchip/common
+CMD=`realpath $0`
+COMMON_DIR=`dirname $CMD`
+TOP_DIR=$(realpath $COMMON_DIR/../../..)
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
@@ -27,6 +20,7 @@ usage()
 	echo "====USAGE: build.sh modules===="
 	echo "uboot              -build uboot"
 	echo "kernel             -build kernel"
+	echo "modules            -build kernel modules"
 	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
@@ -68,6 +62,20 @@ function build_kernel(){
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
 	echo "=========================================="
 	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG && make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS && cd -
+	if [ $? -eq 0 ]; then
+		echo "====Build kernel ok!===="
+	else
+		echo "====Build kernel failed!===="
+		exit 1
+	fi
+}
+
+function build_modules(){
+	echo "============Start build kernel modules============"
+	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
+	echo "=================================================="
+	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG && make ARCH=$RK_ARCH modules -j$RK_JOBS && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build kernel ok!===="
 	else
@@ -260,6 +268,9 @@ if [ $BUILD_TARGET == uboot ];then
 elif [ $BUILD_TARGET == kernel ];then
     build_kernel
     exit 0
+elif [ $BUILD_TARGET == modules ];then
+    build_modules
+    exit 0
 elif [ $BUILD_TARGET == rootfs ];then
     build_rootfs
     exit 0
@@ -314,3 +325,4 @@ else
     usage
     exit 1
 fi
+
