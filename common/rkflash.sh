@@ -6,7 +6,7 @@ then
         CMD=$(realpath $0)
         COMMON_DIR=$(dirname $CMD)
 fi
-TOP_DIR=$COMMON_DIR/../../..
+TOP_DIR=$(realpath $COMMON_DIR/../../..)
 UPGRADETOOL=$TOP_DIR/tools/linux/Linux_Upgrade_Tool/Linux_Upgrade_Tool/upgrade_tool
 ROCKDEV_DIR=$TOP_DIR/rockdev
 LOADER=$ROCKDEV_DIR/MiniLoaderAll.bin
