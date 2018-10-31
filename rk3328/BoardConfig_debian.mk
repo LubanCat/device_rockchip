@@ -3,11 +3,11 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=evb-rk3328
+export RK_UBOOT_DEFCONFIG=rk3328
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3328-evb-linux
+export RK_KERNEL_DTS=rk3328-evb
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
