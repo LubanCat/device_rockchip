@@ -19,13 +19,13 @@ export RK_CFG_BUILDROOT=
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rk3399pro_npu
+export RK_CFG_RAMBOOT=rockchip_rk3399pro-npu
 # Pcba config
 export RK_CFG_PCBA=
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=rk3399pro_npu
+export RK_TARGET_PRODUCT=rk3399pro-npu
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=
 # rootfs image path
