@@ -24,6 +24,7 @@ usage()
 	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
+	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs, currently build ros as default"
 	echo "ros                -build ros rootfs"
 	echo "debian             -build debian rootfs"
@@ -109,6 +110,23 @@ function build_ramboot(){
 		echo "====Build ramboot ok!===="
 	else
 		echo "====Build ramboot failed!===="
+		exit 1
+	fi
+}
+
+function build_multi-npu_boot(){
+	if [ -z "$RK_MULTINPU_BOOT" ]; then
+		echo "=========Please set 'RK_MULTINPU_BOOT=y' in BoardConfig.mk========="
+		exit 1
+	fi
+        echo "=========Start build multi-npu boot========="
+        echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
+        echo "====================================="
+	/usr/bin/time -f "you take %E to build multi-npu boot" $COMMON_DIR/mk-multi-npu_boot.sh
+	if [ $? -eq 0 ]; then
+		echo "====Build multi-npu boot ok!===="
+	else
+		echo "====Build multi-npu boot failed!===="
 		exit 1
 	fi
 }
@@ -309,6 +327,9 @@ elif [ $BUILD_TARGET == recovery ];then
     exit 0
 elif [ $BUILD_TARGET == ramboot ];then
     build_ramboot
+    exit 0
+elif [ $BUILD_TARGET == multi-npu_boot ];then
+    build_multi-npu_boot
     exit 0
 elif [ $BUILD_TARGET == pcba ];then
     build_pcba
