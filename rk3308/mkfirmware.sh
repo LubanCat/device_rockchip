@@ -12,6 +12,7 @@ cd $DEVICE_DIR
 cd ../../..
 TOP_DIR=$(pwd)
 
+export RK_LOADER_NAME=
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 
 ROCKDEV=$TOP_DIR/rockdev
@@ -25,7 +26,11 @@ RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
-LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
+if [ -z $RK_LOADER_NAME ]; then
+	LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
+else
+	LOADER=$TOP_DIR/u-boot/$RK_LOADER_NAME
+fi
 MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
 MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
 rm -rf $ROCKDEV
