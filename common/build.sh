@@ -50,7 +50,7 @@ function build_uboot(){
 	if [ -f u-boot/*_loader_*.bin ]; then
 		rm u-boot/*_loader_*.bin
 	fi
-	cd u-boot && ./make.sh $RK_UBOOT_DEFCONFIG && cd -
+	cd u-boot && ./make.sh $RK_UBOOT_DEFCONFIG && ./make.sh loader-all && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build uboot ok!===="
 	else
