@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=evb-aarch32-rk3308-uart4
+export RK_UBOOT_DEFCONFIG=evb-aarch32-rk3308
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
 # Kernel dts
@@ -45,3 +45,5 @@ MIC_NUM=6
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
+# loader name
+export RK_LOADER_NAME=*_loader_uart4_v*.bin
