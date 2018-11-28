@@ -9,7 +9,7 @@ export RK_KERNEL_DEFCONFIG=rk3308_linux_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk3308b-evb-amic-v10
 # boot image type
-export RK_BOOT_IMG=boot.img
+export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
