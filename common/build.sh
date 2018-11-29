@@ -266,6 +266,7 @@ elif [ $BUILD_TARGET == buildroot ];then
     build_buildroot
     exit 0
 elif [ $BUILD_TARGET == recovery ];then
+    build_kernel
     build_recovery
     exit 0
 elif [ $BUILD_TARGET == ramboot ];then
