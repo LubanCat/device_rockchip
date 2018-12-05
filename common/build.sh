@@ -12,6 +12,7 @@ TOP_DIR=$(pwd)
 COMMON_DIR=$TOP_DIR/device/rockchip/common
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
+source $TOP_DIR/device/rockchip/common/Version.mk
 
 if [ ! -n "$1" ];then
 	echo "build all and save all as default"
