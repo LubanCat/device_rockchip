@@ -33,11 +33,24 @@ case $FS_TYPE in
 		$COMMON_DIR/mke2img.sh $USERDATA_DIR $USERDATA_IMG
 		;;
 	fat|vfat)
-		SIZE=$(du -h -BM --max-depth=1 $USERDATA_DIR|awk '{print int($1)}')
-		# echo "create image size=${SIZE}M"
-		dd if=/dev/zero of=$USERDATA_IMG bs=1M count=$SIZE >/dev/null 2>&1
-		mkfs.vfat $USERDATA_IMG >/dev/null 2>&1
-		mcopy -i $USERDATA_IMG $USERDATA_DIR/* ::/ >/dev/null 2>&1
+		SIZE=$(du -sh -L -BM $USERDATA_DIR|grep -o "^[0-9]*")
+		EXTRA_SIZE=4 #4M
+
+		MAX_RETRY=10
+		RETRY=0
+		while true;do
+			SIZE=$[SIZE+EXTRA_SIZE]
+			echo "Creating vfat image with size ${SIZE}M"
+			dd of=$USERDATA_IMG bs=1M seek=$SIZE count=0 && \
+			mkfs.vfat $USERDATA_IMG && \
+			MTOOLS_SKIP_CHECK=1 \
+			mcopy -bspmn -D s -i $USERDATA_IMG $USERDATA_DIR/* ::/ && \
+			break
+
+			RETRY=$[RETRY+1]
+			[ ! $RETRY -lt $MAX_RETRY ] && { echo "Failed to make vfat image! "; exit; }
+			echo "Retring with increased size....($RETRY/$MAX_RETRY)"
+		done
 		;;
 	*)
 		echo "file system: $FS_TYPE not support."
