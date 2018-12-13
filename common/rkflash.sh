@@ -30,67 +30,71 @@ fi
 
 if [ $FLASH_TYPE = all ]
 then
-	sudo $UPGRADETOOL ul $LOADER
-	sudo $UPGRADETOOL di -p $PARAMETER
-	sudo $UPGRADETOOL di -uboot $UBOOT
-	sudo $UPGRADETOOL di -trust $TRUST
-	sudo $UPGRADETOOL di -b $BOOT
-	sudo $UPGRADETOOL di -r $RECOVERY
-	sudo $UPGRADETOOL di -m $MISC
-	sudo $UPGRADETOOL di -oem $OEM
-	sudo $UPGRADETOOL di -userdata $USERDATA
-	sudo $UPGRADETOOL di -rootfs $ROOTFS
+	$UPGRADETOOL ul $LOADER
+	$UPGRADETOOL di -p $PARAMETER
+	$UPGRADETOOL di -uboot $UBOOT
+	$UPGRADETOOL di -trust $TRUST
+	$UPGRADETOOL di -b $BOOT
+	$UPGRADETOOL di -r $RECOVERY
+	$UPGRADETOOL di -m $MISC
+	$UPGRADETOOL di -oem $OEM
+	$UPGRADETOOL di -userdata $USERDATA
+	$UPGRADETOOL di -rootfs $ROOTFS
 fi
 
 if [ $FLASH_TYPE = loader ]
 then
-	sudo $UPGRADETOOL ul $LOADER
+	$UPGRADETOOL ul $LOADER
 	exit 0
 fi
 
 if [ $FLASH_TYPE = parameter ]
 then
-	sudo $UPGRADETOOL di -p $PARAMETER
+	$UPGRADETOOL di -p $PARAMETER
 fi
 
 if [ $FLASH_TYPE = uboot ]
 then
-	sudo $UPGRADETOOL di -uboot $UBOOT
+	$UPGRADETOOL di -uboot $UBOOT
 fi
 
 if [ $FLASH_TYPE = trust ]
 then
-	sudo $UPGRADETOOL di -trust $TRUST
+	$UPGRADETOOL di -trust $TRUST
 fi
 
 if [ $FLASH_TYPE = boot ]
 then
-	sudo $UPGRADETOOL di -b $BOOT
+	$UPGRADETOOL di -b $BOOT
 fi
 
 if [ $FLASH_TYPE = recovery ]
 then
-	sudo $UPGRADETOOL di -r $RECOVERY
+	$UPGRADETOOL di -r $RECOVERY
 fi
 
 if [ $FLASH_TYPE = misc ]
 then
-	sudo $UPGRADETOOL di -misc $MISC
+	$UPGRADETOOL di -misc $MISC
 fi
 
 if [ $FLASH_TYPE = oem ]
 then
-	sudo $UPGRADETOOL di -oem $OEM
+	$UPGRADETOOL di -oem $OEM
 fi
 
 if [ $FLASH_TYPE = userdata ]
 then
-	sudo $UPGRADETOOL di -userdata $USERDATA
+	$UPGRADETOOL di -userdata $USERDATA
 fi
 
 if [ $FLASH_TYPE = rootfs ]
 then
-	sudo $UPGRADETOOL di -rootfs $ROOTFS
+	$UPGRADETOOL di -rootfs $ROOTFS
 fi
 
-sudo $UPGRADETOOL rd
+if [ $FLASH_TYPE = rd ]
+then
+	$UPGRADETOOL rd
+fi
+
