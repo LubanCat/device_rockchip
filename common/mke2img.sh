@@ -21,4 +21,4 @@ done
 
 tune2fs -c 1 -i 0 $DST
 resize2fs -M $DST
-e2fsck -fyD $DST
+e2fsck -fy $DST
