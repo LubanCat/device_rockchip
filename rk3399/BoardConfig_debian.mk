@@ -29,7 +29,7 @@ export RK_TARGET_PRODUCT=rk3399
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
-export RK_ROOTFS_IMG=rootfs/linaro-rootfs.img
+export RK_ROOTFS_IMG=debian/linaro-rootfs.img
 # ramdisk image path
 export RK_RAMDISK_IMG=
 # Set oem partition type, including ext2 squashfs
