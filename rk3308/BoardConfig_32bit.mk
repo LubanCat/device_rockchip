@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=evb-aarch32-rk3308
+export RK_UBOOT_DEFCONFIG=rk3308-aarch32
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
 # Kernel dts
