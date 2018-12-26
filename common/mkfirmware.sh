@@ -11,6 +11,7 @@ fi
 cd $COMMON_DIR
 cd ../../..
 TOP_DIR=$(pwd)
+RELATIVE_TOP_DIR=..
 
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
@@ -35,7 +36,7 @@ then
 	if [ -f $ROOTFS_IMG ]
 	then
 		echo -n "create rootfs.img..."
-		ln -s -f $ROOTFS_IMG $ROCKDEV/rootfs.img
+		ln -s -f `echo $ROOTFS_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/rootfs.img
 		echo "done."
 	else
 		echo "warning: $ROOTFS_IMG not found!"
@@ -45,7 +46,7 @@ fi
 if [ -f $PARAMETER ]
 then
 	echo -n "create parameter..."
-	ln -s -f $PARAMETER $ROCKDEV/parameter.txt
+	ln -s -f `echo $PARAMETER | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/parameter.txt
 	echo "done."
 else
 	echo "warning: $PARAMETER not found!"
@@ -56,7 +57,7 @@ then
 	if [ -f $RECOVERY_IMG ]
 	then
 		echo -n "create recovery.img..."
-		ln -s -f $RECOVERY_IMG $ROCKDEV/recovery.img
+		ln -s -f `echo $RECOVERY_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/recovery.img
 		echo "done."
 	else
 		echo "warning: $RECOVERY_IMG not found!"
@@ -68,7 +69,7 @@ then
 	if [ -f $MISC_IMG ]
 	then
 		echo -n "create misc.img..."
-		ln -s -f $MISC_IMG $ROCKDEV/misc.img
+		ln -s -f `echo $MISC_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/misc.img
 		echo "done."
 	else
 		echo "warning: $MISC_IMG not found!"
@@ -102,7 +103,7 @@ fi
 if [ -f $UBOOT_IMG ]
 then
         echo -n "create uboot.img..."
-        ln -s -f $UBOOT_IMG $ROCKDEV/uboot.img
+        ln -s -f `echo $UBOOT_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/uboot.img
         echo "done."
 else
         echo -e "\e[31m error: $UBOOT_IMG not found! \e[0m"
@@ -111,7 +112,7 @@ fi
 if [ -f $TRUST_IMG ]
 then
         echo -n "create trust.img..."
-        ln -s -f $TRUST_IMG $ROCKDEV/trust.img
+        ln -s -f `echo $TRUST_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/trust.img
         echo "done."
 else
         echo -e "\e[31m error: $TRUST_IMG not found! \e[0m"
@@ -120,7 +121,7 @@ fi
 if [ -f $LOADER ]
 then
         echo -n "create loader..."
-        ln -s -f $LOADER $ROCKDEV/MiniLoaderAll.bin
+        ln -s -f `echo $LOADER | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/MiniLoaderAll.bin
         echo "done."
 else
 	echo -e "\e[31m error: $LOADER not found,or there are multiple loaders! \e[0m"
@@ -141,7 +142,7 @@ then
 	if [ -f $BOOT_IMG ]
 	then
 		echo -n "create boot.img..."
-		ln -s -f $BOOT_IMG $ROCKDEV/boot.img
+		ln -s -f `echo $BOOT_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/boot.img
 		echo "done."
 	else
 		echo "warning: $BOOT_IMG not found!"
@@ -153,7 +154,7 @@ then
 	if [ -f $RAMBOOT_IMG ]
 	then
 	        echo -n "create boot.img..."
-	        ln -s -f $RAMBOOT_IMG $ROCKDEV/boot.img
+	        ln -s -f `echo $RAMBOOT_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/boot.img
 	        echo "done."
 	else
 		echo "warning: $RAMBOOT_IMG not found!"
