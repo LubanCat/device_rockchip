@@ -27,8 +27,7 @@ UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
 LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
 #SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
-MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
-MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
+MKIMAGE=$TOP_DIR/device/rockchip/common/mk-image.sh
 mkdir -p $ROCKDEV
 
 if [ $RK_ROOTFS_IMG ]
@@ -80,9 +79,7 @@ if [ $RK_OEM_DIR ]
 then
 	if [ -d $OEM_DIR ]
 	then
-		echo -n "create oem.img..."
-		$MKOEM $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE
-		echo "done."
+		$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE
 	else
 		echo "warning: $OEM_DIR  not found!"
 	fi
@@ -92,9 +89,7 @@ if [ $RK_USERDATA_DIR ]
 then
 	if [ -d $USER_DATA_DIR ]
 	then
-		echo -n "create userdata.img..."
-		$MKUSERDATA $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE
-		echo "done."
+		$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE
 	else
 		echo "warning: $USER_DATA_DIR not found!"
 	fi
