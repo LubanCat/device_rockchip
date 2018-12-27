@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=evb-rk3326
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk3326_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3326-evb-lp3-v10-linux
+export RK_KERNEL_DTS=rk3326-evb-lp3-v10-robot-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -27,7 +27,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk3326
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=suqashfs
+export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
 export RK_ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 # Set oem partition type, including ext2 squashfs
