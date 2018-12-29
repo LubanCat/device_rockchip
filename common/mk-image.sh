@@ -1,8 +1,13 @@
 #!/bin/bash
 
+if [ -d "$TARGET_OUTPUT_DIR" ];then
+    HOST_DIR=$TARGET_OUTPUT_DIR/host
+    export PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin:$PATH
+fi
+
 fatal()
 {
-    echo $@
+    echo -e "FATAL: " $@
     exit 1
 }
 
@@ -42,39 +47,46 @@ mkimage_auto_sized()
     done
 }
 
-create_image()
+copy_to_ntfs()
 {
-    dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
-    case $FS_TYPE in
-        ext[234])
-            # Set max-mount-counts to 2, and disable the time-dependent checking.
-            mke2fs $TARGET && tune2fs -c 2 -i 0 $TARGET
-            ;;
-        msdos|fat|vfat)
-            # Use fat32 by default
-            mkfs.vfat -F 32 $TARGET
-            ;;
-        ntfs)
-            # Enable compression
-            mkntfs -FCQ $TARGET
-            ;;
-    esac
+    DEPTH=1
+    while true;do
+        DIRS=$(find $SRC_DIR -maxdepth $DEPTH -mindepth $DEPTH -type d|xargs)
+        [ $DIRS ] || break
+        for dir in $DIRS;do
+            ntfscp $TARGET $dir ${dir#$SRC_DIR} || \
+                fatal "Please update buildroot to: \n83c061e7c9 rockchip: Select host-ntfs-3g"
+        done
+        DEPTH=$(($DEPTH + 1))
+    done
+
+    FILES=$(find $SRC_DIR -type f|xargs)
+    for file in $FILES;do
+        ntfscp $TARGET $file ${file#$SRC_DIR} || \
+            fatal "Failed to do ntfscp!"
+    done
 }
 
 mkimage()
 {
     echo "Making $TARGET from $SRC_DIR with size(${SIZE}M)"
-    create_image >/dev/null|| fatal "Failed to create empty image!"
-
-    FAILED=
-    mkdir $TEMP
-    mount $TARGET $TEMP
-    cp -rp $SRC_DIR/* $TEMP || FAILED=1
-    umount $TEMP
-    rm -rf $TEMP
-
-    [ "$FAILED" ] && fatal "Failed to copy files!"
-    echo "Generated $TARGET"
+    dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
+    case $FS_TYPE in
+        ext[234])
+            # Set max-mount-counts to 2, and disable the time-dependent checking.
+            mke2fs $TARGET -d $SRC_DIR && tune2fs -c 2 -i 0 $TARGET
+            ;;
+        msdos|fat|vfat)
+            # Use fat32 by default
+            mkfs.vfat -F 32 $TARGET && \
+			MTOOLS_SKIP_CHECK=1 \
+			mcopy -bspmn -D s -i $TARGET $SRC_DIR/* ::/
+            ;;
+        ntfs)
+            # Enable compression
+            mkntfs -FCQ $TARGET && copy_to_ntfs
+            ;;
+    esac
 }
 
 rm -rf $TARGET
@@ -86,7 +98,7 @@ case $FS_TYPE in
         if [ ! "$SIZE" ]; then
             mkimage_auto_sized
         else
-            mkimage
+            mkimage && echo "Generated $TARGET"
         fi
         ;;
     *)
