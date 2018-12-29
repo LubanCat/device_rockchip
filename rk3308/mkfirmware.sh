@@ -31,8 +31,7 @@ if [ -z $RK_LOADER_NAME ]; then
 else
 	LOADER=$TOP_DIR/u-boot/$RK_LOADER_NAME
 fi
-MKOEM=$TOP_DIR/device/rockchip/common/mk-oem.sh
-MKUSERDATA=$TOP_DIR/device/rockchip/common/mk-userdata.sh
+MKIMAGE=$TOP_DIR/device/rockchip/common/mk-image.sh
 rm -rf $ROCKDEV
 mkdir -p $ROCKDEV
 
@@ -95,18 +94,14 @@ fi
 echo -n "$OEM_DIR $RK_OEM_FS_TYPE"
 if [ -d $OEM_DIR ]
 then
-	echo -n "create oem.img..."
-	$MKOEM $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE
-	echo "done."
+	$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE
 else
 	echo -e "\e[31m error: create oem image fail! \e[0m"
 fi
 
 if [ -d $USER_DATA_DIR ]
 then
-	echo -n "create userdata.img..."
-	$MKUSERDATA $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE
-	echo "done."
+	$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE
 else
 	echo -e "\e[31m error: $USER_DATA_DIR not found! \e[0m"
 fi
