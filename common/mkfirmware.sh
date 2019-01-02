@@ -30,6 +30,12 @@ LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
 MKIMAGE=$TOP_DIR/device/rockchip/common/mk-image.sh
 mkdir -p $ROCKDEV
 
+# Require buildroot host tools to do image packing.
+if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
+    echo "Source buildroot/build/envsetup.sh"
+    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+fi
+
 if [ $RK_ROOTFS_IMG ]
 then
 	if [ -f $ROOTFS_IMG ]

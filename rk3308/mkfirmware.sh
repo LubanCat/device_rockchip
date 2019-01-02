@@ -35,6 +35,11 @@ MKIMAGE=$TOP_DIR/device/rockchip/common/mk-image.sh
 rm -rf $ROCKDEV
 mkdir -p $ROCKDEV
 
+# Require buildroot host tools to do image packing.
+if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
+    echo "Source buildroot/build/envsetup.sh"
+    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+fi
 
 if [ "${RK_OEM_DIR}" == "dueros"  ];then
 	if [ $RK_ARCH == arm ];then

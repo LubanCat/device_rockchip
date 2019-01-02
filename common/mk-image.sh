@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ -d "$TARGET_OUTPUT_DIR" ];then
-    HOST_DIR=$TARGET_OUTPUT_DIR/host
-    export PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin:$PATH
+if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
+    echo "Source buildroot/build/envsetup.sh firstly!!!"
+    exit 1
 fi
+
+# Prefer using buildroot host tools for compatible.
+HOST_DIR=$TARGET_OUTPUT_DIR/host
+export PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin:$PATH
 
 fatal()
 {
