@@ -22,8 +22,8 @@ usage()
 
 [ ! $# -lt 3 ] || usage
 
-SRC_DIR=$1
-TARGET=$2
+export SRC_DIR=$1
+export TARGET=$2
 FS_TYPE=$3
 SIZE=$4
 TEMP=$(mktemp -u)
@@ -55,20 +55,17 @@ copy_to_ntfs()
 {
     DEPTH=1
     while true;do
-        DIRS=$(find $SRC_DIR -maxdepth $DEPTH -mindepth $DEPTH -type d|xargs)
-        [ $DIRS ] || break
-        for dir in $DIRS;do
-            ntfscp $TARGET $dir ${dir#$SRC_DIR} || \
+        find $SRC_DIR -maxdepth $DEPTH -mindepth $DEPTH -type d|grep -q "" \
+            || break
+        find $SRC_DIR -maxdepth $DEPTH -mindepth $DEPTH -type d \
+            -exec sh -c 'ntfscp $TARGET "$1" "${1#$SRC_DIR}"' sh {} \; || \
                 fatal "Please update buildroot to: \n83c061e7c9 rockchip: Select host-ntfs-3g"
-        done
         DEPTH=$(($DEPTH + 1))
     done
 
-    FILES=$(find $SRC_DIR -type f|xargs)
-    for file in $FILES;do
-        ntfscp $TARGET $file ${file#$SRC_DIR} || \
+    find $SRC_DIR -type f \
+        -exec sh -c 'ntfscp $TARGET "$1" "${1#$SRC_DIR}"' sh {} \; || \
             fatal "Failed to do ntfscp!"
-    done
 }
 
 mkimage()
