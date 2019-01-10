@@ -226,11 +226,9 @@ function build_ota_ab_updateimg(){
 
     echo "Make ota ab update.img"
     source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
-    echo $source_package_file_name
-    ln -fs $PACK_TOOL_DIR/rockdev/ota-package-file $PACK_TOOL_DIR/rockdev/package-file
-    cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+    cd $PACK_TOOL_DIR/rockdev && ln -fs ota-package-file package-file && ./mkupdate.sh && cd -
     mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ota.img
-    ln -fs $PACK_TOOL_DIR/rockdev/$source_package_file_name $PACK_TOOL_DIR/rockdev/package-file
+    cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
     if [ $? -eq 0 ]; then
         echo "Make update ota ab image ok!"
     else
