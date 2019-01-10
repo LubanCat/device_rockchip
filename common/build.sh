@@ -33,6 +33,7 @@ usage()
 	echo "cleanall           -clean uboot, kernel, rootfs, recovery"
 	echo "firmware           -pack all the image we need to boot up system"
 	echo "updateimg          -pack update image"
+	echo "otapackage         -pack ab update otapackage image"
 	echo "save               -save images, patches, commands used to debug"
 	echo "default            -build all modules"
 }
@@ -219,6 +220,25 @@ function build_updateimg(){
 	fi
 }
 
+function build_ota_ab_updateimg(){
+    IMAGE_PATH=$TOP_DIR/rockdev
+    PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
+
+    echo "Make ota ab update.img"
+    source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+    echo $source_package_file_name
+    ln -fs $PACK_TOOL_DIR/rockdev/ota-package-file $PACK_TOOL_DIR/rockdev/package-file
+    cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+    mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ota.img
+    ln -fs $PACK_TOOL_DIR/rockdev/$source_package_file_name $PACK_TOOL_DIR/rockdev/package-file
+    if [ $? -eq 0 ]; then
+        echo "Make update ota ab image ok!"
+    else
+        echo "Make update ota ab image failed!"
+        exit 1
+    fi
+}
+
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d.%H%M)
@@ -250,6 +270,7 @@ function build_all_save(){
 	build_all
 	build_firmware
 	build_updateimg
+	build_ota_ab_updateimg
 	build_save
 }
 #=========================
@@ -291,6 +312,9 @@ elif [ $BUILD_TARGET == debian ];then
     exit 0
 elif [ $BUILD_TARGET == updateimg ];then
     build_updateimg
+    exit 0
+elif [ $BUILD_TARGET == otapackage ];then
+    build_ota_ab_updateimg
     exit 0
 elif [ $BUILD_TARGET == all ];then
     build_all
