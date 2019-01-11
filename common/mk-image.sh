@@ -74,8 +74,8 @@ mkimage()
     dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
     case $FS_TYPE in
         ext[234])
-            # Set max-mount-counts to 2, and disable the time-dependent checking.
-            mke2fs $TARGET -d $SRC_DIR && tune2fs -c 2 -i 0 $TARGET
+            # Set max-mount-counts to 0, and disable the time-dependent checking.
+            mke2fs $TARGET -d $SRC_DIR && tune2fs -c 0 -i 0 $TARGET
             ;;
         msdos|fat|vfat)
             # Use fat32 by default
