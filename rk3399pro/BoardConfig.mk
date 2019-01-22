@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=evb-rk3399
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3399pro-evb-v10-linux
+export RK_KERNEL_DTS=rk3399pro-evb-v11-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
