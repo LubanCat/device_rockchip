@@ -36,7 +36,7 @@ export RK_OEM_FS_TYPE=
 export RK_USERDATA_FS_TYPE=
 # Set flash type. support <emmc, nand, spi_nand, spi_nor>
 export RK_STORAGE_TYPE=
-#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
+#OEM config
 export RK_OEM_DIR=
 #userdata config
 export RK_USERDATA_DIR=
