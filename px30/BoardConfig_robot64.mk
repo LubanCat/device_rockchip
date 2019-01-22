@@ -5,9 +5,9 @@ export RK_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=evb-px30
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=px30_linux_defconfig
+export RK_KERNEL_DEFCONFIG=px30_linux_robot_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=px30-evb-ddr3-v10-linux
+export RK_KERNEL_DTS=px30-evb-ddr3-v10-robot-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -15,7 +15,7 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_px30_robot32
+export RK_CFG_BUILDROOT=rockchip_px30_robot64
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px30_recovery
 # ramboot config
