@@ -5,9 +5,9 @@ export RK_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=evb-rk3326
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk3326_linux_robot_defconfig
+export RK_KERNEL_DEFCONFIG=rk3326_linux_robot_no_gpu_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3326-evb-lp3-v10-robot-linux
+export RK_KERNEL_DTS=rk3326-evb-lp3-v10-robot-no-gpu-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -15,7 +15,7 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3326_robot64
+export RK_CFG_BUILDROOT=rockchip_rk3326_robot64_no_gpu
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # ramboot config
@@ -36,7 +36,7 @@ export RK_OEM_FS_TYPE=ext2
 export RK_USERDATA_FS_TYPE=ext2
 # Set flash type. support <emmc, nand, spi_nand, spi_nor>
 export RK_STORAGE_TYPE=emmc
-#OEM config
+#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
 export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
