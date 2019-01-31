@@ -4,6 +4,8 @@
 export RK_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=evb-rk3326
+# use robot for trust
+export RK_ROBOT=ROBOT
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk3326_linux_robot_defconfig
 # Kernel dts
