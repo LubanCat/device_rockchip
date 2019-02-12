@@ -15,17 +15,17 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3399
+export RK_CFG_BUILDROOT=rockchip_rk3399pro
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk3399_recovery
+export RK_CFG_RECOVERY=rockchip_rk3399pro_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
-export RK_CFG_PCBA=rockchip_rk3399_pcba
+export RK_CFG_PCBA=rockchip_rk3399pro_pcba
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=rk3399
+export RK_TARGET_PRODUCT=rk3399pro
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
