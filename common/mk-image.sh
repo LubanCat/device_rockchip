@@ -47,14 +47,41 @@ copy_to_ntfs()
             fatal "Failed to do ntfscp!"
 }
 
+copy_to_image()
+{
+    echo "Copying $SRC_DIR into $TARGET (root permission required)"
+
+    mkdir -p $TEMP || return -1
+    sudo mount $TARGET $TEMP || return -1
+
+    cp -rp $SRC_DIR/* $TEMP
+    RET=$?
+
+    sudo umount $TEMP
+    rm -rf $TEMP
+
+    return $RET
+}
+
+check_host_tool()
+{
+    which $1|grep -q "^$TARGET_OUTPUT_DIR"
+}
+
 mkimage()
 {
     echo "Making $TARGET from $SRC_DIR with size(${SIZE}M)"
     dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
     case $FS_TYPE in
         ext[234])
+            if check_host_tool mke2fs; then
+                mke2fs $TARGET -d $SRC_DIR || return -1
+            else
+                mke2fs $TARGET || return -1
+                copy_to_image || return -1
+            fi
             # Set max-mount-counts to 0, and disable the time-dependent checking.
-            mke2fs $TARGET -d $SRC_DIR && tune2fs -c 0 -i 0 $TARGET
+            tune2fs -c 0 -i 0 $TARGET
             ;;
         msdos|fat|vfat)
             # Use fat32 by default
@@ -64,7 +91,12 @@ mkimage()
             ;;
         ntfs)
             # Enable compression
-            mkntfs -FCQ $TARGET && copy_to_ntfs
+            mkntfs -FCQ $TARGET
+            if check_host_tool mke2fs; then
+                copy_to_ntfs
+            else
+                copy_to_image
+            fi
             ;;
     esac
 }
