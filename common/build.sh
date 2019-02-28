@@ -229,7 +229,6 @@ function build_ota_ab_updateimg(){
     cd $PACK_TOOL_DIR/rockdev && ln -fs ota-package-file package-file && ./mkupdate.sh && cd -
     mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ota.img
     cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
-    build_updateimg
     if [ $? -eq 0 ]; then
         echo "Make update ota ab image ok!"
     else
@@ -268,8 +267,8 @@ function build_save(){
 function build_all_save(){
 	build_all
 	build_firmware
-	build_updateimg
 	build_ota_ab_updateimg
+	build_updateimg
 	build_save
 }
 #=========================
