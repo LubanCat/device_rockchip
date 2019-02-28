@@ -30,27 +30,6 @@ TEMP=$(mktemp -u)
 
 [ -d "$SRC_DIR" ] || usage
 
-mkimage_auto_sized()
-{
-    tar cf $TEMP $SRC_DIR >/dev/null 2>&1
-    SIZE=$(du -m $TEMP|grep -o "^[0-9]*")
-    rm -rf $TEMP
-    echo "Making $TARGET from $SRC_DIR (auto sized)"
-
-    EXTRA_SIZE=4 #4M
-    MAX_RETRY=10
-    RETRY=0
-
-    while true;do
-        SIZE=$[SIZE+EXTRA_SIZE]
-        $0 $SRC_DIR $TARGET $FS_TYPE $SIZE && break
-
-        RETRY=$[RETRY+1]
-        [ $RETRY -gt $MAX_RETRY ] && fatal "Failed to make image!"
-        echo "Retring with increased size....($RETRY/$MAX_RETRY)"
-    done
-}
-
 copy_to_ntfs()
 {
     DEPTH=1
@@ -88,6 +67,27 @@ mkimage()
             mkntfs -FCQ $TARGET && copy_to_ntfs
             ;;
     esac
+}
+
+mkimage_auto_sized()
+{
+    tar cf $TEMP $SRC_DIR >/dev/null 2>&1
+    SIZE=$(du -m $TEMP|grep -o "^[0-9]*")
+    rm -rf $TEMP
+    echo "Making $TARGET from $SRC_DIR (auto sized)"
+
+    EXTRA_SIZE=4 #4M
+    MAX_RETRY=10
+    RETRY=0
+
+    while true;do
+        SIZE=$[SIZE+EXTRA_SIZE]
+        mkimage && break
+
+        RETRY=$[RETRY+1]
+        [ $RETRY -gt $MAX_RETRY ] && fatal "Failed to make image!"
+        echo "Retring with increased size....($RETRY/$MAX_RETRY)"
+    done
 }
 
 rm -rf $TARGET
