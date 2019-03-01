@@ -208,16 +208,31 @@ function build_firmware(){
 function build_updateimg(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
+    if [ "$RK_LINUX_AB_ENABLE"x = "true"x ];then
+        echo "Make Linux a/b update.img."
+	    build_ota_ab_updateimg
+        source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+        cd $PACK_TOOL_DIR/rockdev && ln -fs "$source_package_file_name"-ab package-file && ./mkupdate.sh && cd -
+        mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ab.img
+        cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
+        if [ $? -eq 0 ]; then
+            echo "Make Linux a/b update image ok!"
+        else
+            echo "Make Linux a/b update image failed!"
+            exit 1
+        fi
 
-	echo "Make update.img"
-	cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
-	mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH
-	if [ $? -eq 0 ]; then
-	   echo "Make update image ok!"
-	else
-	   echo "Make update image failed!"
-	   exit 1
-	fi
+    else
+        echo "Make update.img"
+        cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+        mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH
+        if [ $? -eq 0 ]; then
+            echo "Make update image ok!"
+        else
+            echo "Make update image failed!"
+            exit 1
+        fi
+    fi
 }
 
 function build_ota_ab_updateimg(){
@@ -226,7 +241,7 @@ function build_ota_ab_updateimg(){
 
     echo "Make ota ab update.img"
     source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
-    cd $PACK_TOOL_DIR/rockdev && ln -fs ota-package-file package-file && ./mkupdate.sh && cd -
+    cd $PACK_TOOL_DIR/rockdev && ln -fs "$source_package_file_name"-ota package-file && ./mkupdate.sh && cd -
     mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ota.img
     cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
     if [ $? -eq 0 ]; then
@@ -267,7 +282,6 @@ function build_save(){
 function build_all_save(){
 	build_all
 	build_firmware
-	build_ota_ab_updateimg
 	build_updateimg
 	build_save
 }
