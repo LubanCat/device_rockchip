@@ -45,3 +45,5 @@ MIC_NUM=6
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
+#choose enable Linux A/B
+export RK_LINUX_AB_ENABLE=
