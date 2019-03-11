@@ -17,7 +17,7 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3326_64_no_cl
+export RK_CFG_BUILDROOT=rockchip_rk3326_64_open
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # ramboot config
