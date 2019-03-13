@@ -19,6 +19,7 @@ OEM=$ROCKDEV_DIR/oem.img
 MISC=$ROCKDEV_DIR/misc.img
 ROOTFS=$ROCKDEV_DIR/rootfs.img
 USERDATA=$ROCKDEV_DIR/userdata.img
+UPDATE=$ROCKDEV_DIR/update.img
 
 if [ ! -n "$1" ]
 then
@@ -91,6 +92,11 @@ fi
 if [ $FLASH_TYPE = rootfs ]
 then
 	$UPGRADETOOL di -rootfs $ROOTFS
+fi
+
+if [ $FLASH_TYPE = update ]
+then
+	$UPGRADETOOL uf $UPDATE
 fi
 
 if [ $FLASH_TYPE = rd ]
