@@ -27,7 +27,7 @@ export RK_CFG_PCBA=
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=rk1808-multi
+export RK_TARGET_PRODUCT=rk1808
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=
 # rootfs image path
