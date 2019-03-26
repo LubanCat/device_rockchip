@@ -25,7 +25,7 @@ export RK_CFG_PCBA=rockchip_rk3126c_pcba
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=px3se
+export RK_TARGET_PRODUCT=rk3126c
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
