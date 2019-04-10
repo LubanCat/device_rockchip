@@ -25,8 +25,7 @@ usage()
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
-	echo "yocto              -build yocto rootfs, currently build ros as default"
-	echo "ros                -build ros rootfs"
+	echo "yocto              -build yocto rootfs"
 	echo "debian             -build debian rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
@@ -132,10 +131,6 @@ function build_multi-npu_boot(){
 }
 
 function build_rootfs(){
-	build_buildroot
-}
-
-function build_ros(){
 	build_buildroot
 }
 
@@ -336,9 +331,6 @@ elif [ $BUILD_TARGET == pcba ];then
     exit 0
 elif [ $BUILD_TARGET == yocto ];then
     build_yocto
-    exit 0
-elif [ $BUILD_TARGET == ros ];then
-    build_ros
     exit 0
 elif [ $BUILD_TARGET == debian ];then
     build_debian
