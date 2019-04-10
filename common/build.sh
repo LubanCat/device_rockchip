@@ -131,7 +131,26 @@ function build_multi-npu_boot(){
 }
 
 function build_yocto(){
-	echo "we don't support yocto at this time"
+	if [ -z "$RK_YOCTO_MACHINE" ]; then
+		echo "This board doesn't support yocto!"
+		exit 1
+	fi
+
+	echo "=========Start build ramboot========="
+	echo "TARGET_MACHINE=$RK_YOCTO_MACHINE"
+	echo "====================================="
+
+	cd yocto
+	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
+	source oe-init-build-env
+	bitbake core-image-minimal
+
+	if [ $? -eq 0 ]; then
+		echo "====Build yocto ok!===="
+	else
+		echo "====Build yocto failed!===="
+		exit 1
+	fi
 }
 
 function build_debian(){
@@ -155,7 +174,7 @@ function build_rootfs(){
 	case "$1" in
 		yocto)
 			build_yocto
-			ROOTFS_IMG=
+			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
 			;;
 		debian)
 			build_debian
