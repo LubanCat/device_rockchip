@@ -29,7 +29,7 @@ export RK_TARGET_PRODUCT=rk3328
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
-export RK_ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
+export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

@@ -64,7 +64,7 @@ fi
 if [ -f $ROOTFS_IMG ]
 then
 	echo -n "create rootfs.img..."
-	cp -a $ROOTFS_IMG $ROCKDEV/rootfs.img
+	cp -aL $ROOTFS_IMG $ROCKDEV/rootfs.img
 	echo "done."
 else
 	echo -e "\e[31m error: $ROOTFS_IMG not found! \e[0m"

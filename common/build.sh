@@ -150,17 +150,30 @@ function build_debian(){
 }
 
 function build_rootfs(){
-	case $1 in
+	rm -f $RK_ROOTFS_IMG
+
+	case "$1" in
 		yocto)
 			build_yocto
+			ROOTFS_IMG=
 			;;
 		debian)
 			build_debian
+			ROOTFS_IMG=rootfs/linaro-rootfs.img
 			;;
 		*)
-			build_buildroot
+			# build_buildroot
+			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
 	esac
+
+	[ -z "$ROOTFS_IMG" ] && return
+
+	if [ ! -f "$ROOTFS_IMG" ]; then
+		echo "$ROOTFS_IMG not generated?"
+	else
+		ln -sf $TOP_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
+	fi
 }
 
 function build_recovery(){
@@ -205,7 +218,7 @@ function build_all(){
 	echo "============================================"
 	build_uboot
 	build_kernel
-	build_rootfs
+	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
 	build_ramboot
 }
