@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3399pro-npu
+export RK_UBOOT_DEFCONFIG=rknpu-lion
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk1808_x4_linux_defconfig
 # main board kernel dts
