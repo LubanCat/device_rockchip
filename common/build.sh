@@ -181,7 +181,7 @@ function build_rootfs(){
 			ROOTFS_IMG=rootfs/linaro-rootfs.img
 			;;
 		*)
-			# build_buildroot
+			build_buildroot
 			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
 	esac
