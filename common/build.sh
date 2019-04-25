@@ -7,25 +7,11 @@ BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
 
-if [ ! -n "$1" ];then
-	echo "build all and save all as default"
-	BUILD_TARGET=allsave
-elif echo $1 | grep -wqE "BoardConfig.*.mk";then
-	BUILD_TARGET=""
-	NEW_BOARD_CONFIG=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$1
-
-	echo "switching to board: $NEW_BOARD_CONFIG"
-	if [ ! -f $NEW_BOARD_CONFIG ]; then
-		echo "not exist!"
-		exit 1
-	fi
-else
-	BUILD_TARGET="$1"
-fi
-
 function usage()
 {
-	echo "====USAGE: build.sh modules===="
+	echo "Usage: build.sh [OPTIONS]"
+	echo "Available options:"
+	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "uboot              -build uboot"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
@@ -43,11 +29,12 @@ function usage()
 	echo "updateimg          -pack update image"
 	echo "otapackage         -pack ab update otapackage image"
 	echo "save               -save images, patches, commands used to debug"
-	echo "default            -build all modules"
+	echo "allsave            -build all & firmware & updateimg & save"
+	echo ""
+	echo "Default option is 'allsave'."
 }
 
 function build_uboot(){
-	# build uboot
 	echo "============Start build uboot============"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "========================================="
@@ -64,7 +51,6 @@ function build_uboot(){
 }
 
 function build_kernel(){
-	# build kernel
 	echo "============Start build kernel============"
 	echo "TARGET_ARCH          =$RK_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
@@ -94,7 +80,6 @@ function build_modules(){
 }
 
 function build_buildroot(){
-	# build buildroot
 	echo "==========Start build buildroot=========="
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "========================================="
@@ -108,7 +93,6 @@ function build_buildroot(){
 }
 
 function build_ramboot(){
-	# build ramboot image
 	echo "=========Start build ramboot========="
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "====================================="
@@ -162,7 +146,6 @@ function build_yocto(){
 }
 
 function build_debian(){
-	# build debian
 	echo "===========Start build debian==========="
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
@@ -204,7 +187,6 @@ function build_rootfs(){
 }
 
 function build_recovery(){
-	# build recovery
 	echo "==========Start build recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
@@ -218,7 +200,6 @@ function build_recovery(){
 }
 
 function build_pcba(){
-	# build pcba
 	echo "==========Start build pcba=========="
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "===================================="
@@ -258,7 +239,6 @@ function clean_all(){
 }
 
 function build_firmware(){
-	# mkfirmware.sh to genarate image
 	./mkfirmware.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "Make image ok!"
@@ -350,23 +330,36 @@ function build_allsave(){
 }
 
 #=========================
-# build target
+# build targets
 #=========================
-case "$BUILD_TARGET" in
-	"")
-		rm -f $BOARD_CONFIG
-		ln -s $NEW_BOARD_CONFIG $BOARD_CONFIG
-		;;
-	*help|-h)
-		usage
-		;;
-	buildroot|debian|yocto)
-		build_rootfs $BUILD_TARGET
-		;;
-	recovery)
-		build_kernel
-		;&
-	*)
-		eval build_$BUILD_TARGET
-		;;
-esac
+
+if echo $@|grep -wqE "help|-h"; then
+	usage
+	exit 0
+fi
+
+OPTIONS="$@"
+for option in ${OPTIONS:-allsave}; do
+	echo "processing option: $option"
+	case $option in
+		BoardConfig*.mk)
+			CONF=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$option
+			echo "switching to board: $CONF"
+			if [ ! -f $CONF ]; then
+				echo "not exist!"
+				exit 1
+			fi
+
+			ln -sf $CONF $BOARD_CONFIG
+			;;
+		buildroot|debian|yocto)
+			build_rootfs $option
+			;;
+		recovery)
+			build_kernel
+			;&
+		*)
+			eval build_$option || usage
+			;;
+	esac
+done
