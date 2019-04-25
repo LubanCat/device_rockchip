@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3126
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3126-linux
+export RK_KERNEL_DTS=rk3126-yk-86v-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
