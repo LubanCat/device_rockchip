@@ -20,7 +20,12 @@ fi
 
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
-KERNEL_IMAGE=$TOP_DIR/$RK_KERNEL_IMG
+if [ -z $RK_KERNEL_ZIMG ]; then
+	KERNEL_IMAGE=$TOP_DIR/$RK_KERNEL_IMG
+else
+	KERNEL_IMAGE=$TOP_DIR/$RK_KERNEL_ZIMG
+fi
+
 KERNEL_DTB=$TOP_DIR/kernel/resource.img
 
 # build kernel
