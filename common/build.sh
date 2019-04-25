@@ -10,9 +10,17 @@ source $TOP_DIR/device/rockchip/common/Version.mk
 if [ ! -n "$1" ];then
 	echo "build all and save all as default"
 	BUILD_TARGET=allsave
+elif echo $1 | grep -wqE "BoardConfig.*.mk";then
+	BUILD_TARGET=""
+	NEW_BOARD_CONFIG=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$1
+
+	echo "switching to board: $NEW_BOARD_CONFIG"
+	if [ ! -f $NEW_BOARD_CONFIG ]; then
+		echo "not exist!"
+		exit 1
+	fi
 else
 	BUILD_TARGET="$1"
-	NEW_BOARD_CONFIG=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$1
 fi
 
 function usage()
@@ -346,10 +354,8 @@ function build_allsave(){
 #=========================
 case "$BUILD_TARGET" in
 	"")
-		if [ -f $NEW_BOARD_CONFIG ]; then
-			rm -f $BOARD_CONFIG
-			ln -s $NEW_BOARD_CONFIG $BOARD_CONFIG
-		fi
+		rm -f $BOARD_CONFIG
+		ln -s $NEW_BOARD_CONFIG $BOARD_CONFIG
 		;;
 	*help|-h)
 		usage
