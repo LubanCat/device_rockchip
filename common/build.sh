@@ -136,6 +136,7 @@ function build_yocto(){
 	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
 	bitbake core-image-minimal
+	cd ..
 
 	if [ $? -eq 0 ]; then
 		echo "====Build yocto ok!===="
