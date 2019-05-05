@@ -92,7 +92,7 @@ mkimage()
         ntfs)
             # Enable compression
             mkntfs -FCQ $TARGET
-            if check_host_tool mke2fs; then
+            if check_host_tool ntfscp; then
                 copy_to_ntfs
             else
                 copy_to_image
