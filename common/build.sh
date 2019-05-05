@@ -235,7 +235,7 @@ function clean_all(){
 	echo "clean uboot, kernel, rootfs, recovery"
 	cd $TOP_DIR/u-boot/ && make distclean && cd -
 	cd $TOP_DIR/kernel && make distclean && cd -
-	rm -rf buildroot/out
+	rm -rf buildroot/output
 }
 
 function build_firmware(){
