@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3128x
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3128h-sdk-linux
+export RK_KERNEL_DTS=rk3128h-evb-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
