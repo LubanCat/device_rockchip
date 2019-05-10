@@ -183,6 +183,7 @@ function build_rootfs(){
 	if [ ! -f "$ROOTFS_IMG" ]; then
 		echo "$ROOTFS_IMG not generated?"
 	else
+		mkdir -p ${RK_ROOTFS_IMG%/*}
 		ln -sf $TOP_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
 	fi
 }
