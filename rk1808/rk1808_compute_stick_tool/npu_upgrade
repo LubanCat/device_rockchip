@@ -5,7 +5,7 @@ SCRIPT_ROOT=$(dirname $(readlink -f "$0"))
 
 if [ $# -ne 4 ]; then
 	echo 'Usage: '$PROGRAM' loader uboot trust boot'
-	exit
+	exit -1
 fi
 
 cat /proc/cpuinfo |grep Intel
@@ -26,27 +26,27 @@ BOOT_ADDR=0x20000
 
 if [ ! -f $UPGRADE_TOOL ]; then
 	echo $UPGRADE_TOOL 'is not existed!'
-	exit
+	exit -1
 fi
 
 if [ ! -f $LOADER ]; then
 	echo $LOADER 'is not existed!'
-	exit
+	exit -1
 fi
 
 if [ ! -f $UBOOT ]; then
 	echo $UBOOT 'is not existed!'
-	exit
+	exit -1
 fi
 
 if [ ! -f $TRUST ]; then
 	echo $TRUST 'is not existed!'
-	exit
+	exit -1
 fi
 
 if [ ! -f $BOOT ]; then
 	echo $BOOT 'is not existed!'
-	exit
+	exit -1
 fi
 
 echo 'start to wait device...'
@@ -63,7 +63,7 @@ while [ $i -lt 5 ]; do
 done
 if [ $i -ge 5 ]; then
 	echo 'failed to wait device!'
-	exit
+	exit -1
 fi
 echo 'device is ready'
 
@@ -71,7 +71,7 @@ echo 'start to download loader...'
 $UPGRADE_TOOL db $LOADER > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to download loader!'
-	exit
+	exit -1
 fi
 echo 'download loader ok'
 
@@ -79,7 +79,7 @@ echo 'start to wait loader...'
 $UPGRADE_TOOL td > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to wait loader!'
-	exit
+	exit -1
 fi
 echo 'loader is ready'
 
@@ -87,7 +87,7 @@ echo 'start to write uboot...'
 $UPGRADE_TOOL wl $UBOOT_ADDR $UBOOT > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to write uboot!'
-	exit
+	exit -1
 fi
 echo 'write uboot ok'
 
@@ -95,7 +95,7 @@ echo 'start to write trust...'
 $UPGRADE_TOOL wl $TRUST_ADDR $TRUST > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to write trust!'
-	exit
+	exit -1
 fi
 echo 'write trust ok'
 
@@ -103,7 +103,7 @@ echo 'start to write boot...'
 $UPGRADE_TOOL wl $BOOT_ADDR $BOOT > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to write boot!'
-	exit
+	exit -1
 fi
 echo 'write boot ok'
 
@@ -111,6 +111,6 @@ echo 'start to run system...'
 $UPGRADE_TOOL rs $UBOOT_ADDR $TRUST_ADDR $BOOT_ADDR $UBOOT $TRUST $BOOT > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'failed to run system!'
-	exit
+	exit -1
 fi
 echo 'run system ok'
