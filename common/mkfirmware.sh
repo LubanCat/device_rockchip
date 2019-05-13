@@ -41,7 +41,7 @@ then
 	if [ -f $ROOTFS_IMG ]
 	then
 		echo -n "create rootfs.img..."
-		ln -s -f `echo $ROOTFS_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/rootfs.img
+		ln -s -f `readlink $ROOTFS_IMG | sed "s;$TOP_DIR;$RELATIVE_TOP_DIR;"` $ROCKDEV/rootfs.img
 		echo "done."
 	else
 		echo "warning: $ROOTFS_IMG not found!"
