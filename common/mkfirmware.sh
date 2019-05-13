@@ -2,16 +2,9 @@
 
 set -e
 
-COMMON_DIR=$(cd `dirname $0`; pwd)
-if [ -h $0 ]
-then
-        CMD=$(readlink $0)
-        COMMON_DIR=$(dirname $CMD)
-fi
-cd $COMMON_DIR
-cd ../../..
-TOP_DIR=$(pwd)
-RELATIVE_TOP_DIR=..
+SCRIPT_DIR=$(dirname $(realpath $BASH_SOURCE))
+TOP_DIR=$(realpath $SCRIPT_DIR/../../..)
+cd $TOP_DIR
 
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
@@ -27,7 +20,7 @@ UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
 LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
 #SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
-MKIMAGE=$TOP_DIR/device/rockchip/common/mk-image.sh
+MKIMAGE=$SCRIPT_DIR/mk-image.sh
 mkdir -p $ROCKDEV
 
 # Require buildroot host tools to do image packing.
