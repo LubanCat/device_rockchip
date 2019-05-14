@@ -8,12 +8,22 @@ if [ $# -ne 4 ]; then
 	exit -1
 fi
 
-cat /proc/cpuinfo |grep Intel
+cat /proc/cpuinfo |grep -E "Intel|AMD"
 if [ $? -ne 0 ]; then
  echo "use arm version"
-  UPGRADE_TOOL=$SCRIPT_ROOT/upgrade_tool_arm
+  LOG_DIR=~/.rockchip/upgrade_tool/aarch64/log
+  CONFIG_INI=$SCRIPT_ROOT/aarch64_release/config.ini
+  UPGRADE_TOOL=$SCRIPT_ROOT/aarch64_release/upgrade_tool
 else
-  UPGRADE_TOOL=$SCRIPT_ROOT/upgrade_tool_x86
+  LOG_DIR=~/.rockchip/upgrade_tool/x64/log
+  CONFIG_INI=$SCRIPT_ROOT/x64_release/config.ini
+  UPGRADE_TOOL=$SCRIPT_ROOT/x64_release/upgrade_tool
+fi
+
+mkdir -p $LOG_DIR
+grep log_dir $CONFIG_INI > /dev/null
+if [ $? -ne 0 ]; then
+    echo "log_dir=$(realpath $LOG_DIR)" >> $CONFIG_INI
 fi
 
 LOADER=$1
