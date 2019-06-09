@@ -270,11 +270,14 @@ function build_all(){
 	build_ramboot
 }
 
-function clean_all(){
+function build_cleanall(){
 	echo "clean uboot, kernel, rootfs, recovery"
 	cd $TOP_DIR/u-boot/ && make distclean && cd -
 	cd $TOP_DIR/kernel && make distclean && cd -
-	rm -rf buildroot/output
+	rm -rf $TOP_DIR/buildroot/output
+	rm -rf $TOP_DIR/yocto/build
+	rm -rf $TOP_DIR/distro/output
+	rm -rf $TOP_DIR/debian/binary
 }
 
 function build_firmware(){
