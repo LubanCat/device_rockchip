@@ -29,6 +29,66 @@ if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
 fi
 
+check_partition_size() {
+	echo $PARAMETER
+
+	PARTITIONS_PREFIX=`echo -n "CMDLINE: mtdparts=rk29xxnand:"`
+	while read line
+	do
+		if [[ $line =~ $PARTITIONS_PREFIX ]]
+		then
+			partitions=`echo $line | sed "s/$PARTITIONS_PREFIX//g"`
+			echo $partitions
+			break
+		fi
+	done < $PARAMETER
+
+	[ -z $"partitions" ] && return
+
+	IFS=,
+	for part in $partitions;
+	do
+		part_size=`echo $part | cut -d '@' -f1`
+		part_name=`echo $part | cut -d '(' -f2|cut -d ')' -f1`
+
+		[[ $part_size =~ "-" ]] && continue
+
+		part_size=$(($part_size))
+		part_size_bytes=$[$part_size*512]
+
+		case $part_name in
+			uboot)
+				if [ $part_size_bytes -lt `du -b $UBOOT_IMG | awk '{print $1}'` ]
+				then
+					echo -e "\e[31m error: uboot image size exceed parameter! \e[0m"
+					return -1
+				fi
+			;;
+			boot)
+				if [ $part_size_bytes -lt `du -b $BOOT_IMG | awk '{print $1}'` ]
+				then
+					echo -e "\e[31m error: boot image size exceed parameter! \e[0m"
+					return -1
+				fi
+			;;
+			recovery)
+				if [ $part_size_bytes -lt `du -b $RECOVERY_IMG | awk '{print $1}'` ]
+				then
+					echo -e "\e[31m error: recovery image size exceed parameter! \e[0m"
+					return -1
+				fi
+			;;
+			rootfs)
+				if [ $part_size_bytes -lt `du -bD $ROOTFS_IMG | awk '{print $1}'` ]
+				then
+					echo -e "\e[31m error: rootfs image size exceed parameter! \e[0m"
+					return -1
+				fi
+			;;
+		esac
+	done
+}
+
 if [ $RK_ROOTFS_IMG ]
 then
 	if [ -f $ROOTFS_IMG ]
@@ -47,7 +107,8 @@ then
 	ln -rsf $PARAMETER $ROCKDEV/parameter.txt
 	echo "done."
 else
-	echo "warning: $PARAMETER not found!"
+	echo -e "\e[31m error: $PARAMETER not found! \e[0m"
+	exit -1
 fi
 
 if [ $RK_CFG_RECOVERY ]
@@ -154,4 +215,7 @@ then
 		echo "warning: $RAMBOOT_IMG not found!"
 	fi
 fi
+
+check_partition_size
+
 echo -e "\e[36m Image: image in rockdev is ready \e[0m"
