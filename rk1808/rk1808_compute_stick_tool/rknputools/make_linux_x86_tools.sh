@@ -1,8 +1,8 @@
 #!/bin/bash
 
 export RK_RKNN_API_PLT=Linux
-export RK_RKNN_API_ARCH=arm
-export RK_NPU_TRANSFER_PROXY_ARCH=linux-aarch64
+export RK_RKNN_API_ARCH=x86
+export RK_NPU_TRANSFER_PROXY_ARCH=linux-x86_64
 
 set -e
 
