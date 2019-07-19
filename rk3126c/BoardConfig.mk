@@ -15,7 +15,7 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3126c
+export RK_CFG_BUILDROOT=rockchip_rk3126c_dpf
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3126c_recovery
 # ramboot config
