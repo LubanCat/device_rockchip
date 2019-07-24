@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk1808
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk1808_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk1808-toybrick-compute-stick-v10
+export RK_KERNEL_DTS=rk1808-compute-stick-emmc
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
