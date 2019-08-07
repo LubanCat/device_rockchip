@@ -5,7 +5,7 @@ export RK_ARCH=arm
 # target chip
 export RK_TARGET_PRODUCT=rv1108
 #Target Board Version
-export RK_TARGET_BOARD_VERSION=lock-evb-v10
+export RK_TARGET_BOARD_VERSION=lock-evb-sl-v11
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1108_defconfig
 # Kernel defconfig
