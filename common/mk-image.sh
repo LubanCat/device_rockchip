@@ -114,7 +114,7 @@ mkimage_auto_sized()
 
     while true;do
         EXTRA_SIZE=$(($SIZE / 50))
-        SIZE=$[SIZE+EXTRA_SIZE]
+        SIZE=$(($SIZE + ($EXTRA_SIZE > 4 ? $EXTRA_SIZE : 4)))
         mkimage && break
 
         RETRY=$[RETRY+1]
