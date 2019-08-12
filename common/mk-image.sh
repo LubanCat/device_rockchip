@@ -71,6 +71,7 @@ check_host_tool()
 mkimage()
 {
     echo "Making $TARGET from $SRC_DIR with size(${SIZE}M)"
+    rm -rf $TARGET
     dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
     case $FS_TYPE in
         ext[234])
@@ -108,11 +109,11 @@ mkimage_auto_sized()
     rm -rf $TEMP
     echo "Making $TARGET from $SRC_DIR (auto sized)"
 
-    EXTRA_SIZE=4 #4M
     MAX_RETRY=10
     RETRY=0
 
     while true;do
+        EXTRA_SIZE=$(($SIZE / 50))
         SIZE=$[SIZE+EXTRA_SIZE]
         mkimage && break
 
