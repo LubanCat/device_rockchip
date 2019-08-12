@@ -17,7 +17,7 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # setting.ini for firmware
 export RK_SETTING_INI=setting-emmc.ini
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rv1108_lock-evb-v10_defconfig
+export RK_CFG_BUILDROOT=rockchip_rv1108_lock_defconfig
 # Recovery config
 #export RK_CFG_RECOVERY=rockchip_rk3308_recovery
 # ramboot config

@@ -7,7 +7,7 @@ export RK_TARGET_PRODUCT=rv1108
 #Target Board Version
 export RK_TARGET_BOARD_VERSION=lock-evb-sl-v11
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rv1108_defconfig
+export RK_CFG_BUILDROOT=rockchip_rv1108_lock_defconfig
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1108-"$RK_TARGET_BOARD_VERSION"_defconfig
 # Kernel dts
