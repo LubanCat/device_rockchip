@@ -35,3 +35,5 @@ export RK_LOADER_EMMC_TURNING_DEGREE=2
 export RK_LOADER_BOOTPART_SELECT=0
 # Set ui_resolution
 export RK_UI_RESOLUTION=360x640
+# Set UVC source
+export RK_UVC_USE_SL_MODULE=y
