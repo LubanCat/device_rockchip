@@ -17,7 +17,7 @@ export RK_PARAMETER=parameter-64bit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3308_robot64
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk3308_recovery
+export RK_CFG_RECOVERY=rockchip_rk3308_robot_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
