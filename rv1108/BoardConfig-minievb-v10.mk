@@ -11,7 +11,7 @@ export RK_CFG_BUILDROOT=rockchip_rv1108_lock_defconfig
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1108_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rv1108-"$RK_TARGET_BOARD_VERSION"
+export RK_KERNEL_DTS=rv1108-${RK_TARGET_BOARD_VERSION}
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # setting.ini for firmware
