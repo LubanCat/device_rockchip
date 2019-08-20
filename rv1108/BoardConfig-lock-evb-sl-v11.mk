@@ -27,7 +27,9 @@ export RK_STORAGE_TYPE=emmc
 # Set userdata config
 export RK_USERDATA_FILESYSTEM_TYPE=ext4
 export RK_USERDATA_FILESYSTEM_SIZE=32M
-export RK_USERDATA_DIR=common/userdata
+# Set root data config
+export RK_ROOT_FILESYSTEM_TYPE=ext4
+export RK_ROOT_FILESYSTEM_SIZE=32M
 # Set loader config
 export RK_LOADER_POWER_HOLD_GPIO_GROUP=3
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=14
