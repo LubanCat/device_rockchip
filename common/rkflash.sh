@@ -154,3 +154,8 @@ then
 	$UPGRADETOOL rd
 fi
 
+if [ $FLASH_TYPE = erase ]
+then
+	$UPGRADETOOL EF $LOADER
+fi
+
