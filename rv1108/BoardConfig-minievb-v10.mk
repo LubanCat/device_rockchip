@@ -26,8 +26,10 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 export RK_STORAGE_TYPE=nor
 # Set userdata config
 export RK_USERDATA_FILESYSTEM_TYPE=jffs2
-export RK_USERDATA_FILESYSTEM_SIZE=6
-export RK_USERDATA_DIR=common/userdata
+export RK_USERDATA_FILESYSTEM_SIZE=6M
+# Set root data config
+export RK_ROOT_FILESYSTEM_TYPE=jffs2
+export RK_ROOT_FILESYSTEM_SIZE=6M
 # Set loader config
 export RK_LOADER_POWER_HOLD_GPIO_GROUP=none
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=none
