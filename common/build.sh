@@ -162,12 +162,7 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
-	if [ "$ARCH" = "armhf" ]; then
-		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
-
-	else
-		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
-	fi
+	VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	./mk-image.sh
 	cd ..
