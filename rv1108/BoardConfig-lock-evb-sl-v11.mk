@@ -19,7 +19,7 @@ export RK_SETTING_INI=setting-emmc.ini
 # Build jobs
 export RK_JOBS=12
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=cpio.lzo
+export RK_ROOTFS_TYPE=cpio.lz4
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set flash type. support <emmc, nand, nor>
@@ -39,3 +39,5 @@ export RK_LOADER_BOOTPART_SELECT=0
 export RK_UI_RESOLUTION=360x640
 # Set UVC source
 export RK_UVC_USE_SL_MODULE=y
+# Set first start application
+export RK_FIRST_START_APP="lock_app system_manager face_service cvr"
