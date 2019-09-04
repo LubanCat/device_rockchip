@@ -15,6 +15,8 @@ export RK_TARGET_PRODUCT=rv1108
 export RK_TARGET_BOARD_VERSION=lock-evb-sl-v10
 # Set flash type. support <emmc, nand, nor>
 export RK_STORAGE_TYPE=emmc
+# Set depth camera
+export RK_HAS_DEPTH_CAMERA=y
 
 ########################################
 #           Buildroot Config           #
