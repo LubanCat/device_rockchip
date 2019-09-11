@@ -77,4 +77,4 @@ export RK_JOBS=12
 #Set ui_resolution
 export RK_UI_RESOLUTION=1280x720
 # Set first start application
-export RK_FIRST_START_APP="lock_app system_manager face_service cvr"
+export RK_FIRST_START_APP="cvr"
