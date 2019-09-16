@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh firstly!!!"
     exit 1
