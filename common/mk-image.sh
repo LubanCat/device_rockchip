@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh firstly!!!"
     exit 1
@@ -76,9 +76,9 @@ mkimage()
     case $FS_TYPE in
         ext[234])
             if check_host_tool mke2fs; then
-                mke2fs $TARGET -d $SRC_DIR || return -1
+                mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR || return -1
             else
-                mke2fs $TARGET || return -1
+                mke2fs -t $FS_TYPE $TARGET || return -1
                 copy_to_image || return -1
             fi
             # Set max-mount-counts to 0, and disable the time-dependent checking.
