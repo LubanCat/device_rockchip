@@ -20,7 +20,7 @@ export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_px30_robot64
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_px30_recovery
+export RK_CFG_RECOVERY=rockchip_px30_robot_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
