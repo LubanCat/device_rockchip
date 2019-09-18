@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=px30_linux_robot_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=px30-evb-ddr3-v10-robot-linux
 # boot image type
-export RK_BOOT_IMG=boot.img
+export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
@@ -30,7 +30,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=px30
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
+export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
