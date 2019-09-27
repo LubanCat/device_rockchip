@@ -65,7 +65,7 @@ export RK_ROOT_FILESYSTEM_SIZE=32M
 #            Firmware Config           #
 ########################################
 # setting.ini for firmware
-export RK_SETTING_INI=setting-emmc.ini
+export RK_SETTING_INI=setting-emmc-sl.ini
 
 ########################################
 #            Build Config              #
