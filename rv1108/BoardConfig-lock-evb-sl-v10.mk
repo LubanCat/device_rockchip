@@ -38,6 +38,7 @@ export RK_LOADER_POWER_HOLD_GPIO_GROUP=3
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=12
 export RK_LOADER_EMMC_TURNING_DEGREE=0
 export RK_LOADER_BOOTPART_SELECT=0
+export RK_LOADER_PREISP_EN=1
 
 ########################################
 #            Kernel Config             #
