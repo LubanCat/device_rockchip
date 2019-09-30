@@ -15,6 +15,8 @@ export RK_TARGET_PRODUCT=rv1108
 export RK_TARGET_BOARD_VERSION=lock-evb-v11
 # Set flash type. support <emmc, nand, nor>
 export RK_STORAGE_TYPE=emmc
+# Set depth camera
+export RK_HAS_DEPTH_CAMERA=n
 
 ########################################
 #           Buildroot Config           #
@@ -36,6 +38,7 @@ export RK_LOADER_POWER_HOLD_GPIO_GROUP=3
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=14
 export RK_LOADER_EMMC_TURNING_DEGREE=2
 export RK_LOADER_BOOTPART_SELECT=0
+export RK_LOADER_PREISP_EN=0
 
 ########################################
 #            Kernel Config             #
@@ -76,5 +79,7 @@ export RK_JOBS=12
 ########################################
 # Set ui_resolution
 export RK_UI_RESOLUTION=360x640
+# Set UVC source
+export RK_UVC_USE_SL_MODULE=n
 # Set first start application
 export RK_FIRST_START_APP="lock_app system_manager face_service"
