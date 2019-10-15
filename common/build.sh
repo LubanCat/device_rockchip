@@ -136,7 +136,7 @@ function build_yocto(){
 	cd yocto
 	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
-	bitbake core-image-minimal
+	bitbake core-image-minimal -r conf/include/rksdk.conf
 	cd ..
 
 	if [ $? -eq 0 ]; then
