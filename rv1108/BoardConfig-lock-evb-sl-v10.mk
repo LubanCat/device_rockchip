@@ -82,4 +82,4 @@ export RK_UI_RESOLUTION=360x640
 # Set UVC source
 export RK_UVC_USE_SL_MODULE=y
 # Set first start application
-export RK_FIRST_START_APP="lock_app system_manager face_service"
+export RK_FIRST_START_APP="lock_app system_manager face_service uvc_app"
