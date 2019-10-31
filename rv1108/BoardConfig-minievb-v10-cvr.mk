@@ -66,7 +66,7 @@ export RK_ROOT_FILESYSTEM_SIZE=6M
 #            Firmware Config           #
 ########################################
 # setting.ini for firmware
-export RK_SETTING_INI=setting.ini
+export RK_SETTING_INI=setting-cvr.ini
 
 ########################################
 #            Build Config              #
