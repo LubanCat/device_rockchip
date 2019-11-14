@@ -179,7 +179,7 @@ function build_distro(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
-	/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
+	cd distro && make $RK_DISTRO_DEFCONFIG && /usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build debian ok!===="
 	else
