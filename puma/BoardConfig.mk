@@ -35,7 +35,7 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config 
-export RK_OEM_DIR=oem_normal
+export RK_OEM_DIR=oem_ipc
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
