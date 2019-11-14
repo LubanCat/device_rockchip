@@ -1,0 +1,168 @@
+{
+  "DeviceInfo": [
+    {
+      "id": 0,
+      "name": "DeviceName",
+      "value": "IP Camera"
+    },
+    {
+      "id": 1,
+      "name": "DeviceID",
+      "value": "720a0000-9664-11b4-8325-bcbac271eaf8"
+    },
+    {
+      "id": 2,
+      "name": "DeviceDescription",
+      "value": "IPCamera",
+      "ro": true
+    },
+    {
+      "id": 3,
+      "name": "DeviceLocation",
+      "value": "Fuzhou",
+      "ro": true
+    },
+    {
+      "id": 4,
+      "name": "SystemContact",
+      "value": "Rockchip.China",
+      "ro": true
+    },
+    {
+      "id": 5,
+      "name": "SerialNumber",
+      "value": "DS-2CD7T47DWD-IZSW20190805AACHD46944751",
+      "ro": true
+    },
+    {
+      "id": 6,
+      "name": "MacAddress",
+      "value": "bc:ba:c2:71:ea:f8",
+      "ro": true
+    },
+    {
+      "id": 7,
+      "name": "FirmwareVersion",
+      "value": "V5.5.91",
+      "ro": true
+    },
+    {
+      "id": 8,
+      "name": "FirmwareReleaseDate",
+      "value": "build 090828",
+      "ro": true
+    },
+    {
+      "id": 9,
+      "name": "EncoderVersion",
+      "value": "V7.3",
+      "ro": true
+    },
+    {
+      "id": 10,
+      "name": "EncoderReleaseDate",
+      "value": "build 090828",
+      "ro": true
+    },
+    {
+      "id": 11,
+      "name": "BootVersion",
+      "value": "V1.3.4",
+      "ro": true
+    },
+    {
+      "id": 12,
+      "name": "BootReleaseDate",
+      "value": "100316",
+      "ro": true
+    },
+    {
+      "id": 13,
+      "name": "HardwareVersion",
+      "value": "0x0",
+      "ro": true
+    },
+    {
+      "id": 14,
+      "name": "DeviceType",
+      "value": "IPCamera",
+      "ro": true
+    },
+    {
+      "id": 15,
+      "name": "TelecontrolID",
+      "value": "88",
+      "ro": true
+    },
+    {
+      "id": 16,
+      "name": "SupportBeep",
+      "value": false,
+      "ro": true
+    },
+    {
+      "id": 17,
+      "name": "FirmwareVersionInfo",
+      "value": "B-R-H3-0",
+      "ro": true
+    }
+  ],
+  "NetworkInterface": [
+    {
+      "id": 0,
+      "interface": "LAN",
+      "mac": "AA:BB:CC:DD:EE:FF",
+      "ipv4": {
+        "dhcp": false,
+        "address": "172.16.21.251",
+        "gateway": "172.16.21.1",
+        "netmask": "255.255.255.0",
+        "broadcast": "172.16.21.255",
+        "dns1": "223.5.5.5",
+        "dns2": "8.8.4.4"
+      },
+      "ipv6": {
+        "dhcp": true
+      }
+    },
+    {
+      "id": 1,
+      "interface": "WAN",
+      "mac": "AA:BB:CC:DD:EE:FF",
+      "ipv4": {
+        "dhcp": true,
+        "address": "172.16.21.251",
+        "gateway": "172.16.21.1",
+        "netmask": "255.255.255.0",
+        "broadcast": "172.16.21.255",
+        "dns1": "223.5.5.5",
+        "dns2": "8.8.8.8"
+      },
+      "ipv6": {
+        "dhcp": true
+      }
+    }
+  ],
+  "WiFiList": [
+    {
+      "id": 0,
+      "ssid": "TP-LINK_H",
+      "mode": "Manage",
+      "security": "WPA2-Personal",
+      "channel": "6",
+      "signal": "100",
+      "speed": "150",
+      "status": "connected"
+    },
+    {
+      "id": 1,
+      "ssid": "TP-LINK_L",
+      "mode": "Ad-Hoc",
+      "security": "WPA-Personal",
+      "channel": "1",
+      "signal": "100",
+      "speed": "150",
+      "status": "not connect"
+    }
+  ]
+}

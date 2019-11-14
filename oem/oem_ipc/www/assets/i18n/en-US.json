@@ -1,0 +1,118 @@
+{
+    "APP": {
+        "Title": "IP Camera"
+    },
+    "NAV": {
+        "Brand": "IP Camera",
+        "Preview": "Preview",
+        "Config": "Config",
+        "About": "About",
+        "Login": "Login",
+        "Logout": "Logout"
+    },
+    "PTZ": {
+        "Name": "PTZ",
+        "Preset": "Preset",
+        "Cruise": "Cruise"
+    },
+    "CFG": {
+        "System": {
+            "name": "System",
+            "items": {
+                "Settings": "Settings",
+                "Maintain": "Maintain",
+                "Security": "Security",
+                "User": "User"
+            }
+        },
+        "Network": {
+            "name": "Network",
+            "items": {
+                "Basic": "Basic",
+                "Advanced": "Advanced"
+            }
+        },
+        "Video": {
+            "name": "Video",
+            "items": {
+                "Encoder": "Encoder Param",
+                "ROI": "ROI Region",
+                "RegionCrop": "Region Crop"
+            }
+        },
+        "Audio": {
+            "name": "Audio",
+            "items": {
+                "AudioParam": "Audio Param"
+            }
+        },
+        "Image": {
+            "name": "Image",
+            "items": {
+                "DisplaySettings": "Displayer Settings",
+                "OSDSettings": "OSD Settings",
+                "PrivacyCover": "Privacy Cover",
+                "ScenarioSwitch": "Scenario Switch"
+            }
+        },
+        "Event": {
+            "name": "Event",
+            "items": {
+                "MotionDetect": "Motion Detect",
+                "AlarmInput": "Alarm Input",
+                "AlarmOutput": "Alarm Output",
+                "Abnormal": "Abnormal"
+            }
+        },
+        "Storage": {
+            "name": "Storage",
+            "items": {
+                "PlanSettings": "Plan Settings",
+                "StorageManage": "Storage Manage"
+            }
+        },
+        "Intel": {
+            "name": "Intelligence Analysis",
+            "items": {
+                "MarkCover": "Mask Cover",
+                "MaskArea": "Mask Area",
+                "RuleSettings": "Rule Settings",
+                "Advanced": "Advanced Settings"
+            }
+        }
+    },
+    "ABOUTContent": "A common IP Camera web front-end solution, which uses Angular 8, Bootstrap4, video.js, videojs-flash. Also, uses Typescript, SCSS technoligies, use WASM, WebGL, FFMPEG to support H.265 video playback.",
+    "NICTYPE": "Nic Type",
+    "DHCP": "DHCP",
+    "IPV4IP": "IPv4 Addrress",
+    "IPV4MASK": "IPv4 Mask",
+    "IPV4GW": "IPv4 Gateway",
+    "Auto": "Auto",
+    "10MHD": "10M Half Duplex",
+    "10MD": "10M Dual Duplex",
+    "100MHD": "100M Half Duplex",
+    "100MD": "100M Dual Duplex",
+    "1000MD": "1000M Dual Duplex",
+    "ENABLE": "enable",
+    "PREVIOUS": "prev",
+    "NEXT": "next",
+    "WIFI": {
+        "ID": "id",
+        "MODE": "mode",
+        "SECURITY": "security",
+        "CHANNEL": "channel",
+        "SIGNAL": "signal",
+        "SPEED": "speed",
+        "STATUS": "status",
+        "SECURETYPE": "encrypt type",
+        "PASSPHRASE": "passphrase",
+        "ENABLEWPS": "Enable WPS",
+        "PINCODE": "PIN Code",
+        "ROUTERPIN": "Router PIN",
+        "USEROUTERPIN": "Use Router PIN",
+        "PBCCONNECT": "PBC Connection",
+        "CONNECT": "Connect",
+        "TABLE": "Wi-Fi List",
+        "CONFIG": "Wi-Fi Config"
+    }
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "System",
+    "items": [
+      "Settings",
+      "Maintain",
+      "Security",
+      "User"
+    ]
+  },
+  {
+    "name": "Network",
+    "items": [
+      "Basic",
+      "Advanced"
+    ]
+  },
+  {
+    "name": "Video",
+    "items": [
+      "Encoder",
+      "ROI",
+      "RegionCrop"
+    ]
+  },
+  {
+    "name": "Audio",
+    "items": [
+      "AudioParam"
+    ]
+  },
+  {
+    "name": "Image",
+    "items": [
+      "DisplaySettings",
+      "OSDSettings",
+      "PrivacyCover",
+      "ScenarioSwitch"
+    ]
+  },
+  {
+    "name": "Event",
+    "items": [
+      "MotionDetect",
+      "AlarmInput",
+      "AlarmOutput",
+      "Abnormal"
+    ]
+  },
+  {
+    "name": "Storage",
+    "items": [
+      "PlanSettings",
+      "StorageManage"
+    ]
+  },
+  {
+    "name": "Intel",
+    "items": [
+      "MarkCover",
+      "MaskArea",
+      "RuleSettings",
+      "Advanced"
+    ]
+  }
+]
