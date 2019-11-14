@@ -1,0 +1,118 @@
+{
+	"APP" : {
+    "Title" : "网络摄像机"
+  },
+  "NAV": {
+    "Brand": "网络摄像机",
+    "Preview": "预览",
+    "Config": "配置",
+    "About": "关于",
+    "Login": "登录",
+    "Logout": "注销"
+  },
+  "PTZ": {
+    "Name": "云台",
+    "Preset": "预置位",
+    "Cruise": "巡航路径"
+  },
+  "CFG": {
+    "System": {
+      "name": "系统",
+      "items": {
+        "Settings" : "系统设置",
+        "Maintain" : "系统维护",
+        "Security" : "安全管理",
+        "User" : "用户管理"
+      }
+    },
+    "Network": {
+      "name" : "网络",
+      "items": {
+        "Basic" : "基础设置",
+        "Advanced" : "高级设置"
+      }
+    },
+    "Video": {
+      "name" : "视频",
+      "items": {
+        "Encoder" : "编码参数",
+        "ROI" : "兴趣区域",
+        "RegionCrop" : "区域裁剪"
+      }
+    },
+    "Audio": {
+      "name" : "音频",
+      "items": {
+        "AudioParam" : "音频参数"
+      }
+    },
+    "Image": {
+      "name" : "图像",
+      "items": {
+        "DisplaySettings" : "显示设置",
+        "OSDSettings" : "OSD 设置",
+        "PrivacyCover" : "隐私遮盖",
+        "ScenarioSwitch" : "场景切换"
+      }
+    },
+    "Event": {
+      "name" : "事件",
+      "items": {
+        "MotionDetect" : "移动侦测",
+        "AlarmInput" : "报警输入",
+        "AlarmOutput" : "报警输出",
+        "Abnormal" : "异常"
+      }
+    },
+    "Storage": {
+      "name" : "存储",
+      "items": {
+        "PlanSettings" : "计划配置",
+        "StorageManage" : "存储管理"
+      }
+    },
+    "Intel": {
+      "name" : "智能分析",
+      "items": {
+        "MarkCover" : "叠加和抓图",
+        "MaskArea" : "屏蔽区域",
+        "RuleSettings" : "规则配置",
+        "Advanced" : "高级配置"
+      }
+    }
+  },
+  "ABOUTContent" : "用于网络摄像机的通用网页前端方案，采用 Angular 8、Bootstrap 4、video.js、videojs-flash等库和框架，使用TypeScript、SCSS等语言，使用WASM、WebGL、FFMPEG等技术支持H265播放",
+  "NICTYPE": "网卡类型",
+  "DHCP": "自动获取",
+  "IPV4IP": "设备IPv4地址",
+  "IPV4MASK": "设备IPv4掩码",
+  "IPV4GW": "IPv4网关",
+  "Auto": "自适应",
+  "10MHD": "10M 半双工",
+  "10MD": "10M 双工",
+  "100MHD": "100M 半双工",
+  "100MD": "100M 双工",
+  "1000MD": "1000M 双工",
+  "ENABLE": "启用",
+  "PREVIOUS": "上一页",
+  "NEXT": "下一页",
+  "WIFI": {
+    "ID": "序号",
+    "MODE": "工作模式",
+    "SECURITY": "安全模式",
+    "CHANNEL": "工作信道",
+    "SIGNAL": "信号强度",
+    "SPEED": "速度",
+    "STATUS": "状态",
+    "SECURETYPE": "加密类型",
+    "PASSPHRASE": "密码",
+    "ENABLEWPS": "启用WPS",
+    "PINCODE": "PIN码",
+    "ROUTERPIN": "路由器PIN码",
+    "USEROUTERPIN": "使用路由器PIN码",
+    "PBCCONNECT": "PBC连接",
+    "CONNECT": "连接",
+    "TABLE": "Wi-Fi 列表",
+    "CONFIG": "Wi-Fi 配置"
+  }
+}
