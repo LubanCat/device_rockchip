@@ -49,8 +49,9 @@ copy_to_ntfs()
 
 copy_to_image()
 {
-    echo "Copying $SRC_DIR into $TARGET (root permission required)"
+    ls $SRC_DIR/* &>/dev/null || return 0
 
+    echo "Copying $SRC_DIR into $TARGET (root permission required)"
     mkdir -p $TEMP || return -1
     sudo mount $TARGET $TEMP || return -1
 
@@ -75,9 +76,10 @@ mkimage()
     dd of=$TARGET bs=1M seek=$SIZE count=0 2>&1 || fatal "Failed to dd image!"
     case $FS_TYPE in
         ext[234])
-            if check_host_tool mke2fs; then
+            if mke2fs -h 2>&1 | grep -wq "\-d"; then
                 mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR || return -1
             else
+                echo "Detected old mke2fs(doesn't support '-d' option)!"
                 mke2fs -t $FS_TYPE $TARGET || return -1
                 copy_to_image || return -1
             fi
@@ -104,7 +106,7 @@ mkimage()
 
 mkimage_auto_sized()
 {
-    tar cf $TEMP $SRC_DIR >/dev/null 2>&1
+    tar cf $TEMP $SRC_DIR &>/dev/null
     SIZE=$(du -m $TEMP|grep -o "^[0-9]*")
     rm -rf $TEMP
     echo "Making $TARGET from $SRC_DIR (auto sized)"
