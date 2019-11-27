@@ -5,7 +5,7 @@ export RK_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk1808
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk1808_linux_defconfig
+export RK_KERNEL_DEFCONFIG=puma_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk1808-evb-v10
 # boot image type
