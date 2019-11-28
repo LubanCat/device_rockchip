@@ -17,7 +17,7 @@ then
         exit 0
 fi
 source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
-make
+$TOP_DIR/buildroot/utils/brmake
 if [ $? -ne 0 ]; then
     exit 1
 fi
