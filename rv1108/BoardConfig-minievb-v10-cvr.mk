@@ -79,6 +79,11 @@ export RK_JOBS=12
 ########################################
 #Set ui_resolution
 export RK_UI_RESOLUTION=1280x720
+# Set face detection parameter
+export RK_FACE_DETECTION_WIDTH=720
+export RK_FACE_DETECTION_HEIGHT=1280
+export RK_FACE_DETECTION_OFFSET_X=-50
+export RK_FACE_DETECTION_OFFSET_Y=-50
 # Set UVC source
 export RK_UVC_USE_SL_MODULE=n
 # Set first start application
