@@ -82,8 +82,8 @@ export RK_UI_RESOLUTION=360x640
 # Set face detection parameter
 export RK_FACE_DETECTION_WIDTH=720
 export RK_FACE_DETECTION_HEIGHT=1280
-export RK_FACE_DETECTION_OFFSET_X=-50
-export RK_FACE_DETECTION_OFFSET_Y=-50
+export RK_FACE_DETECTION_OFFSET_X=50
+export RK_FACE_DETECTION_OFFSET_Y=-20
 # Set UVC source
 export RK_UVC_USE_SL_MODULE=y
 # Set first start application
