@@ -15,6 +15,7 @@ function usage()
 	echo "uboot              -build uboot"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
+	echo "toolchain          -build toolchain"
 	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
@@ -76,6 +77,21 @@ function build_modules(){
 		echo "====Build kernel ok!===="
 	else
 		echo "====Build kernel failed!===="
+		exit 1
+	fi
+}
+
+function build_toolchain(){
+	echo "==========Start build toolchain =========="
+	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
+	echo "========================================="
+	[[ -z "$RK_CFG_TOOLCHAIN" ]] \
+		&& /usr/bin/time -f "you take %E to build toolchain" $COMMON_DIR/mk-toolchain.sh $BOARD_CONFIG \
+		|| echo "No toolchain step, skip!"
+	if [ $? -eq 0 ]; then
+		echo "====Build toolchain ok!===="
+	else
+		echo "====Build toolchain failed!===="
 		exit 1
 	fi
 }
@@ -253,6 +269,7 @@ function build_all(){
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS"
+	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
@@ -260,6 +277,7 @@ function build_all(){
 	echo "============================================"
 	build_uboot
 	build_kernel
+	build_toolchain && \
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
 	build_ramboot
