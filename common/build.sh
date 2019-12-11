@@ -1,5 +1,7 @@
 #!/bin/bash
 
+unset RK_CFG_TOOLCHAIN
+
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
@@ -85,7 +87,7 @@ function build_toolchain(){
 	echo "==========Start build toolchain =========="
 	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
 	echo "========================================="
-	[[ -z "$RK_CFG_TOOLCHAIN" ]] \
+	[[ $RK_CFG_TOOLCHAIN ]] \
 		&& /usr/bin/time -f "you take %E to build toolchain" $COMMON_DIR/mk-toolchain.sh $BOARD_CONFIG \
 		|| echo "No toolchain step, skip!"
 	if [ $? -eq 0 ]; then
