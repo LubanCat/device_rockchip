@@ -220,7 +220,7 @@ function build_rootfs(){
 			;;
 		distro)
 			build_distro
-			ROOTFS_IMG=rootfs/linaro-rootfs.img
+			ROOTFS_IMG=yocto/output/images/rootfs.$RK_ROOTFS_TYPE
 			;;
 		*)
 			build_buildroot
