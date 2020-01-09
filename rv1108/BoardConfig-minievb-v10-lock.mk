@@ -34,6 +34,7 @@ export RK_ROOTFS_TYPE=cpio.lz4
 #            Loader Config             #
 ########################################
 # Set loader config
+export RK_LOADER_BUILD_TYPE=nor
 export RK_LOADER_POWER_HOLD_GPIO_GROUP=none
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=none
 export RK_LOADER_EMMC_TURNING_DEGREE=0
