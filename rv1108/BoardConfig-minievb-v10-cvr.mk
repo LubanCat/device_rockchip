@@ -12,7 +12,7 @@ export RK_TARGET_PRODUCT=rv1108
 #             Board Info               #
 ########################################
 #Target Board Version
-export RK_TARGET_BOARD_VERSION=minievb-v10
+export RK_TARGET_BOARD_VERSION=minievb-v10-cvr
 # Set flash type. support <emmc, nand, nor>
 export RK_STORAGE_TYPE=nor
 # Set depth camera
@@ -34,6 +34,7 @@ export RK_ROOTFS_TYPE=cpio.lz4
 #            Loader Config             #
 ########################################
 # Set loader config
+export RK_LOADER_BUILD_TYPE=all
 export RK_LOADER_POWER_HOLD_GPIO_GROUP=none
 export RK_LOADER_POWER_HOLD_GPIO_INDEX=none
 export RK_LOADER_EMMC_TURNING_DEGREE=0
@@ -44,7 +45,7 @@ export RK_LOADER_PREISP_EN=0
 #            Kernel Config             #
 ########################################
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rv1108_defconfig
+export RK_KERNEL_DEFCONFIG=rv1108_cvr_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rv1108-${RK_TARGET_BOARD_VERSION}
 
