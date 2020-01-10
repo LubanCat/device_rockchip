@@ -91,4 +91,4 @@ export RK_FACE_FOV_SCALE_FACTOR_Y=1
 # Set UVC source
 export RK_UVC_USE_SL_MODULE=n
 # Set first start application
-export RK_FIRST_START_APP="cvr udevd udevadm"
+export RK_FIRST_START_APP="cvr system_manager device_manager"
