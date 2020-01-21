@@ -14,8 +14,6 @@ export RK_BOOT_IMG=boot.img
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
-# Toolchain config
-export RK_CFG_TOOLCHAIN=rockchip_puma_toolchain
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_puma
 # Recovery config
