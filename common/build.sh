@@ -400,7 +400,10 @@ for option in ${OPTIONS:-allsave}; do
 	echo "processing option: $option"
 	case $option in
 		BoardConfig*.mk)
-			CONF=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$option
+			option=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$option
+			;&
+		*.mk)
+			CONF=$(realpath $option)
 			echo "switching to board: $CONF"
 			if [ ! -f $CONF ]; then
 				echo "not exist!"
