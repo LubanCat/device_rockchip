@@ -15,6 +15,9 @@ MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
+FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
+OEM_FAKEROOT_SCRIPT=$ROCKDEV/oem.fs
+USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
@@ -139,7 +142,15 @@ if [ $RK_OEM_DIR ]
 then
 	if [ -d $OEM_DIR ]
 	then
-		$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE
+		echo "#!/bin/sh" > $OEM_FAKEROOT_SCRIPT
+		echo "set -e" >> $OEM_FAKEROOT_SCRIPT
+		if [ -d $OEM_DIR/www ]; then
+			echo "chown -R www-data:www-data $OEM_DIR/www" >> $OEM_FAKEROOT_SCRIPT
+		fi
+		echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE"  >> $OEM_FAKEROOT_SCRIPT
+		chmod a+x $OEM_FAKEROOT_SCRIPT
+		$FAKEROOT_TOOL -- $OEM_FAKEROOT_SCRIPT
+		rm -f $OEM_FAKEROOT_SCRIPT
 	else
 		echo "warning: $OEM_DIR  not found!"
 	fi
@@ -149,7 +160,12 @@ if [ $RK_USERDATA_DIR ]
 then
 	if [ -d $USER_DATA_DIR ]
 	then
-		$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE
+		echo "#!/bin/sh" > $USERDATA_FAKEROOT_SCRIPT
+		echo "set -e" >> $USERDATA_FAKEROOT_SCRIPT
+		echo "$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE"  >> $USERDATA_FAKEROOT_SCRIPT
+		chmod a+x $USERDATA_FAKEROOT_SCRIPT
+		$FAKEROOT_TOOL -- $USERDATA_FAKEROOT_SCRIPT
+		rm -f $USERDATA_FAKEROOT_SCRIPT
 	else
 		echo "warning: $USER_DATA_DIR not found!"
 	fi
