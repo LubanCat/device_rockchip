@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk1806
+export RK_UBOOT_DEFCONFIG=rk1808
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rk1806_linux_defconfig
 # Kernel dts
