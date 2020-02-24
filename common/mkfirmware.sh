@@ -22,6 +22,7 @@ TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
 LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
+SPL=$TOP_DIR/u-boot/*_loader_spl.bin
 #SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
 MKIMAGE=$SCRIPT_DIR/mk-image.sh
 mkdir -p $ROCKDEV
@@ -193,6 +194,11 @@ if [ -f $LOADER ]
 then
         echo -n "create loader..."
         ln -rsf $LOADER $ROCKDEV/MiniLoaderAll.bin
+        echo "done."
+elif [ -f $SPL ]
+then
+	echo -n "create spl..."
+        ln -rsf $SPL $ROCKDEV/MiniLoaderAll.bin
         echo "done."
 else
 	echo -e "\e[31m error: $LOADER not found,or there are multiple loaders! \e[0m"

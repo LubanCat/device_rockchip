@@ -15,6 +15,7 @@ function usage()
 	echo "Available options:"
 	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "uboot              -build uboot"
+	echo "spl                -build spl"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
@@ -50,6 +51,22 @@ function build_uboot(){
 		echo "====Build uboot ok!===="
 	else
 		echo "====Build uboot failed!===="
+		exit 1
+	fi
+}
+
+function build_spl(){
+	echo "============Start build spl============"
+	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
+	echo "========================================="
+	if [ -f u-boot/*spl.bin ]; then
+		rm u-boot/*spl.bin
+	fi
+	cd u-boot && ./make.sh $RK_SPL_DEFCONFIG && ./make.sh spl-s && cd -
+	if [ $? -eq 0 ]; then
+		echo "====Build spl ok!===="
+	else
+		echo "====Build spl failed!===="
 		exit 1
 	fi
 }
@@ -269,6 +286,7 @@ function build_all(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
+	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS"
 	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
@@ -277,7 +295,15 @@ function build_all(){
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
-	build_uboot
+
+	#note: if build spl, it will delete loader.bin in uboot directory,
+	# so can not build uboot and spl at the same time.
+	if [ -z $RK_SPL_DEFCONFIG ]; then
+		build_uboot
+	else
+		build_spl
+	fi
+
 	build_kernel
 	build_toolchain && \
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
