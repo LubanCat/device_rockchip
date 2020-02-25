@@ -16,7 +16,7 @@ export RK_BOOT_IMG=zboot.img
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-robot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_px30_robot64
 # Recovery config
