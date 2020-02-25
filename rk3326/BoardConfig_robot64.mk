@@ -13,7 +13,7 @@ export RK_KERNEL_DTS=rk3326-evb-lp3-v10-robot-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm64/boot/image
+export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
 export RK_PARAMETER=parameter-robot.txt
