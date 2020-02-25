@@ -18,7 +18,7 @@ export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
 export RK_PARAMETER=parameter.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_px30_64_open
+export RK_CFG_BUILDROOT=rockchip_px30_64_opensource
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px30_recovery
 # ramboot config
