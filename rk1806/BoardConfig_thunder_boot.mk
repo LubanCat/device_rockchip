@@ -5,7 +5,7 @@ export RK_ARCH=arm64
 # SPL defconfig
 export RK_SPL_DEFCONFIG=rk1808
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk1806_linux_defconfig
+export RK_KERNEL_DEFCONFIG=rk1806_linux_thunder_boot_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk1806-thunder-boot
 # boot image type
