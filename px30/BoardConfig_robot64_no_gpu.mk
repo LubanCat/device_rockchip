@@ -11,16 +11,16 @@ export RK_KERNEL_DEFCONFIG=px30_linux_robot_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=px30-evb-ddr3-v10-robot-no-gpu-linux
 # boot image type
-export RK_BOOT_IMG=boot.img
+export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-robot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_px30_robot64_no_gpu
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_px30_recovery
+export RK_CFG_RECOVERY=rockchip_px30_robot_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
@@ -30,14 +30,14 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=px30
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
+export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
-#OEM config: /oem/dueros/aispeech/iflytekSDK/CaeDemo_VAD/smart_voice
+#OEM config
 export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
