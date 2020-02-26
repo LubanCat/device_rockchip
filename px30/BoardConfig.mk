@@ -19,6 +19,8 @@ export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 export RK_PARAMETER=parameter.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_px30_64
+# Debian 10 config
+export RK_DISTRO_DEFCONFIG=px30_defconfig
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px30_recovery
 # ramboot config
