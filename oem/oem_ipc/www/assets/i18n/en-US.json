@@ -83,19 +83,21 @@
     },
     "ABOUTContent": "A common IP Camera web front-end solution, which uses Angular 8, Bootstrap4, video.js, videojs-flash. Also, uses Typescript, SCSS technoligies, use WASM, WebGL, FFMPEG to support H.265 video playback.",
     "NICTYPE": "Nic Type",
-    "DHCP": "DHCP",
-    "IPV4IP": "IPv4 Addrress",
-    "IPV4MASK": "IPv4 Mask",
-    "IPV4GW": "IPv4 Gateway",
-    "Auto": "Auto",
     "10MHD": "10M Half Duplex",
     "10MD": "10M Dual Duplex",
     "100MHD": "100M Half Duplex",
     "100MD": "100M Dual Duplex",
     "1000MD": "1000M Dual Duplex",
-    "ENABLE": "enable",
+
+    "DHCP": "DHCP",
+    "IPV4IP": "IPv4 Addrress",
+    "IPV4MASK": "IPv4 Mask",
+    "IPV4GW": "IPv4 Gateway",
+    "enable": "enable",
+
     "PREVIOUS": "prev",
     "NEXT": "next",
+
     "WIFI": {
         "ID": "id",
         "MODE": "mode",
@@ -114,5 +116,144 @@
         "CONNECT": "Connect",
         "TABLE": "Wi-Fi List",
         "CONFIG": "Wi-Fi Config"
-    }
+    },
+
+    "DEV_MANAGE": "Device Manage",
+    "port": "Port",
+
+    "add": "Add",
+    "del": "Del",
+    "save": "Save",
+
+    "streamType": "Stream Type",
+    "mainStream": "Main Stream",
+    "subStream": "Sub Stream",
+    "thirdStream": "Third Stream",
+
+    "persistentArea": "Persistent Area",
+    "areaID": "Area ID",
+    "areaLevel": "Area Level",
+    "areaName": "Area Name",
+
+    "videoType": "Video Type",
+    "videoStream": "Video Stream",
+    "compositeStream": "Composite Stream",
+
+    "resolution": "Resolution",
+
+    "RCMode": "RateControl Mode",
+    "CBR": "CBR",
+    "VBR": "VBR",
+
+    "imageQuality": "Image Quality",
+    "lowest": "Lowest",
+    "lower": "Lower",
+    "medium": "Medium",
+    "higher": "Higher",
+    "highest": "Highest",
+
+    "frameRate": "FPS",
+    "maxRate": "Maximum Bitrate",
+
+    "outputDataType": "Video Encoder Type",
+    "smart": "Smart",
+    "IFrameInterval": "I Frame Interval",
+    "audioCodec": "Audio Codec",
+    "audioInput": "Audio Input",
+    "micIn": "Mic In",
+    "lineIn": "Line In",
+    "inputVolume": "Input Volume",
+    "noiseFiltering": "Ambient Noise Filtering",
+
+    "open": "Open",
+    "close": "Close",
+
+    "RCQuality": "Encoder Complexity",
+    "high": "High",
+    "low": "Low",
+
+    "rateSmooth": "Rate Smooth",
+    "smooth": "Clarity<->Smooth",
+
+    "scenario": "Scenario",
+    "normal": "Normal",
+    "frontLight": "Front Light",
+    "lowIllumination": "lowIllumination",
+    "custom1": "Custom 1",
+    "custom2": "Custom 2",
+
+    "dayNightConversion": "Day Night Conversion",
+    "graphicOptions": "Graphic Options",
+    "lightness": "Lightness",
+    "contrast": "Contrast",
+    "saturation": "Saturation",
+    "sharpness": "Sharpness",
+
+    "exposure": "Exposure",
+    "apertureType": "Aperture Type",
+    "auto": "Automatic",
+    "manual": "Manual",
+    "automaticApertureSensitivity": "Automatic Aperture Sensitivity",
+    "exposureTime": "Exposure Time",
+    "gain": "Gain",
+
+    "ICR": "ICR",
+    "day": "Day",
+    "night": "Night",
+    "timing": "Timing",
+    "alarmInputTrigger": "Alarm Input Trigger",
+
+    "sensitivity": "Sensitivity",
+    "TTF": "TTF",
+    "overexposeSuppress": "Over Expose Suppress",
+    "overexposeSuppressType": "Over Expose Suppress Type",
+    "distanceLevel": "Distance Level",
+
+    "backlight": "Backlight",
+    "backlightCompensationArea": "Backlight Compensation Area",
+    "WDR": "WDR",
+    "WDRLevel": "WDR Level",
+    "HLC": "HighLight Compensation",
+    "HLCLevel": "HighLight Compensation Level",
+
+    "whiteBalance": "White Balance",
+    "manualWhiteBalance": "Manual White Balance",
+    "autoWhiteBalance1": "Auto White Balance 1",
+    "autoWhiteBalance2": "Auto White Balance 2",
+    "lockingWhiteBalance": "Locking White Balance",
+    "fluorescentLamp": "Fluorescent Lamp",
+    "incandescent": "Incandescent",
+    "warmLight": "Warm Light",
+    "naturalLight": "Natural Light",
+    "whiteBalanceRed": "WhiteBalance Red Gain",
+    "whiteBalanceBlue": "WhiteBalance Blue Gain",
+
+    "imageEnhancement": "Image Enhancement",
+
+    "DNR": "DNR",
+    "general": "General Mode",
+    "advanced": "Advanced Mode",
+
+    "noiseLevel": "Noise Level",
+    "spatialDenoiseLevel": "Spatial Denoise Level",
+    "temporalDenoiseLevel": "Temporal Denoise Level",
+    "dehaze": "Dehaze",
+    "antiShakeDSP": "Anti Shake DSP",
+    "grayRange": "Gray Range",
+
+    "videoAdjustment": "Video Adjustment",
+    "mirror": "Mirror",
+    "leftRight": "Left Right",
+    "upDown": "Up Down",
+    "rotate": "Rotate",
+
+    "SCN": "SCN",
+    "indoor": "Indoor",
+    "outdoor": "Outdoor",
+
+    "videoStandard": "Video Standard",
+    "videoInputMode": "Video Input Mode",
+
+    "other": "Other",
+    "localOutput": "Local Output"
 }

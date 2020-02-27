@@ -1,0 +1,96 @@
+[
+  {
+    "name": "streamType",
+    "items": [
+      "mainStream",
+      "subStream",
+      "thirdStream"
+    ]
+  },
+  {
+    "name": "videoType",
+    "items": [
+      "videoStream",
+      "compositeStream"
+    ]
+  },
+  {
+    "name": "resolution",
+    "items": [
+      "1280*720",
+      "1280*960",
+      "1920*1080",
+      "1920*1536"
+    ]
+  },
+  {
+    "name": "RCMode",
+    "items": [
+      "CBR",
+      "VBR"
+    ]
+  },
+  {
+    "name": "imageQuality",
+    "items": [
+      "lowest",
+      "lower",
+      "medium",
+      "higher",
+      "highest"
+    ]
+  },
+  {
+    "name": "frameRate",
+    "items": [
+      "1/16",
+      "1/8",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "6",
+      "8",
+      "10",
+      "12",
+      "15",
+      "16",
+      "18",
+      "20",
+      "25",
+      "30"
+    ]
+  },
+  {
+    "name": "outputDataType",
+    "items": [
+      "H.264",
+      "H.265",
+      "MPEG4",
+      "MJPEG"
+    ]
+  },
+  {
+    "name": "smart",
+    "items": [
+      "open",
+      "close"
+    ]
+  },
+  {
+    "name": "RCQuality",
+    "items": [
+      "high",
+      "medium",
+      "low"
+    ]
+  },
+  {
+    "name": "SVC",
+    "items": [
+      "open",
+      "close"
+    ]
+  }
+]

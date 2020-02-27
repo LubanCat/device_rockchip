@@ -107,62 +107,201 @@
       "ro": true
     }
   ],
-  "NetworkInterface": [
+  "lan": {
+    "link": {
+      "sAddress": "84:C2:E4:1B:66:D8",
+      "sInterface": "eth0",
+      "sNicSpeed": "auto"
+    },
+    "ipv4": {
+      "sV4Address": "172.16.21.46",
+      "sV4Gateway": "172.16.21.1",
+      "sV4Method": "dhcp",
+      "sV4Netmask": "255.255.255.0"
+    },
+    "sDNS": "10.10.10.10 8.8.8.8",
+    "sSecurity": ""
+  },
+  "wlan": {
+    "link": {
+      "sAddress": "84:C2:E4:1B:66:D7",
+      "sInterface": "wlan",
+      "sNicSpeed": "auto"
+    },
+    "ipv4": {
+      "sV4Address": "172.16.21.47",
+      "sV4Gateway": "172.16.21.1",
+      "sV4Method": "dhcp",
+      "sV4Netmask": "255.255.255.0"
+    },
+    "sDNS": "10.10.10.188 8.8.8.8",
+    "sSecurity": ""
+  },
+  "network-port": [
     {
       "id": 0,
-      "interface": "LAN",
-      "mac": "AA:BB:CC:DD:EE:FF",
-      "ipv4": {
-        "dhcp": false,
-        "address": "172.16.21.251",
-        "gateway": "172.16.21.1",
-        "netmask": "255.255.255.0",
-        "broadcast": "172.16.21.255",
-        "dns1": "223.5.5.5",
-        "dns2": "8.8.4.4"
-      },
-      "ipv6": {
-        "dhcp": true
-      }
+      "iPortNo": 80,
+      "sProtocol": "HTTP"
     },
     {
       "id": 1,
-      "interface": "WAN",
-      "mac": "AA:BB:CC:DD:EE:FF",
-      "ipv4": {
-        "dhcp": true,
-        "address": "172.16.21.251",
-        "gateway": "172.16.21.1",
-        "netmask": "255.255.255.0",
-        "broadcast": "172.16.21.255",
-        "dns1": "223.5.5.5",
-        "dns2": "8.8.8.8"
+      "iPortNo": 443,
+      "sProtocol": "HTTPS"
+    },
+    {
+      "id": 2,
+      "iPortNo": 8080,
+      "sProtocol": "DEV_MANAGE"
+    },
+    {
+      "id": 3,
+      "iPortNo": 554,
+      "sProtocol": "RTSP"
+    },
+    {
+      "id": 4,
+      "iPortNo": 1935,
+      "sProtocol": "RTMP"
+    }
+  ],
+  "audio": [
+    {
+      "iBitRate": 300,
+      "iSampleRate": 16000,
+      "iVolume": 82,
+      "sANS": "close",
+      "sEncodeType": "AAC",
+      "sInput": "lineIn",
+      "id": 0
+    }
+  ],
+  "video": [
+    {
+      "iGOP": 50,
+      "iMaxRate": 3072,
+      "iStreamSmooth": 15,
+      "sFrameRate": "30",
+      "sImageQuality": "higher",
+      "sOutputDataType": "H.265",
+      "sRCMode": "VBR",
+      "sRCQuality": "medium",
+      "sResolution": "1920*1080",
+      "sSVC": "open",
+      "sSmart": "open",
+      "sStreamType": "mainStream",
+      "sVideoType": "compositeStream",
+      "id": 0
+    },
+    {
+      "id": 1,
+      "iGOP": 30,
+      "iMaxRate": 512,
+      "iStreamSmooth": 50,
+      "sFrameRate": "15",
+      "sImageQuality": "lower",
+      "sOutputDataType": "H.265",
+      "sRCMode": "CBR",
+      "sRCQuality": "high",
+      "sResolution": "1280*960",
+      "sSVC": "close",
+      "sSmart": "close",
+      "sStreamType": "subStream",
+      "sVideoType": "compositeStream"
+    },
+    {
+      "id": 2,
+      "iGOP": 30,
+      "iMaxRate": 256,
+      "iStreamSmooth": 50,
+      "sFrameRate": "15",
+      "sImageQuality": "medium",
+      "sOutputDataType": "H.264",
+      "sRCMode": "CBR",
+      "sRCQuality": "high",
+      "sResolution": "1280*720",
+      "sSVC": "close",
+      "sSmart": "close",
+      "sStreamType": "thirdStream",
+      "sVideoType": "videoStream"
+    }
+  ],
+  "stream-url": [
+    {
+      "id": 0,
+      "sStreamProtocol": "RTMP",
+      "sURL": "rtmp://172.16.21.52:1935/live/mainstream"
+    },
+    {
+      "id": 1,
+      "sStreamProtocol": "RTMP",
+      "sURL": "rtmp://172.16.21.52:1935/live/substream"
+    },
+    {
+      "id": 2,
+      "sStreamProtocol": "RTSP",
+      "sURL": "rtsp://172.16.21.46:554/thirdstream"
+    }
+  ],
+  "image": [
+    {
+      "id": 0,
+      "imageAdjustment": {
+        "iBrightness": 16,
+        "iContrast": 30,
+        "iSaturation": 58,
+        "iSharpness": 80
       },
-      "ipv6": {
-        "dhcp": true
+      "exposure": {
+        "sIrisType": "manual",
+        "iAutoIrisLevel": 76,
+        "sExposureTime": "1/250",
+        "iExposureGain": 0
+      },
+      "nightToDay": {
+        "sNightToDay": "manual",
+        "iNightToDayFilterLevel": 4,
+        "iNightToDayFilterTime": 69,
+        "sBeginTime": "07:00:00",
+        "sEndTime": "18:00:00",
+        "sIrcutFilterAction": "day",
+        "sOverexposeSuppressType": "auto",
+        "sOverexposeSuppress": "open",
+        "iDistanceLevel": 1
+      },
+      "BLC": {
+        "iBLCRegionHeight": 92,
+        "iBLCRegionWidth": 120,
+        "iHLCLevel": 0,
+        "iPositionX": 0,
+        "iPositionY": 0,
+        "iWDRLevel": 0,
+        "sBLCRegion": "close",
+        "sHLC": "close",
+        "sWDR": "close"
+      },
+      "whiteBlance": {
+        "sWhiteBlanceStyle": "manualWhiteBalance",
+        "iWhiteBalanceBlue": 67,
+        "iWhiteBalanceRed": 88
+      },
+      "imageEnhancement": {
+        "sNoiseReduceMode": "advanced",
+        "iDenoiseLevel": 30,
+        "iSpatialDenoiseLevel": 0,
+        "iTemporalDenoiseLevel": 0,
+        "sDehaze": "open",
+        "iDehazeLevel": 0,
+        "sDIS": "open",
+        "sGrayScaleMode": "[16-235]"
+      },
+      "videoAdjustment": {
+        "sImageFlip": "leftRight",
+        "sSceneMode": "outdoor",
+        "sPowerLineFrequencyMode": "PAL(50HZ)"
       }
     }
   ],
-  "WiFiList": [
-    {
-      "id": 0,
-      "ssid": "TP-LINK_H",
-      "mode": "Manage",
-      "security": "WPA2-Personal",
-      "channel": "6",
-      "signal": "100",
-      "speed": "150",
-      "status": "connected"
-    },
-    {
-      "id": 1,
-      "ssid": "TP-LINK_L",
-      "mode": "Ad-Hoc",
-      "security": "WPA-Personal",
-      "channel": "1",
-      "signal": "100",
-      "speed": "150",
-      "status": "not connect"
-    }
-  ]
+  "scenario": {
+    "sScenario": "frontlight"
+  }
 }

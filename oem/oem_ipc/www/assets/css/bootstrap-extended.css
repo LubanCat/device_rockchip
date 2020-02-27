@@ -165,6 +165,7 @@ form .form-group {
 
 form .form-control {
   border: 1px solid #ccd6e6;
+  padding: 0;
   color: #3f587e; }
   form .form-control::-webkit-input-placeholder {
     color: #b1c1d8; }
