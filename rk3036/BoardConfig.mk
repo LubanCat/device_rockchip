@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=kylin-rk3036
+export RK_UBOOT_DEFCONFIG=rk3036
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
