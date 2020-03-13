@@ -289,7 +289,7 @@
       "iPositionX": 0,
       "iPositionY": 0,
       "sChannelName": "channel 2",
-      "sChannelNameOverlayEnabled": "false"
+      "iChannelNameOverlayEnabled": 1
     },
     "characterOverlay": [
       {
@@ -297,73 +297,127 @@
         "iPositionY": 0,
         "id": 0,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 1
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 1,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 2,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 3,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 4,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 5,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 6,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       },
       {
         "iPositionX": 0,
         "iPositionY": 0,
         "id": 7,
         "sDisplayText": "test",
-        "sIsPersistentText": "true",
-        "sTextOverlayEnabled": "false"
+        "iIsPersistentText": 1,
+        "iTextOverlayEnabled": 0
       }
     ],
-    "dataTimeOverlay": {
+    "dateTimeOverlay": {
       "iPositionX": 0,
       "iPositionY": 0,
       "sDateStyle": "MM-DD-YYYY",
-      "sDateTimeOverlayEnabled": "false",
-      "sDisplayWeek": "true",
+      "iDateTimeOverlayEnabled": 0,
+      "iDisplayWeekEnabled": 1,
       "sTimeStyle": "24hour"
+    },
+    "normalizedScreenSize": {
+      "iNormalizedScreenHeight": 480,
+      "iNormalizedScreenWidth": 704
+    }
+  },
+  "privacy-mask": {
+    "privacyMask": [
+      {
+        "iMaskHeight": 100,
+        "iMaskWidth": 100,
+        "iPositionX": 0,
+        "iPositionY": 0,
+        "id": 0,
+        "iPrivacyMaskEnabled": 0
+      },
+      {
+        "iMaskHeight": 100,
+        "iMaskWidth": 100,
+        "iPositionX": 0,
+        "iPositionY": 0,
+        "id": 1,
+        "iPrivacyMaskEnabled": 0
+      },
+      {
+        "iMaskHeight": 100,
+        "iMaskWidth": 100,
+        "iPositionX": 0,
+        "iPositionY": 0,
+        "id": 2,
+        "iPrivacyMaskEnabled": 0
+      },
+      {
+        "iMaskHeight": 100,
+        "iMaskWidth": 100,
+        "iPositionX": 0,
+        "iPositionY": 0,
+        "id": 3,
+        "iPrivacyMaskEnabled": 0
+      }
+    ],
+    "normalizedScreenSize": {
+      "iNormalizedScreenHeight": 480,
+      "iNormalizedScreenWidth": 704
+    }
+  },
+  "PicForm": {
+    "imageOverlay": {
+      "iImageHeight": 100,
+      "iImageWidth": 100,
+      "iPositionX": 0,
+      "iPositionY": 0,
+      "iImageOverlayEnabled": 1,
+      "iTransparentColorEnabled": 1
     },
     "normalizedScreenSize": {
       "iNormalizedScreenHeight": 480,
@@ -442,5 +496,51 @@
     "iTotalVideoVolume": 2.262224,
     "iVideoQuotaRatio": 50,
     "id": 2
-  }
+  },
+  "wifi-enabled": {
+    "iPower": 1,
+    "id": 1,
+    "sType": "wifi"
+  },
+  "wifi-list": [
+    {
+      "Favorite": 1,
+      "Strength": 68,
+      "sName": "zxmr-24",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 0,
+      "Strength": 58,
+      "sName": "zxmr-23",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk2",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 0,
+      "Strength": 70,
+      "sName": "zxmr-22",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk3",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 0,
+      "Strength": 3,
+      "sName": "zxmr-21",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk4",
+      "sState": "ready",
+      "sType": "wifi"
+    }
+  ],
+  "scan": {},
+  "wifi-on": {},
+  "wifi-off": {}
 }
