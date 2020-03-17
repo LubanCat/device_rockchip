@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3399pro
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3399pro-evb-v14-linux
+export RK_KERNEL_DTS=rk3399pro-evb-v11-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -15,7 +15,7 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3399pro_combine
+export RK_CFG_BUILDROOT=rockchip_rk3399pro
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3399pro_recovery
 # ramboot config
