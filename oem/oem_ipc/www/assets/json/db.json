@@ -542,5 +542,158 @@
   ],
   "scan": {},
   "wifi-on": {},
-  "wifi-off": {}
+  "wifi-off": {},
+
+  "roi": {
+    "normalizedScreenSize": {
+      "iNormalizedScreenHeight": 480,
+      "iNormalizedScreenWidth": 704
+    },
+    "ROIRegionList": [
+      {
+        "sStreamType": "mainStream",
+        "iStreamEnabled": 1,
+        "iROIId": 1,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "mainStream",
+        "iStreamEnabled": 1,
+        "iROIId": 2,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "mainStream",
+        "iStreamEnabled": 1,
+        "iROIId": 3,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "mainStream",
+        "iStreamEnabled": 1,
+        "iROIId": 4,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "subStream",
+        "iStreamEnabled": 1,
+        "iROIId": 1,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "subStream",
+        "iStreamEnabled": 1,
+        "iROIId": 2,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "subStream",
+        "iStreamEnabled": 1,
+        "iROIId": 3,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "subStream",
+        "iStreamEnabled": 1,
+        "iROIId": 4,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "thirdStream",
+        "iStreamEnabled": 1,
+        "iROIId": 1,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "thirdStream",
+        "iStreamEnabled": 1,
+        "iROIId": 2,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "thirdStream",
+        "iStreamEnabled": 1,
+        "iROIId": 3,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      },
+      {
+        "sStreamType": "thirdStream",
+        "iStreamEnabled": 1,
+        "iROIId": 4,
+        "iROIEnabled": 1,
+        "sName": "test",
+        "iQualityLevelOfROI": 1,
+        "iHeight": 100,
+        "iWidth": 100,
+        "iPositionX": 1,
+        "iPositionY": 1
+      }
+    ]
+  }
 }

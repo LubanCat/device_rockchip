@@ -8,7 +8,8 @@
     "Config": "配置",
     "About": "关于",
     "Login": "登录",
-    "Logout": "注销"
+    "Logout": "注销",
+    "Download": "回放"
   },
   "PTZ": {
     "Name": "云台",
@@ -131,6 +132,7 @@
     "AUTOCONNECT": "Wi-Fi 自动连接"
   },
 
+  "scan": "扫描",
   "DEV_MANAGE": "设备管理",
   "port": "端口",
 
@@ -401,5 +403,27 @@
     "videoRemainingSpace": "录像剩余空间",
     "snapshotQuotaPercentage": "抓图配额百分比",
     "videoQuotaPercentage": "录像配额百分比"
-  }
+  },
+
+  "Download": {
+    "picture": "截图",
+    "record": "录像",
+    "InquireCondition": "查询条件",
+    "StartDownload": "开始下载",
+    "StopDownload": "停止下载",
+    "FileType": "文件类型",
+    "StartTime": "开始时间",
+    "EndTime": "结束时间",
+    "PositiveOrder": "正序",
+    "ReverseOrder": "逆序",
+    "Inquire": "查询",
+    "DownloadList": "下载列表（点击文件名预览）",
+    "Order": "序号",
+    "FileName": "文件名",
+    "FileTime": "时间",
+    "FileSize": "文件大小",
+    "DownloadProgress": "下载进度",
+    "OrderedByTime": "按时间排序",
+    "Preview": "预览"
+}
 }
