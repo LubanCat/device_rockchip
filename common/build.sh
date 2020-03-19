@@ -9,6 +9,49 @@ BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
 
+function usagekernel()
+{
+	echo "cd kernel"
+	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG"
+	echo "make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS"
+}
+
+function usageuboot()
+{
+	echo "cd u-boot"
+	echo "./make.sh $RK_UBOOT_DEFCONFIG"
+}
+
+function usagerootfs()
+{
+	echo "source envsetup.sh $RK_CFG_BUILDROOT"
+
+	case "${RK_ROOTFS_SYSTEM:-buildroot}" in
+		yocto)
+			;;
+		debian)
+			;;
+		distro)
+			;;
+		*)
+			echo "make"
+			;;
+	esac
+}
+
+function usagerecovery()
+{
+	echo "source envsetup.sh $RK_CFG_RECOVERY"
+	echo "$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY"
+}
+
+function usagemodules()
+{
+	echo "cd kernel"
+	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG"
+	echo "make ARCH=$RK_ARCH modules -j$RK_JOBS"
+}
+
 function usage()
 {
 	echo "Usage: build.sh [OPTIONS]"
@@ -417,7 +460,12 @@ function build_allsave(){
 #=========================
 
 if echo $@|grep -wqE "help|-h"; then
-	usage
+	if [ -n "$2" -a "$(type -t usage$2)" == function ]; then
+		echo "###Current SDK Default [ $2 ] Build Command###"
+		eval usage$2
+	else
+		usage
+	fi
 	exit 0
 fi
 
