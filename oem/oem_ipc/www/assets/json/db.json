@@ -286,82 +286,82 @@
       "sOSDFrontColorMode": "customize"
     },
     "channelNameOverlay": {
-      "iPositionX": 0,
-      "iPositionY": 0,
+      "iPositionX": 393.52317880794703,
+      "iPositionY": 198.65486725663715,
       "sChannelName": "channel 2",
       "iChannelNameOverlayEnabled": 1
     },
     "characterOverlay": [
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 432.4238410596027,
+        "iPositionY": 299.1858407079646,
         "id": 0,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 1
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 312.3708609271523,
+        "iPositionY": 272.283185840708,
         "id": 1,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 0
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 427.7615894039735,
+        "iPositionY": 251.0442477876106,
         "id": 2,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
-        "iTextOverlayEnabled": 0
+        "sIsPersistentText": "",
+        "iTextOverlayEnabled": 1
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 89.74834437086093,
+        "iPositionY": 96.7079646017699,
         "id": 3,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 0
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 431.25827814569544,
+        "iPositionY": 365.7345132743363,
         "id": 4,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
-        "iTextOverlayEnabled": 0
+        "sIsPersistentText": "",
+        "iTextOverlayEnabled": 1
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 36.13245033112583,
+        "iPositionY": 16,
         "id": 5,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 0
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 36.13245033112583,
+        "iPositionY": 16,
         "id": 6,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 0
       },
       {
-        "iPositionX": 0,
-        "iPositionY": 0,
+        "iPositionX": 36.13245033112583,
+        "iPositionY": 16,
         "id": 7,
         "sDisplayText": "test",
-        "iIsPersistentText": 1,
+        "sIsPersistentText": "",
         "iTextOverlayEnabled": 0
       }
     ],
     "dateTimeOverlay": {
-      "iPositionX": 0,
-      "iPositionY": 0,
+      "iPositionX": 322.8609271523179,
+      "iPositionY": 92.46017699115043,
       "sDateStyle": "MM-DD-YYYY",
-      "iDateTimeOverlayEnabled": 0,
+      "iDateTimeOverlayEnabled": 1,
       "iDisplayWeekEnabled": 1,
       "sTimeStyle": "24hour"
     },
@@ -543,7 +543,6 @@
   "scan": {},
   "wifi-on": {},
   "wifi-off": {},
-
   "roi": {
     "normalizedScreenSize": {
       "iNormalizedScreenHeight": 480,
@@ -695,5 +694,76 @@
         "iPositionY": 1
       }
     ]
-  }
+  },
+  "region-crop": {
+    "normalizedScreenSize": {
+      "iNormalizedScreenHeight": 1000,
+      "iNormalizedScreenWidth": 1000
+    },
+    "RegionClip": {
+      "iVideoResolutionWidth": 640,
+      "iVideoResolutionHeight": 480,
+      "iRegionClipEnabled": 0,
+      "iHeight": 92,
+      "iWidth": 120,
+      "iPositionX": 0,
+      "iPositionY": 0
+    }
+  },
+  "motion-detection": {
+    "iColumnGranularity": 22,
+    "iEndTriggerTime": 500,
+    "iHighlightEnabled": 0,
+    "iMotionDetectionEnabled": 0,
+    "iRowGranularity": 18,
+    "iSamplingInterval": 2,
+    "iSensitivityLevel": 0,
+    "iStartTriggerTime": 500,
+    "id": 0,
+    "sGridMap": "0000012345456000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "sRegionType": "grid"
+  },
+  "motion-linkage": {
+    "iNotificationCenterEnabled": 1,
+    "iNotificationEmailEnabled": 0,
+    "iNotificationFTPEnabled": 0,
+    "iNotificationIO1Enabled": 0,
+    "iNotificationRecord1Enabled": 0,
+    "iVideoInputChannelID": 0,
+    "id": 0,
+    "sEventType": "VMD"
+  },
+  "ntp-time": {
+    "time": "2020-03-20T11:20:18"
+  },
+  "network-ntp": {
+    "iAutoMode": 1,
+    "iRefreshTime": 60,
+    "id": 0,
+    "sNtpServers": "122.224.9.29 94.130.49.186",
+    "sTimeZone": "posix/Etc/GMT-8"
+  },
+  "ntp-zone": [
+    {
+      "iHavedst": 1,
+      "id": 0,
+      "sName": "(GMT-8:00)太平洋时间(美国和加拿大)",
+      "sTimeZone": "posix/Etc/GMT+8",
+      "sTimeZoneDst": "posix/America/Los_Angeles"
+    },
+    {
+      "iHavedst": 0,
+      "id": 1,
+      "sName": "(GMT+0:00)都柏林、爱丁堡、伦敦",
+      "sTimeZone": "posix/Etc/GMT-0",
+      "sTimeZoneDst": ""
+    },
+    {
+      "iHavedst": 0,
+      "id": 2,
+      "sName": "(GMT+8:00)北京、乌鲁木齐、新加坡、珀斯",
+      "sTimeZone": "posix/Etc/GMT-8",
+      "sTimeZoneDst": ""
+    }
+  ]
 }

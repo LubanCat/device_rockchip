@@ -365,7 +365,17 @@
     "status": "状态",
     "upgrade": "升级",
     "upgradeFile": "升级文件",
-    "tip": "说明：升级需要几分钟，请耐心等待！"
+    "tip": "说明：升级需要几分钟，请耐心等待！",
+    "oversize": "剩余空间不足!",
+    "fileUploading": "文件上传中，请勿重复点击！",
+    "uploadFail": "文件上传失败!",
+    "restartTip": "确认重启设备？",
+    "restarting": "重启中！",
+    "reseting": "恢复出厂设置中！",
+    "complete": "完成,请刷新网页！",
+    "factoryReset": "确认恢复出厂设置，确认设备将重启",
+    "noFile": "请先选择需上传的文件!",
+    "typeNeedDb": "请选择db格式的参数文件！"
 },
 
   "VideoPlan": "录像计划",
@@ -425,5 +435,65 @@
     "DownloadProgress": "下载进度",
     "OrderedByTime": "按时间排序",
     "Preview": "预览"
-}
+  },
+
+  "saveTip": "保存提示",
+  "saveSuccess": "保存成功！",
+  "saveFail": "保存失败！",
+  "idle": "未连接",
+  "online": "已连接",
+  "ready": "就绪",
+  "association": "协商中",
+  "configuration": "配置中",
+
+  "Region": {
+    "enableCrop": "启用区域裁剪 ",
+    "regionSetting": "区域裁剪设定"
+  },
+
+  "Motion": {
+    "normalLinkage": "常规联动",
+    "alarmOutput": "警报输出",
+    "videoLinkage": "录像联动",
+    "notificationMail": "邮件联动",
+    "notificationCenter": "中心联动",
+    "notificationFTP": "FTP联动",
+    "modeSetting": "模式设定",
+    "sensitive": "灵敏度",
+    "motionEnabled": "启用移动侦测",
+    "dynamicAnalysisEnabled": "启用动态分析",
+    "normalMode": "普通模式"
+  },
+
+  "regionSetting": "区域设置",
+  "armingTime": "布防时间",
+  "linkageMode": "联动方式",
+  "tip": "提示",
+  "quit": "退出",
+
+  "NTP": {
+    "timezone": "时区",
+    "ntpCalibration": "NTP校准",
+    "ntpServices": "NTP地址",
+    "calibrationInterval": "校准间隔",
+    "test": "测试",
+    "manualCalibration": "手动校准",
+    "deviceTime": "设备时间",
+    "syncLocalTime": "同步本地时间",
+    "testing": "测试中!",
+    "testSuccess": "测试成功！",
+    "setTime": "设置时间",
+    "minutes": "分钟"
+  },
+
+  "ImageSetting": "高级图像设置",
+  "isp": "ISP设置",
+  "osd": "OSD设置",
+  "mask": "视频遮挡",
+  "pictureMask": "图片遮挡",
+  "basic": "基础设置",
+  "time": "时间设置",
+  "dst": "dst",
+  "upgrade": "系统升级",
+  "log": "日志"
 }
