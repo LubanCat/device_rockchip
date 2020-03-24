@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
 
 CMD=`realpath $0`
