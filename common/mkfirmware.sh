@@ -18,6 +18,7 @@ fi
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
+ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
@@ -98,8 +99,11 @@ check_partition_size() {
 	done
 }
 
-if [ $RK_ROOTFS_IMG ]
+if [ ! -f $ROCKDEV/rootfs.img ]
 then
+	if [ -f $ROOTFS_IMG_SOURCE ];then
+		ln -rsf $ROOTFS_IMG_SOURCE $ROOTFS_IMG
+	fi
 	if [ -f $ROOTFS_IMG ]
 	then
 		echo -n "create rootfs.img..."
