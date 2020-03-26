@@ -359,7 +359,7 @@ function build_cleanall(){
 	cd $TOP_DIR/u-boot/ && make distclean && cd -
 	cd $TOP_DIR/kernel && make distclean && cd -
 	rm -rf $TOP_DIR/buildroot/output
-	rm -rf $TOP_DIR/yocto/build
+	rm -rf $TOP_DIR/yocto/build/tmp
 	rm -rf $TOP_DIR/distro/output
 	rm -rf $TOP_DIR/debian/binary
 }
