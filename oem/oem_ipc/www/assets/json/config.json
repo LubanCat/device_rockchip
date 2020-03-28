@@ -32,10 +32,7 @@
   {
     "name": "Image",
     "items": [
-      "DisplaySettings",
-      "OSDSettings",
-      "PrivacyCover",
-      "ScenarioSwitch"
+      "ImageSettings"
     ]
   },
   {

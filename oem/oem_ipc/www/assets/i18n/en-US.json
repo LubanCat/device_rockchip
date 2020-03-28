@@ -358,7 +358,17 @@
         "status": "Status",
         "upgrade": "Upgrade",
         "upgradeFile": "Upgrade File",
-        "tip": "Tip：Plase wait some mintues for upgrade!"
+        "restarting": "wait for restart",
+        "reseting": "wait for reset",
+        "complete": "Completed, please refresh!",
+        "tip": "Tip：Plase wait some mintues for upgrade!",
+        "oversize": "Free Room is smaller than file size!",
+        "fileUploading": "File is Loading. Don't repeat!",
+        "uploadFail": "File upload fail!",
+        "restartTip": "Make sure to restart!",
+        "factoryReset": "Mark sure to reset!",
+        "noFile": "No file is selected!",
+        "typeNeedDb": "File type must be db!"
     },
 
     "VideoPlan": "Video Plan",
@@ -418,6 +428,66 @@
         "DownloadProgress": "Progress",
         "Ordered By Time": "Ordered By Time",
         "Preview": "Preview"
-    }
+    },
+
+    "saveTip": "Save Tip",
+    "saveSuccess": "Save Success",
+    "saveFail": "Save Fail",
+    "idle": "idle",
+    "online": "online",
+    "ready": "ready",
+    "association": "association",
+    "configuration": "configuration",
+
+    "Region": {
+        "enableCrop": "Clip Enabled",
+        "regionSetting": "Region Clip Setting"
+    },
+
+    "Motion": {
+        "normalLinkage": "Normal Notification Enabled",
+        "alarmOutput": "Alarm Output Enabled",
+        "videoLinkage": "Video Notification Enabled",
+        "notificationMail": "Notification Mail",
+        "notificationCenter": "Notification Center",
+        "notificationFTP": "Notification FTP",
+        "modeSetting": "Mode Setting",
+        "sensitive": "Sensitive",
+        "motionEnabled": "Motion Detect Enabled",
+        "dynamicAnalysisEnabled": "Dynamic Analysis Enabled",
+        "normalMode": "Normal Mode"
+    },
+
+    "regionSetting": "Region Setting",
+    "armingTime": "Arming Time",
+    "linkageMode": "Notification Mode",
+    "tip": "tip",
+    "quit": "Quit",
+
+    "NTP": {
+        "timezone": "Timezone",
+        "ntpCalibration": "NTP Calibration",
+        "ntpServices": "NTP Services",
+        "calibrationInterval": "Calibration Interval",
+        "test": "test",
+        "manualCalibration": "Manual Calibration",
+        "deviceTime": "Time of Device",
+        "syncLocalTime": "Sync Local Time",
+        "testing": "Testing!",
+        "testSuccess": "Successful！",
+        "setTime": "Set Time",
+        "minutes": "Minutes"
+    },
+
+    "ImageSetting": "Image Setting",
+    "isp": "ISP Setting",
+    "osd": "OSD Setting",
+    "mask": "Normal Mask Setting",
+    "pictureMask": "Picture Mask Setting",
+    "basic": "Basic Setting",
+    "time": "Time Setting",
+    "dst": "Device Setting",
+    "upgrade": "Upgrade",
+    "log": "log"
 
 }
