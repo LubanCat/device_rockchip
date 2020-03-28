@@ -211,7 +211,7 @@ then
         echo "done."
 else
 	echo -e "\e[31m error: $LOADER not found,or there are multiple loaders! \e[0m"
-	rm $LOADER
+	rm $LOADER || true
 fi
 
 #if [ -f $SPINOR_LOADER ]
