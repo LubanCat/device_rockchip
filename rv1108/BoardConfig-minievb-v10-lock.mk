@@ -12,7 +12,7 @@ export RK_TARGET_PRODUCT=rv1108
 #             Board Info               #
 ########################################
 #Target Board Version
-export RK_TARGET_BOARD_VERSION=minievb-v10
+export RK_TARGET_BOARD_VERSION=minievb-v10-lock
 # Set flash type. support <emmc, nand, nor>
 export RK_STORAGE_TYPE=nor
 # Set depth camera
@@ -45,7 +45,7 @@ export RK_LOADER_PREISP_EN=0
 #            Kernel Config             #
 ########################################
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rv1108_defconfig
+export RK_KERNEL_DEFCONFIG=rv1108_lock_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rv1108-${RK_TARGET_BOARD_VERSION}
 
