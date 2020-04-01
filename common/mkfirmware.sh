@@ -99,7 +99,7 @@ check_partition_size() {
 	done
 }
 
-if [ ! -f $ROCKDEV/rootfs.img ]
+if [ $RK_ROOTFS_IMG ]
 then
 	if [ -f $ROOTFS_IMG_SOURCE ];then
 		ln -rsf $ROOTFS_IMG_SOURCE $ROOTFS_IMG
