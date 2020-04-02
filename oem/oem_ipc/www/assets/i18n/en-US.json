@@ -9,7 +9,8 @@
         "About": "About",
         "Login": "Login",
         "Logout": "Logout",
-        "Download": "Replay"
+        "Download": "Replay",
+        "Face": "Face"
     },
     "PTZ": {
         "Name": "PTZ",
@@ -53,7 +54,8 @@
                 "DisplaySettings": "Displayer Settings",
                 "OSDSettings": "OSD Settings",
                 "PrivacyCover": "Privacy Cover",
-                "ScenarioSwitch": "Scenario Switch"
+                "ScenarioSwitch": "Scenario Switch",
+                "ImageSettings": "Image Setting"
             }
         },
         "Event": {
@@ -82,6 +84,35 @@
             }
         }
     },
+
+    "FACE": {
+        "MemberList": {
+            "name": "Member List",
+            "items": {
+                "ListManagement": "List Management",
+                "BatchInput": "Batch Input"
+            }
+        },
+        "SnapShot": {
+            "name": "Snap Shot",
+            "items": {
+                "SnapShot": "Snap Shot"
+            }
+        },
+        "Control": {
+            "name": "Control",
+            "items": {
+                "Control": "Control"
+            }
+        },
+        "Config": {
+            "name": "Config",
+            "items": {
+              "ParaConfig": "Parameter Config"
+            }
+          }
+    },
+
     "ABOUTContent": "A common IP Camera web front-end solution, which uses Angular 8, Bootstrap4, video.js, videojs-flash. Also, uses Typescript, SCSS technoligies, use WASM, WebGL, FFMPEG to support H.265 video playback.",
     "NICTYPE": "Nic Type",
     "10MHD": "10M Half Duplex",
@@ -129,7 +160,9 @@
         "PASSWORD": "Wi-Fi Password",
         "GENERATE": "Generate",
         "WPSMODE": "WPS Mode Setting",
-        "AUTOCONNECT": "Wi-Fi AutoConnect"
+        "AUTOCONNECT": "Wi-Fi AutoConnect",
+        "deleteOne": "Are you sure that delete info of the wifi selected?",
+        "deleteThis": "Delete"
     },
 
     "scan": "Scan",
@@ -368,7 +401,9 @@
         "restartTip": "Make sure to restart!",
         "factoryReset": "Mark sure to reset!",
         "noFile": "No file is selected!",
-        "typeNeedDb": "File type must be db!"
+        "typeNeedDb": "File type must be db!",
+        "putFile": "Select File please!",
+        "upgrading": "Upgrading!"
     },
 
     "VideoPlan": "Video Plan",
@@ -479,7 +514,6 @@
         "minutes": "Minutes"
     },
 
-    "ImageSetting": "Image Setting",
     "isp": "ISP Setting",
     "osd": "OSD Setting",
     "mask": "Normal Mask Setting",
@@ -488,6 +522,110 @@
     "time": "Time Setting",
     "dst": "Device Setting",
     "upgrade": "Upgrade",
-    "log": "log"
+    "log": "log",
+    "deleteSuccess": "Delete Successful!",
+    "deleteFail": "Delete Fail!",
 
+    "MNG": {
+        "id": "ID",
+        "type": "Type",
+        "name": "Name",
+        "gender": "Gender",
+        "registrationAvatar": "Registration Avatar",
+        "registrationTime": "Registration Time",
+        "birthday": "Birthday",
+        "typeOfCertification": "Type Of Certification",
+        "CertificationId": "Certification Id",
+        "phoneNumber": "Phone Number",
+        "nation": "Nation",
+        "hometown": "Hometown",
+        "address": "Address",
+        "remark": "Remark",
+        "none": "None",
+        "memberManager": "Member Manage",
+        "batchDelete": "Batch Delete",
+        "selectAll": "Select All",
+        "unselectAll": "Unselect All",
+        "confirmDelete": "Confirm",
+        "searchCondition": "Search Condition",
+        "searchByCondition": "Search By Condition",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "addMember": "Add Member",
+        "dblClickTip": "Select/Unselect when double click!",
+        "listType": "List Type",
+        "AccessCardNumber": "Access Card Number",
+        "searchByName": "Search By Name"
+    },
+
+    "SNAP": {
+        "time": "time",
+        "searchCondition": "Snapshot Result Search",
+        "dblClickTip": "Double click to add infomation!"
+    },
+
+    "whiteList": "White List",
+    "blackList": "Black List",
+    "all": "ALL",
+    "male": "Male",
+    "female": "Female",
+    "identityCard": "Identity Card",
+    "permanent": "Permanent",
+    "type": "Type",
+    "gender": "Gender",
+    "age": "Age",
+    "cardNumber": "Card Number",
+    "search": "Search",
+    "cancel": "Cancel",
+    "operationMenu": "Operation Menu",
+    "modify": "Modify",
+    "delete": "Delete",
+    "Are you sure that delete info selected?": "Are you sure that delete info selected?",
+    "addFile": "Add File",
+    "modifyFile": "Modify File",
+    "noResult": "No Result!",
+    "id": "ID",
+    "avatar": "Avatar",
+    "status": "Status",
+    "remark": "Remark",
+    "Snapshot": "Snapshot",
+    "Processed": "Processed",
+    "addInfo": "Add Infomation",
+    "name": "Name",
+    "registerationAvatar": "Registeration Avatar",
+    "presentAvatar": "Present Avatar",
+    "similarity": "Similarity",
+    "accessCardNumber": "Access Card Number",
+    "birthday": "Birthday",
+    "phoneNumber": "Phone Number",
+    "nation": "Nation",
+    "hometown": "Hometown",
+    "getIpFail": "Get Ip Fail!",
+    "fresh": "Fresh",
+    "batchInput": "Batch Input",
+    "batchInputImage": "Batch Input Image",
+    "upload": "Upload",
+
+    "FACEPARA": {
+        "FaceMinPixel": "Min Face Pixel",
+        "DetectHeight": "Detect Height",
+        "DetectWidth": "Detect Width",
+        "LeftCornerX": "Detection Region X",
+        "LeftCornerY": "Detection Region Y",
+        "FaceDetectionThreshold": "Face Detection Threshold",
+        "FaceRecognitionThreshold": "Face Recognition Threshold",
+        "LiveDetectThreshold": "Live Detect Threshold",
+        "PromptVolume": "Prompt Volume",
+        "LiveDetect": "Live Detect",
+        "LiveDetectBeginTime": "Live Detection Beginning Time",
+        "LiveDetectEndTime": "Live Detection End Time"
+    },
+
+    "outOfRange": "Out of Range",
+    "modifyInfo": "Modify Infomation",
+    "isRequired": " is required!",
+    "minAge": "Min age",
+    "maxAge": "Max age",
+    "ageOrder": "Max age should be bigger than min age!",
+    "timeOrder": "Endtime should be bigger thatn Starttime!"
 }

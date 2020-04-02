@@ -9,7 +9,8 @@
     "About": "关于",
     "Login": "登录",
     "Logout": "注销",
-    "Download": "回放"
+    "Download": "回放",
+    "Face": "人脸识别管理"
   },
   "PTZ": {
     "Name": "云台",
@@ -53,7 +54,8 @@
         "DisplaySettings" : "显示设置",
         "OSDSettings" : "OSD 设置",
         "PrivacyCover" : "隐私遮盖",
-        "ScenarioSwitch" : "场景切换"
+        "ScenarioSwitch" : "场景切换",
+        "ImageSettings": "高级图像设置"
       }
     },
     "Event": {
@@ -82,6 +84,35 @@
       }
     }
   },
+
+  "FACE": {
+    "MemberList": {
+        "name": "人员管理",
+        "items": {
+            "ListManagement": "人员清单",
+            "BatchInput": "批量导入"
+        }
+    },
+    "SnapShot": {
+        "name": "抓拍记录",
+        "items": {
+            "SnapShot": "抓拍记录"
+        }
+    },
+    "Control": {
+        "name": "控制记录",
+        "items": {
+            "Control": "控制记录"
+        }
+    },
+    "Config": {
+      "name": "配置信息",
+      "items": {
+        "ParaConfig": "参数配置"
+      }
+    }
+  },
+
   "ABOUTContent" : "用于网络摄像机的通用网页前端方案，采用 Angular 8、Bootstrap 4、video.js、videojs-flash等库和框架，使用TypeScript、SCSS等语言，使用WASM、WebGL、FFMPEG等技术支持H265播放",
   "NICTYPE": "网卡类型",
   "10MHD": "10M 半双工",
@@ -129,7 +160,9 @@
     "PASSWORD": "Wi-Fi 密码",
     "GENERATE": "生成",
     "WPSMODE": "WPS 模式设置",
-    "AUTOCONNECT": "Wi-Fi 自动连接"
+    "AUTOCONNECT": "Wi-Fi 自动连接",
+    "deleteOne": "确认要删除所选中wifi的信息?",
+    "deleteThis": "删除"
   },
 
   "scan": "扫描",
@@ -375,7 +408,9 @@
     "complete": "完成,请刷新网页！",
     "factoryReset": "确认恢复出厂设置，确认设备将重启",
     "noFile": "请先选择需上传的文件!",
-    "typeNeedDb": "请选择db格式的参数文件！"
+    "typeNeedDb": "请选择db格式的参数文件！",
+    "putFile": "请选择文件！",
+    "upgrading": "系统升级中！"
 },
 
   "VideoPlan": "录像计划",
@@ -486,7 +521,6 @@
     "minutes": "分钟"
   },
 
-  "ImageSetting": "高级图像设置",
   "isp": "ISP设置",
   "osd": "OSD设置",
   "mask": "视频遮挡",
@@ -495,5 +529,111 @@
   "time": "时间设置",
   "dst": "dst",
   "upgrade": "系统升级",
-  "log": "日志"
+  "log": "日志",
+  "deleteSuccess": "删除成功!",
+  "deleteFail": "删除失败！",
+
+  "MNG": {
+    "id": "序号",
+    "type": "类型",
+    "name": "名称",
+    "gender": "性别",
+    "registrationAvatar": "头像",
+    "registrationTime": "注册时间",
+    "birthday": "生日",
+    "typeOfCertification": "证件类型",
+    "CertificationId": "证件号",
+    "phoneNumber": "电话号码",
+    "nation": "民族",
+    "hometown": "籍贯",
+    "address": "住址",
+    "remark": "备注",
+    "none": "无",
+    "memberManager": "人员管理",
+    "batchDelete": "批量删除",
+    "selectAll": "全选",
+    "unselectAll": "取消全选",
+    "confirmDelete": "确认删除",
+    "searchCondition": "查询条件",
+    "searchByCondition": "条件查询",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "addMember": "添加人员",
+    "dblClickTip": "双击选择或取消选择！",
+    "listType": "名单类型",
+    "AccessCardNumber": "门禁卡号",
+    "searchByName": "姓名模糊查询"
+  },
+
+  "SNAP": {
+    "time": "时间",
+    "searchCondition": "抓拍查询",
+    "dblClickTip": "双击进行信息添加"
+  },
+
+  "whiteList": "白名单",
+  "blackList": "黑名单",
+  "all": "所有",
+  "male": "男",
+  "female": "女",
+  "identityCard": "身份证",
+  "permanent": "永久",
+  "type": "类型",
+  "gender": "性别",
+  "age": "年龄",
+  "cardNumber": "卡号",
+  "search": "查询",
+  "cancel": "取消",
+  "operationMenu": "操作菜单",
+  "modify": "修改",
+  "delete": "删除",
+  "Are you sure that delete info selected?": "确认删除所选信息？",
+  "addFile": "添加文件",
+  "modifyFile": "修改文件",
+  "noResult": "无匹配信息！",
+  "id": "序号",
+  "avatar": "头像",
+  "status": "状态",
+  "remark": "备注",
+  "Snapshot": "抓拍",
+  "Processed": "已处理",
+  "addInfo": "添加信息",
+  "name": "姓名",
+  "registerationAvatar": "注册头像",
+  "presentAvatar": "现场头像",
+  "similarity": "相似度",
+  "accessCardNumber": "门禁卡号",
+  "birthday": "生日",
+  "phoneNumber": "电话号码",
+  "nation": "民族",
+  "hometown": "籍贯",
+  "getIpFail": "获取ip失败！",
+  "fresh": "刷新",
+  "batchInput": "批量导入",
+  "batchInputImage": "批量导入图片",
+  "upload": "上传",
+  "schedule": "计划",
+
+  "FACEPARA": {
+    "FaceMinPixel": "人脸最小像素",
+    "DetectHeight": "人脸检测高度",
+    "DetectWidth": "人脸检测宽度",
+    "LeftCornerX": "人脸检测区域X轴",
+    "LeftCornerY": "人脸检测区域Y轴",
+    "FaceDetectionThreshold": "人脸检测阈值",
+    "FaceRecognitionThreshold": "人脸识别阈值",
+    "LiveDetectThreshold": "活体检测阈值",
+    "PromptVolume": "提示音量",
+    "LiveDetect": "活体检测",
+    "LiveDetectBeginTime": "活体检测开始时间",
+    "LiveDetectEndTime": "活体检测结束时间"
+  },
+
+  "outOfRange": "超出取值范围",
+  "modifyInfo": "修改信息",
+  "isRequired": "是必填的！",
+  "minAge": "最小年龄",
+  "maxAge": "最大年龄",
+  "ageOrder": "最大年龄必须比最小年龄大！",
+  "timeOrder": "结束时间必须大于开始时间！"
 }
