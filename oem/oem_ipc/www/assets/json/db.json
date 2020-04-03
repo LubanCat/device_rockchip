@@ -765,5 +765,44 @@
       "sTimeZone": "posix/Etc/GMT-8",
       "sTimeZoneDst": ""
     }
+  ],
+
+  "member-list": [
+    {
+        "sTelephoneNumber": 0,
+        "id": 0,
+        "sAddress": "",
+        "sAge": "",
+        "sBirthday": "2000-1-1",
+        "sCertificateNumber": "",
+        "sCertificateType": "identityCard",
+        "sGender": "male",
+        "sHometown": "",
+        "sListType": "permanent",
+        "sName": "",
+        "sNation": "汉",
+        "sNote": "",
+        "sPicturePath": "",
+        "sRegistrationTime": "",
+        "sType": "whiteList"
+    },
+    {
+        "sTelephoneNumber": 0,
+        "id": 1,
+        "sAddress": "",
+        "sAge": "",
+        "sBirthday": "2000-1-1",
+        "sCertificateNumber": "",
+        "sCertificateType": "identityCard",
+        "sGender": "male",
+        "sHometown": "",
+        "sListType": "permanent",
+        "sName": "",
+        "sNation": "汉",
+        "sNote": "",
+        "sPicturePath": "",
+        "sRegistrationTime": "",
+        "sType": "whiteList"
+    }
   ]
 }
