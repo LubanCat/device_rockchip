@@ -367,7 +367,7 @@
   "drawMask": "绘制区域",
   "stopDrawing": "停止绘制",
   "deleteMask": "清楚全部",
-  "confirmDelete": "清楚确认",
+  "confirmDelete": "确认删除",
   "isDeleteAllMask": "确定要清楚全部遮盖区域吗?",
   "yes": "确定",
   "no": "取消",
@@ -385,7 +385,7 @@
     "restart": "重启",
     "restartDevice": "重启设备.",
     "restoreDefault": "恢复出厂设置",
-    "restoreSimple": "简单恢复",
+    "restoreSimple": "恢复",
     "setPartParameterDefault": "简单恢复出厂设置。",
     "restoreAll": "彻底恢复",
     "setAllParameterDefault": "彻底恢复出厂设置。",
@@ -451,25 +451,24 @@
   },
 
   "Download": {
-    "picture": "截图",
-    "record": "录像",
-    "InquireCondition": "查询条件",
-    "StartDownload": "开始下载",
-    "StopDownload": "停止下载",
-    "FileType": "文件类型",
-    "StartTime": "开始时间",
-    "EndTime": "结束时间",
-    "PositiveOrder": "正序",
-    "ReverseOrder": "逆序",
-    "Inquire": "查询",
-    "DownloadList": "下载列表（点击文件名预览）",
-    "Order": "序号",
-    "FileName": "文件名",
-    "FileTime": "时间",
-    "FileSize": "文件大小",
-    "DownloadProgress": "下载进度",
-    "OrderedByTime": "按时间排序",
-    "Preview": "预览"
+    "inquireCondition": "查询条件",
+    "startDownload": "开始下载",
+    "stopDownload": "停止下载",
+    "fileType": "文件类型",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "positiveOrder": "正序",
+    "reverseOrder": "逆序",
+    "inquire": "查询",
+    "downloadList1": "下载列表（点击文件名预览）",
+    "downloadList2": "下载列表",
+    "order": "序号",
+    "fileName": "文件名",
+    "fileTime": "时间",
+    "fileSize": "文件大小",
+    "downloadProgress": "下载进度",
+    "orderedByTime": "按时间排序",
+    "preview": "预览"
   },
 
   "saveTip": "保存提示",
@@ -562,7 +561,8 @@
     "dblClickTip": "双击选择或取消选择！",
     "listType": "名单类型",
     "AccessCardNumber": "门禁卡号",
-    "searchByName": "姓名模糊查询"
+    "searchByName": "姓名模糊查询",
+    "control": "控制信息"
   },
 
   "SNAP": {
@@ -635,5 +635,11 @@
   "minAge": "最小年龄",
   "maxAge": "最大年龄",
   "ageOrder": "最大年龄必须比最小年龄大！",
-  "timeOrder": "结束时间必须大于开始时间！"
+  "timeOrder": "结束时间必须大于开始时间！",
+  "selectFile": "选择文件",
+  "noFileSelected": "没有文件被选择",
+  "output": "导出",
+  "pictureRecord": "截图",
+  "videoRecord": "录像",
+  "isRequired2": "是必选的！"
 }

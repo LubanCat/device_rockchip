@@ -1450,7 +1450,7 @@ button:focus {
   .nav.nav-tabs.nav-underline {
     background: #fff;
     position: relative;
-    border-bottom: 1px solid #2DCEE3; }
+    border-bottom: 1px solid #dedede; }
     .nav.nav-tabs.nav-underline .nav-item {
       position: relative;
       z-index: 1;
@@ -1476,28 +1476,29 @@ button:focus {
         padding: 0.5rem 1rem;
         -webkit-transition: color 0.2s;
         transition: color 0.2s;
-        color: #2DCEE3;
+        color: #dedede;
         border: none; }
         .nav.nav-tabs.nav-underline .nav-item a.nav-link.dropdown-toggle::after {
           margin-top: -1rem; }
         .nav.nav-tabs.nav-underline .nav-item a.nav-link.active {
           border: none;
-          background-color: transparent; }
+          background-color: transparent;
+          color: #353a40 }
           .nav.nav-tabs.nav-underline .nav-item a.nav-link.active:focus, .nav.nav-tabs.nav-underline .nav-item a.nav-link.active:hover {
-            color: #55595c;
+            color: #353a40;
             background-color: transparent; }
           .nav.nav-tabs.nav-underline .nav-item a.nav-link.active:before {
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0); }
         .nav.nav-tabs.nav-underline .nav-item a.nav-link:hover, .nav.nav-tabs.nav-underline .nav-item a.nav-link:focus {
-          color: #2DCEE3; }
+          color: #353a40; }
         .nav.nav-tabs.nav-underline .nav-item a.nav-link:before {
           position: absolute;
           bottom: -1px;
           left: 0;
           width: 100%;
-          height: 4px;
-          background: #2DCEE3;
+          height: 3px;
+          background: #353a40;
           content: '';
           -webkit-transition: -webkit-transform 0.3s;
           transition: transform 0.3s;

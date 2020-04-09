@@ -378,7 +378,7 @@
         "restart": "Restart",
         "restartDevice": "Restart device.",
         "restoreDefault": "Restore Default Setting",
-        "restoreSimple": "Restore Simplely",
+        "restoreSimple": "Restore",
         "setPartParameterDefault": "Restore default setting simplely.",
         "restoreAll": "Restore Wholely",
         "setAllParameterDefault": "Restore default setting wholely.",
@@ -444,25 +444,24 @@
     },
 
     "Download": {
-        "picture": "Image",
-        "record": "Video",
-        "InquireCondition": "Inquire Condition",
-        "StartDownload": "Start Download",
-        "StopDownload": "Stop Download",
-        "FileType": "File Type",
-        "StartTime": "Start Time",
-        "EndTime": "End Time",
-        "PositiveOrder": "Positive Order",
-        "ReverseOrder": "Reverse Order",
-        "Inquire": "Inquire",
-        "DownloadList": "Download List(preview when file name is clicked)",
-        "Order": "Order",
-        "FileName": "File Name",
-        "FileTime": "Time",
-        "FileSize": "File Size",
-        "DownloadProgress": "Progress",
-        "Ordered By Time": "Ordered By Time",
-        "Preview": "Preview"
+        "inquireCondition": "Inquire Condition",
+        "startDownload": "Start Download",
+        "stopDownload": "Stop Download",
+        "fileType": "File Type",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "positiveOrder": "Positive Order",
+        "reverseOrder": "Reverse Order",
+        "inquire": "Inquire",
+        "downloadList1": "Download List(preview when file name is clicked)",
+        "downloadList2": "Download List",
+        "order": "Order",
+        "fileName": "File Name",
+        "fileTime": "Time",
+        "fileSize": "File Size",
+        "downloadProgress": "Progress",
+        "orderedByTime": "Ordered By Time",
+        "preview": "Preview"
     },
 
     "saveTip": "Save Tip",
@@ -555,7 +554,8 @@
         "dblClickTip": "Select/Unselect when double click!",
         "listType": "List Type",
         "AccessCardNumber": "Access Card Number",
-        "searchByName": "Search By Name"
+        "searchByName": "Search By Name",
+        "control": "Control"
     },
 
     "SNAP": {
@@ -627,5 +627,11 @@
     "minAge": "Min age",
     "maxAge": "Max age",
     "ageOrder": "Max age should be bigger than min age!",
-    "timeOrder": "Endtime should be bigger thatn Starttime!"
+    "timeOrder": "Endtime should be bigger thatn Starttime!",
+    "selectFile": "Select File",
+    "noFileSelected": "No File Selected",
+    "output": "Output",
+    "pictureRecord": "Picture",
+    "videoRecord": "Video",
+    "isRequired2": "is Required！"
 }
