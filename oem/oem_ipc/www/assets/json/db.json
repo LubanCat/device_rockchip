@@ -282,12 +282,12 @@
       "sAlignment": "customize",
       "sOSDAttribute": "transparent/flashing",
       "sOSDFontSize": "16*16",
-      "sOSDFrontColor": "#e39bc5",
+      "sOSDFrontColor": "fba284",
       "sOSDFrontColorMode": "customize"
     },
     "channelNameOverlay": {
       "iPositionX": 393.52317880794703,
-      "iPositionY": 198.65486725663715,
+      "iPositionY": 198.65486725663712,
       "sChannelName": "channel 2",
       "iChannelNameOverlayEnabled": 1
     },
@@ -310,7 +310,7 @@
       },
       {
         "iPositionX": 427.7615894039735,
-        "iPositionY": 251.0442477876106,
+        "iPositionY": 251.04424778761063,
         "id": 2,
         "sDisplayText": "test",
         "sIsPersistentText": "",
@@ -358,7 +358,7 @@
       }
     ],
     "dateTimeOverlay": {
-      "iPositionX": 322.8609271523179,
+      "iPositionX": 320.00000000000006,
       "iPositionY": 92.46017699115043,
       "sDateStyle": "MM-DD-YYYY",
       "iDateTimeOverlayEnabled": 1,
@@ -766,43 +766,42 @@
       "sTimeZoneDst": ""
     }
   ],
-
   "member-list": [
     {
-        "sTelephoneNumber": 0,
-        "id": 0,
-        "sAddress": "",
-        "sAge": "",
-        "sBirthday": "2000-1-1",
-        "sCertificateNumber": "",
-        "sCertificateType": "identityCard",
-        "sGender": "male",
-        "sHometown": "",
-        "sListType": "permanent",
-        "sName": "",
-        "sNation": "汉",
-        "sNote": "",
-        "sPicturePath": "",
-        "sRegistrationTime": "",
-        "sType": "whiteList"
+      "sTelephoneNumber": 0,
+      "id": 0,
+      "sAddress": "",
+      "sAge": "",
+      "sBirthday": "2000-1-1",
+      "sCertificateNumber": "",
+      "sCertificateType": "identityCard",
+      "sGender": "male",
+      "sHometown": "",
+      "sListType": "permanent",
+      "sName": "",
+      "sNation": "汉",
+      "sNote": "",
+      "sPicturePath": "",
+      "sRegistrationTime": "",
+      "sType": "whiteList"
     },
     {
-        "sTelephoneNumber": 0,
-        "id": 1,
-        "sAddress": "",
-        "sAge": "",
-        "sBirthday": "2000-1-1",
-        "sCertificateNumber": "",
-        "sCertificateType": "identityCard",
-        "sGender": "male",
-        "sHometown": "",
-        "sListType": "permanent",
-        "sName": "",
-        "sNation": "汉",
-        "sNote": "",
-        "sPicturePath": "",
-        "sRegistrationTime": "",
-        "sType": "whiteList"
+      "sTelephoneNumber": 0,
+      "id": 1,
+      "sAddress": "",
+      "sAge": "",
+      "sBirthday": "2000-1-1",
+      "sCertificateNumber": "",
+      "sCertificateType": "identityCard",
+      "sGender": "male",
+      "sHometown": "",
+      "sListType": "permanent",
+      "sName": "",
+      "sNation": "汉",
+      "sNote": "",
+      "sPicturePath": "",
+      "sRegistrationTime": "",
+      "sType": "whiteList"
     }
   ]
 }
