@@ -190,6 +190,10 @@ else
         echo -e "\e[31m error: $UBOOT_IMG not found! \e[0m"
 fi
 
+if [ "$RK_UBOOT_FORMAT_TYPE" = "fit" ]; then
+        rm -f $ROCKDEV/trust.img
+        echo "uboot fotmat type is fit, so ignore trust.img..."
+else
 if [ -f $TRUST_IMG ]
 then
         echo -n "create trust.img..."
@@ -197,6 +201,7 @@ then
         echo "done."
 else
         echo -e "\e[31m error: $TRUST_IMG not found! \e[0m"
+fi
 fi
 
 if [ -f $LOADER ]
