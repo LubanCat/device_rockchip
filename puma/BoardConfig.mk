@@ -4,6 +4,8 @@
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126
+# Uboot image format type: fit(flattened image tree)
+export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1109_defconfig
 # Kernel dts
@@ -13,7 +15,7 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_puma
 # Recovery config
