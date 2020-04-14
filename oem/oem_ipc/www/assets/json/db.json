@@ -16,37 +16,37 @@
       "id": 2,
       "name": "model",
       "ro": "true",
-      "value": "XX-2CD7T47DWD-IZSW"
+      "value": "model1"
     },
     {
       "id": 3,
       "name": "serialNumber",
       "ro": "true",
-      "value": "XX-2CD7T47DWD-IZSW20190805AACHD46944751"
+      "value": "serialNumber1"
     },
     {
       "id": 4,
       "name": "firmwareVersion",
       "ro": "true",
-      "value": "V5.5.91 build 190218"
+      "value": "firmwareVersion1"
     },
     {
       "id": 5,
       "name": "encoderVersion",
       "ro": "true",
-      "value": "V7.3 build 190107"
+      "value": "encoderVersion1"
     },
     {
       "id": 6,
       "name": "webVersion",
       "ro": "true",
-      "value": "V4.0.1 build 181018"
+      "value": "webVersion1"
     },
     {
       "id": 7,
       "name": "pluginVersion",
       "ro": "true",
-      "value": "V3.0.6.46"
+      "value": "pluginVersion1"
     },
     {
       "id": 8,
@@ -282,7 +282,7 @@
       "sAlignment": "customize",
       "sOSDAttribute": "transparent/flashing",
       "sOSDFontSize": "16*16",
-      "sOSDFrontColor": "fba284",
+      "sOSDFrontColor": "f887c2",
       "sOSDFrontColorMode": "customize"
     },
     "channelNameOverlay": {
