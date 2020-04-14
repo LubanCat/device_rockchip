@@ -641,5 +641,6 @@
   "output": "导出",
   "pictureRecord": "截图",
   "videoRecord": "录像",
-  "isRequired2": "是必选的！"
+  "isRequired2": "是必选的！",
+  "fileIsSelected": "个文件被选择"
 }

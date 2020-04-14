@@ -633,5 +633,6 @@
     "output": "Output",
     "pictureRecord": "Picture",
     "videoRecord": "Video",
-    "isRequired2": "is Required！"
+    "isRequired2": "is Required！",
+    "fileIsSelected" : "files is selected"
 }
