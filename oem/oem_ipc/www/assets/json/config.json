@@ -39,6 +39,7 @@
     "name": "Event",
     "items": [
       "MotionDetect",
+      "IntrusionDetection",
       "AlarmInput",
       "AlarmOutput",
       "Abnormal"

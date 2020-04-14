@@ -62,6 +62,7 @@
       "name" : "事件",
       "items": {
         "MotionDetect" : "移动侦测",
+        "IntrusionDetection": "区域入侵",
         "AlarmInput" : "报警输入",
         "AlarmOutput" : "报警输出",
         "Abnormal" : "异常"
@@ -180,7 +181,7 @@
 
   "persistentArea": "固定区域",
   "areaID": "区域编号",
-  "areaLevel": "区域等级",
+  "areaLevel": "提升等级",
   "areaName": "区域名称",
 
   "videoType": "视频类型",
@@ -642,5 +643,22 @@
   "pictureRecord": "截图",
   "videoRecord": "录像",
   "isRequired2": "是必选的！",
-  "fileIsSelected": "个文件被选择"
+  "shouldNotSmallerThan": "不能小于",
+  "shouldNotBiggerThan": "不能大于",
+  "fileIsSelected": "个文件被选择",
+  "sensitive": "灵敏度",
+  "proportion": "占比",
+  "paraSetting": "参数设定",
+  "waitForUploading": "上传中，请等待！",
+  "uploadFail": "文件上传失败!",
+  "uploadSuccess": "文件上传成功!",
+  "timeCanNotBeOverlapping": "时间区间不能叠加！",
+  "timeFormatError": "时间格式错误！",
+  "snapSuccess": "抓拍成功！",
+  "snapFail": "抓拍失败！",
+
+  "Intrusion": {
+    "timeThreshold": "时间阈值",
+    "intrusionEnabled": "区域入侵启用"
+  }
 }
