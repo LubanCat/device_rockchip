@@ -212,6 +212,8 @@ function build_yocto(){
 	echo "TARGET_MACHINE=$RK_YOCTO_MACHINE"
 	echo "====================================="
 
+	export LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8
+
 	cd yocto
 	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
