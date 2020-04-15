@@ -62,6 +62,7 @@
             "name": "Event",
             "items": {
                 "MotionDetect": "Motion Detect",
+                "IntrusionDetection": "Intrusion Detection",
                 "AlarmInput": "Alarm Input",
                 "AlarmOutput": "Alarm Output",
                 "Abnormal": "Abnormal"
@@ -180,7 +181,7 @@
 
     "persistentArea": "Persistent Area",
     "areaID": "Area ID",
-    "areaLevel": "Area Level",
+    "areaLevel": "Quality Level",
     "areaName": "Area Name",
 
     "videoType": "Video Type",
@@ -634,5 +635,22 @@
     "pictureRecord": "Picture",
     "videoRecord": "Video",
     "isRequired2": "is Required！",
-    "fileIsSelected" : "files is selected"
+    "shouldNotSmallerThan": " should't be smaller than ",
+    "shouldNotBiggerThan": " should't be bigger than ",
+    "fileIsSelected" : "files is selected",
+    "sensitive": "Sensitive",
+    "proportion": "Proportion",
+    "paraSetting": "Parameter Setting",
+    "waitForUploading": "Wait For Uploading",
+    "uploadFail": "File upload fail!",
+    "uploadSuccess": "File upload successful!",
+    "timeCanNotBeOverlapping": "Time Region Can't Be Overlapping！",
+    "timeFormatError": "Time Format Error！",
+    "snapSuccess": "Snap Successful！",
+    "snapFail": "Snap Fail！",
+
+    "Intrusion": {
+        "timeThreshold": "Time Threshold",
+        "intrusionEnabled": "Intrusion Enabled"
+    }
 }
