@@ -16,6 +16,8 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_PARAMETER=parameter.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3399
+# Debian 10 config
+export RK_DISTRO_DEFCONFIG=rk3399_defconfig
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3399_recovery
 # ramboot config
