@@ -8,8 +8,10 @@ export RK_UBOOT_DEFCONFIG=rv1126
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1109_defconfig
+# kernel defconfig fragment
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-evb-ddr3-v10-tb.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v10
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v10-tb
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -17,7 +19,7 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_puma
+export RK_CFG_BUILDROOT=rockchip_puma_tb
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_puma_recovery
 # ramboot config
