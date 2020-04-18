@@ -40,6 +40,7 @@ then
 	$UPGRADETOOL di -oem $OEM
 	$UPGRADETOOL di -userdata $USERDATA
 	$UPGRADETOOL di -rootfs $ROOTFS
+	$UPGRADETOOL rd
 fi
 
 if [ $FLASH_TYPE = norecovery ]; then
