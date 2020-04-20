@@ -639,6 +639,13 @@
   "timeOrder": "结束时间必须大于开始时间！",
   "selectFile": "选择文件",
   "noFileSelected": "没有文件被选择",
+  "noFileSelectedWithLimit": "没有文件被选择(文件大小需小于1M)",
+  "qualifiedFile": "个合格文件",
+  "failedFile": "个违规文件",
+  "oversizeLimit1M": "个过大(小于1M)",
+  "typeErrorJpg": "个类型错误(需jpg)",
+  "fileTypeShouldBe": "文件格式必须为",
+  "oversize1M": "文件大小大于1M,上传失败!",
   "output": "导出",
   "pictureRecord": "截图",
   "videoRecord": "录像",
@@ -660,5 +667,21 @@
   "Intrusion": {
     "timeThreshold": "时间阈值",
     "intrusionEnabled": "区域入侵启用"
-  }
+  },
+
+  "copySchedule": "复制计划",
+  "selectAll": "全选",
+  "unselectAll": "取消全选",
+  "monday": "星期一",
+  "tuesday": "星期二",
+  "wednesday": "星期三",
+  "thursday": "星期四",
+  "friday": "星期五",
+  "saturday": "星期六",
+  "sunday": "星期日",
+  "getVideoUrlFail": "获取视频链接失败，请刷新页面！",
+  "fileSizeShouldBeSmallerThan": "文件大小应小于",
+  "selectFileFirst": "请先选择需上传文件！",
+  "getParaFailFreshPlease": "获取配置失败，请刷新！",
+  "initPlayerFailFreshPlease": "初始化播放器失败，请刷新！"
 }

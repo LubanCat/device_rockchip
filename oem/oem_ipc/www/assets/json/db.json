@@ -498,9 +498,11 @@
     "id": 2
   },
   "wifi-enabled": {
-    "iPower": 1,
-    "id": 1,
-    "sType": "wifi"
+    "sName": "",
+    "sService": "",
+    "sPassword": "",
+    "iFavorite": "",
+    "iAutoconnect": 0
   },
   "wifi-list": [
     {
@@ -536,6 +538,51 @@
       "sName": "zxmr-21",
       "sSecurity": "psk",
       "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk4",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 1,
+      "Strength": 68,
+      "sName": "zxmr-24",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 1,
+      "Strength": 63,
+      "sName": "zxmr-25",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 1,
+      "Strength": 80,
+      "sName": "zxmr-26",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 1,
+      "Strength": 20,
+      "sName": "zxmr-27",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
+      "sState": "ready",
+      "sType": "wifi"
+    },
+    {
+      "Favorite": 1,
+      "Strength": 64,
+      "sName": "zxmr-28",
+      "sSecurity": "psk",
+      "sService": "wifi_8cf710c4e981_7a786d722d3234_managed_psk1",
       "sState": "ready",
       "sType": "wifi"
     }
