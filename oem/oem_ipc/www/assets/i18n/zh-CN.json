@@ -391,10 +391,10 @@
     "restoreAll": "彻底恢复",
     "setAllParameterDefault": "彻底恢复出厂设置。",
     "outputInfo": "导出信息",
-    "deviceInfo": "设备信息",
+    "deviceInfo": "设备参数",
     "diagnosticInfo": "诊断信息",
     "diagnosticInfoIntroduce": "包含日志和系统信息等。",
-    "inputInfo": "导入信息",
+    "inputInfo": "参数导入",
     "input": "导入",
     "status": "状态",
     "upgrade": "升级",
@@ -657,6 +657,7 @@
   "proportion": "占比",
   "paraSetting": "参数设定",
   "waitForUploading": "上传中，请等待！",
+  "waitForDelete": "删除中，请等待！",
   "uploadFail": "文件上传失败!",
   "uploadSuccess": "文件上传成功!",
   "timeCanNotBeOverlapping": "时间区间不能叠加！",
@@ -683,5 +684,21 @@
   "fileSizeShouldBeSmallerThan": "文件大小应小于",
   "selectFileFirst": "请先选择需上传文件！",
   "getParaFailFreshPlease": "获取配置失败，请刷新！",
-  "initPlayerFailFreshPlease": "初始化播放器失败，请刷新！"
+  "initPlayerFailFreshPlease": "初始化播放器失败，请刷新！",
+  "imageType": "图像类型",
+  "eventTrigger": "事件触发",
+
+  "SCREENSHOT": {
+    "screenshotByEventEnabled": "事件抓图启动",
+    "screenshotByTimingEnabled": "定时抓图启动",
+    "screenshotNum": "抓图数量",
+    "shotInterval": "抓图间隔"
+  },
+
+  "milliseconds": "毫秒",
+  "seconds": "秒",
+  "minutes": "分钟",
+  "hours": "小时",
+  "days": "天",
+  "middle": "中"
 }
