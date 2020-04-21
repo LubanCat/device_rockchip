@@ -22,9 +22,7 @@ echo 0 > /sys/devices/system/cpu/cpu3/online
 echo 600000000 > /sys/kernel/debug/clk/clk_core_npu/clk_rate
 echo 600000000 > /sys/kernel/debug/clk/aclk_npu/clk_rate
 
-dbserver &
-storage_manager &
-netserver &
+ipc-daemon --no-mediaserver &
 
 ls /sys/class/drm | grep "card0-"
 if [ $? -ne 0 ] ;then
@@ -39,8 +37,10 @@ if [ $HasDisplay -eq 1 ]; then
   sh /oem/isppx4_init.sh
   sleep 2
   mediaserver -c /oem/usr/share/mediaserver/rv1109/camerax4_audio_g711a_rga_mp4_rtsp_rtmp_jpeg_face_display_v2.conf &
+  #mediaserver -c /oem/usr/share/mediaserver/rv1109/camerax4_audio_g711a_rga_mp4_rtsp_rtmp_face_display_v3.conf &
 else
   sh /oem/isppx3_init.sh
   sleep 2
   mediaserver -c /oem/usr/share/mediaserver/rv1109/camerax3_audio_g711a_rga_mp4_rtsp_rtmp_jpeg_face_v2.conf &
+  #mediaserver -c /oem/usr/share/mediaserver/rv1109/camerax3_audio_g711a_rga_mp4_rtsp_rtmp_face_v3.conf &
 fi
