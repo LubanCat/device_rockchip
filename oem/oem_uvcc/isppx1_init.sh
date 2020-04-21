@@ -8,5 +8,5 @@ media-ctl -d /dev/media1 -l '"rkispp-subdev":2->"rkispp_scale0":0[1]'
 
 
 #v4l2-ctl -d /dev/video13  --set-fmt-video=width=2688,height=1520,pixelformat=NV12 --stream-mmap=4 --stream-count=1 --stream-poll &
-v4l2-ctl -d /dev/video14  --set-fmt-video=width=2688,height=1520,pixelformat=NV12 --stream-mmap=4 --stream-count=1 --stream-poll &
+v4l2-ctl -d /dev/video14  --set-fmt-video=width=2688,height=1520,pixelformat=NV12 &
 sleep 3
