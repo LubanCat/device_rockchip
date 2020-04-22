@@ -8,6 +8,8 @@ export RK_UBOOT_DEFCONFIG=rv1126
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1109_defconfig
+# Kernel defconfig fragment
+export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-evb-ddr3-v10
 # boot image type
