@@ -11,6 +11,7 @@ cd ../../..
 TOP_DIR=$(pwd)
 RAMDISK_IMG=$1
 RAMDISK_CFG=$2
+RAMDISK_TYPE=$RK_RAMBOOT_TYPE
 echo "config is $RAMDISK_CFG"
 if [ -z $RAMDISK_CFG ]
 then
@@ -44,7 +45,15 @@ fi
 
 source $TOP_DIR/buildroot/build/envsetup.sh $RAMDISK_CFG
 CPIO_IMG=$TOP_DIR/buildroot/output/$RAMDISK_CFG/images/rootfs.cpio.gz
+ROMFS_IMG=$TOP_DIR/buildroot/output/$RAMDISK_CFG/images/rootfs.romfs
 TARGET_IMAGE=$TOP_DIR/buildroot/output/$RAMDISK_CFG/images/$RAMDISK_IMG
+
+if [ -z $RAMDISK_TYPE ]
+then
+RAMDISK_TYPE=CPIO
+fi
+
+eval ROOTFS_IMAGE=\$${RAMDISK_TYPE}_IMG
 
 # build ramdisk
 echo "====Start build $RAMDISK_CFG===="
@@ -59,6 +68,15 @@ else
     exit 1
 fi
 
+if [ $RAMDISK_TYPE == ROMFS ]
+then
+# Do compress for tinyrootfs
+cat $ROOTFS_IMAGE | gzip -n -f -9 > $ROOTFS_IMAGE.gz
+cat $KERNEL_IMAGE | gzip -n -f -9 > $KERNEL_IMAGE.gz
+ROOTFS_IMAGE=$ROOTFS_IMAGE.gz
+KERNEL_IMAGE=$KERNEL_IMAGE.gz
+fi
+
 echo -n "pack $RAMDISK_IMG..."
-$TOP_DIR/kernel/scripts/mkbootimg --kernel $KERNEL_IMAGE --ramdisk $CPIO_IMG --second $KERNEL_DTB -o $TARGET_IMAGE
+$TOP_DIR/kernel/scripts/mkbootimg --kernel $KERNEL_IMAGE --ramdisk $ROOTFS_IMAGE --second $KERNEL_DTB -o $TARGET_IMAGE
 echo "done."
