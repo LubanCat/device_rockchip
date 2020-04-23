@@ -384,10 +384,10 @@
         "restoreAll": "Restore Wholely",
         "setAllParameterDefault": "Restore default setting wholely.",
         "outputInfo": "Output Information",
-        "deviceInfo": "Device",
+        "deviceInfo": "Device Parameter",
         "diagnosticInfo": "Diagnostic",
         "diagnosticInfoIntroduce": "Include log, system information and so on.",
-        "inputInfo": "Input Information",
+        "inputInfo": "Input Device Parameter",
         "input": "Input",
         "status": "Status",
         "upgrade": "Upgrade",
@@ -649,6 +649,7 @@
     "proportion": "Proportion",
     "paraSetting": "Parameter Setting",
     "waitForUploading": "Wait For Uploading",
+    "waitForDelete": "wait For Delete",
     "uploadFail": "File upload fail!",
     "uploadSuccess": "File upload successful!",
     "timeCanNotBeOverlapping": "Time Region Can't Be Overlapping！",
@@ -675,5 +676,21 @@
     "fileSizeShouldBeSmallerThan": "File size should be smaller than ",
     "selectFileFirst": "Select File First!",
     "getParaFailFreshPlease": "Get Parameter Fail, Fresh Please!",
-    "initPlayerFailFreshPlease": "Init Player Fail, Fresh Please!"
+    "initPlayerFailFreshPlease": "Init Player Fail, Fresh Please!",
+    "imageType": "Image Type",
+    "eventTrigger": "Event Trigger",
+    
+    "SCREENSHOT": {
+        "screenshotByEventEnabled": "Screenshot By Event Enabled",
+        "screenshotByTimingEnabled": "Screenshot By Timing Enabled",
+        "screenshotNum": "Number of Screenshot",
+        "shotInterval": "Screenshot Interval"
+    },
+
+    "milliseconds": "Milliseconds",
+    "seconds": "Seconds",
+    "minutes": "Minutes",
+    "hours": "Hours",
+    "days": "Days",
+    "middle": "Middle"
 }
