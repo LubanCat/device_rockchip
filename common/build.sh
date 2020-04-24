@@ -90,6 +90,9 @@ function usage()
 }
 
 function build_uboot(){
+	if [ -z $RK_UBOOT_DEFCONFIG ]; then
+		return;
+	fi
 	echo "============Start build uboot============"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "========================================="
