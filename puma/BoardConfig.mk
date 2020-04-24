@@ -20,8 +20,6 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_puma
-# Tiny rootfs config
-export RK_CFG_TINYROOTFS=
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_puma_recovery
 # ramboot config
