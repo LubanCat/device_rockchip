@@ -34,6 +34,8 @@ export RK_TARGET_PRODUCT=puma
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
+# Set ramboot image type
+export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
