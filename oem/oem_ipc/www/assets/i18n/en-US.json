@@ -556,7 +556,8 @@
         "listType": "List Type",
         "AccessCardNumber": "Access Card Number",
         "searchByName": "Search By Name",
-        "control": "Control"
+        "control": "Control",
+        "feature": "Feature"
     },
 
     "SNAP": {
@@ -692,5 +693,11 @@
     "minutes": "Minutes",
     "hours": "Hours",
     "days": "Days",
-    "middle": "Middle"
+    "middle": "Middle",
+    "ranges": "Ranges",
+    "shouldBeInteger": " Should Be Integer!",
+    "deleteAll": "Delete All",
+    "initScheduleFailFreshPlease": "Init Schedule Fail, Fresh Please!",
+    "getNoWifiInfoClickScan2Fresh": "Get nothing about wifi, click on Scan to Fresh!",
+    "getFeatureFail": "Get feature of some image fail, search in ListManagement for detail!"
 }
