@@ -46,6 +46,12 @@ function usagerecovery()
 	echo "$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY"
 }
 
+function usageramboot()
+{
+	echo "source envsetup.sh $RK_CFG_RAMBOOT"
+	echo "$COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT"
+}
+
 function usagemodules()
 {
 	echo "cd kernel"
