@@ -563,7 +563,8 @@
     "listType": "名单类型",
     "AccessCardNumber": "门禁卡号",
     "searchByName": "姓名模糊查询",
-    "control": "控制信息"
+    "control": "控制信息",
+    "feature": "特征值"
   },
 
   "SNAP": {
@@ -700,5 +701,13 @@
   "minutes": "分钟",
   "hours": "小时",
   "days": "天",
-  "middle": "中"
+  "middle": "中",
+  "ranges": "取值范围",
+  "shouldBeInteger": "必须为整数！",
+  "deleteAll": "全部删除",
+  "initScheduleFailFreshPlease": "初始化计划表失败，请刷新！",
+  "getNoWifiInfoClickScan2Fresh": "未获取到wifi信息，点击扫描刷新！",
+  "getFeatureFail": "部分照片不可用，详情查询人员清单（特征值）！",
+  "success": "成功",
+  "fail": "失败"
 }
