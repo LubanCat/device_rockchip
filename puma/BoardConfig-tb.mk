@@ -17,7 +17,7 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-fit.txt
+export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_puma_tb
 # Recovery config
