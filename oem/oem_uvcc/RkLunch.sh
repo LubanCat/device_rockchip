@@ -15,11 +15,11 @@ echo performance > /sys/bus/cpu/devices/cpu0/cpufreq/scaling_governor
 #npu 600m
 #echo 600000000 >/sys/kernel/debug/clk/clk_core_npu/clk_rate
 #echo 600000000 >/sys/kernel/debug/clk/aclk_npu/clk_rate
+export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
 
+#isp hdr mode
+export HDR_MODE=0
 
-#mediaserver need
-dbserver &
-storage_manager &
 
 /oem/aicamera.sh &
 #/oem/eptz.sh &
