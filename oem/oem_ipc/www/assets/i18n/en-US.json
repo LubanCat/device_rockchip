@@ -10,7 +10,8 @@
         "Login": "Login",
         "Logout": "Logout",
         "Download": "Replay",
-        "Face": "Face"
+        "Face": "Face",
+        "UserName": "User Name"
     },
     "PTZ": {
         "Name": "PTZ",
@@ -699,5 +700,18 @@
     "deleteAll": "Delete All",
     "initScheduleFailFreshPlease": "Init Schedule Fail, Fresh Please!",
     "getNoWifiInfoClickScan2Fresh": "Get nothing about wifi, click on Scan to Fresh!",
-    "getFeatureFail": "Get feature of some image fail, search in ListManagement for detail!"
+    "getFeatureFail": "Get feature of some image fail, search in ListManagement for detail!",
+    "success": "Success",
+    "fail": "Fail",
+    "wait": "Wait",
+    "initFailFreshPlease": "Init Fail, Fresh Please!",
+    "uploadSuccessWaitForGetFeature": "Complete uploading. Waiting for getting feature!",
+    "uploadSuccessAndGetFeatureSuccess": "Complete uploading and getting feature!",
+    "dstEnabled": "DST Enabled",
+
+    "HawaiianStandardTime10": "(UTC-10:00) Hawaii",
+    "PacificStandardTime8DaylightTime,M3.2.0,M11.1.0": "(UTC-08:00) Pacific Time (United States and Canada)",
+    "GMTStandardTime0DaylightTime,M3.5.0/1,M10.5.0": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London",
+    "ChinaStandardTime-8": "(UTC+08:00) Beijing, Chongqing, Hong Kong Special Administrative Region, Urumqi",
+    "TokyoStandardTime-9": "(UTC+09:00) Osaka, Sapporo, Tokyo"
 }

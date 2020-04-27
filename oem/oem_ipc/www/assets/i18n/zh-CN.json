@@ -10,7 +10,8 @@
     "Login": "登录",
     "Logout": "注销",
     "Download": "回放",
-    "Face": "人脸识别管理"
+    "Face": "人脸识别管理",
+    "UserName": "用户名"
   },
   "PTZ": {
     "Name": "云台",
@@ -709,5 +710,16 @@
   "getNoWifiInfoClickScan2Fresh": "未获取到wifi信息，点击扫描刷新！",
   "getFeatureFail": "部分照片不可用，详情查询人员清单（特征值）！",
   "success": "成功",
-  "fail": "失败"
+  "fail": "失败",
+  "wait": "等待",
+  "initFailFreshPlease": "初始化失败，请刷新页面!",
+  "uploadSuccessWaitForGetFeature": "文件上传完成，获取特征值中！",
+  "uploadSuccessAndGetFeatureSuccess": "文件上传完成，获取特征值完成！",
+  "dstEnabled": "启用夏令时",
+
+  "HawaiianStandardTime10": "(UTC-10:00) 夏威夷",
+  "PacificStandardTime8DaylightTime,M3.2.0,M11.1.0": "(UTC-08:00) 太平洋时间(美国和加拿大)",
+  "GMTStandardTime0DaylightTime,M3.5.0/1,M10.5.0": "(UTC+00:00) 都柏林,爱丁堡,里斯本,伦敦",
+  "ChinaStandardTime-8": "(UTC+08:00) 北京,重庆,香港特别行政区,乌鲁木齐",
+  "TokyoStandardTime-9": "(UTC+09:00) 大阪,札幌,东京"
 }
