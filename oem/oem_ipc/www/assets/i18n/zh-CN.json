@@ -716,6 +716,12 @@
   "uploadSuccessWaitForGetFeature": "文件上传完成，获取特征值中！",
   "uploadSuccessAndGetFeatureSuccess": "文件上传完成，获取特征值完成！",
   "dstEnabled": "启用夏令时",
+  "userName": "用户名",
+  "password": "密码",
+  "pleaseSignIn": "请登录",
+  "pleaseInformYour": "请输入你的",
+  "rememberMe": "记住我",
+  "signIn": "登录",
 
   "HawaiianStandardTime10": "(UTC-10:00) 夏威夷",
   "PacificStandardTime8DaylightTime,M3.2.0,M11.1.0": "(UTC-08:00) 太平洋时间(美国和加拿大)",

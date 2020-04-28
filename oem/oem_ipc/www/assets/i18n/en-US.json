@@ -708,6 +708,12 @@
     "uploadSuccessWaitForGetFeature": "Complete uploading. Waiting for getting feature!",
     "uploadSuccessAndGetFeatureSuccess": "Complete uploading and getting feature!",
     "dstEnabled": "DST Enabled",
+    "userName": "User Name",
+    "password": "Password",
+    "pleaseSignIn": "Please Sign In",
+    "pleaseInformYour": "Please inform your",
+    "rememberMe": "Remember Me",
+    "signIn": "Sign In",
 
     "HawaiianStandardTime10": "(UTC-10:00) Hawaii",
     "PacificStandardTime8DaylightTime,M3.2.0,M11.1.0": "(UTC-08:00) Pacific Time (United States and Canada)",
