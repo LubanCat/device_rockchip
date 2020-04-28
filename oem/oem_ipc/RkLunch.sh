@@ -11,6 +11,8 @@ check_linker /userdata   /oem/www/userdata
 check_linker /media/usb0 /oem/www/usb0
 check_linker /mnt/sdcard /oem/www/sdcard
 
+export HDR_MODE=0
+
 #vpu 600M
 echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
