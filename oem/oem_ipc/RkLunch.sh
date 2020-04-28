@@ -21,8 +21,8 @@ echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 #echo 0 > /sys/devices/system/cpu/cpu3/online
 
 #npu 600M
-echo 600000000 > /sys/kernel/debug/clk/clk_core_npu/clk_rate
-echo 600000000 > /sys/kernel/debug/clk/aclk_npu/clk_rate
+echo userspace > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/governor
+echo 600000000 > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/userspace/set_freq
 
 ipc-daemon --no-mediaserver &
 
