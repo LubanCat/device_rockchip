@@ -17,8 +17,9 @@ echo performance > /sys/bus/cpu/devices/cpu0/cpufreq/scaling_governor
 #echo 600000000 >/sys/kernel/debug/clk/aclk_npu/clk_rate
 export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
 
-#isp hdr mode
+#rkmedia isp ctrl
 export HDR_MODE=0
+export RKISPP_DEV=rkispp_scale0
 
 
 /oem/aicamera.sh &
