@@ -35,10 +35,15 @@ else
   HasDisplay=1
 fi
 
+cnt=0
 if [ $HasDisplay -eq 1 ]; then
 	while [ 1 ];
 	do
-		sleep 3
+		cnt=$(( cnt + 1 ))
+		if [ $cnt -eq 5 ]; then
+			break;
+		fi
+
 		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
 		if [ $? -ne 0 ]; then
 			sh /oem/isppx4_init.sh
@@ -46,11 +51,15 @@ if [ $HasDisplay -eq 1 ]; then
 		else
 			break;
 		fi
+		sleep 3
 	done
 else
 	while [ 1 ];
 	do
-		sleep 3
+		cnt=$(( cnt + 1 ))
+		if [ $cnt -eq 5 ]; then
+			break;
+		fi
 		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
 		if [ $? -ne 0 ]; then
 			sh /oem/isppx3_init.sh
@@ -58,5 +67,6 @@ else
 		else
 			break;
 		fi
+		sleep 3
 	done
 fi
