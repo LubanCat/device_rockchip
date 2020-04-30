@@ -19,17 +19,17 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_puma_tb
+export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_tb
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_puma_recovery
+export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_puma_tinyrootfs
+export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs
 # Pcba config
 export RK_CFG_PCBA=
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=puma
+export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # rootfs image path
