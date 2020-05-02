@@ -54,20 +54,20 @@ export RK_KERNEL_DTS=rv1108-${RK_TARGET_BOARD_VERSION}
 ########################################
 # Set userdata config
 export RK_USERDATA_FILESYSTEM_TYPE=jffs2
-export RK_USERDATA_FILESYSTEM_SIZE=6M
+export RK_USERDATA_FILESYSTEM_SIZE=4M
 
 ########################################
 #             Root Config              #
 ########################################
 # Set root data config
 export RK_ROOT_FILESYSTEM_TYPE=jffs2
-export RK_ROOT_FILESYSTEM_SIZE=6M
+export RK_ROOT_FILESYSTEM_SIZE=8M
 
 ########################################
 #            Firmware Config           #
 ########################################
 # setting.ini for firmware
-export RK_SETTING_INI=setting.ini
+export RK_SETTING_INI=setting-lock.ini
 
 ########################################
 #            Build Config              #
