@@ -1,10 +1,6 @@
 #!/bin/sh
 #
 
-#for usb uvc iso
-echo 1 > /proc/irq/71/smp_affinity_list
-echo performance > /sys/bus/cpu/devices/cpu0/cpufreq/scaling_governor
-
 #vpu 600m
 #echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
@@ -12,9 +8,10 @@ echo performance > /sys/bus/cpu/devices/cpu0/cpufreq/scaling_governor
 #echo 0 > /sys/devices/system/cpu/cpu2/online
 #echo 0 > /sys/devices/system/cpu/cpu3/online
 
-#npu 600m
-#echo 600000000 >/sys/kernel/debug/clk/clk_core_npu/clk_rate
-#echo 600000000 >/sys/kernel/debug/clk/aclk_npu/clk_rate
+#npu 600M
+#echo userspace > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/governor
+#echo 600000000 > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/userspace/set_freq
+
 export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
 export VIV_VX_MAX_SOC_OT_NUMBER=16
 
