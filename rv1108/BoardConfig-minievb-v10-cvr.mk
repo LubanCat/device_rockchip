@@ -61,7 +61,7 @@ export RK_USERDATA_FILESYSTEM_SIZE=6M
 ########################################
 # Set root data config
 export RK_ROOT_FILESYSTEM_TYPE=jffs2
-export RK_ROOT_FILESYSTEM_SIZE=6M
+export RK_ROOT_FILESYSTEM_SIZE=8M
 
 ########################################
 #            Firmware Config           #

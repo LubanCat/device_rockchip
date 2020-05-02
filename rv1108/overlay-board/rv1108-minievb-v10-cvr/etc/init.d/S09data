@@ -10,7 +10,7 @@ case "$1" in
 	find_target_part=0
 	storage_type_emmc=1
 	mount_dir="/data"
-	nor_block_path=/dev/mtdblock7
+	nor_block_path=/dev/mtdblock5
 
 	if [ -e /dev/mmcblk0p1 ]; then
 		for block_path in /dev/mmcblk0p*;
