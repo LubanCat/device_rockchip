@@ -667,6 +667,9 @@ Apache-2.0
    limitations under the License.
 
 
+ngx-cookie-service
+MIT
+
 object-keys
 MIT
 The MIT License (MIT)
