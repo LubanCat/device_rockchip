@@ -18,7 +18,8 @@ export VIV_VX_MAX_SOC_OT_NUMBER=16
 #rkmedia isp ctrl
 export HDR_MODE=0
 export RKISPP_DEV=rkispp_scale0
-
+export ENABLE_SKIP_FRAME=1
+echo 1 > /sys/module/video_rkispp/parameters/isp_ispp_mode
 
 /oem/aicamera.sh &
 #/oem/eptz.sh &
