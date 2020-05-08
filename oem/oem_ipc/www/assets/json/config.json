@@ -19,6 +19,7 @@
     "name": "Video",
     "items": [
       "Encoder",
+      "AdvancedEncoder",
       "ROI",
       "RegionCrop"
     ]
