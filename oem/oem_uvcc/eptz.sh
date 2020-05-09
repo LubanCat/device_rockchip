@@ -12,8 +12,7 @@ check_alive()
 
 uvc_config.sh rndis
 sh /oem/isppx1_init.sh
-rk_npu_uvc_device  -i rkispp_scale0 -f image:nv12 -w 2688 -h 1520  -r 1 -t 1  -n rockx_face_detect:300x300 &
-
+eptz_demo -i rkispp_scale0 -f image:nv12 -n rockx_face_detect:300x300 &
 while true
 do
   check_alive smart_display_service
