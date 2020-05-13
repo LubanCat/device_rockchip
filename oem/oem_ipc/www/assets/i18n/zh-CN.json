@@ -123,6 +123,12 @@
   "100MHD": "100M 半双工",
   "100MD": "100M 双工",
   "1000MD": "1000M 双工",
+  "10baseT/Half": "10M 半双工",
+  "10baseT/Full": "10M 双工",
+  "100baseT/Half": "100M 半双工",
+  "100baseT/Full": "100M 双工",
+  "1000baseT/Full": "1000M 双工",
+  "Auto": "自动",
 
   "DHCP": "自动获取",
   "IPV4IP": "设备IPv4地址",

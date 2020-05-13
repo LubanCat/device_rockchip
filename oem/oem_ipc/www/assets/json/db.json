@@ -87,11 +87,15 @@
       "sV4Netmask": "255.255.255.0"
     },
     "link": {
-      "sAddress": "84:c2:e4:1b:66:d8",
-      "sDNS1": "114.114.114.114",
-      "sDNS2": "8.8.8.8",
+      "iDuplex": 1,
+      "iNicSpeed": 1000,
+      "iPower": 1,
+      "sAddress": "de:04:cd:7c:c7:31",
+      "sDNS1": "10.10.10.188",
+      "sDNS2": "58.22.96.66",
       "sInterface": "eth0",
-      "sNicType": "10MD"
+      "sNicSpeed": "10baseT/Half",
+      "sNicSpeedSupport": "Auto 10baseT/Half 10baseT/Full 100baseT/Half 100baseT/Full 1000baseT/Full "
     }
   },
   "wlan": {
