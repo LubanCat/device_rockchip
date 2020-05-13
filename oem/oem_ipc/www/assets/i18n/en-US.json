@@ -123,6 +123,12 @@
     "100MHD": "100M Half Duplex",
     "100MD": "100M Dual Duplex",
     "1000MD": "1000M Dual Duplex",
+    "10baseT/Half": "10M Half Duplex",
+    "10baseT/Full": "10M Dual Duplex",
+    "100baseT/Half": "100M Half Duplex",
+    "100baseT/Full": "100M Dual Duplex",
+    "1000baseT/Full": "1000M Dual Duplex",
+    "Auto": "Auto",
 
     "DHCP": "DHCP",
     "IPV4IP": "IPv4 Addrress",
