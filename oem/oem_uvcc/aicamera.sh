@@ -11,9 +11,6 @@ check_alive()
 }
 
 uvc_config.sh rndis
-sh /oem/isppx2_init.sh
-#uvc_flow_test -i /dev/video0 -w 1280 -h 720 -f nv12 -t mjpeg &
-#uvc_flow_test -i /dev/video0 -w 1920 -h 1080 -f nv12 -t mjpeg &
 while true
 do
   check_alive uvc_app

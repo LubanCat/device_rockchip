@@ -11,7 +11,6 @@ check_alive()
 }
 
 uvc_config.sh rndis
-sh /oem/isppx1_init.sh
 eptz_demo -i rkispp_scale0 -f image:nv12 -n rockx_face_detect:300x300 &
 while true
 do
