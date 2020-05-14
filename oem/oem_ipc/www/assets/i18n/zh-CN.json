@@ -793,7 +793,7 @@
   "sTelephoneNumber": "电话",
   "sType": "类型",
   "info": "信息",
-  "outputExcel": "导出Excel",
+  "outputExcel": "导出xls",
   "iFaceId": "人脸编号",
   "sSimilarity": "相似度",
   "sSnapshotPath": "抓拍照片地址",
