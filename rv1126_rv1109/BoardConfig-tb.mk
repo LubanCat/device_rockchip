@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rv1126
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rv1109_defconfig
+export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-evb-ddr3-v10-tb.config
 # Kernel dts
