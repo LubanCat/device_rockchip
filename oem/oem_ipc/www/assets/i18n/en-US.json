@@ -57,7 +57,8 @@
                 "OSDSettings": "OSD Settings",
                 "PrivacyCover": "Privacy Cover",
                 "ScenarioSwitch": "Scenario Switch",
-                "ImageSettings": "Image Setting"
+                "ImageSettings": "Image Setting",
+                "PictureMask": "Picture Mask"
             }
         },
         "Event": {
@@ -796,5 +797,13 @@
     "temporaryLogin": "Temporary Login",
     "autoLoginDay": "Auto Login Within One Day",
     "autoLoginWeek": "Auto Login Within One Week",
-    "autoLoginMonth": "Auto Login Within One Month"
+    "autoLoginMonth": "Auto Login Within One Month",
+    "prepareForDownloa": "Preparing for download！",
+    "startDownloadWithTip": "start downloading. If not, check brower whether support downloading!",
+    "downloadFail": "Download Fail!",
+    "reason": "Reason",
+    "overResolutionHeight": "Height of Resolution over 3000",
+    "overResolutionWidth": "Width of Resolution over 2000",
+    "clickForDetail": "Click for detail",
+    "waitForVerifing": "Wait for verifing!"
 }

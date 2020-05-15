@@ -57,7 +57,8 @@
         "OSDSettings" : "OSD 设置",
         "PrivacyCover" : "隐私遮盖",
         "ScenarioSwitch" : "场景切换",
-        "ImageSettings": "高级图像设置"
+        "ImageSettings": "高级图像设置",
+        "PictureMask": "图片遮盖"
       }
     },
     "Event": {
@@ -804,5 +805,14 @@
   "temporaryLogin": "临时登录",
   "autoLoginDay": "一天内免密登录",
   "autoLoginWeek": "一周内免密登录",
-  "autoLoginMonth": "一月内免密登录"
+  "autoLoginMonth": "一月内免密登录",
+  "prepareForDownloa": "准备下载中，请不要操作网页！",
+  "startDownloadWithTip": "开始下载，若无弹窗或下载任务，请确认浏览器是否开启多任务下载功能！",
+  "downloadFail": "下载失败！",
+  "reason": "原因",
+  "overResolutionHeight": "分辨率高超3000",
+  "overResolutionWidth": "分辨率宽超2000",
+  "clickForDetail": "点击查看详情",
+  "waitForVerifing": "校验照片中，请耐心等待！"
+
 }
