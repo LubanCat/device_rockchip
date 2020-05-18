@@ -33,7 +33,10 @@
   {
     "name": "Image",
     "items": [
-      "ImageSettings"
+      "DisplaySettings",
+      "OSDSettings",
+      "PrivacyCover",
+      "PictureMask"
     ]
   },
   {
