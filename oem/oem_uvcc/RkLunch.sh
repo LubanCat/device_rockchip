@@ -1,25 +1,19 @@
 #!/bin/sh
 #
 
-#vpu 600m
-#echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
-
-#cpux2
-#echo 0 > /sys/devices/system/cpu/cpu2/online
-#echo 0 > /sys/devices/system/cpu/cpu3/online
-
-#npu 600M
-#echo userspace > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/governor
-#echo 600000000 > /sys/devices/platform/ffbc0000.npu/devfreq/ffbc0000.npu/userspace/set_freq
+#for usb uvc iso
+usbirq=`cat /proc/interrupts |grep dwc3| awk '{print $1}'|tr -cd "[0-9]"`
+echo "usb irq:$usbirq"
+echo 1 > /proc/irq/$usbirq/smp_affinity_list
 
 export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
 export VIV_VX_MAX_SOC_OT_NUMBER=16
 
 #rkmedia isp ctrl
-export HDR_MODE=1
+export HDR_MODE=0
 export RKISPP_DEV=rkispp_scale0
 export ENABLE_SKIP_FRAME=1
-echo 1 > /sys/module/video_rkispp/parameters/isp_ispp_mode
+#echo 1 > /sys/module/video_rkispp/parameters/isp_ispp_mode
 
 /oem/aicamera.sh &
 #/oem/eptz.sh &
