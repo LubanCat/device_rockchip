@@ -412,6 +412,7 @@
         "factoryReset": "Mark sure to reset!",
         "noFile": "No file is selected!",
         "typeNeedDb": "File type must be db!",
+        "typeNeedImg": "File type must be img!",
         "putFile": "Select File please!",
         "upgrading": "Upgrading!"
     },
@@ -805,5 +806,9 @@
     "overResolutionHeight": "Height of Resolution over 3000",
     "overResolutionWidth": "Width of Resolution over 2000",
     "clickForDetail": "Click for detail",
-    "waitForVerifing": "Wait for verifing!"
+    "waitForVerifing": "Wait for verifing!",
+    "fileError": "File has error",
+    "fileAbort": "File is aborted",
+    "noWlanInfo": "Get no wlan info!",
+    "noLanInfo": "Get no lan info!"
 }

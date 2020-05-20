@@ -419,6 +419,7 @@
     "factoryReset": "确认恢复出厂设置，确认设备将重启",
     "noFile": "请先选择需上传的文件!",
     "typeNeedDb": "请选择db格式的参数文件！",
+    "typeNeedImg": "请选择img格式的升级文件！",
     "putFile": "请选择文件！",
     "upgrading": "系统升级中！"
 },
@@ -652,8 +653,8 @@
   "noFileSelectedWithLimit": "没有文件被选择(文件大小需小于1M)",
   "qualifiedFile": "个合格文件",
   "failedFile": "个违规文件",
-  "oversizeLimit1M": "个过大(小于1M)",
-  "typeErrorJpg": "个类型错误(需jpg)",
+  "oversizeLimit1M": "过大(应小于1M)",
+  "typeErrorJpg": "类型错误(需jpg)",
   "fileTypeShouldBe": "文件格式必须为",
   "oversize1M": "文件大小大于1M,上传失败!",
   "output": "导出",
@@ -813,6 +814,9 @@
   "overResolutionHeight": "分辨率高超3000",
   "overResolutionWidth": "分辨率宽超2000",
   "clickForDetail": "点击查看详情",
-  "waitForVerifing": "校验照片中，请耐心等待！"
-
+  "waitForVerifing": "校验照片中，请耐心等待！",
+  "fileError": "文件错误",
+  "fileAbort": "文件中断",
+  "noWlanInfo": "未获取到wlan信息！",
+  "noLanInfo": "未获取到lan信息！"
 }
