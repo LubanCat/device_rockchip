@@ -82,10 +82,13 @@ check_partition_size() {
 				fi
 			;;
 			recovery)
-				if [ $part_size_bytes -lt `du -b $RECOVERY_IMG | awk '{print $1}'` ]
+				if [ -f $RECOVERY_IMG ]
 				then
-					echo -e "\e[31m error: recovery image size exceed parameter! \e[0m"
-					return -1
+					if [ $part_size_bytes -lt `du -b $RECOVERY_IMG | awk '{print $1}'` ]
+					then
+						echo -e "\e[31m error: recovery image size exceed parameter! \e[0m"
+						return -1
+					fi
 				fi
 			;;
 			rootfs)
