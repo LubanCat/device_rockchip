@@ -73,6 +73,15 @@ then
 	$UPGRADETOOL di -p $PARAMETER
 fi
 
+if [ $FLASH_TYPE = resource ]
+then
+        if [ -n "$2" ];then
+                RESOURCE=$2
+        fi
+        echo "flash resource: $RESOURCE"
+        $UPGRADETOOL di -resource $RESOURCE
+fi
+
 if [ $FLASH_TYPE = uboot ]
 then
 	if [ -n "$2" ];then
