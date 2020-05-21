@@ -66,6 +66,7 @@ function usage()
 	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "uboot              -build uboot"
 	echo "spl                -build spl"
+	echo "loader             -build loader"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
@@ -120,6 +121,22 @@ function build_spl(){
 		echo "====Build spl ok!===="
 	else
 		echo "====Build spl failed!===="
+		exit 1
+	fi
+}
+
+function build_loader(){
+	if [ -z $RK_LOADER_BUILD_TARGET ]; then
+		return;
+	fi
+	echo "============Start build loader============"
+	echo "RK_LOADER_BUILD_TARGET=$RK_LOADER_BUILD_TARGET"
+	echo "=========================================="
+	cd loader && ./build.sh $RK_LOADER_BUILD_TARGET && cd -
+	if [ $? -eq 0 ]; then
+		echo "====Build loader ok!===="
+	else
+		echo "====Build loader failed!===="
 		exit 1
 	fi
 }
@@ -363,6 +380,7 @@ function build_all(){
 		build_spl
 	fi
 
+	build_loader
 	build_kernel
 	build_toolchain && \
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
