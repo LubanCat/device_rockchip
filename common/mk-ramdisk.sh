@@ -78,5 +78,9 @@ KERNEL_IMAGE=$KERNEL_IMAGE.gz
 fi
 
 echo -n "pack $RAMDISK_IMG..."
-$TOP_DIR/kernel/scripts/mkbootimg --kernel $KERNEL_IMAGE --ramdisk $ROOTFS_IMAGE --second $KERNEL_DTB -o $TARGET_IMAGE
+if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS" ];then
+	$COMMON_DIR/mk-fitimage.sh $TARGET_IMAGE $TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS $ROOTFS_IMAGE
+else
+	$TOP_DIR/kernel/scripts/mkbootimg --kernel $KERNEL_IMAGE --ramdisk $ROOTFS_IMAGE --second $KERNEL_DTB -o $TARGET_IMAGE
+fi
 echo "done."
