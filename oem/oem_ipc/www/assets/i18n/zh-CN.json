@@ -818,5 +818,6 @@
   "fileError": "文件错误",
   "fileAbort": "文件中断",
   "noWlanInfo": "未获取到wlan信息！",
-  "noLanInfo": "未获取到lan信息！"
+  "noLanInfo": "未获取到lan信息！",
+  "failure": "失败"
 }
