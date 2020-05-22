@@ -510,8 +510,12 @@ if echo $@|grep -wqE "help|-h"; then
 	exit 0
 fi
 
-OPTIONS="$@"
-for option in ${OPTIONS:-allsave}; do
+OPTIONS="${@:-allsave}"
+
+[ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT" ] \
+	&& source "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT"  # board hooks
+
+for option in ${OPTIONS}; do
 	echo "processing option: $option"
 	case $option in
 		BoardConfig*.mk)
