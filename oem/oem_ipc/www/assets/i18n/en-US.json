@@ -811,5 +811,6 @@
     "fileAbort": "File is aborted",
     "noWlanInfo": "Get no wlan info!",
     "noLanInfo": "Get no lan info!",
-    "failure": "Failure"
+    "failure": "Failure",
+    "connect": "Connect"
 }
