@@ -14,7 +14,8 @@ check_linker /mnt/sdcard /oem/www/sdcard
 #set max socket buffer size to 512KByte
 sysctl -w net.core.wmem_max=524288
 
-export HDR_MODE=0
+export HDR_MODE=1
+export enable_encoder_debug=1
 
 #vpu 600M
 echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
