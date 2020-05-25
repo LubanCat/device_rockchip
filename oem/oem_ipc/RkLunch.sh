@@ -16,6 +16,7 @@ sysctl -w net.core.wmem_max=524288
 
 export HDR_MODE=1
 export enable_encoder_debug=1
+ispserver &
 
 #vpu 600M
 echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
