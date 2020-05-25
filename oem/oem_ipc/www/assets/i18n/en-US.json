@@ -812,5 +812,17 @@
     "noWlanInfo": "Get no wlan info!",
     "noLanInfo": "Get no lan info!",
     "failure": "Failure",
-    "connect": "Connect"
+    "connect": "Connect",
+    "not24BMP": "BMP should be 24bit!",
+    "resolutionRatioWrong": "Resolution ratio is wrong!",
+    "resolutionRatioWrong16": "Resolution should be 16 aligned!",
+    "formatingNotClick": "Formating!",
+    "completeFormating": "Complete formating",
+    "getFormatStatusFailFresh": "Fail to get formating status, fresh please!",
+    "noDiskCanBeSelected": "No Disk can be selected!",
+    "diskIsUnmounted": "This disk is unmounted!",
+    "functionRunningAlarm": "Program Running! Don't click again!",
+    "startRecording": "Start Recording",
+    "stopRecording": "Stop Recording",
+    "recordingFail": "Recording Fail!"
 }

@@ -820,5 +820,17 @@
   "noWlanInfo": "未获取到wlan信息！",
   "noLanInfo": "未获取到lan信息！",
   "failure": "失败",
-  "connect": "连接"
+  "connect": "连接",
+  "not24BMP": "需24位深BMP！",
+  "resolutionRatioWrong": "图片宽高比率错误！",
+  "resolutionRatioWrong16": "图片宽高需为16的倍数！",
+  "formatingNotClick": "格式化中，请勿重复点击！",
+  "completeFormating": "格式化完成！",
+  "getFormatStatusFailFresh": "获取格式化信息失败，请刷新！",
+  "noDiskCanBeSelected": "无可选磁盘！",
+  "diskIsUnmounted": "该磁盘未挂载！",
+  "functionRunningAlarm": "该功能运行中，请勿重复点击！",
+  "startRecording": "开始录像",
+  "stopRecording": "结束录像",
+  "recordingFail": "录像失败"
 }
