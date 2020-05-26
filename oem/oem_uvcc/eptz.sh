@@ -9,11 +9,12 @@ check_alive()
   fi
   
 }
-
+ispserver &
 uvc_config.sh rndis
 eptz_demo -i rkispp_scale0 -f image:nv12 -n rockx_face_detect:300x300 &
 while true
 do
+  check_alive ispserver
   check_alive smart_display_service
   sleep 2
 done
