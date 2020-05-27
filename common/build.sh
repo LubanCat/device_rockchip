@@ -13,7 +13,7 @@ source $TOP_DIR/device/rockchip/common/Version.mk
 function usagekernel()
 {
 	echo "cd kernel"
-	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG"
+	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS"
 }
 
