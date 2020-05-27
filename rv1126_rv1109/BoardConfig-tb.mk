@@ -3,9 +3,13 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rv1126
+export RK_UBOOT_DEFCONFIG=rv1126-emmc-tb
+# Trust ini config
+export RK_TRUST_INI_CONFIG=RV1126TOS_TB.ini
+# Uboot SPL ini config
+export RK_SPL_INI_CONFIG=RV1126MINIALL_EMMC_TB.ini
 # Uboot image format type: fit(flattened image tree)
-export RK_UBOOT_FORMAT_TYPE=fit
+export RK_UBOOT_FORMAT_TYPE=
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
@@ -21,7 +25,7 @@ export RK_PARAMETER=parameter-tb.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_tb
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
+export RK_CFG_RECOVERY=
 # ramboot config
 export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs
 # Pcba config
@@ -37,14 +41,14 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
+export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
-export RK_OEM_DIR=oem_ipc
+export RK_OEM_DIR=
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
-export RK_MISC=wipe_all-misc.img
+export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
