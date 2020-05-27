@@ -20,7 +20,9 @@ function usagekernel()
 function usageuboot()
 {
 	echo "cd u-boot"
-	echo "./make.sh $RK_UBOOT_DEFCONFIG"
+	echo "./make.sh $RK_UBOOT_DEFCONFIG" \
+		"${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG}" \
+		"${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG}"
 }
 
 function usagerootfs()
@@ -100,7 +102,12 @@ function build_uboot(){
 	if [ -f u-boot/*_loader_*.bin ]; then
 		rm u-boot/*_loader_*.bin
 	fi
-	cd u-boot && ./make.sh $RK_UBOOT_DEFCONFIG && cd -
+
+	cd u-boot && ./make.sh $RK_UBOOT_DEFCONFIG \
+		${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
+		${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
+		&& cd -
+
 	if [ $? -eq 0 ]; then
 		echo "====Build uboot ok!===="
 	else
