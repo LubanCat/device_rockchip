@@ -172,7 +172,8 @@
         "WPSMODE": "WPS Mode Setting",
         "AUTOCONNECT": "Wi-Fi AutoConnect",
         "deleteOne": "Are you sure that delete info of the wifi selected?",
-        "deleteThis": "Delete"
+        "deleteThis": "Delete",
+        "readyAlarm": "Wifi is ready.Delete it before changing password!"
     },
 
     "scan": "Scan",
@@ -212,6 +213,7 @@
 
     "frameRate": "FPS",
     "maxRate": "Maximum Bitrate",
+    "minRate": "Minimum Bitrate",
 
     "outputDataType": "Video Encoder Type",
     "smart": "Smart",
@@ -300,6 +302,7 @@
     "dehaze": "Dehaze",
     "antiShakeDSP": "Anti Shake DSP",
     "grayRange": "Gray Range",
+    "FEC": "FEC",
 
     "videoAdjustment": "Video Adjustment",
     "mirror": "Mirror",
@@ -824,5 +827,7 @@
     "functionRunningAlarm": "Program Running! Don't click again!",
     "startRecording": "Start Recording",
     "stopRecording": "Stop Recording",
-    "recordingFail": "Recording Fail!"
+    "recordingFail": "Recording Fail!",
+    "config": "Config",
+    "responseError": "Response Error!"
 }

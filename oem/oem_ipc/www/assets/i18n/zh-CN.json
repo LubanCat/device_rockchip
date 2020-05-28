@@ -172,7 +172,8 @@
     "WPSMODE": "WPS 模式设置",
     "AUTOCONNECT": "Wi-Fi 自动连接",
     "deleteOne": "确认要删除所选中wifi的信息?",
-    "deleteThis": "删除"
+    "deleteThis": "删除",
+    "readyAlarm": "wifi已连接，如需重设密码请先删除！"
   },
 
   "scan": "扫描",
@@ -212,6 +213,7 @@
 
   "frameRate": "视频帧率",
   "maxRate": "码率上限",
+  "minRate": "码率下限",
 
   "outputDataType": "视频编码",
   "smart": "Smart",
@@ -307,6 +309,7 @@
   "dehaze": "透雾模式",
   "antiShakeDSP": "电子防抖",
   "grayRange": "灰度范围",
+  "FEC": "鱼眼矫正",
 
   "videoAdjustment": "视频调整",
   "mirror": "镜像",
@@ -832,5 +835,7 @@
   "functionRunningAlarm": "该功能运行中，请勿重复点击！",
   "startRecording": "开始录像",
   "stopRecording": "结束录像",
-  "recordingFail": "录像失败"
+  "recordingFail": "录像失败",
+  "config": "配置",
+  "responseError": "响应异常！"
 }
