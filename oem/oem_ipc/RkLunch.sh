@@ -55,10 +55,8 @@ if [ $HasDisplay -eq 1 ]; then
 		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
 		if [ $? -ne 0 ]; then
 			if [ $HasHDMI -eq 1 ]; then
-				sh /oem/isppx3_init.sh
 				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
 			else
-				sh /oem/isppx4_init.sh
 				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
 			fi
 		else
@@ -75,7 +73,6 @@ else
 		fi
 		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
 		if [ $? -ne 0 ]; then
-			sh /oem/isppx3_init.sh
 			mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
 		else
 			break;
