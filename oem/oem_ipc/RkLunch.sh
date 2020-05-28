@@ -11,8 +11,8 @@ check_linker /userdata   /oem/www/userdata
 check_linker /media/usb0 /oem/www/usb0
 check_linker /mnt/sdcard /oem/www/sdcard
 
-#set max socket buffer size to 512KByte
-sysctl -w net.core.wmem_max=524288
+#set max socket buffer size to 1.5MByte
+sysctl -w net.core.wmem_max=1572864
 
 export HDR_MODE=1
 export enable_encoder_debug=1
