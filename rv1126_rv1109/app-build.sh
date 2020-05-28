@@ -50,12 +50,14 @@ function rebuild()
 	make  \
 		dbserver-rebuild \
 		common_algorithm-rebuild \
-		ipcweb-backend-rebuild \
 		libgdbus-rebuild \
 		libIPCProtocol-rebuild \
 		librkdb-rebuild \
-		netserver-rebuild \
+		CallFunIpc-rebuild \
 		camera_engine_rkaiq-rebuild \
+		isp2-ipc-rebuild \
+		ipcweb-backend-rebuild \
+		netserver-rebuild \
 		storage_manager-rebuild \
 		rk_oem-rebuild \
 		mpp-rebuild \
@@ -63,8 +65,6 @@ function rebuild()
 		rockface-rebuild \
 		rkmedia-rebuild \
 		mediaserver-rebuild \
-		CallFunIpc-rebuild \
-		isp2-ipc-rebuild \
 ###
 }
 
