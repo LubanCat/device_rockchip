@@ -214,6 +214,7 @@
     "frameRate": "FPS",
     "maxRate": "Maximum Bitrate",
     "minRate": "Minimum Bitrate",
+    "targetRate": "Target Bitrate",
 
     "outputDataType": "Video Encoder Type",
     "smart": "Smart",
@@ -275,6 +276,7 @@
     "backlightCompensationArea": "Backlight Compensation Area",
     "WDR": "WDR",
     "WDRLevel": "WDR Level",
+    "HDR": "HDR",
     "HLC": "HighLight Compensation",
     "HLCLevel": "HighLight Compensation Level",
 

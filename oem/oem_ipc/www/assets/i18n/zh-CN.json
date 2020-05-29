@@ -214,6 +214,7 @@
   "frameRate": "视频帧率",
   "maxRate": "码率上限",
   "minRate": "码率下限",
+  "targetRate": "目标码率",
 
   "outputDataType": "视频编码",
   "smart": "Smart",
@@ -282,6 +283,7 @@
 
   "WDR": "宽动态",
   "WDRLevel": "宽动态级别",
+  "HDR": "高动态",
   "HLC": "强光抑制",
   "HLCLevel": "强光抑制级别",
 
