@@ -767,6 +767,7 @@
     "switch": "Switch",
     "passwordsNotEqual": "Passwrod aren't equal!",
     "samrtOpenTip": "After Opening Smart, the application will be restart and ROI function will be ban!",
+    "samrtCloseTip": "After Closeing Smart, the application will be restart and ROI function will be available!",
     "advancePara": "Advance",
     "ScreenshotPlan": "Screenshot Plan",
     "motion-detect": "Motion Detect",
@@ -831,5 +832,31 @@
     "stopRecording": "Stop Recording",
     "recordingFail": "Recording Fail!",
     "config": "Config",
-    "responseError": "Response Error!"
+    "responseError": "Response Error!",
+    "imageWidth": "Image Width",
+    "faceWidth": "Face Width",
+    "deviceNum": "Device Number",
+    "snapTime": "Snap Time",
+    "positonInfo": "Position Info",
+    "enableSetting": "Enable And Setting",
+    "infoSetting": "Info Setting",
+  
+    "OverlaySnap": {
+      "streamOverlayEnabled": "Overlay in Stream Enabled",
+      "imageOverlayEnabled": "Overlay in Snap Enabled",
+      "snap": "Snap Image Setting",
+      "head": "Head Image",
+      "demicalTip": " should be integer or one decimal!",
+      "faceEnabled": "Face Recognition Enabled"
+    },
+  
+    "ImgQ": {
+      "general": "General",
+      "good": "Good",
+      "best": "Best"
+    },
+
+    "HDRCloseTip": "When HDR closes, the device will reboot.",
+    "HDROpenTip": "When HDR opens, the device will reboot.",
+    "rebootHDR": "HDR has opened, the device is rebooting!"
 }
