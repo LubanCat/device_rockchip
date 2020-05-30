@@ -775,6 +775,7 @@
   "switch": "切换",
   "passwordsNotEqual": "密码不一致!",
   "samrtOpenTip": "Smart开启后，应用将重启，且该码流ROI功能将被禁用，是否确认保存？",
+  "samrtCloseTip": "Smart关闭后，应用将重启，且该码流ROI功能将启用，是否确认保存？",
   "advancePara": "高级参数",
   "ScreenshotPlan": "抓图计划",
   "motion-detect": "移动侦测",
@@ -839,5 +840,31 @@
   "stopRecording": "结束录像",
   "recordingFail": "录像失败",
   "config": "配置",
-  "responseError": "响应异常！"
+  "responseError": "响应异常！",
+  "imageWidth": "图像宽度",
+  "faceWidth": "人脸宽度",
+  "deviceNum": "设备编号",
+  "snapTime": "抓图时间",
+  "positonInfo": "监控点信息",
+  "enableSetting": "启用与设置",
+  "infoSetting": "信息设置",
+
+  "OverlaySnap": {
+    "streamOverlayEnabled": "码流叠加开启",
+    "imageOverlayEnabled": "报警抓图叠加开启",
+    "snap": "智能图像设置",
+    "head": "大头照",
+    "demicalTip": "必须是整数或一位小数!",
+    "faceEnabled": "人脸识别启用"
+  },
+
+  "ImgQ": {
+    "general": "一般",
+    "good": "较好",
+    "best": "最好"
+  },
+
+  "HDRCloseTip": "高动态关闭将重启设备，是否关闭？",
+  "HDROpenTip": "高动态开启将重启设备，是否开启？",
+  "rebootHDR": "重启设备中！"
 }
