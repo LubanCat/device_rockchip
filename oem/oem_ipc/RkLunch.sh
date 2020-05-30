@@ -16,7 +16,6 @@ sysctl -w net.core.wmem_max=1572864
 
 export HDR_MODE=1
 export enable_encoder_debug=1
-ispserver &
 
 #vpu 600M
 echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
@@ -26,6 +25,9 @@ echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 #echo 0 > /sys/devices/system/cpu/cpu3/online
 
 ipc-daemon --no-mediaserver &
+sleep 3
+ispserver &
+sleep 1
 
 ls /sys/class/drm | grep "card0-"
 if [ $? -ne 0 ] ;then
