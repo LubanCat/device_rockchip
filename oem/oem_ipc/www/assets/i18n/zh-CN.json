@@ -866,5 +866,9 @@
 
   "HDRCloseTip": "高动态关闭将重启设备，是否关闭？",
   "HDROpenTip": "高动态开启将重启设备，是否开启？",
-  "rebootHDR": "重启设备中！"
+  "rebootHDR": "重启设备中！",
+  "deviceRestarting": "设备重启中！",
+  "completeTip": "完成，请刷新页面！",
+  "keyLoss": "关键字缺失,保存失败!"
+
 }

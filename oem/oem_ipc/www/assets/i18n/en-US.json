@@ -858,5 +858,8 @@
 
     "HDRCloseTip": "When HDR closes, the device will reboot.",
     "HDROpenTip": "When HDR opens, the device will reboot.",
-    "rebootHDR": "HDR has opened, the device is rebooting!"
+    "rebootHDR": "HDR has opened, the device is rebooting!",
+    "deviceRestarting": "Device is restarting!",
+    "completeTip": "Completed, please refresh!",
+    "keyLoss": "Key is loss, save fail!"
 }
