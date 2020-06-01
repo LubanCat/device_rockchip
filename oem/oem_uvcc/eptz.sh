@@ -4,6 +4,7 @@
 check_alive()
 {
   PID=`ps |grep $1 |grep -v grep | wc -l`
+  killall -9 mddediaserver
   if [ $PID -le 0 ];then
      $1 &
   fi
