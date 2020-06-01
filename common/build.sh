@@ -434,7 +434,18 @@ function build_updateimg(){
 
 	else
 		echo "Make update.img"
-		cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+		if [ -f "$PACK_TOOL_DIR/rockdev/$RK_PACKAGE_FILE" ]; then
+			source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+
+			cd $PACK_TOOL_DIR/rockdev && \
+				ln -fs "$PACK_TOOL_DIR/rockdev/$RK_PACKAGE_FILE" package-file && \
+				./mkupdate.sh && cd -
+
+			cd $PACK_TOOL_DIR/rockdev && \
+				ln -fs $source_package_file_name package-file && cd -
+		else
+			cd $PACK_TOOL_DIR/rockdev && ./mkupdate.sh && cd -
+		fi
 		mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH
 		if [ $? -eq 0 ]; then
 			echo "Make update image ok!"
