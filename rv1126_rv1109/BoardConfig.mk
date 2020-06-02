@@ -16,12 +16,16 @@ export RK_KERNEL_DTS=rv1126-evb-ddr3-v10
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
+# kernel image format type: fit(flattened image tree)
+export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
+# Recovery image format type: fit(flattened image tree)
+export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
