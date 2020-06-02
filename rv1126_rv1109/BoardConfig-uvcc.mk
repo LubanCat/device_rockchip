@@ -11,7 +11,8 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v10
+#export RK_KERNEL_DTS=rv1126-evb-ddr3-v10
+export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
