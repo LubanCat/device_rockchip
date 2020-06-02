@@ -3,10 +3,19 @@
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
 
+function unset_board_config_all()
+{
+	local tmp_file=`mktemp`
+	grep -o "^export.*RK_.*=" `find $TOP_DIR/device/rockchip -name "Board*.mk" -type f` -h | sort | uniq > $tmp_file
+	source $tmp_file
+	rm -f $tmp_file
+}
+
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
+unset_board_config_all
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
 
