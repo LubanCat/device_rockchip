@@ -4,8 +4,8 @@
 check_alive()
 {
   PID=`ps |grep $1 |grep -v grep | wc -l`
-  killall -9 mediaserver
   if [ $PID -le 0 ];then
+     killall -9 mediaserver
      if [ "$1"x == "uvc_app"x ];then
        killall -9 uvc_app
        reboot
