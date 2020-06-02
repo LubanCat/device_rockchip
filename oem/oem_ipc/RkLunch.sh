@@ -15,7 +15,7 @@ check_linker /mnt/sdcard /oem/www/sdcard
 sysctl -w net.core.wmem_max=1572864
 
 export HDR_MODE=1
-export enable_encoder_debug=1
+export enable_encoder_debug=0
 
 #vpu 600M
 echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
