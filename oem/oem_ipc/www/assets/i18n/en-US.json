@@ -861,5 +861,7 @@
     "rebootHDR": "HDR has opened, the device is rebooting!",
     "deviceRestarting": "Device is restarting!",
     "completeTip": "Completed, please refresh!",
-    "keyLoss": "Key is loss, save fail!"
+    "keyLoss": "Key is loss, save fail!",
+    "complete": "Complete",
+    "modifySuccessful": "Modify successful!"
 }

@@ -869,6 +869,8 @@
   "rebootHDR": "重启设备中！",
   "deviceRestarting": "设备重启中！",
   "completeTip": "完成，请刷新页面！",
-  "keyLoss": "关键字缺失,保存失败!"
+  "keyLoss": "关键字缺失,保存失败!",
+  "complete": "完成",
+  "modifySuccessful": "修改成功！"
 
 }
