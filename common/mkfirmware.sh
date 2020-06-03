@@ -6,6 +6,15 @@ SCRIPT_DIR=$(dirname $(realpath $BASH_SOURCE))
 TOP_DIR=$(realpath $SCRIPT_DIR/../../..)
 cd $TOP_DIR
 
+function unset_board_config_all()
+{
+	local tmp_file=`mktemp`
+	grep -o "^export.*RK_.*=" `find $TOP_DIR/device/rockchip -name "Board*.mk" -type f` -h | sort | uniq > $tmp_file
+	source $tmp_file
+	rm -f $tmp_file
+}
+unset_board_config_all
+
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
