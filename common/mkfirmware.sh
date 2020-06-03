@@ -9,12 +9,7 @@ cd $TOP_DIR
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
-CHECK_RK_OEM_FLAG="`grep -w "^BR2_PACKAGE_RK_OEM=y" $TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/.config; true;`"
-if [ "${CHECK_RK_OEM_FLAG}x" != "x" ]; then
-OEM_DIR=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/oem
-else
 OEM_DIR=$TOP_DIR/device/rockchip/oem/$RK_OEM_DIR
-fi
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
@@ -22,6 +17,9 @@ ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
+if [ ! -f $FAKEROOT_TOOL ]; then
+FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/host/bin/fakeroot
+fi
 OEM_FAKEROOT_SCRIPT=$ROCKDEV/oem.fs
 USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
@@ -151,7 +149,7 @@ then
 	fi
 fi
 
-if [ $RK_OEM_DIR ]
+if [ $RK_OEM_DIR -a "${RK_OEM_BUILDIN_BUILDROOT}x" != "YESx" ]
 then
 	if [ -d $OEM_DIR ]
 	then
