@@ -135,7 +135,7 @@
     "IPV4IP": "IPv4 Addrress",
     "IPV4MASK": "IPv4 Mask",
     "IPV4GW": "IPv4 Gateway",
-    "enable": "enable",
+    "enable": "Enable",
     "MAC": "Media Access Control Address",
     "DNS1":"Preferred DNS server",
     "DNS2":"Secondary DNS server",
@@ -488,6 +488,7 @@
     "ready": "ready",
     "association": "association",
     "configuration": "configuration",
+    "attempting": "attempting",
 
     "Region": {
         "enableCrop": "Clip Enabled",
@@ -840,7 +841,7 @@
     "positonInfo": "Position Info",
     "enableSetting": "Enable And Setting",
     "infoSetting": "Info Setting",
-  
+
     "OverlaySnap": {
       "streamOverlayEnabled": "Overlay in Stream Enabled",
       "imageOverlayEnabled": "Overlay in Snap Enabled",
@@ -849,7 +850,7 @@
       "demicalTip": " should be integer or one decimal!",
       "faceEnabled": "Face Recognition Enabled"
     },
-  
+
     "ImgQ": {
       "general": "General",
       "good": "Good",
@@ -863,5 +864,7 @@
     "completeTip": "Completed, please refresh!",
     "keyLoss": "Key is loss, save fail!",
     "complete": "Complete",
-    "modifySuccessful": "Modify successful!"
+    "modifySuccessful": "Modify successful!",
+    "wifiTurnOn": "WiFi is turning on!",
+    "wifiScaning": "Scaning Wifi!"
 }
