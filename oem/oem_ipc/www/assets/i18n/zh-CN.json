@@ -204,9 +204,10 @@
   "CBR": "定码率",
   "VBR": "变码率",
 
-  "imageQuality": "图像质量",
+  "RCQuality": "图像质量",
   "lowest": "最低",
   "lower": "较低",
+  "low": "低",
   "medium": "中等",
   "higher": "较高",
   "highest": "最高",
@@ -231,9 +232,10 @@
   "open": "开启",
   "close": "关闭",
 
-  "RCQuality": "编码复杂度",
+  "H264Profile": "编码复杂度",
   "high": "高",
-  "low": "低",
+  "main": "中",
+  "baseline": "低",
 
   "rateSmooth": "码流平滑",
   "smooth": "清晰<->平滑",
@@ -878,6 +880,7 @@
   "wifiScaning": "扫描WiFi中！",
   "noAvalidDisk": "无可用磁盘！",
   "noDiskSelect": "请先选择需要格式化的磁盘！",
-  "getRecordStatusFail": "获取录像状态失败！"
+  "getRecordStatusFail": "获取录像状态失败！",
+  "imageQuality": "图像质量"
 
 }

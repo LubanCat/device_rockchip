@@ -204,9 +204,10 @@
     "CBR": "CBR",
     "VBR": "VBR",
 
-    "imageQuality": "Image Quality",
+    "RCQuality": "Image Quality",
     "lowest": "Lowest",
     "lower": "Lower",
+    "low": "Low",
     "medium": "Medium",
     "higher": "Higher",
     "highest": "Highest",
@@ -231,9 +232,10 @@
     "open": "Open",
     "close": "Close",
 
-    "RCQuality": "Encoder Complexity",
+    "H264Profile": "Encoder Complexity",
     "high": "High",
-    "low": "Low",
+    "main": "Main",
+    "baseline": "Baseline",
 
     "rateSmooth": "Rate Smooth",
     "smooth": "Clarity<->Smooth",
@@ -870,5 +872,7 @@
     "wifiScaning": "Scaning Wifi!",
     "noAvalidDisk": "No avalid disk!",
     "noDiskSelect": "No disk is selected!",
-    "getRecordStatusFail": "Get recording status fail!"
+    "getRecordStatusFail": "Get recording status fail!",
+    "imageQuality": "Image Quality"
+
 }
