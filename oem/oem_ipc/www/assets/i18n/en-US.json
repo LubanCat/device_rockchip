@@ -370,6 +370,7 @@
     "12hour": "12 Hour",
     "24hour": "24 Hour",
     "characterOverlay": "Character Overlay",
+    "charOverScreen": "String may be oversize.The over part wouldn't be shown!",
 
     "maskEnabled": "Mask Enabled",
     "drawMask": "Draw Mask",
@@ -866,5 +867,8 @@
     "complete": "Complete",
     "modifySuccessful": "Modify successful!",
     "wifiTurnOn": "WiFi is turning on!",
-    "wifiScaning": "Scaning Wifi!"
+    "wifiScaning": "Scaning Wifi!",
+    "noAvalidDisk": "No avalid disk!",
+    "noDiskSelect": "No disk is selected!",
+    "getRecordStatusFail": "Get recording status fail!"
 }

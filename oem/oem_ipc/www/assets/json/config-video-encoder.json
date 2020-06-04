@@ -44,7 +44,9 @@
     "items": [
       "lowest",
       "lower",
+      "low",
       "medium",
+      "high",
       "higher",
       "highest"
     ]

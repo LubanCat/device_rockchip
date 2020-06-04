@@ -377,6 +377,7 @@
   "12hour": "12 小时",
   "24hour": "24 小时",
   "characterOverlay": "字符叠加",
+  "charOverScreen": "字符可能超出显示范围，超出部分将不显示！",
 
   "maskEnabled": "启用视频遮盖",
   "drawMask": "绘制区域",
@@ -874,6 +875,9 @@
   "complete": "完成",
   "modifySuccessful": "修改成功！",
   "wifiTurnOn": "WiFi开启中！",
-  "wifiScaning": "扫描WiFi中！"
+  "wifiScaning": "扫描WiFi中！",
+  "noAvalidDisk": "无可用磁盘！",
+  "noDiskSelect": "请先选择需要格式化的磁盘！",
+  "getRecordStatusFail": "获取录像状态失败！"
 
 }
