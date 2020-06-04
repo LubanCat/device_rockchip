@@ -13,5 +13,6 @@ export VIV_VX_MAX_SOC_OT_NUMBER=16
 export HDR_MODE=0
 export ENABLE_SKIP_FRAME=1
 
+#export ENABLE_EPTZ=1
+
 /oem/aicamera.sh &
-#/oem/eptz.sh &
