@@ -51,3 +51,5 @@ export RK_USERDATA_DIR=userdata_normal
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
+# Define package-file for update.img
+export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
