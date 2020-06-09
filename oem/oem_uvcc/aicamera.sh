@@ -13,7 +13,6 @@ check_alive()
        $1 &
      fi
   fi
-  
 }
 
 stop_unused_daemon()
@@ -32,6 +31,7 @@ usb_irq_set()
   echo 1 > /proc/irq/$usbirq/smp_affinity_list
 }
 
+dbserver &
 ispserver &
 stop_unused_daemon
 /oem/usb_config.sh rndis
@@ -39,6 +39,7 @@ usb_irq_set
 uvc_app &
 while true
 do
+  check_alive dbserver
   check_alive ispserver
   check_alive uvc_app
   check_alive smart_display_service
