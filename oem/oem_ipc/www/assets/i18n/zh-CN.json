@@ -384,9 +384,9 @@
   "maskEnabled": "启用视频遮盖",
   "drawMask": "绘制区域",
   "stopDrawing": "停止绘制",
-  "deleteMask": "清楚全部",
+  "deleteMask": "清除全部",
   "confirmDelete": "确认删除",
-  "isDeleteAllMask": "确定要清楚全部遮盖区域吗?",
+  "isDeleteAllMask": "确定要清除全部遮盖区域吗?",
   "yes": "确定",
   "no": "取消",
 
@@ -881,6 +881,7 @@
   "noAvalidDisk": "无可用磁盘！",
   "noDiskSelect": "请先选择需要格式化的磁盘！",
   "getRecordStatusFail": "获取录像状态失败！",
-  "imageQuality": "图像质量"
+  "imageQuality": "图像质量",
+  "videoPlanEnabledRecordUseless": "录像计划开启，预览界面录像将被中断"
 
 }

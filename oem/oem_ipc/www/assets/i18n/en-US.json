@@ -873,6 +873,7 @@
     "noAvalidDisk": "No avalid disk!",
     "noDiskSelect": "No disk is selected!",
     "getRecordStatusFail": "Get recording status fail!",
-    "imageQuality": "Image Quality"
+    "imageQuality": "Image Quality",
+    "videoPlanEnabledRecordUseless": "Video Plan is enabled, recorging will be aborted!"
 
 }
