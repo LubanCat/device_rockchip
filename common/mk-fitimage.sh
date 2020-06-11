@@ -30,6 +30,7 @@ if [ ! -f $src_its_file ]; then
 fi
 
 rm -f $target_its_file
+mkdir -p "`dirname $target_its_file`"
 
 while read line
 do
