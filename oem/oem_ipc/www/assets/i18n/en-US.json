@@ -874,6 +874,9 @@
     "noDiskSelect": "No disk is selected!",
     "getRecordStatusFail": "Get recording status fail!",
     "imageQuality": "Image Quality",
-    "videoPlanEnabledRecordUseless": "Video Plan is enabled, recorging will be aborted!"
+    "videoPlanEnabledRecordUseless": "Video Plan is enabled, recorging will be aborted!",
+    "portChangeTip": "Ports are changed. The device will reboot after saving. Confirm?",
+    "downloadPartFail": "Download part of data fail!",
+    "recordStatusError": "Recording status is error!"
 
 }

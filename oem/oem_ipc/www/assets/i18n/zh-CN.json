@@ -882,6 +882,8 @@
   "noDiskSelect": "请先选择需要格式化的磁盘！",
   "getRecordStatusFail": "获取录像状态失败！",
   "imageQuality": "图像质量",
-  "videoPlanEnabledRecordUseless": "录像计划开启，预览界面录像将被中断"
-
+  "videoPlanEnabledRecordUseless": "录像计划已开启，预览界面录像将被中断",
+  "portChangeTip": "端口改变，设备将会重启，是否保存？",
+  "downloadPartFail": "部分数据缺失，请重新下载！",
+  "recordStatusError": "获取录像状态异常！"
 }
