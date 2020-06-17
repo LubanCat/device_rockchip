@@ -22,7 +22,7 @@ export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
+export RK_CFG_RECOVERY=
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
@@ -48,7 +48,7 @@ export RK_OEM_DIR=oem_uvcc
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
-export RK_MISC=wipe_all-misc.img
+export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define package-file for update.img
