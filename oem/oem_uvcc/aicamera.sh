@@ -15,8 +15,18 @@ check_alive()
   fi
   
 }
+
+stop_unused_daemon()
+{
+  killall -9 adbd
+  killall -9 ntpd
+  killall -9 connmand
+  killall -9 dropbear
+}
+
 ispserver &
 uvc_config.sh rndis
+stop_unused_daemon
 uvc_app &
 while true
 do
