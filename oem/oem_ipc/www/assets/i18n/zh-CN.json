@@ -220,6 +220,7 @@
   "outputDataType": "视频编码",
   "smart": "Smart",
   "IFrameInterval": "I帧间隔",
+  "GOP": "I帧间隔",
   "audioCodec": "音频编码",
   "audioInput": "音频输入",
   "sampleRate": "采样率",
@@ -233,11 +234,13 @@
   "close": "关闭",
 
   "H264Profile": "编码复杂度",
+  "h264Profile": "编码复杂度",
   "high": "高",
   "main": "中",
   "baseline": "低",
 
   "rateSmooth": "码流平滑",
+  "streamSmooth": "码流平滑",
   "smooth": "清晰<->平滑",
 
   "scenario": "场景",
@@ -885,5 +888,6 @@
   "videoPlanEnabledRecordUseless": "录像计划已开启，预览界面录像将被中断",
   "portChangeTip": "端口改变，设备将会重启，是否保存？",
   "downloadPartFail": "部分数据缺失，请重新下载！",
-  "recordStatusError": "获取录像状态异常！"
+  "recordStatusError": "获取录像状态异常！",
+  "functionForbid": "该功能被禁用！"
 }
