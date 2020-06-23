@@ -220,6 +220,7 @@
     "outputDataType": "Video Encoder Type",
     "smart": "Smart",
     "IFrameInterval": "I Frame Interval",
+    "GOP": "I Frame Interval",
     "audioCodec": "Audio Codec",
     "audioInput": "Audio Input",
     "sampleRate": "Sample Rate",
@@ -233,11 +234,13 @@
     "close": "Close",
 
     "H264Profile": "Encoder Complexity",
+    "h264Profile": "Encoder Complexity",
     "high": "High",
     "main": "Main",
     "baseline": "Baseline",
 
     "rateSmooth": "Rate Smooth",
+    "streamSmooth": "Rate Smooth",
     "smooth": "Clarity<->Smooth",
 
     "scenario": "Scenario",
@@ -877,6 +880,7 @@
     "videoPlanEnabledRecordUseless": "Video Plan is enabled, recorging will be aborted!",
     "portChangeTip": "Ports are changed. The device will reboot after saving. Confirm?",
     "downloadPartFail": "Download part of data fail!",
-    "recordStatusError": "Recording status is error!"
+    "recordStatusError": "Recording status is error!",
+    "functionForbid": "Function is forbid!"
 
 }
