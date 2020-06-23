@@ -25,8 +25,8 @@ stop_unused_daemon()
 }
 
 ispserver &
-uvc_config.sh rndis
 stop_unused_daemon
+/oem/usb_config.sh rndis
 uvc_app &
 while true
 do
