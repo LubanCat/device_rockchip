@@ -25,9 +25,12 @@ ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
 ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
-FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
-if [ ! -f $FAKEROOT_TOOL ]; then
-FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/host/bin/fakeroot
+if which fakeroot; then
+FAKEROOT_TOOL="`which fakeroot`"
+else
+	echo -e "Install fakeroot First."
+	echo -e "  sudo apt-get install fakeroot"
+	exit -1
 fi
 OEM_FAKEROOT_SCRIPT=$ROCKDEV/oem.fs
 USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
