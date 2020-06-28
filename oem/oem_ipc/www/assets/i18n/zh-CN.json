@@ -915,5 +915,11 @@
   "portChangeTip": "端口改变，设备将会重启，是否保存？",
   "downloadPartFail": "部分数据缺失，请重新下载！",
   "recordStatusError": "获取录像状态异常！",
-  "functionForbid": "该功能被禁用！"
+  "functionForbid": "该功能被禁用！",
+  "intervalTimeShouldOver10": "间隔时间必须大于10！",
+
+  "alarmInputId": "报警输入号",
+  "ipAddress": "IP地址",
+  "alarmType": "报警类型",
+  "alarmName": "报警名称"
 }

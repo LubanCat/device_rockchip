@@ -907,6 +907,7 @@
     "portChangeTip": "Ports are changed. The device will reboot after saving. Confirm?",
     "downloadPartFail": "Download part of data fail!",
     "recordStatusError": "Recording status is error!",
-    "functionForbid": "Function is forbid!"
+    "functionForbid": "Function is forbid!",
+    "intervalTimeShouldOver10": "Interval Time Should be Over 10!"
 
 }
