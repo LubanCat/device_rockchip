@@ -17,8 +17,8 @@ sysctl -w net.core.wmem_max=1572864
 export HDR_MODE=1
 export enable_encoder_debug=0
 
-#vpu 600M
-echo 600 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
+#vpu 600M, kernel default 600M
+#echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
 #cpu x2
 #echo 0 > /sys/devices/system/cpu/cpu2/online
