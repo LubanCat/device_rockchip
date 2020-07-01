@@ -17,6 +17,9 @@ sysctl -w net.core.wmem_max=1572864
 export HDR_MODE=1
 export enable_encoder_debug=0
 
+# ispp using fbc420 mode
+echo 1 > /sys/module/video_rkispp/parameters/mode
+
 #vpu 600M, kernel default 600M
 #echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
