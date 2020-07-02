@@ -17,15 +17,11 @@ sysctl -w net.core.wmem_max=1572864
 export HDR_MODE=1
 export enable_encoder_debug=0
 
-# ispp using fbc420 mode
+# ispp using fbc420 mode to save ddr bandwidth
 echo 1 > /sys/module/video_rkispp/parameters/mode
 
 #vpu 600M, kernel default 600M
 #echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
-
-#cpu x2
-#echo 0 > /sys/devices/system/cpu/cpu2/online
-#echo 0 > /sys/devices/system/cpu/cpu3/online
 
 ipc-daemon --no-mediaserver &
 sleep 3
@@ -85,3 +81,23 @@ else
 		sleep 3
 	done
 fi
+
+# mount media part for video recording
+export MEDIA_DEV=/dev/block/by-name/media
+export FSTYPE=ext4
+
+prepare_part()
+{
+  dumpe2fs -h $MEDIA_DEV 2>/dev/null| grep "media"
+  if [ $? -ne 0 ]; then
+    echo "Auto formatting $MEDIA_DEV to $FSTYPE"
+    mke2fs -F -L media $MEDIA_DEV && tune2fs -c 0 -i 0 $MEDIA_DEV && prepare_part && return
+  fi
+}
+prepare_part()
+echo "prepare_part /userdata/media"
+mkdir -p /userdata/media && sync
+echo "fsck /userdata/media"
+fsck.$FSTYPE -y $MEDIA_DEV
+mount $MEDIA_DEV /userdata/media
+dbus-send --system --print-reply --dest=rockchip.StorageManager / rockchip.StorageManager.file.AddDisk string:"/userdata/media"
