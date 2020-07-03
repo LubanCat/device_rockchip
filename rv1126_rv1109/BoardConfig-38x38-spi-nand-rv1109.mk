@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rv1126
+export RK_UBOOT_DEFCONFIG=rv1109
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nand
+export RK_KERNEL_DTS=rv1109-38-v10-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
