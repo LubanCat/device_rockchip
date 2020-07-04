@@ -759,6 +759,7 @@
   "success": "成功",
   "fail": "失败",
   "wait": "等待",
+  "repeat": "重复注册",
   "initFailFreshPlease": "初始化失败，请刷新页面!",
   "inquireFailFreshPlease": "查询失败，请刷新页面!",
   "uploadSuccessWaitForGetFeature": "文件上传完成，获取特征值中！",
