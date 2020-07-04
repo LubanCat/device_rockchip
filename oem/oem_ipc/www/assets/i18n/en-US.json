@@ -751,6 +751,7 @@
     "success": "Success",
     "fail": "Fail",
     "wait": "Wait",
+    "repeat": "Repeat",
     "initFailFreshPlease": "Init Fail, Fresh Please!",
     "inquireFailFreshPlease": "Inquire Fail Fresh Please!",
     "uploadSuccessWaitForGetFeature": "Complete uploading. Waiting for getting feature!",
