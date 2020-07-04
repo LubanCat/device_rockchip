@@ -881,7 +881,8 @@
       "snap": "Snap Image Setting",
       "head": "Head Image",
       "demicalTip": " should be integer or one decimal!",
-      "faceEnabled": "Face Recognition Enabled"
+      "faceEnabled": "Face Detection Enabled",
+      "FaceRecognitionEnabled": "Face Recognition Enabled"
     },
 
     "ImgQ": {

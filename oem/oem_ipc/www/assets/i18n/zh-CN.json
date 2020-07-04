@@ -889,7 +889,8 @@
     "snap": "智能图像设置",
     "head": "大头照",
     "demicalTip": "必须是整数或一位小数!",
-    "faceEnabled": "人脸识别启用"
+    "faceEnabled": "人脸检测启用",
+    "FaceRecognitionEnabled": "人脸识别启用"
   },
 
   "ImgQ": {
