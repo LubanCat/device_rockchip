@@ -24,9 +24,7 @@ echo 1 > /sys/module/video_rkispp/parameters/mode
 #echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
 ipc-daemon --no-mediaserver &
-sleep 3
 ispserver &
-sleep 1
 
 ls /sys/class/drm | grep "card0-"
 if [ $? -ne 0 ] ;then
@@ -44,42 +42,14 @@ else
   fi
 fi
 
-cnt=0
 if [ $HasDisplay -eq 1 ]; then
-	while [ 1 ];
-	do
-		cnt=$(( cnt + 1 ))
-		if [ $cnt -eq 5 ]; then
-			break;
-		fi
-
-		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
-		if [ $? -ne 0 ]; then
-			if [ $HasHDMI -eq 1 ]; then
-				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
-			else
-				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
-			fi
-		else
-			break;
-		fi
-		sleep 3
-	done
+	if [ $HasHDMI -eq 1 ]; then
+		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
+	else
+		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
+	fi
 else
-	while [ 1 ];
-	do
-		cnt=$(( cnt + 1 ))
-		if [ $cnt -eq 5 ]; then
-			break;
-		fi
-		ps|grep mediaserver|grep -v grep|grep -v ipc-daemon
-		if [ $? -ne 0 ]; then
-			mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
-		else
-			break;
-		fi
-		sleep 3
-	done
+	mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
 fi
 
 # mount media part for video recording
@@ -94,10 +64,9 @@ prepare_part()
     mke2fs -F -L media $MEDIA_DEV && tune2fs -c 0 -i 0 $MEDIA_DEV && prepare_part && return
   fi
 }
-prepare_part()
+prepare_part
 echo "prepare_part /userdata/media"
 mkdir -p /userdata/media && sync
 echo "fsck /userdata/media"
 fsck.$FSTYPE -y $MEDIA_DEV
 mount $MEDIA_DEV /userdata/media
-dbus-send --system --print-reply --dest=rockchip.StorageManager / rockchip.StorageManager.file.AddDisk string:"/userdata/media"
