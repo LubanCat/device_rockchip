@@ -89,6 +89,7 @@ uvc_device_config()
 uac_device_config()
 {
   UAC=$1
+  mkdir ${USB_FUNCTIONS_DIR}/${UAC}.gs0
   UAC_GS0=${USB_FUNCTIONS_DIR}/${UAC}.gs0
   echo 3 > ${UAC_GS0}/p_chmask
   echo 2 > ${UAC_GS0}/p_ssize
@@ -123,7 +124,7 @@ pre_run_adb()
 {
   if [ $ADB_EN = on ];then
     umount /dev/usb-ffs/adb
-    mkdir /dev/usb-ffs/adb -m 0770
+    mkdir -p /dev/usb-ffs/adb -m 0770
     mount -o uid=2000,gid=2000 -t functionfs adb /dev/usb-ffs/adb
     start-stop-daemon --start --quiet --background --exec /usr/bin/adbd
   fi
@@ -133,6 +134,7 @@ pre_run_adb()
 #init usb config
 /etc/init.d/S10udev stop
 umount /sys/kernel/config
+mkdir /dev/usb-ffs
 mount -t configfs none /sys/kernel/config
 mkdir -p /sys/kernel/config/usb_gadget/rockchip
 mkdir -p /sys/kernel/config/usb_gadget/rockchip/strings/0x409
@@ -199,6 +201,7 @@ esac
 ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6 ${USB_CONFIGS_DIR}/f1
 
 if [ $ADB_EN = on ];then
+  mkdir ${USB_FUNCTIONS_DIR}/ffs.adb
   CONFIG_STR=`cat /sys/kernel/config/usb_gadget/rockchip/configs/b.1/strings/0x409/configuration`
   STR=${CONFIG_STR}_adb
   echo $STR > ${USB_CONFIGS_DIR}/strings/0x409/configuration
@@ -207,6 +210,7 @@ if [ $ADB_EN = on ];then
   echo "adb on++++++ ${USB_CNT}"
   ln -s ${USB_FUNCTIONS_DIR}/ffs.adb ${USB_CONFIGS_DIR}/f${USB_CNT}
   pre_run_adb
+  sleep 1
 fi
 
 UDC=`ls /sys/class/udc/| awk '{print $1}'`
