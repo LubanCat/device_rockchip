@@ -282,6 +282,12 @@
     "night": "Night",
     "timing": "Timing",
     "alarmInputTrigger": "Alarm Input Trigger",
+    "fillLightMode": "Fill Light",
+    "IR": "IR MODE",
+    "LED": "LED MODE",
+    "MIX": "MIX MODE",
+    "sBrightnessAdjustmentMode": "Brightness Adjustment",
+    "iLightBrightness": "Light Brightness",
 
     "sensitivity": "Sensitivity",
     "TTF": "TTF",
@@ -599,7 +605,7 @@
         "searchByCondition": "Search By Condition",
         "startTime": "Start Time",
         "endTime": "End Time",
-        "addMember": "Add Member",
+        "addMember": "Add",
         "dblClickTip": "Select/Unselect when double click!",
         "listType": "List Type",
         "AccessCardNumber": "Access Card Number",
@@ -652,7 +658,7 @@
     "hometown": "Hometown",
     "getIpFail": "Get Ip Fail!",
     "fresh": "Fresh",
-    "batchInput": "Batch Input",
+    "batchInput": "Batch",
     "batchInputImage": "Batch Input Image",
     "upload": "Upload",
 
@@ -882,7 +888,7 @@
       "head": "Head Image",
       "demicalTip": " should be integer or one decimal!",
       "faceEnabled": "Face Detection Enabled",
-      "FaceRecognitionEnabled": "Face Recognition Enabled"
+      "faceRecognitionEnabled": "Face Recognition Enabled"
     },
 
     "ImgQ": {
@@ -893,6 +899,7 @@
 
     "HDRCloseTip": "When HDR closes, the device will reboot.",
     "HDROpenTip": "When HDR opens, the device will reboot.",
+    "dehazeAlterTip": "When Dehaze alters, Contrast would be reset!",
     "rebootHDR": "HDR has opened, the device is rebooting!",
     "deviceRestarting": "Device is restarting!",
     "completeTip": "Completed, please refresh!",
@@ -910,6 +917,7 @@
     "downloadPartFail": "Download part of data fail!",
     "recordStatusError": "Recording status is error!",
     "functionForbid": "Function is forbid!",
-    "intervalTimeShouldOver10": "Interval Time Should be Over 10!"
+    "intervalTimeShouldOver10": "Interval Time Should be Over 10!",
+    "faceRegDisabled": "Face Recognition is disabled!"
 
 }

@@ -282,6 +282,12 @@
   "night": "夜晚",
   "timing": "定时",
   "alarmInputTrigger": "报警输入触发",
+  "fillLightMode": "补光灯模式",
+  "IR": "红外模式",
+  "LED": "白光模式",
+  "MIX": "混合模式",
+  "sBrightnessAdjustmentMode": "亮度调节模式",
+  "iLightBrightness": "补光灯亮度",
 
   "sensitivity": "灵敏度",
   "TTF": "过滤时间",
@@ -890,7 +896,7 @@
     "head": "大头照",
     "demicalTip": "必须是整数或一位小数!",
     "faceEnabled": "人脸检测启用",
-    "FaceRecognitionEnabled": "人脸识别启用"
+    "faceRecognitionEnabled": "人脸识别启用"
   },
 
   "ImgQ": {
@@ -901,6 +907,7 @@
 
   "HDRCloseTip": "高动态关闭将重启设备，是否关闭？",
   "HDROpenTip": "高动态开启将重启设备，是否开启？",
+  "dehazeAlterTip": "透雾模式变更后，原有对比度设置将会失效，是否变更？",
   "rebootHDR": "重启设备中！",
   "deviceRestarting": "设备重启中！",
   "completeTip": "完成，请刷新页面！",
@@ -923,5 +930,6 @@
   "alarmInputId": "报警输入号",
   "ipAddress": "IP地址",
   "alarmType": "报警类型",
-  "alarmName": "报警名称"
+  "alarmName": "报警名称",
+  "faceRegDisabled": "人脸识别未开启"
 }
