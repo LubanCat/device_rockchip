@@ -18,7 +18,11 @@ unset_board_config_all
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
-OEM_DIR=$TOP_DIR/device/rockchip/oem/$RK_OEM_DIR
+if [ "${RK_OEM_DIR}x" != "x" ];then
+	OEM_DIR=$TOP_DIR/device/rockchip/oem/$RK_OEM_DIR
+else
+	OEM_DIR=
+fi
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
@@ -46,7 +50,12 @@ mkdir -p $ROCKDEV
 # Require buildroot host tools to do image packing.
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh"
-    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+	if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
+		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RAMBOOT
+	fi
+	if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
+		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+	fi
 fi
 
 check_partition_size() {
@@ -164,9 +173,9 @@ then
 	fi
 fi
 
-if [ $RK_OEM_DIR -a "${RK_OEM_BUILDIN_BUILDROOT}x" != "YESx" ]
+if [ "${RK_OEM_BUILDIN_BUILDROOT}x" != "YESx" ]
 then
-	if [ -d $OEM_DIR ]
+	if [ -d "$OEM_DIR" ]
 	then
 		echo "#!/bin/sh" > $OEM_FAKEROOT_SCRIPT
 		echo "set -e" >> $OEM_FAKEROOT_SCRIPT
@@ -184,7 +193,7 @@ fi
 
 if [ $RK_USERDATA_DIR ]
 then
-	if [ -d $USER_DATA_DIR ]
+	if [ -d "$USER_DATA_DIR" ]
 	then
 		echo "#!/bin/sh" > $USERDATA_FAKEROOT_SCRIPT
 		echo "set -e" >> $USERDATA_FAKEROOT_SCRIPT
