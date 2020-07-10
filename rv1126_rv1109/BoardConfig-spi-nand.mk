@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Target chip
+export RK_CHIP=RV1126
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
@@ -51,4 +53,4 @@ export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img
-export RK_PACKAGE_FILE=rv1126_rv1109-package-file-spi-nand
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nand
