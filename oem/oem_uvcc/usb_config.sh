@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ADB_EN=off
+ADB_EN=on
 USB_FUNCTIONS_DIR=/sys/kernel/config/usb_gadget/rockchip/functions
 USB_CONFIGS_DIR=/sys/kernel/config/usb_gadget/rockchip/configs/b.1
 
