@@ -586,6 +586,7 @@
   "log": "日志",
   "deleteSuccess": "删除成功!",
   "deleteFail": "删除失败！",
+  "nothing2delete": "请先选择需要删除的信息！",
 
   "MNG": {
     "id": "序号",
@@ -644,6 +645,7 @@
   "modify": "修改",
   "delete": "删除",
   "Are you sure that delete info selected?": "确认删除所选信息？",
+  "deleteInfoWithControlTip": "确认删除所选信息？若存在相关控制记录也将被删除。",
   "addFile": "添加文件",
   "modifyFile": "修改文件",
   "noResult": "无匹配信息！",
