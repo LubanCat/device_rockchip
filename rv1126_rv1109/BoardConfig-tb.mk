@@ -6,10 +6,6 @@ export RK_CHIP=RV1126
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126-emmc-tb
-# Trust ini config
-export RK_TRUST_INI_CONFIG=RV1126TOS_TB.ini
-# Uboot SPL ini config
-export RK_SPL_INI_CONFIG=RV1126MINIALL_EMMC_TB.ini
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=
 # Kernel defconfig
