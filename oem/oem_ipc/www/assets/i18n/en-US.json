@@ -499,7 +499,7 @@
 
     "Download": {
         "inquireCondition": "Inquire Condition",
-        "startDownload": "Start Download",
+        "startDownload": "Download",
         "stopDownload": "Stop Download",
         "fileType": "File Type",
         "startTime": "Start Time",
@@ -686,7 +686,7 @@
     "maxAge": "Max age",
     "ageOrder": "Max age should be bigger than min age!",
     "timeOrder": "Endtime should be bigger thatn Starttime!",
-    "selectFile": "Select File",
+    "selectFile": "Select",
     "noFileSelected": "No File Selected",
     "noFileSelectedWithLimit": "No File Selected(file size should be smaller than 1M)",
     "qualifiedFile": "Qualified File",
