@@ -4,6 +4,8 @@
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk3126
+# Trust ini config
+export RK_TRUST_INI_CONFIG=RK3126TOS_LADDR.ini
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
@@ -15,9 +17,9 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3126c_dpf
+export RK_CFG_BUILDROOT=rockchip_rk312x
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk3126c_recovery
+export RK_CFG_RECOVERY=rockchip_rk312x_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config

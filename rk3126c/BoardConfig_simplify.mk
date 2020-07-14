@@ -3,9 +3,11 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3126
+export RK_UBOOT_DEFCONFIG=linux_rk3126
+# Trust ini config
+export RK_TRUST_INI_CONFIG=RK3126TOS_LADDR.ini
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
+export RK_KERNEL_DEFCONFIG=rk3126_linux_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk3126-linux
 # boot image type
@@ -13,11 +15,11 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-nand.txt
+export RK_PARAMETER=parameter-buildroot-simplify.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3126c
+export RK_CFG_BUILDROOT=rockchip_rk3126c_dpf
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk3126c_recovery
+export RK_CFG_RECOVERY=rockchip_rk312x_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
@@ -34,10 +36,12 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
+# Set flash type. support <emmc, nand, spi_nand, spi_nor>
+export RK_STORAGE_TYPE=emmc
 #OEM config
-export RK_OEM_DIR=oem_empty
+export RK_OEM_DIR=oem_normal
 #userdata config
-export RK_USERDATA_DIR=userdata_empty
+export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
