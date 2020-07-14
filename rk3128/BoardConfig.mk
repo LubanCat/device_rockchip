@@ -6,6 +6,10 @@ export RK_ARCH=arm
 export RK_UBOOT_DEFCONFIG=rk3128
 # Trust ini config
 export RK_TRUST_INI_CONFIG=RK3126TOS_LADDR.ini
+# Uboot size
+export RK_UBOOT_SIZE_CONFIG=1024\ 2
+# Trust size
+export RK_TRUST_SIZE_CONFIG=1024\ 2
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
