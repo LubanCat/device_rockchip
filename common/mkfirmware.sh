@@ -189,6 +189,10 @@ then
 	else
 		echo "warning: $OEM_DIR  not found!"
 	fi
+else
+	if [ -f "$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/oem.img" ]; then
+		ln -sfr $TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/oem.img $ROCKDEV/oem.img
+	fi
 fi
 
 if [ $RK_USERDATA_DIR ]
