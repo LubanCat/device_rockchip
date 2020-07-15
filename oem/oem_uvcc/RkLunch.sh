@@ -32,6 +32,14 @@ fi
 fi
 fi
 
+camera_max_width=`media-ctl -p | awk -v line=$(media-ctl -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $2}'`
+camera_max_height=`media-ctl -p | awk -v line=$(media-ctl -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $3}'`
+
+echo ${camera_max_width}
+echo ${camera_max_height}
+export CAMERA_MAX_WIDTH=${camera_max_width}
+export CAMERA_MAX_HEIGHT=${camera_max_height}
+
 #rkmedia isp ctrl
 export ENABLE_SKIP_FRAME=1
 
