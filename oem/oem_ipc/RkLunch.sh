@@ -11,6 +11,21 @@ check_linker /userdata   /oem/www/userdata
 check_linker /media/usb0 /oem/www/usb0
 check_linker /mnt/sdcard /oem/www/sdcard
 
+if [ ! -f "/oem/sysconfig.db" ]; then
+  media-ctl -p -d /dev/media0 | grep 3840x2160
+  if [ $? -eq 0 ] ;then
+    ln -s -f /oem/sysconfig-4K.db /oem/sysconfig.db
+  fi
+  media-ctl -p -d /dev/media0 | grep 2688x1520
+  if [ $? -eq 0 ] ;then
+    ln -s -f /oem/sysconfig-2K.db /oem/sysconfig.db
+  fi
+  media-ctl -p -d /dev/media0 | grep 1920x1080
+  if [ $? -eq 0 ] ;then
+    ln -s -f /oem/sysconfig-1080P.db /oem/sysconfig.db
+  fi
+fi
+
 #set max socket buffer size to 1.5MByte
 sysctl -w net.core.wmem_max=1572864
 
