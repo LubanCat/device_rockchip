@@ -10,7 +10,11 @@ check_alive()
        killall -9 uvc_app
        reboot
      else
-       $1 &
+       if [ "$1"x == "ispserver"x ];then
+          ispserver -no-sync-db &
+       else
+          $1 &
+       fi
      fi
   fi
 }
@@ -32,7 +36,7 @@ usb_irq_set()
 }
 
 dbserver &
-ispserver &
+ispserver -no-sync-db &
 stop_unused_daemon
 /oem/usb_config.sh rndis
 usb_irq_set
