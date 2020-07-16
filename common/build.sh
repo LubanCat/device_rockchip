@@ -3,6 +3,47 @@
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
 
+function choose_target_board()
+{
+	echo
+	echo "You're building on Linux"
+	echo "Lunch menu...pick a combo:"
+	echo ""
+
+	echo "0. default BoardConfig.mk"
+	echo ${RK_TARGET_BOARD_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
+
+	local INDEX
+	read -p "Which would you like? [0]: " INDEX
+	INDEX=$((${INDEX:-0} - 1))
+
+	if echo $INDEX | grep -vq [^0-9]; then
+		RK_BUILD_TARGET_BOARD="${RK_TARGET_BOARD_ARRAY[$INDEX]}"
+	else
+		echo "Lunching for Default BoardConfig.mk boards..."
+		RK_BUILD_TARGET_BOARD=BoardConfig.mk
+	fi
+}
+
+function build_select_board()
+{
+	TARGET_PRODUCT="device/rockchip/.target_product"
+	TARGET_PRODUCT_DIR=$(realpath ${TARGET_PRODUCT})
+
+	RK_TARGET_BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
+
+	RK_TARGET_BOARD_ARRAY_LEN=${#RK_TARGET_BOARD_ARRAY[@]}
+	if [ $RK_TARGET_BOARD_ARRAY_LEN -eq 0 ]; then
+		echo "No available Board Config"
+		return
+	fi
+
+	choose_target_board
+
+	ln -rfs $TARGET_PRODUCT_DIR/$RK_BUILD_TARGET_BOARD device/rockchip/.BoardConfig.mk
+	echo "switching to board: `realpath $BOARD_CONFIG`"
+}
+
 function unset_board_config_all()
 {
 	local tmp_file=`mktemp`
@@ -14,9 +55,14 @@ function unset_board_config_all()
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
+
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
+
+if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
+	build_select_board
+fi
 unset_board_config_all
-source $BOARD_CONFIG
+[ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
 
 function usagekernel()
@@ -75,6 +121,7 @@ function usage()
 	echo "Usage: build.sh [OPTIONS]"
 	echo "Available options:"
 	echo "BoardConfig*.mk    -switch to specified board config"
+	echo "lunch              -list current SDK boards and switch to specified board config"
 	echo "uboot              -build uboot"
 	echo "spl                -build spl"
 	echo "loader             -build loader"
@@ -556,6 +603,9 @@ for option in ${OPTIONS}; do
 			;;
 		buildroot|debian|distro|yocto)
 			build_rootfs $option
+			;;
+		lunch)
+			build_select_board
 			;;
 		recovery)
 			build_kernel
