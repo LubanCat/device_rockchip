@@ -379,6 +379,8 @@
   "alarmInputsNumber": "报警输入个数",
   "alarmOutputsNumber": "报警输出个数",
   "firmwareVersionInfo": "主控版本属性",
+  "manufacturer": "制造商",
+  "hardwareId": "硬件编号",
 
   "attribute": "属性",
   "transparent/flashing": "透明，闪烁",

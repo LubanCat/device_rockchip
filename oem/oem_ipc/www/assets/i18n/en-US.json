@@ -372,6 +372,8 @@
     "alarmInputsNumber": "Alarm Inputs Number",
     "alarmOutputsNumber": "Alarm Outputs Number",
     "firmwareVersionInfo": "Firmware Version Infomation",
+    "manufacturer": "Manufacturer",
+    "hardwareId": "Hardware ID",
 
     "attribute": "Attribute",
     "transparent/flashing": "Transparent And Flashing",
@@ -411,7 +413,7 @@
 
     "maskEnabled": "Mask Enabled",
     "drawMask": "Draw Mask",
-    "stopDrawing": "Stop Drawing",
+    "stopDrawing": "Stop",
     "deleteMask": "Delete All Masks",
     "confirmDelete": "Confirm",
     "isDeleteAllMask": "Do you want to delete all masks?",
