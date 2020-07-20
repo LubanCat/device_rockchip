@@ -11,7 +11,7 @@ export RK_UBOOT_FORMAT_TYPE=
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-evb-ddr3-v12-tb-emmc.config
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-tb-emmc.config
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-tb-emmc
 # boot image type
