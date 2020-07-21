@@ -105,7 +105,7 @@ pre_run_rndis()
 {
   RNDIS_STR="rndis"
   if ( echo $1 |grep -q "rndis" ); then
-   sleep 1
+   #sleep 1
    IP_FILE=/data/uvc_xu_ip_save
    echo "config usb0 IP..."
    if [ -f $IP_FILE ]; then
