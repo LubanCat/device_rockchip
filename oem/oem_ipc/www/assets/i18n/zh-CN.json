@@ -935,5 +935,6 @@
   "ipAddress": "IP地址",
   "alarmType": "报警类型",
   "alarmName": "报警名称",
-  "faceRegDisabled": "人脸识别未开启"
+  "faceRegDisabled": "人脸识别未开启",
+  "failPageRange": "失败范围："
 }

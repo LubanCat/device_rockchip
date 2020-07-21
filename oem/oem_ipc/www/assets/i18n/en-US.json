@@ -922,6 +922,11 @@
     "recordStatusError": "Recording status is error!",
     "functionForbid": "Function is forbid!",
     "intervalTimeShouldOver10": "Interval Time Should be Over 10!",
-    "faceRegDisabled": "Face Recognition is disabled!"
 
+    "alarmInputId": "Input ID",
+    "ipAddress": "IP",
+    "alarmType": "Alarm Type",
+    "alarmName": "Alarm Name",
+    "faceRegDisabled": "Face Recognition is disabled!",
+    "failPageRange": "Fail Range is: "
 }
