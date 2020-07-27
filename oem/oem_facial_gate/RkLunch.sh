@@ -6,10 +6,9 @@ check_linker()
 	[ ! -L "$2" ] && ln -sf $1 $2
 }
 
-check_linker /userdata   /oem/www/userdata
-check_linker /userdata   /oem/www/userdata
-check_linker /media/usb0 /oem/www/usb0
-check_linker /mnt/sdcard /oem/www/sdcard
+check_linker /userdata   /usr/www/userdata
+check_linker /media/usb0 /usr/www/usb0
+check_linker /mnt/sdcard /usr/www/sdcard
 
 #set max socket buffer size to 1.5MByte
 sysctl -w net.core.wmem_max=1572864
