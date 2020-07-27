@@ -40,7 +40,7 @@
 			type = "ramdisk";
 			arch = "arm";
 			os = "linux";
-			compression = "gzip";
+			compression = "none";
 			load = <0xffffff02>;
 
 			hash {
