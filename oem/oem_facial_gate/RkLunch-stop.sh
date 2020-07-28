@@ -27,5 +27,3 @@ do
 	fi
 	sleep 1
 done
-
-umount /userdata/media
