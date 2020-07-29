@@ -5,7 +5,7 @@ export RK_CHIP=RV1109
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rv1109
+export RK_UBOOT_DEFCONFIG=rv1126
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
