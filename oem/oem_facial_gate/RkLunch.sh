@@ -23,10 +23,10 @@ echo 1 > /sys/module/video_rkispp/parameters/mode
 #echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
 ipc-daemon --no-mediaserver &
-ispserver &
+#ispserver -no-sync-db &
 
-echo 60 > /sys/devices/platform/pwmleds/leds/PWM-IR/brightness
+echo 77 > /sys/devices/platform/pwmleds/leds/PWM-IR/brightness
 
-export QT_QPA_FB_DRM=1
-export QT_QPA_PLATFORM=linuxfb:rotation=0
-QFacialGate -f 10000 &
+#export QT_QPA_FB_DRM=1
+#export QT_QPA_PLATFORM=linuxfb:rotation=0
+#QFacialGate -f 10000 &
