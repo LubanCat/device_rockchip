@@ -54,6 +54,15 @@ else
   fi
 fi
 
+arecord -l |grep "card 0"
+if [ $? -ne 0 ] ;then
+  echo "not found sound card"
+  HasAudio=0
+else
+  echo "find sound card"
+  HasAudio=1
+fi
+
 if [ $HasDisplay -eq 1 ]; then
 	if [ $HasHDMI -eq 1 ]; then
 		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
@@ -61,7 +70,11 @@ if [ $HasDisplay -eq 1 ]; then
 		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
 	fi
 else
-	mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
+	if [ $HasAudio -eq 1 ]; then
+		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
+	else
+		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-without-audio.conf &
+	fi
 fi
 
 # mount media part for video recording
