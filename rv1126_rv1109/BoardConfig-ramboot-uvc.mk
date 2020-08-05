@@ -16,7 +16,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 #export RK_KERNEL, which must modify cmdline
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v12
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v13
 #export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1
 # boot image type
 export RK_BOOT_IMG=zboot.img
