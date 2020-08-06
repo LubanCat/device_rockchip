@@ -37,6 +37,7 @@ export enable_encoder_debug=0
 
 ipc-daemon --no-mediaserver &
 ispserver &
+sleep 1
 
 ls /sys/class/drm | grep "card0-"
 if [ $? -ne 0 ] ;then
