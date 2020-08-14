@@ -5,7 +5,7 @@ check_alive()
 {
   PID=`busybox ps |grep $1 |grep -v grep | wc -l`
   if [ $PID -le 0 ];then
-     killall  -3 mediaserver
+     killall -3 aiserver
      if [ "$1"x == "uvc_app"x ];then
        killall -9 uvc_app
        reboot
