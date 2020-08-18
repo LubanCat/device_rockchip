@@ -84,7 +84,15 @@ function usageuboot()
 
 function usagerootfs()
 {
-	echo "source envsetup.sh $RK_CFG_BUILDROOT"
+	if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
+		echo "source envsetup.sh $RK_CFG_BUILDROOT"
+	else
+		if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
+			echo "source envsetup.sh $RK_CFG_RAMBOOT"
+		else
+			echo "Not found config buildroot. Please Check !!!"
+		fi
+	fi
 
 	case "${RK_ROOTFS_SYSTEM:-buildroot}" in
 		yocto)
