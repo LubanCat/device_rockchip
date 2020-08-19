@@ -5,7 +5,7 @@ export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126-emmc-tb
 # Uboot image format type: fit(flattened image tree)
-export RK_UBOOT_FORMAT_TYPE=
+export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
@@ -15,7 +15,7 @@ export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-tb-emmc
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
+export RK_KERNEL_IMG=kernel/arch/arm/boot/Image.gz
 # parameter for GPT table
 export RK_PARAMETER=parameter-tb.txt
 # Buildroot config
@@ -24,6 +24,8 @@ export RK_PARAMETER=parameter-tb.txt
 export RK_CFG_RECOVERY=
 # ramboot config
 export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs
+# ramboot idt config
+export RK_RECOVERY_FIT_ITS=boot-tb.its
 # Pcba config
 export RK_CFG_PCBA=
 # Build jobs
