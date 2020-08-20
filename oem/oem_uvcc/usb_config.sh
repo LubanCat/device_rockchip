@@ -41,7 +41,7 @@ configure_uvc_resolution_h264()
     echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
     echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwMinBitRate
     echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwMaxBitRate
-    echo -e "333333\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwFrameInterval
+    echo -e "333333\n400000\n500000\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwFrameInterval
 }
 uvc_device_config()
 {
