@@ -19,7 +19,7 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-fit-128M.txt
+export RK_PARAMETER=parameter-fit-nand-256M.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 # Recovery config
