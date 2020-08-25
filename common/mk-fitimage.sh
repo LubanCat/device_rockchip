@@ -9,12 +9,6 @@ cd $TOP_DIR
 source $TOP_DIR/device/rockchip/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 
-if [ -z $RK_KERNEL_ZIMG ]; then
-	KERNEL_IMAGE=$TOP_DIR/$RK_KERNEL_IMG
-else
-	KERNEL_IMAGE=$TOP_DIR/$RK_KERNEL_ZIMG
-fi
-
 fdt=0
 kernel=0
 ramdisk=0
@@ -22,7 +16,16 @@ resource=0
 OUTPUT_TARGET_IMAGE="$1"
 src_its_file="$2"
 ramdisk_file_path="$3"
+kernel_image="$4"
 target_its_file="$ROCKDEV/.tmp_its"
+
+if [ -z $kernel_image ]; then
+	if [ -z $RK_KERNEL_ZIMG ]; then
+		kernel_image=$TOP_DIR/$RK_KERNEL_IMG
+	else
+		kernel_image=$TOP_DIR/$RK_KERNEL_ZIMG
+	fi
+fi
 
 if [ ! -f $src_its_file ]; then
 	echo "Not Fount $src_its_file ..."
@@ -48,7 +51,7 @@ do
 
 	############################# generate kernel image path
 	if [ $kernel -eq 1 ];then
-		echo "data = /incbin/(\"$KERNEL_IMAGE\");" >> $target_its_file
+		echo "data = /incbin/(\"$kernel_image\");" >> $target_its_file
 		kernel=0
 		continue
 	fi

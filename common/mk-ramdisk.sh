@@ -79,7 +79,7 @@ fi
 
 echo -n "pack $RAMDISK_IMG..."
 if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS" ];then
-	$COMMON_DIR/mk-fitimage.sh $TARGET_IMAGE $TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS $ROOTFS_IMAGE
+	$COMMON_DIR/mk-fitimage.sh $TARGET_IMAGE $TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS $ROOTFS_IMAGE $KERNEL_IMAGE
 else
 	$TOP_DIR/kernel/scripts/mkbootimg --kernel $KERNEL_IMAGE --ramdisk $ROOTFS_IMAGE --second $KERNEL_DTB -o $TARGET_IMAGE
 fi

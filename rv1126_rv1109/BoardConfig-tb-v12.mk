@@ -15,7 +15,7 @@ export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-tb-emmc
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm/boot/Image.gz
+export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-tb.txt
 # Buildroot config
