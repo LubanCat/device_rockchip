@@ -65,8 +65,17 @@ unset_board_config_all
 [ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
 
+function check_config() {
+	if [ -z ${1} ];then
+		echo "====No Found config on `realpath $BOARD_CONFIG`. Just exit ..."
+		exit 0
+	fi
+}
+
 function usagekernel()
 {
+	check_config $RK_KERNEL_DTS
+	check_config $RK_KERNEL_DEFCONFIG
 	echo "cd kernel"
 	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS"
@@ -109,12 +118,14 @@ function usagerootfs()
 
 function usagerecovery()
 {
+	check_config $RK_CFG_RECOVERY
 	echo "source envsetup.sh $RK_CFG_RECOVERY"
 	echo "$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY"
 }
 
 function usageramboot()
 {
+	check_config $RK_CFG_RAMBOOT
 	echo "source envsetup.sh $RK_CFG_RAMBOOT"
 	echo "$COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT"
 }
@@ -269,6 +280,10 @@ function build_buildroot(){
 	echo "==========Start build buildroot=========="
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "========================================="
+	if [ -z ${RK_CFG_BUILDROOT} ];then
+		echo "====No Found config on `realpath $BOARD_CONFIG`. Just exit ..."
+		return
+	fi
 	/usr/bin/time -f "you take %E to build builroot" $COMMON_DIR/mk-buildroot.sh $BOARD_CONFIG
 	if [ $? -eq 0 ]; then
 		echo "====Build buildroot ok!===="
@@ -282,6 +297,10 @@ function build_ramboot(){
 	echo "=========Start build ramboot========="
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "====================================="
+	if [ -z ${RK_CFG_RAMBOOT} ];then
+		echo "====No Found config on `realpath $BOARD_CONFIG`. Just exit ..."
+		return
+	fi
 	/usr/bin/time -f "you take %E to build ramboot" $COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT
 	if [ $? -eq 0 ]; then
 		rm $TOP_DIR/rockdev/boot.img
@@ -413,6 +432,10 @@ function build_recovery(){
 	echo "==========Start build recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
+	if [ -z ${RK_CFG_RECOVERY} ];then
+		echo "====No Found config on `realpath $BOARD_CONFIG`. Just exit ..."
+		return
+	fi
 	/usr/bin/time -f "you take %E to build recovery" $COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY
 	if [ $? -eq 0 ]; then
 		echo "====Build recovery ok!===="
@@ -426,6 +449,10 @@ function build_pcba(){
 	echo "==========Start build pcba=========="
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "===================================="
+	if [ -z ${RK_CFG_PCBA} ];then
+		echo "====No Found config on `realpath $BOARD_CONFIG`. Just exit ..."
+		return
+	fi
 	/usr/bin/time -f "you take %E to build pcba" $COMMON_DIR/mk-ramdisk.sh pcba.img $RK_CFG_PCBA
 	if [ $? -eq 0 ]; then
 		echo "====Build pcba ok!===="
@@ -620,6 +647,7 @@ for option in ${OPTIONS}; do
 			build_select_board
 			;;
 		recovery)
+			check_config ${RK_CFG_RECOVERY}
 			build_kernel
 			;&
 		*)
