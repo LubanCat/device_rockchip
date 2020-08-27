@@ -8,7 +8,13 @@ check_alive()
      killall -3 aiserver
      if [ "$1"x == "uvc_app"x ];then
        killall -9 uvc_app
-       reboot
+       echo " uvc app die ,restart it and usb reprobe !!!"
+       rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
+       echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
+       echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/bind
+       /oem/usb_config.sh rndis off #disable adb
+       usb_irq_set
+       uvc_app &
      else
        if [ "$1"x == "ispserver"x ];then
           ispserver -no-sync-db &

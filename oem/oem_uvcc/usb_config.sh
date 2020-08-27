@@ -1,6 +1,9 @@
 #!/bin/sh
 
 ADB_EN=on
+if ( echo $2 |grep -q "off" ); then
+ADB_EN=off
+fi
 USB_FUNCTIONS_DIR=/sys/kernel/config/usb_gadget/rockchip/functions
 USB_CONFIGS_DIR=/sys/kernel/config/usb_gadget/rockchip/configs/b.1
 

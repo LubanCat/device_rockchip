@@ -1,9 +1,6 @@
 #!/bin/sh
 #
 
-#vi_aging adjust
-io -4 0xfe801048 0x10
-
 #for usb uvc iso
 usbirq=`cat /proc/interrupts |grep dwc3| awk '{print $1}'|tr -cd "[0-9]"`
 echo "usb irq:$usbirq"
