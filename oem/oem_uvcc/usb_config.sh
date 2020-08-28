@@ -145,6 +145,10 @@ mkdir -p ${USB_CONFIGS_DIR}/strings/0x409
 echo 0x2207 > /sys/kernel/config/usb_gadget/rockchip/idVendor
 echo 0x0310 > /sys/kernel/config/usb_gadget/rockchip/bcdDevice
 echo 0x0200 > /sys/kernel/config/usb_gadget/rockchip/bcdUSB
+echo 239 > /sys/kernel/config/usb_gadget/rockchip/bDeviceClass
+echo 2 > /sys/kernel/config/usb_gadget/rockchip/bDeviceSubClass
+echo 1 > /sys/kernel/config/usb_gadget/rockchip/bDeviceProtocol
+
 echo "2020" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/serialnumber
 echo "rockchip" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/manufacturer
 echo "UVC" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/product
