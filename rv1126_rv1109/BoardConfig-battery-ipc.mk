@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-tb.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-tb-emmc
+export RK_KERNEL_DTS=rv1126-bat-ipc-v10
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
