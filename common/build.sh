@@ -304,7 +304,7 @@ function build_ramboot(){
 	/usr/bin/time -f "you take %E to build ramboot" $COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT
 	if [ $? -eq 0 ]; then
 		rm $TOP_DIR/rockdev/boot.img
-		ln -s $TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img $TOP_DIR/rockdev/boot.img
+		ln -rfs $TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img $TOP_DIR/rockdev/boot.img
 		echo "====Build ramboot ok!===="
 	else
 		echo "====Build ramboot failed!===="
