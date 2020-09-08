@@ -44,6 +44,7 @@
 			type = "ramdisk";
 			arch = "arm";
 			os = "linux";
+			preload = <1>;
 			comp = <0x5800000>;
 			load  = <0x2800000>;
 			decomp-async;
