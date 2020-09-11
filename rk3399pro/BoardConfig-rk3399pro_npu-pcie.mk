@@ -13,7 +13,7 @@ export RK_BOOT_IMG=
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-npu.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=
 # Recovery config
