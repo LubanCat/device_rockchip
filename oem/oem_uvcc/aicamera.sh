@@ -31,6 +31,8 @@ stop_unused_daemon()
   killall -9 ntpd
   killall -9 connmand
   killall -9 dropbear
+  killall -9 start_rknn.sh
+  killall -9 rknn_server
 }
 
 usb_irq_set()
