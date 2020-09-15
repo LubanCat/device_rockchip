@@ -23,7 +23,7 @@ export RK_PARAMETER=parameter-tb.txt
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs
+export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs_evb
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # Pcba config

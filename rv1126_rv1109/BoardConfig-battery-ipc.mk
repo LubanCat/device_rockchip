@@ -9,7 +9,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-tb.config
+export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-battery.config"
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-bat-ipc-v10
 # boot image type
@@ -23,7 +23,7 @@ export RK_PARAMETER=parameter-tb.txt
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs
+export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs_bat
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # Pcba config
