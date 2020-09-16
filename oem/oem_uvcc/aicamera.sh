@@ -7,8 +7,8 @@ check_alive()
   if [ $PID -le 0 ];then
      killall -3 aiserver
      if [ "$1"x == "uvc_app"x ];then
-       killall -9 uvc_app
        echo " uvc app die ,restart it and usb reprobe !!!"
+       sleep 1
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/bind
