@@ -43,6 +43,15 @@ then
 	$UPGRADETOOL rd
 fi
 
+if [ $FLASH_TYPE = tb ]
+then
+	$UPGRADETOOL ul $LOADER
+	$UPGRADETOOL di -p $PARAMETER
+	$UPGRADETOOL di -uboot $UBOOT
+	$UPGRADETOOL di -b $BOOT
+	$UPGRADETOOL rd
+fi
+
 if [ $FLASH_TYPE = norecovery ]; then
 	$UPGRADETOOL ul $LOADER
 	$UPGRADETOOL di -p $PARAMETER
