@@ -18,12 +18,10 @@ export RK_BOOT_IMG=zboot.img
 export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-tb.txt
-# Buildroot config
-# export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_tb
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_tinyrootfs_evb
+export RK_CFG_RAMBOOT=rockchip_rv1126_evb_tb
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # Pcba config
