@@ -28,6 +28,8 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3328
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
+# yocto machine
+export RK_YOCTO_MACHINE=rockchip-rk3328-evb
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
