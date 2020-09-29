@@ -41,6 +41,13 @@ else
    MEDIAX=/dev/media0
 fi
 camera_max_width=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $2}'`
+if [[ -z $camera_max_width ]];
+then
+    echo "camera_max_width is empty,try get from media0!!"
+    MEDIAX=/dev/media0
+fi
+
+camera_max_width=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $2}'`
 camera_max_height=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $3}'`
 
 echo ${camera_max_width}

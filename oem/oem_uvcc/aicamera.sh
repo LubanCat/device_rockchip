@@ -5,7 +5,6 @@ check_alive()
 {
   PID=`busybox ps |grep $1 |grep -v grep | wc -l`
   if [ $PID -le 0 ];then
-     killall -3 aiserver
      if [ "$1"x == "uvc_app"x ];then
        echo " uvc app die ,restart it and usb reprobe !!!"
        sleep 1
@@ -19,7 +18,13 @@ check_alive()
        if [ "$1"x == "ispserver"x ];then
           ispserver -no-sync-db &
        else
-          $1 &
+         if [ "$1"x == "aiserver"x ];then
+            echo "aiserver is die,tell uvc to recovery"
+            killall -3 uvc_app
+            aiserver &
+         else
+            $1 &
+         fi
        fi
      fi
   fi
@@ -49,11 +54,13 @@ stop_unused_daemon
 /oem/usb_config.sh rndis
 usb_irq_set
 uvc_app &
+aiserver &
 while true
 do
   check_alive dbserver
   check_alive ispserver
   check_alive uvc_app
-  check_alive smart_display_service
+  check_alive aiserver
   sleep 2
+  check_alive smart_display_service
 done
