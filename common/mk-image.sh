@@ -128,7 +128,7 @@ mkimage_auto_sized()
 rm -rf $TARGET
 case $FS_TYPE in
     squashfs)
-        mksquashfs $SRC_DIR $TARGET -noappend -comp gzip
+        mksquashfs $SRC_DIR $TARGET -noappend -comp lz4
         ;;
     ext[234]|msdos|fat|vfat|ntfs)
         if [ ! "$SIZE" ]; then
