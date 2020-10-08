@@ -16,7 +16,8 @@ check_alive()
        uvc_app &
      else
        if [ "$1"x == "ispserver"x ];then
-          ispserver -no-sync-db &
+          #ispserver -no-sync-db &
+		  /oem/ispserver/ispserver.sh &
        else
          if [ "$1"x == "aiserver"x ];then
             echo "aiserver is die,tell uvc to recovery"
@@ -49,7 +50,8 @@ usb_irq_set()
 }
 
 dbserver &
-ispserver -no-sync-db &
+#ispserver -no-sync-db &
+/oem/ispserver/ispserver.sh &
 stop_unused_daemon
 /oem/usb_config.sh rndis
 usb_irq_set
