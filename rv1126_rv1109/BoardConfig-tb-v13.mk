@@ -43,7 +43,7 @@ export RK_USERDATA_FS_TYPE=ext2
 #OEM config
 export RK_OEM_DIR=
 #userdata config
-export RK_USERDATA_DIR=userdata_normal
+export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=
 #choose enable distro module
