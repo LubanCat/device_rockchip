@@ -36,6 +36,7 @@ export enable_encoder_debug=0
 #echo 600000000 >/sys/kernel/debug/mpp_service/rkvenc/clk_core
 
 ipc-daemon --no-mediaserver &
+sleep 2
 ispserver &
 sleep 1
 
