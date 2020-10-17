@@ -71,9 +71,10 @@ uvc_device_config()
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/control/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/control/class/fs/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/control/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/control/class/ss/h
   ##YUYV support config
-  #mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/uncompressed/u
-  #configure_uvc_resolution_yuyv 640 480
-  #configure_uvc_resolution_yuyv_720p 1280 720
+  mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/uncompressed/u
+  configure_uvc_resolution_yuyv 320 240
+  configure_uvc_resolution_yuyv 640 480
+  configure_uvc_resolution_yuyv_720p 1280 720
 
   ##mjpeg support config
   mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m
@@ -96,7 +97,7 @@ uvc_device_config()
   configure_uvc_resolution_h264 3840 2160
 
   mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/header/h
-  #ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/u
+  ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/u
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/m
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/f
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/fs/h
