@@ -520,7 +520,7 @@ function build_updateimg(){
 		echo "Make Linux a/b update.img."
 		build_otapackage
 		source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
-		cd $PACK_TOOL_DIR/rockdev && ln -fs "$source_package_file_name"-ab package-file && ./mkupdate.sh && cd -
+		cd $PACK_TOOL_DIR/rockdev && ln -fs "$PACK_TOOL_DIR/rockdev/$RK_PACKAGE_FILE"-ab package-file && ./mkupdate.sh && cd -
 		mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ab.img
 		cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
 		if [ $? -eq 0 ]; then
@@ -560,7 +560,7 @@ function build_otapackage(){
 
 	echo "Make ota ab update.img"
 	source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
-	cd $PACK_TOOL_DIR/rockdev && ln -fs "$source_package_file_name"-ota package-file && ./mkupdate.sh && cd -
+	cd $PACK_TOOL_DIR/rockdev && ln -fs "$PACK_TOOL_DIR/rockdev/$RK_PACKAGE_FILE"-ota package-file && ./mkupdate.sh && cd -
 	mv $PACK_TOOL_DIR/rockdev/update.img $IMAGE_PATH/update_ota.img
 	cd $PACK_TOOL_DIR/rockdev && ln -fs $source_package_file_name package-file && cd -
 	if [ $? -eq 0 ]; then
