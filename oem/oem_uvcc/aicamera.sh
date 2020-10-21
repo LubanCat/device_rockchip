@@ -47,7 +47,7 @@ usb_irq_set()
   echo "usb irq:$usbirq"
   echo 1 > /proc/irq/$usbirq/smp_affinity_list
 }
-
+ulimit -c unlimited
 dbserver &
 ispserver -no-sync-db &
 stop_unused_daemon
