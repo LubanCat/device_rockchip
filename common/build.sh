@@ -165,8 +165,31 @@ function usage()
 	echo "otapackage         -pack ab update otapackage image"
 	echo "save               -save images, patches, commands used to debug"
 	echo "allsave            -build all & firmware & updateimg & save"
+	echo "check              -check the environment of building"
 	echo ""
 	echo "Default option is 'allsave'."
+}
+
+function build_check(){
+	local build_depend_cfg="build-depend-tools.txt"
+	common_product_build_tools="$TOP_DIR/device/rockchip/common/$build_depend_cfg"
+	target_product_build_tools="$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$build_depend_cfg"
+	cat $common_product_build_tools $target_product_build_tools 2>/dev/null | while read chk_item
+		do
+			chk_item=${chk_item###*}
+			if [ -z "$chk_item" ]; then
+				continue
+			fi
+
+			dst=${chk_item%%,*}
+			src=${chk_item##*,}
+			eval $dst 1>/dev/null 2>&1
+			if [ $? -ne 0 ];then
+				echo "**************************************"
+				echo "Please install ${dst%% *} first"
+				echo "    sudo apt-get install $src"
+			fi
+		done
 }
 
 function build_uboot(){
