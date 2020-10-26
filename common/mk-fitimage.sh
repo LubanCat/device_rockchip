@@ -32,6 +32,12 @@ if [ ! -f $src_its_file ]; then
 	exit -1
 fi
 
+if [ "$RK_ARCH" == "arm" ]; then
+	kernel_dtb_file="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS.dtb"
+else
+	kernel_dtb_file="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS.dtb"
+fi
+
 rm -f $target_its_file
 mkdir -p "`dirname $target_its_file`"
 
@@ -39,7 +45,7 @@ while read line
 do
 	############################# generate fdt path
 	if [ $fdt -eq 1 ];then
-		echo "data = /incbin/(\"$TOP_DIR/kernel/arch/$RK_ARCH/boot/dts/$RK_KERNEL_DTS.dtb\");" >> $target_its_file
+		echo "data = /incbin/(\"$TOP_DIR/$kernel_dtb_file\");" >> $target_its_file
 		fdt=0
 		continue
 	fi
