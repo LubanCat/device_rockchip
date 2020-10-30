@@ -5,23 +5,25 @@ export RK_CHIP=RV1126
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rv1126
+#export RK_UBOOT_DEFCONFIG=rv1126
+export RK_UBOOT_DEFCONFIG=rv1126-ab
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
-export RK_SPL_DEFCONFIG=rv1126
+#export RK_SPL_DEFCONFIG=rv1126
+export RK_SPL_DEFCONFIG=rv1126-ab
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
+export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-uvc-spi-nand.config"
 # Kernel dts
-#export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nand
 export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-fit-128M.txt
+#export RK_PARAMETER=parameter-fit-128M.txt
+export RK_PARAMETER=parameter-fit-128M-ab.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc_spi_nand
 # Recovery config
@@ -56,3 +58,5 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-spi-nand
+#choose enable Linux A/B
+export RK_LINUX_AB_ENABLE=true
