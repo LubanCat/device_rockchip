@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-facial-gate.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1109-evb-ddr3-v12-facial-gate
+export RK_KERNEL_DTS=rv1109-evb-ddr3-v13-facial-gate
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
