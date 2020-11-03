@@ -420,35 +420,43 @@ function build_distro(){
 }
 
 function build_rootfs(){
-	rm -f $RK_ROOTFS_IMG
+	[ -z "$RK_ROOTFS_IMG" ] && return
+
+	RK_ROOTFS_DIR=$TOP_DIR/.rootfs
+	ROOTFS_IMG=${RK_ROOTFS_IMG##*/}
+
+	rm -rf $RK_ROOTFS_IMG $RK_ROOTFS_DIR
+	mkdir -p $RK_ROOTFS_DIR
 
 	case "$1" in
 		yocto)
 			build_yocto
-			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
+			ln -rsf yocto/build/latest/rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		debian)
 			build_debian
-			ROOTFS_IMG=debian/linaro-rootfs.img
+			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		distro)
 			build_distro
-			ROOTFS_IMG=distro/output/images/rootfs.$RK_ROOTFS_TYPE
+			for f in $(ls distro/output/images/rootfs.*);do
+				ln -rsf $f* $RK_ROOTFS_DIR/
+			done
 			;;
 		*)
 			build_buildroot
-			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
+			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
+				ln -rsf $f* $RK_ROOTFS_DIR/
+			done
 			;;
 	esac
 
-	[ -z "$ROOTFS_IMG" ] && return
-
-	if [ ! -f "$ROOTFS_IMG" ]; then
-		echo "$ROOTFS_IMG not generated?"
-	else
-		mkdir -p ${RK_ROOTFS_IMG%/*}
-		ln -rsf $TOP_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
+	if [ ! -f "$RK_ROOTFS_DIR/$ROOTFS_IMG" ]; then
+		echo "There's no $ROOTFS_IMG generated..."
+		exit 1
 	fi
+
+	ln -rsf $RK_ROOTFS_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
 }
 
 function build_recovery(){
