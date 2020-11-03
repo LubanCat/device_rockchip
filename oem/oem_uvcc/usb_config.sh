@@ -52,13 +52,27 @@ configure_uvc_resolution_h264()
 {
     UVC_DISPLAY_W=$1
     UVC_DISPLAY_H=$2
-    mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p
-    echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/wWidth
-    echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/wHeight
-    echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwMinBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwMaxBitRate
-    echo -e "333333\n400000\n500000\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f/${UVC_DISPLAY_H}p/dwFrameInterval
+	mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p
+	echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/wWidth
+	echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/wHeight
+	echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
+	echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwMinBitRate
+	echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwMaxBitRate
+	echo -e "333333\n400000\n500000\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwFrameInterval
+        echo -ne \\x48\\x32\\x36\\x34\\x00\\x00\\x10\\x00\\x80\\x00\\x00\\xaa\\x00\\x38\\x9b\\x71 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/guidFormat
+}
+configure_uvc_resolution_h265()
+{
+        UVC_DISPLAY_W=$1
+        UVC_DISPLAY_H=$2
+        mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p
+        echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/wWidth
+        echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/wHeight
+        echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
+        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwMinBitRate
+        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwMaxBitRate
+        echo -e "333333\n400000\n500000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwFrameInterval
+        echo -ne \\x48\\x32\\x36\\x35\\x00\\x00\\x10\\x00\\x80\\x00\\x00\\xaa\\x00\\x38\\x9b\\x71 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/guidFormat
 }
 uvc_device_config()
 {
@@ -89,17 +103,26 @@ uvc_device_config()
   #configure_uvc_resolution_mjpeg 2592 1944
 
   ## h.264 support config
-  mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f
+  mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1
   configure_uvc_resolution_h264 640 480
   configure_uvc_resolution_h264 1280 720
   configure_uvc_resolution_h264 1920 1080
   configure_uvc_resolution_h264 2560 1440
   configure_uvc_resolution_h264 3840 2160
 
+  ## h.265 support config
+  mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2
+  configure_uvc_resolution_h265 640 480
+  configure_uvc_resolution_h265 1280 720
+  configure_uvc_resolution_h265 1920 1080
+  configure_uvc_resolution_h265 2560 1440
+  configure_uvc_resolution_h265 3840 2160
+
   mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/header/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/u
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/m
-  ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/f
+  ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1 ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/f1
+    ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2 ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h/f2
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/fs/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/hs/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/ss/h
