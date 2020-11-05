@@ -45,11 +45,17 @@ export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=
+export RK_USERDATA_FS_TYPE=ubi
+#RK_UBIFS_LEBSIZE = logical eraseblock size（逻辑擦除块大小）：flash block size - 2 * flash page 
+export RK_UBIFS_LEBSIZE=0x1f000
+#RK_UBIFS_MINIOSIZE = minimum I/O unit size（页大小）：flash page size
+export RK_UBIFS_MINIOSIZE=0x800
+#RK_UBIFS_MAXLEBCNT = partition size / flash block size
+export RK_UBIFS_MAXLEBCNT=2048
 #OEM config
 export RK_OEM_DIR=
 #userdata config
-export RK_USERDATA_DIR=
+export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=
 #choose enable distro module
