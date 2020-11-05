@@ -126,9 +126,6 @@ check_partition_size() {
 
 if [ $RK_ROOTFS_IMG ]
 then
-	if [ -f $ROOTFS_IMG_SOURCE ];then
-		ln -rsf $ROOTFS_IMG_SOURCE $ROOTFS_IMG
-	fi
 	if [ -f $ROOTFS_IMG ]
 	then
 		echo -n "create rootfs.img..."
@@ -136,6 +133,10 @@ then
 		echo "done."
 	else
 		echo "warning: $ROOTFS_IMG not found!"
+		if [ -f $ROOTFS_IMG_SOURCE ];then
+			echo "Fallback to $ROOTFS_IMG_SOURCE"
+			ln -rsf $ROOTFS_IMG_SOURCE $ROCKDEV/rootfs.img
+		fi
 	fi
 fi
 
