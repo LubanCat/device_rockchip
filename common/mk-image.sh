@@ -125,6 +125,16 @@ mkimage_auto_sized()
     done
 }
 
+mk_ubi_image()
+{
+  UBINIZE_CONFIG_FILE_PATH=$TARGET_OUTPUT_DIR/../../fs/ubi/ubinize.cfg
+  mkfs.ubifs -x lzo -e $RK_UBIFS_LEBSIZE -c $RK_UBIFS_MINIOSIZE -m $RK_UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o temp.ubifs --jrn-size=1048576
+  sed 's/BR2_ROOTFS_UBIFS_PATH/temp.ubifs/g' $UBINIZE_CONFIG_FILE_PATH > ubinize.cfg
+  ubinize -o $TARGET -m $RK_UBIFS_MINIOSIZE -p 0x20000 -s $RK_UBIFS_MAXLEBCNT -v ubinize.cfg
+  rm ubinize.cfg
+  rm temp.ubifs
+}
+
 rm -rf $TARGET
 case $FS_TYPE in
     squashfs)
@@ -136,6 +146,9 @@ case $FS_TYPE in
         else
             mkimage && echo "Generated $TARGET"
         fi
+        ;;
+    ubi)
+        mk_ubi_image
         ;;
     *)
         echo "File system: $FS_TYPE not support."
