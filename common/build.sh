@@ -210,6 +210,19 @@ function build_uboot(){
 		${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG} \
 		&& cd -
 
+	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
+		if [ -f u-boot/*spl.bin ]; then
+			rm u-boot/*spl.bin
+		fi
+		cd u-boot && ./make.sh --spl && cd -
+		if [ $? -eq 0 ]; then
+			echo "====loader update spl from u-boot ok!===="
+		else
+			echo "====loader update spl from u-boot failed!===="
+			exit 1
+		fi
+	fi
+
 	if [ $? -eq 0 ]; then
 		echo "====Build uboot ok!===="
 	else
