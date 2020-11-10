@@ -46,16 +46,28 @@ export RK_RAMBOOT_TYPE=
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
-#RK_UBIFS_LEBSIZE = logical eraseblock size（逻辑擦除块大小）：flash block size - 2 * flash page 
-export RK_UBIFS_LEBSIZE=0x1f000
-#RK_UBIFS_MINIOSIZE = minimum I/O unit size（页大小）：flash page size
-export RK_UBIFS_MINIOSIZE=0x800
-#RK_UBIFS_MAXLEBCNT = partition size / flash block size
-export RK_UBIFS_MAXLEBCNT=2048
 #OEM config
 export RK_OEM_DIR=
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
+#
+# RK_UBI_PAGE_SIZE and RK_UBI_BLOCK_SIZE MUST be defined if meet One of the following conditions:
+#
+# 1. define RK_OEM_DIR and undefine RK_OEM_BUILDIN_BUILDROOT
+# 2. define RK_USERDATA_DIR
+#
+# Set ubifs page size, 2048(2KB) or 4096(4KB)
+export RK_UBI_PAGE_SIZE=2048
+#
+# Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
+export RK_UBI_BLOCK_SIZE=0x20000
+#
+# Set userdata partition size (byte) if define RK_USERDATA_DIR
+export RK_USERDATA_PARTITION_SIZE=0x680000
+#
+# Set oem partition size (byte) if undefine RK_OEM_BUILDIN_BUILDROOT
+# export RK_OEM_PARTITION_SIZE=0x6400000
+#
 #misc image
 export RK_MISC=
 #choose enable distro module

@@ -6,6 +6,8 @@ export RK_CHIP=RV1126
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126
+# Uboot update loader (spl)
+export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
@@ -39,13 +41,33 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=
+export RK_OEM_FS_TYPE=ubi
 # Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=
+export RK_USERDATA_FS_TYPE=ubi
 #OEM config
-export RK_OEM_DIR=
-#userdata config
+export RK_OEM_DIR=oem_ipc
+# OEM build on buildroot
+export RK_OEM_BUILDIN_BUILDROOT=YES
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
+#
+# RK_UBI_PAGE_SIZE and RK_UBI_BLOCK_SIZE MUST be defined if meet One of the following conditions:
+#
+# 1. define RK_OEM_DIR and undefine RK_OEM_BUILDIN_BUILDROOT
+# 2. define RK_USERDATA_DIR
+#
+# Set ubifs page size, 2048(2KB) or 4096(4KB)
+# export RK_UBI_PAGE_SIZE=2048
+#
+# Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
+# export RK_UBI_BLOCK_SIZE=0x20000
+#
+# Set userdata partition size (byte) if define RK_USERDATA_DIR
+# export RK_USERDATA_PARTITION_SIZE=0x02760000
+#
+# Set oem partition size (byte) if undefine RK_OEM_BUILDIN_BUILDROOT
+# export RK_OEM_PARTITION_SIZE=0x6400000
+#
 #misc image
 export RK_MISC=
 #choose enable distro module

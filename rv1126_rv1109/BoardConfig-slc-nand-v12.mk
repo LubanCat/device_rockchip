@@ -36,26 +36,36 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set ubifs page size, 2048(2KB) or 4096(4KB)
-export RK_UBI_PAGE_SIZE=2048
-# Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
-export RK_UBI_BLOCK_SIZE=0x20000
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ubi
-# Set oem partition size (byte)
-# export RK_OEM_PARTITION_SIZE=0x6400000
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
 #OEM config
 export RK_OEM_DIR=
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
-# Set userdata partition size (byte)
+#
+# RK_UBI_PAGE_SIZE and RK_UBI_BLOCK_SIZE MUST be defined if meet One of the following conditions:
+#
+# 1. define RK_OEM_DIR and undefine RK_OEM_BUILDIN_BUILDROOT
+# 2. define RK_USERDATA_DIR
+#
+# Set ubifs page size, 2048(2KB) or 4096(4KB)
+# export RK_UBI_PAGE_SIZE=2048
+#
+# Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
+# export RK_UBI_BLOCK_SIZE=0x20000
+#
+# Set userdata partition size (byte) if define RK_USERDATA_DIR
 # export RK_USERDATA_PARTITION_SIZE=0x02760000
+#
+# Set oem partition size (byte) if undefine RK_OEM_BUILDIN_BUILDROOT
+# export RK_OEM_PARTITION_SIZE=0x6400000
+#
 #misc image
 export RK_MISC=
 # Define pre-build script for this board
