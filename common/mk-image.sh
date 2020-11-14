@@ -26,6 +26,15 @@ export SRC_DIR=$1
 export TARGET=$2
 FS_TYPE=$3
 SIZE=$4
+
+if [ "$FS_TYPE" = "ubi" ]; then
+    UBI_VOL_NAME=${5:-test}
+    # default page size 2KB
+    UBI_PAGE_SIZE=${6:-2048}
+    # default block size 128KB
+    UBI_BLOCK_SIZE=${7:-0x20000}
+fi
+
 TEMP=$(mktemp -u)
 
 [ -d "$SRC_DIR" ] || usage
@@ -127,12 +136,34 @@ mkimage_auto_sized()
 
 mk_ubi_image()
 {
-  UBINIZE_CONFIG_FILE_PATH=$TARGET_OUTPUT_DIR/../../fs/ubi/ubinize.cfg
-  mkfs.ubifs -x lzo -e $RK_UBIFS_LEBSIZE -c $RK_UBIFS_MINIOSIZE -m $RK_UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o temp.ubifs --jrn-size=1048576
-  sed 's/BR2_ROOTFS_UBIFS_PATH/temp.ubifs/g' $UBINIZE_CONFIG_FILE_PATH > ubinize.cfg
-  ubinize -o $TARGET -m $RK_UBIFS_MINIOSIZE -p 0x20000 -s $RK_UBIFS_MAXLEBCNT -v ubinize.cfg
-  rm ubinize.cfg
-  rm temp.ubifs
+    temp_dir="`dirname $TARGET`"
+    temp_ubifs_image=$temp_dir/temp.ubifs
+    temp_ubinize_file=$temp_dir/ubinize.cfg
+    ubifs_lebsize=$(( $UBI_BLOCK_SIZE - 2 * $UBI_PAGE_SIZE ))
+    ubifs_miniosize=$UBI_PAGE_SIZE
+    partition_size=$(( $SIZE ))
+
+    if [ $partition_size -le 0 ]; then
+        echo "Error: ubifs partition MUST set partition size"
+        exit 1
+    fi
+    ubifs_maxlebcnt=$(( $partition_size / $ubifs_lebsize ))
+
+    echo "ubifs_lebsize=$UBI_BLOCK_SIZE"
+    echo "ubifs_miniosize=$UBI_PAGE_SIZE"
+    echo "ubifs_maxlebcnt=$ubifs_maxlebcnt"
+    mkfs.ubifs -x lzo -e $ubifs_lebsize -m $ubifs_miniosize -c $ubifs_maxlebcnt -d $SRC_DIR -F -v -o $temp_ubifs_image
+
+    echo "[ubifs]" > $temp_ubinize_file
+    echo "mode=ubi" >> $temp_ubinize_file
+    echo "vol_id=0" >> $temp_ubinize_file
+    echo "vol_type=dynamic" >> $temp_ubinize_file
+    echo "vol_name=$UBI_VOL_NAME" >> $temp_ubinize_file
+    echo "vol_alignment=1" >> $temp_ubinize_file
+    echo "vol_flags=autoresize" >> $temp_ubinize_file
+    echo "image=$temp_ubifs_image" >> $temp_ubinize_file
+    ubinize -o $TARGET -m $ubifs_miniosize -p $UBI_BLOCK_SIZE -v $temp_ubinize_file
+    rm -f $temp_ubifs_image $temp_ubinize_file
 }
 
 rm -rf $TARGET
