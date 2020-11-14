@@ -46,7 +46,7 @@ export RK_OEM_BUILDIN_BUILDROOT=YES
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
 export RK_OEM_DIR=oem_empty
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_sl
 #misc image
 export RK_MISC=

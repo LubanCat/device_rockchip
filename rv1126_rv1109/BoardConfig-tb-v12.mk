@@ -38,7 +38,7 @@ export RK_OEM_FS_TYPE=
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
 export RK_OEM_DIR=
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=

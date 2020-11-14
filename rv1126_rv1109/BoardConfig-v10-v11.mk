@@ -48,7 +48,7 @@ export RK_USERDATA_FS_TYPE=ext2
 export RK_OEM_DIR=oem_ipc
 # OEM build on buildroot
 export RK_OEM_BUILDIN_BUILDROOT=YES
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
