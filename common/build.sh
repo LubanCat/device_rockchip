@@ -549,10 +549,10 @@ function build_updateimg(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
-	cd $PACK_TOOL_DIR/rockdev
 	if [ "$RK_LINUX_AB_ENABLE" == "true" ];then
 		echo "Make Linux a/b update.img."
 		build_otapackage
+                cd $PACK_TOOL_DIR/rockdev
 		source_package_file_name=`ls -lh package-file | awk -F ' ' '{print $NF}'`
 		ln -fs "$RK_PACKAGE_FILE"-ab package-file
 		./mkupdate.sh
@@ -560,6 +560,7 @@ function build_updateimg(){
 		ln -fs $source_package_file_name package-file
 	else
 		echo "Make update.img"
+	        cd $PACK_TOOL_DIR/rockdev
 
 		if [ -f "$RK_PACKAGE_FILE" ]; then
 			source_package_file_name=`ls -lh package-file | awk -F ' ' '{print $NF}'`
