@@ -424,7 +424,7 @@ function build_rootfs(){
 	ROOTFS_IMG=${RK_ROOTFS_IMG##*/}
 
 	rm -rf $RK_ROOTFS_IMG $RK_ROOTFS_DIR
-	mkdir -p $RK_ROOTFS_DIR
+	mkdir -p ${RK_ROOTFS_IMG%/*} $RK_ROOTFS_DIR
 
 	case "$1" in
 		yocto)
