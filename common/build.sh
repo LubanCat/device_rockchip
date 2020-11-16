@@ -187,8 +187,8 @@ function usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-	echo "debian             -build debian9 stretch rootfs"
-	echo "distro             -build debian10 buster rootfs"
+	echo "debian             -build debian10 buster/x11 rootfs"
+	echo "distro             -build debian10 buster/wayland rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -393,10 +393,10 @@ function build_debian(){
 	esac
 
 	cd debian
-	[ ! -e linaro-stretch-alip-*.tar.gz ] && \
-		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+	[ ! -e linaro-buster-alip-*.tar.gz ] && \
+		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
+	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
 	./mk-image.sh
 
 	finish_build
