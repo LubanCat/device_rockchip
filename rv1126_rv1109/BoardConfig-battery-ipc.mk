@@ -35,7 +35,7 @@ export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=squashfs
+export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 # OEM config
