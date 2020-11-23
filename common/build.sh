@@ -476,8 +476,6 @@ function build_rootfs(){
 function build_recovery(){
 	check_config RK_CFG_RECOVERY && return
 
-	build_kernel
-
 	echo "==========Start building recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
