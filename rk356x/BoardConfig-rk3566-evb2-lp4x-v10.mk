@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
 # Kernel dts
-export RK_KERNEL_DTS=rk3566-evb1-ddr4-v10-linux
+export RK_KERNEL_DTS=rk3566-evb2-lp4x-v10-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
