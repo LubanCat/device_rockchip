@@ -694,7 +694,7 @@ for option in ${OPTIONS}; do
 				exit 1
 			fi
 
-			ln -sf $CONF $BOARD_CONFIG
+			ln -rsf $CONF $BOARD_CONFIG
 			;;
 		lunch) build_select_board ;;
 		all) build_all ;;
