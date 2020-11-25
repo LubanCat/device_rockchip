@@ -6,6 +6,8 @@ check_linker()
 	[ ! -L "$2" ] && ln -sf $1 $2
 }
 
+[ -f /etc/profile.d/enable_coredump.sh ] && source /etc/profile.d/enable_coredump.sh
+
 check_linker /userdata   /oem/www/userdata
 check_linker /userdata   /oem/www/userdata
 check_linker /media/usb0 /oem/www/usb0
