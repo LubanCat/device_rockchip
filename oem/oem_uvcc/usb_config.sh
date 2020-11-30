@@ -134,10 +134,12 @@ uac_device_config()
   UAC_GS0=${USB_FUNCTIONS_DIR}/${UAC}.gs0
   echo 3 > ${UAC_GS0}/p_chmask
   echo 2 > ${UAC_GS0}/p_ssize
+  echo 1 > ${UAC_GS0}/p_feature_unit
   echo 8000,16000,44100,48000 > ${UAC_GS0}/p_srate
 
   echo 3 > ${UAC_GS0}/c_chmask
-  echo 2 > ${UAC_GS0}/p_ssize
+  echo 2 > ${UAC_GS0}/c_ssize
+  echo 1 > ${UAC_GS0}/c_feature_unit
   echo 8000,16000,44100,48000 > ${UAC_GS0}/c_srate
 
   ln -s ${UAC_GS0} ${USB_CONFIGS_DIR}/f2
