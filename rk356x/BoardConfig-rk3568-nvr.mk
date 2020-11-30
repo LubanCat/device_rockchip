@@ -19,11 +19,11 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-fit.txt
+export RK_PARAMETER=parameter-buildroot-NVR-128M.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk356x_nvr
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk356x_recovery
+export RK_CFG_RECOVERY=rockchip_rk356x_nvr_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
@@ -35,7 +35,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
+export RK_ROOTFS_TYPE=squashfs
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path
@@ -47,11 +47,11 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
-export RK_OEM_DIR=oem_normal
+export RK_OEM_DIR=oem_nvr
 # OEM build on buildroot
 #export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config
-export RK_USERDATA_DIR=userdata_normal
+export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
