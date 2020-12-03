@@ -19,6 +19,8 @@ export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 export RK_PARAMETER=parameter.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3326_32
+# Debian 10 config
+export RK_DISTRO_DEFCONFIG=rk3326_defconfig
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # ramboot config
@@ -31,6 +33,8 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3326
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
+# yocto machine
+export RK_YOCTO_MACHINE=rockchip-rk3326-evb
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
