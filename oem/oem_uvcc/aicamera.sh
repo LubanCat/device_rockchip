@@ -7,6 +7,7 @@ check_alive()
   if [ $PID -le 0 ];then
      if [ "$1"x == "uvc_app"x ];then
        echo " uvc app die ,restart it and usb reprobe !!!"
+       echo none > /sys/kernel/config/usb_gadget/rockchip/UDC
        sleep 1
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
@@ -16,7 +17,7 @@ check_alive()
        uvc_app &
      else
        if [ "$1"x == "ispserver"x ];then
-          ispserver -no-sync-db &
+          ispserver -n &
        else
          if [ "$1"x == "aiserver"x ];then
             echo "aiserver is die,tell uvc to recovery"
@@ -49,7 +50,7 @@ usb_irq_set()
 }
 ulimit -c unlimited
 dbserver &
-ispserver -no-sync-db &
+ispserver -n &
 stop_unused_daemon
 /oem/usb_config.sh rndis
 usb_irq_set
