@@ -4,11 +4,6 @@
 #vi_aging adjust
 io -4 0xfe801048 0x40
 
-#for usb uvc iso
-usbirq=`cat /proc/interrupts |grep dwc3| awk '{print $1}'|tr -cd "[0-9]"`
-echo "usb irq:$usbirq"
-echo 1 > /proc/irq/$usbirq/smp_affinity_list
-
 export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
 export VIV_VX_MAX_SOC_OT_NUMBER=16
 
@@ -35,28 +30,16 @@ fi
 fi
 fi
 
-if [ -e /dev/media2 ] ; then
-   MEDIAX=/dev/media1
-else
-   MEDIAX=/dev/media0
-fi
-camera_max_width=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $2}'`
-if [[ -z $camera_max_width ]];
-then
-    echo "camera_max_width is empty,try get from media0!!"
-    MEDIAX=/dev/media0
-fi
+camera_max_width=`media-ctl -p | grep crop|head -1|awk -F '[/@x]' '{print $2}'`
+camera_max_height=`media-ctl -p | grep crop|head -1|awk -F '[/@x]' '{print $3}'`
 
-camera_max_width=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $2}'`
-camera_max_height=`media-ctl -d $MEDIAX -p | awk -v line=$(media-ctl -d $MEDIAX -p | awk '/Sensor/{print NR}') '{if(NR==line+3){print $0}}' | awk -F '[/,@,x]' '{print $3}'`
-
-echo ${camera_max_width}
-echo ${camera_max_height}
+echo "camera_max_width= ${camera_max_width}"
+echo "camera_max_height= ${camera_max_height}"
 export CAMERA_MAX_WIDTH=${camera_max_width}
 export CAMERA_MAX_HEIGHT=${camera_max_height}
 
-#rkmedia isp ctrl
-export ENABLE_SKIP_FRAME=1
+#rockit log level ctrl: 1:fatal error; 2: error; 3: warning; 4:infomational; 5:debug level; 6:verbose
+export rt_log_level=3
 
 #export ENABLE_EPTZ=1
 

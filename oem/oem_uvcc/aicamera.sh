@@ -1,13 +1,31 @@
 #!/bin/sh
 #
 
+TRY_CNT=0
+check_uvc_buffer()
+{
+  if [ "$TRY_CNT" -gt 0 ];then
+     let TRY_CNT=TRY_CNT-1
+     #echo "++++++++TRY_CNT:$TRY_CNT"
+  fi
+  if [ "$TRY_CNT" -gt 10 ];then
+     echo "+++check_uvc_buffer recovery fail,reboot to recovery now+++"
+     reboot &
+  fi
+  if [ -e /tmp/uvc_camera_no_buf ];then
+     let TRY_CNT=TRY_CNT+10
+     echo "uvc no buf to send 200 frames,try to recovery isp time,timeout:$TRY_CNT"
+     killall ispserver
+     killall aiserver
+     rm /tmp/uvc_camera_no_buf -rf
+  fi
+}
 check_alive()
 {
   PID=`busybox ps |grep $1 |grep -v grep | wc -l`
   if [ $PID -le 0 ];then
      if [ "$1"x == "uvc_app"x ];then
        echo " uvc app die ,restart it and usb reprobe !!!"
-       echo none > /sys/kernel/config/usb_gadget/rockchip/UDC
        sleep 1
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
@@ -62,6 +80,7 @@ do
   check_alive ispserver
   check_alive uvc_app
   check_alive aiserver
+  check_uvc_buffer
   sleep 2
   check_alive smart_display_service
 done
