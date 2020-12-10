@@ -21,7 +21,7 @@ export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk356x
+export RK_CFG_BUILDROOT=rockchip_rk3568
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk356x_recovery
 # Recovery image format type: fit(flattened image tree)
