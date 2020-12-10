@@ -25,7 +25,7 @@ export RK_PARAMETER=parameter-fit-nand-256M.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 # Recovery config
-export RK_CFG_RECOVERY=
+export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
@@ -69,10 +69,10 @@ export RK_USERDATA_DIR=
 # export RK_OEM_PARTITION_SIZE=0x6400000
 #
 #misc image
-export RK_MISC=
+export RK_MISC=blank-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img
-export RK_PACKAGE_FILE=rv1109-package-file-spi-nand
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nand
