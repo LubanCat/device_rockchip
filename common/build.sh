@@ -122,7 +122,7 @@ function usageuboot()
 	fi
 
 	if [ "$RK_BUILD_SPI_NOR" = "true" ]; then
-		echo "./make.sh --idblock"
+		echo "./make.sh --idblock --spl"
 	fi
 }
 
@@ -254,7 +254,7 @@ function build_uboot(){
 	fi
 
 	if [ "$RK_BUILD_SPI_NOR" = "true" ]; then
-		./make.sh --idblock
+		./make.sh --idblock --spl
 	fi
 
 	finish_build
