@@ -69,6 +69,13 @@ function rebuild()
 }
 
 unset NEW_OPTS
+if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
+export TARGET_OUTPUT_DIR="$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT"
+else
+if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
+export TARGET_OUTPUT_DIR="$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT"
+fi
+fi
 for option in ${OPTIONS}; do
         echo "processing board option: $option"
         case $option in
