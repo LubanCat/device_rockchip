@@ -301,9 +301,9 @@ function build_kernel(){
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
 	make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
-	if [ -f "device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS" ]; then
-		$COMMON_DIR/mk-fitimage.sh kernel/$RK_BOOT_IMG \
-			device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
+	if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS" ]; then
+		$COMMON_DIR/mk-fitimage.sh $TOP_DIR/$RK_BOOT_IMG \
+			$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
 	fi
 
 	finish_build
