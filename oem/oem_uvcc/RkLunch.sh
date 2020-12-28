@@ -30,6 +30,11 @@ fi
 fi
 fi
 
+#init sysconfig.db
+if [ ! -e "/data/sysconfig.db" ] ;then
+   cp -rf /oem/sysconfig.db /data/sysconfig.db
+fi
+
 camera_max_width=`media-ctl -p | grep crop|head -1|awk -F '[/@x]' '{print $2}'`
 camera_max_height=`media-ctl -p | grep crop|head -1|awk -F '[/@x]' '{print $3}'`
 
