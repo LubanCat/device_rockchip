@@ -75,6 +75,6 @@ export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img
-export RK_PACKAGE_FILE=rv1126-package-file-spi-nand
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nand-uvc
 #choose enable Linux A/B
 export RK_LINUX_AB_ENABLE=true
