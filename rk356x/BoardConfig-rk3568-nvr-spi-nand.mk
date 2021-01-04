@@ -9,7 +9,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT="rockchip_linux_ubifs.config rockchip_linux_bifrost.config"
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
 # Kernel dts   rk3568-nvr-demo-v10-linux   rk3568-evb1-ddr4-v10-linux
 export RK_KERNEL_DTS=rk3568-nvr-demo-v10-linux-spi-nand
 # boot image type
