@@ -10,7 +10,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
-# Kernel dts
+# Kernel dts   rk3568-nvr-demo-v10-linux   rk3568-evb1-ddr4-v10-linux
 export RK_KERNEL_DTS=rk3568-nvr-demo-v10-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
@@ -19,7 +19,7 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-NVR-128M.txt
+export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk356x_nvr
 # Recovery config
@@ -35,7 +35,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=squashfs
+export RK_ROOTFS_TYPE=ext4
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path
