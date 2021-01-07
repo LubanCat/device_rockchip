@@ -58,7 +58,8 @@ if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
 	fi
 fi
 
-check_partition_size() {
+# NOT support the grow partition
+get_partition_size() {
 	echo $PARAMETER
 
 	PARTITIONS_PREFIX=`echo -n "CMDLINE: mtdparts=rk29xxnand:"`
@@ -87,14 +88,38 @@ check_partition_size() {
 
 		case $part_name in
 			uboot)
-				if [ $part_size_bytes -lt `du -b $UBOOT_IMG | awk '{print $1}'` ]
+				uboot_part_size_bytes=$part_size_bytes
+			;;
+			boot)
+				boot_part_size_bytes=$part_size_bytes
+			;;
+			recovery)
+				recovery_part_size_bytes=$part_size_bytes
+			;;
+			rootfs)
+				rootfs_part_size_bytes=$part_size_bytes
+			;;
+			oem)
+				oem_part_size_bytes=$part_size_bytes
+			;;
+		esac
+	done
+}
+
+check_partition_size() {
+
+	for part_name in uboot boot recovery rootfs
+	do
+		case $part_name in
+			uboot)
+				if [ $uboot_part_size_bytes -lt `du -b $UBOOT_IMG | awk '{print $1}'` ]
 				then
 					echo -e "\e[31m error: uboot image size exceed parameter! \e[0m"
 					return -1
 				fi
 			;;
 			boot)
-				if [ $part_size_bytes -lt `du -b $BOOT_IMG | awk '{print $1}'` ]
+				if [ $boot_part_size_bytes -lt `du -b $BOOT_IMG | awk '{print $1}'` ]
 				then
 					echo -e "\e[31m error: boot image size exceed parameter! \e[0m"
 					return -1
@@ -103,7 +128,7 @@ check_partition_size() {
 			recovery)
 				if [ -f $RECOVERY_IMG ]
 				then
-					if [ $part_size_bytes -lt `du -b $RECOVERY_IMG | awk '{print $1}'` ]
+					if [ $recovery_part_size_bytes -lt `du -b $RECOVERY_IMG | awk '{print $1}'` ]
 					then
 						echo -e "\e[31m error: recovery image size exceed parameter! \e[0m"
 						return -1
@@ -113,7 +138,7 @@ check_partition_size() {
 			rootfs)
 				if [ -f $ROOTFS_IMG ]
 				then
-					if [ $part_size_bytes -lt `du -bD $ROOTFS_IMG | awk '{print $1}'` ]
+					if [ $rootfs_part_size_bytes -lt `du -bD $ROOTFS_IMG | awk '{print $1}'` ]
 					then
 						echo -e "\e[31m error: rootfs image size exceed parameter! \e[0m"
 						return -1
@@ -150,6 +175,8 @@ else
 	exit -1
 fi
 
+get_partition_size
+
 if [ $RK_CFG_RECOVERY ]
 then
 	if [ -f $RECOVERY_IMG ]
@@ -184,7 +211,7 @@ then
 			echo "chown -R www-data:www-data $OEM_DIR/www" >> $OEM_FAKEROOT_SCRIPT
 		fi
 		if [ "$RK_OEM_FS_TYPE" = "ubi" ]; then
-			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE $RK_OEM_PARTITION_SIZE oem $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $OEM_FAKEROOT_SCRIPT
+			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE ${RK_OEM_PARTITION_SIZE:-$oem_part_size_bytes} oem $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $OEM_FAKEROOT_SCRIPT
 		else
 			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE"  >> $OEM_FAKEROOT_SCRIPT
 		fi
