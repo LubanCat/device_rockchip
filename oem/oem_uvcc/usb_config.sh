@@ -257,7 +257,7 @@ if [ $ADB_EN = on ];then
   echo "adb on++++++ ${USB_CNT}"
   ln -s ${USB_FUNCTIONS_DIR}/ffs.adb ${USB_CONFIGS_DIR}/f${USB_CNT}
   pre_run_adb
-  sleep 1
+  sleep .5
 fi
 
 UDC=`ls /sys/class/udc/| awk '{print $1}'`

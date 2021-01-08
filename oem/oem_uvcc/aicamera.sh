@@ -74,6 +74,8 @@ stop_unused_daemon
 usb_irq_set
 uvc_app &
 aiserver &
+sleep .5
+smart_display_service &
 while true
 do
   check_alive dbserver
