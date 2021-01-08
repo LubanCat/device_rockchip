@@ -51,21 +51,20 @@ export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
 #
-# RK_UBI_PAGE_SIZE and RK_UBI_BLOCK_SIZE MUST be defined if meet One of the following conditions:
-#
-# 1. define RK_OEM_DIR and undefine RK_OEM_BUILDIN_BUILDROOT
-# 2. define RK_USERDATA_DIR
-#
 # Set ubifs page size, 2048(2KB) or 4096(4KB)
+# Option.
 # export RK_UBI_PAGE_SIZE=2048
 #
 # Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
+# Option.
 # export RK_UBI_BLOCK_SIZE=0x20000
 #
 # Set userdata partition size (byte) if define RK_USERDATA_DIR
+# MUST, if userdata partition is grow partition.
 # export RK_USERDATA_PARTITION_SIZE=0x02760000
 #
-# Set oem partition size (byte) if undefine RK_OEM_BUILDIN_BUILDROOT
+# Set oem partition size (byte)
+# Option. if not set, it will get from parameter auto.
 # export RK_OEM_PARTITION_SIZE=0x6400000
 #
 #misc image
