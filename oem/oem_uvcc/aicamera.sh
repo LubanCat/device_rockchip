@@ -82,7 +82,7 @@ do
   check_alive ispserver
   check_alive uvc_app
   check_alive aiserver
-  check_uvc_buffer
+#  check_uvc_buffer
   sleep 2
   check_alive smart_display_service
 done
