@@ -85,6 +85,11 @@ fi
 export MEDIA_DEV=/dev/block/by-name/media
 export FSTYPE=ext4
 
+if [ ! -f $MEDIA_DEV ]; then
+	echo "media part not exit, do nothing";
+	exit
+fi
+
 prepare_part()
 {
   dumpe2fs -h $MEDIA_DEV 2>/dev/null| grep "media"
