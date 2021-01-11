@@ -13,7 +13,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # EMMC EVB BOARD Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v13
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v13-uvc
 # Logic/npu/vepu merge emmc board kernel dts
 #export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1
 # NPU 800m+ logic separate from npu/vepu emmc board kernel dts
