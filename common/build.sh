@@ -121,7 +121,7 @@ function usageuboot()
 		echo "./make.sh --spl"
 	fi
 
-	if [ "$RK_BUILD_SPI_NOR" = "true" ]; then
+	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
 		echo "./make.sh --idblock --spl"
 	fi
 }
@@ -253,7 +253,7 @@ function build_uboot(){
 		./make.sh --spl
 	fi
 
-	if [ "$RK_BUILD_SPI_NOR" = "true" ]; then
+	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
 		./make.sh --idblock --spl
 	fi
 
@@ -558,27 +558,6 @@ function build_firmware(){
 function build_updateimg(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
-
-	if [ "$RK_BUILD_SPI_NOR" = "true" ]; then
-		mkdir -p $IMAGE_PATH
-		PACK_TOOL_DIR=$TOP_DIR/tools/linux/Firmware_Merger/
-		cd $PACK_TOOL_DIR/
-		if [ ! -f "$TOP_DIR/u-boot/idblock.bin" ]; then
-			echo "Error: idblock.bin not found!!!"
-			exit 1
-		fi
-
-		if [ ! -f "$RK_PACKAGE_FILE" ]; then
-			echo "Error: $RK_PACKAGE_FILE not found!!!"
-			exit 1
-		fi
-
-		ln -fs "$TOP_DIR/u-boot/idblock.bin" $IMAGE_PATH/
-		./firmware_merger -P $RK_PACKAGE_FILE $IMAGE_PATH
-		rm -f $IMAGE_PATH/idblock.bin
-		finish_build
-		return
-	fi
 
 	if [ "$RK_LINUX_AB_ENABLE" == "true" ];then
 		echo "Make Linux a/b update.img."
