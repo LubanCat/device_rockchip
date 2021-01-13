@@ -2,8 +2,8 @@
 
 # Target arch
 export RK_ARCH=arm
-# build firmware for spi nor
-export RK_BUILD_SPI_NOR=true
+# build idblock.bin and update SPL
+export RK_IDBLOCK_UPDATE_SPL=true
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126-spi-nor-tb
 # Loader update spl from Uboot
@@ -54,5 +54,5 @@ export RK_USERDATA_DIR=
 export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
-# Define package-file for Firmware.img
+# Define package-file for update.img
 export RK_PACKAGE_FILE=
