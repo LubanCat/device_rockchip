@@ -15,9 +15,9 @@ export RK_KERNEL_DTS=rk3568-nvr-demo-v10-linux-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
+export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
 # kernel image format type: fit(flattened image tree)
-export RK_KERNEL_FIT_ITS=boot.its
+export RK_KERNEL_FIT_ITS=zboot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-NVR-spi-nand-128M.txt
 # Buildroot config
