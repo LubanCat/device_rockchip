@@ -225,6 +225,9 @@ case $FS_TYPE in
         UBI_BLOCK_SIZE=0x40000
         mk_ubi_image
         ;;
+    jffs2)
+        mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 --pad=0x400000 -s 0x1000 -n
+        ;;
     *)
         echo "File system: $FS_TYPE not support."
         usage
