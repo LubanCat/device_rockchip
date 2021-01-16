@@ -73,7 +73,11 @@ get_partition_size() {
 		fi
 	done < $PARAMETER
 
-	[ -z $"partitions" ] && return
+	if [ -z $partitions ]
+	then
+		echo -e "\e[31m $PARAMETER parse no find string \"$PARTITIONS_PREFIX\" or The last line is not empty or other reason\e[0m"
+		return
+	fi
 
 	IFS=,
 	for part in $partitions;
