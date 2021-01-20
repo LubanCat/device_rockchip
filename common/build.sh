@@ -224,9 +224,10 @@ function build_check(){
 
 			dst=${chk_item%%,*}
 			src=${chk_item##*,}
-			eval $dst 1>/dev/null 2>&1
-			if [ $? -ne 0 ];then
-				echo "**************************************"
+			echo "**************************************"
+			if eval $dst &>/dev/null;then
+				echo "Check [OK]: $dst"
+			else
 				echo "Please install ${dst%% *} first"
 				echo "    sudo apt-get install $src"
 			fi
