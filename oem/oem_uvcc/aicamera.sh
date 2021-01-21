@@ -28,6 +28,8 @@ check_alive()
        echo " uvc app die ,restart it and usb reprobe !!!"
        sleep 1
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
+       echo none > /sys/kernel/config/usb_gadget/rockchip/UDC
+       rmdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
        echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/bind
        /oem/usb_config.sh rndis off #disable adb
