@@ -28,10 +28,10 @@ function check_config(){
 		missing="$missing $var"
 	done
 
-	[ -z "$missing" ] && return 1
+	[ -z "$missing" ] && return 0
 
 	echo "Skipping ${FUNCNAME[1]} for missing configs: $missing."
-	return 0
+	return 1
 }
 
 function choose_target_board()
@@ -99,7 +99,7 @@ source device/rockchip/common/Version.mk
 
 function usagekernel()
 {
-	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG && return
+	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return
 
 	echo "cd kernel"
 	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT"
@@ -108,7 +108,7 @@ function usagekernel()
 
 function usageuboot()
 {
-	check_config RK_UBOOT_DEFCONFIG && return
+	check_config RK_UBOOT_DEFCONFIG || return
 
 	echo "cd u-boot"
 	echo "./make.sh $RK_UBOOT_DEFCONFIG" \
@@ -128,7 +128,7 @@ function usageuboot()
 
 function usagerootfs()
 {
-	check_config RK_ROOTFS_IMG && return
+	check_config RK_ROOTFS_IMG || return
 
 	if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
 		echo "source envsetup.sh $RK_CFG_BUILDROOT"
@@ -155,7 +155,7 @@ function usagerootfs()
 
 function usagerecovery()
 {
-	check_config RK_CFG_RECOVERY && return
+	check_config RK_CFG_RECOVERY || return
 
 	echo "source envsetup.sh $RK_CFG_RECOVERY"
 	echo "$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY"
@@ -163,7 +163,7 @@ function usagerecovery()
 
 function usageramboot()
 {
-	check_config RK_CFG_RAMBOOT && return
+	check_config RK_CFG_RAMBOOT || return
 
 	echo "source envsetup.sh $RK_CFG_RAMBOOT"
 	echo "$COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT"
@@ -171,7 +171,7 @@ function usageramboot()
 
 function usagemodules()
 {
-	check_config RK_KERNEL_DEFCONFIG && return
+	check_config RK_KERNEL_DEFCONFIG || return
 
 	echo "cd kernel"
 	echo "make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG"
@@ -235,7 +235,7 @@ function build_check(){
 }
 
 function build_uboot(){
-	check_config RK_UBOOT_DEFCONFIG && return
+	check_config RK_UBOOT_DEFCONFIG || return
 
 	echo "============Start building uboot============"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
@@ -262,7 +262,7 @@ function build_uboot(){
 }
 
 function build_spl(){
-	check_config RK_SPL_DEFCONFIG && return
+	check_config RK_SPL_DEFCONFIG || return
 
 	echo "============Start building spl============"
 	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
@@ -277,7 +277,7 @@ function build_spl(){
 }
 
 function build_loader(){
-	check_config RK_LOADER_BUILD_TARGET && return
+	check_config RK_LOADER_BUILD_TARGET || return
 
 	echo "============Start building loader============"
 	echo "RK_LOADER_BUILD_TARGET=$RK_LOADER_BUILD_TARGET"
@@ -290,7 +290,7 @@ function build_loader(){
 }
 
 function build_kernel(){
-	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG && return
+	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return
 
 	echo "============Start building kernel============"
 	echo "TARGET_ARCH          =$RK_ARCH"
@@ -311,7 +311,7 @@ function build_kernel(){
 }
 
 function build_modules(){
-	check_config RK_KERNEL_DEFCONFIG && return
+	check_config RK_KERNEL_DEFCONFIG || return
 
 	echo "============Start building kernel modules============"
 	echo "TARGET_ARCH          =$RK_ARCH"
@@ -327,7 +327,7 @@ function build_modules(){
 }
 
 function build_toolchain(){
-	check_config RK_CFG_TOOLCHAIN && return
+	check_config RK_CFG_TOOLCHAIN || return
 
 	echo "==========Start building toolchain =========="
 	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
@@ -340,7 +340,7 @@ function build_toolchain(){
 }
 
 function build_buildroot(){
-	check_config RK_CFG_BUILDROOT && return
+	check_config RK_CFG_BUILDROOT || return
 
 	echo "==========Start building buildroot=========="
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
@@ -353,7 +353,7 @@ function build_buildroot(){
 }
 
 function build_ramboot(){
-	check_config RK_CFG_RAMBOOT && return
+	check_config RK_CFG_RAMBOOT || return
 
 	echo "=========Start building ramboot========="
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
@@ -369,7 +369,7 @@ function build_ramboot(){
 }
 
 function build_multi-npu_boot(){
-	check_config RK_MULTINPU_BOOT && return
+	check_config RK_MULTINPU_BOOT || return
 
 	echo "=========Start building multi-npu boot========="
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
@@ -382,7 +382,7 @@ function build_multi-npu_boot(){
 }
 
 function build_yocto(){
-	check_config RK_YOCTO_MACHINE && return
+	check_config RK_YOCTO_MACHINE || return
 
 	echo "=========Start building ramboot========="
 	echo "TARGET_MACHINE=$RK_YOCTO_MACHINE"
@@ -416,7 +416,7 @@ function build_debian(){
 }
 
 function build_distro(){
-	check_config RK_DISTRO_DEFCONFIG && return
+	check_config RK_DISTRO_DEFCONFIG || return
 
 	echo "===========Start building distro==========="
 	echo "TARGET_ARCH=$RK_ARCH"
@@ -431,7 +431,7 @@ function build_distro(){
 }
 
 function build_rootfs(){
-	check_config RK_ROOTFS_IMG && return
+	check_config RK_ROOTFS_IMG || return
 
 	RK_ROOTFS_DIR=.rootfs
 	ROOTFS_IMG=${RK_ROOTFS_IMG##*/}
@@ -475,7 +475,7 @@ function build_rootfs(){
 }
 
 function build_recovery(){
-	check_config RK_CFG_RECOVERY && return
+	check_config RK_CFG_RECOVERY || return
 
 	echo "==========Start building recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
@@ -488,7 +488,7 @@ function build_recovery(){
 }
 
 function build_pcba(){
-	check_config RK_CFG_PCBA && return
+	check_config RK_CFG_PCBA || return
 
 	echo "==========Start building pcba=========="
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
