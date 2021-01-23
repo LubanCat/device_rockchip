@@ -58,9 +58,6 @@ function choose_target_board()
 
 function build_select_board()
 {
-	TARGET_PRODUCT="device/rockchip/.target_product"
-	TARGET_PRODUCT_DIR=$(realpath ${TARGET_PRODUCT})
-
 	RK_TARGET_BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
 
 	RK_TARGET_BOARD_ARRAY_LEN=${#RK_TARGET_BOARD_ARRAY[@]}
@@ -89,6 +86,8 @@ TOP_DIR=$(realpath $COMMON_DIR/../../..)
 cd $TOP_DIR
 
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
+TARGET_PRODUCT="$TOP_DIR/device/rockchip/.target_product"
+TARGET_PRODUCT_DIR=$(realpath ${TARGET_PRODUCT})
 
 if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
 	build_select_board
@@ -207,8 +206,24 @@ function usage()
 	echo "save               -save images, patches, commands used to debug"
 	echo "allsave            -build all & firmware & updateimg & save"
 	echo "check              -check the environment of building"
+	echo "info               -see the current board building information"
 	echo ""
 	echo "Default option is 'allsave'."
+}
+
+function build_info(){
+	if [ ! -L $TARGET_PRODUCT_DIR ];then
+		echo "No found target product!!!"
+	fi
+	if [ ! -L $BOARD_CONFIG ];then
+		echo "No found target board config!!!"
+	fi
+
+	echo "Current Building Information:"
+	echo "Target Product: $TARGET_PRODUCT_DIR"
+	echo "Target BoardConfig: `realpath $BOARD_CONFIG`"
+	echo "Target Misc config:"
+	echo "`env |grep "^RK_" | grep -v "=$" | sort`"
 }
 
 function build_check(){
@@ -696,6 +711,7 @@ for option in ${OPTIONS}; do
 		ramboot) build_ramboot ;;
 		recovery) build_recovery ;;
 		multi-npu_boot) build_multi-npu_boot ;;
+		info) build_info ;;
 		*) usage ;;
 	esac
 done
