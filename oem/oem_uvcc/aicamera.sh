@@ -43,6 +43,8 @@ check_alive()
             echo "aiserver is die,tell uvc to recovery"
             killall -3 uvc_app
             aiserver &
+            sleep .5
+            killall -10 smart_display_service
          else
             $1 &
          fi
