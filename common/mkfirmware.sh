@@ -79,6 +79,7 @@ get_partition_size() {
 		return
 	fi
 
+	PART_NAME_NEED_TO_CHECK=""
 	IFS=,
 	for part in $partitions;
 	do
@@ -91,20 +92,25 @@ get_partition_size() {
 		part_size_bytes=$[$part_size*512]
 
 		case $part_name in
-			uboot)
+			uboot|uboot_[ab])
 				uboot_part_size_bytes=$part_size_bytes
+				PART_NAME_NEED_TO_CHECK="$PART_NAME_NEED_TO_CHECK:$part_name"
 			;;
-			boot)
+			boot|boot_[ab])
 				boot_part_size_bytes=$part_size_bytes
+				PART_NAME_NEED_TO_CHECK="$PART_NAME_NEED_TO_CHECK:$part_name"
 			;;
 			recovery)
 				recovery_part_size_bytes=$part_size_bytes
+				PART_NAME_NEED_TO_CHECK="$PART_NAME_NEED_TO_CHECK:$part_name"
 			;;
-			rootfs)
+			rootfs|system_[ab])
 				rootfs_part_size_bytes=$part_size_bytes
+				PART_NAME_NEED_TO_CHECK="$PART_NAME_NEED_TO_CHECK:$part_name"
 			;;
 			oem)
 				oem_part_size_bytes=$part_size_bytes
+				PART_NAME_NEED_TO_CHECK="$PART_NAME_NEED_TO_CHECK:$part_name"
 			;;
 		esac
 	done
@@ -112,17 +118,18 @@ get_partition_size() {
 
 check_partition_size() {
 
-	for part_name in uboot boot recovery rootfs
+	while true
 	do
+		part_name=${PART_NAME_NEED_TO_CHECK##*:}
 		case $part_name in
-			uboot)
+			uboot|uboot_[ab])
 				if [ $uboot_part_size_bytes -lt `du -b $UBOOT_IMG | awk '{print $1}'` ]
 				then
 					echo -e "\e[31m error: uboot image size exceed parameter! \e[0m"
 					return -1
 				fi
 			;;
-			boot)
+			boot|boot_[ab])
 				if [ $boot_part_size_bytes -lt `du -b $BOOT_IMG | awk '{print $1}'` ]
 				then
 					echo -e "\e[31m error: boot image size exceed parameter! \e[0m"
@@ -139,7 +146,7 @@ check_partition_size() {
 					fi
 				fi
 			;;
-			rootfs)
+			rootfs|system_[ab])
 				if [ -f $ROOTFS_IMG ]
 				then
 					if [ $rootfs_part_size_bytes -lt `du -bD $ROOTFS_IMG | awk '{print $1}'` ]
@@ -150,6 +157,10 @@ check_partition_size() {
 				fi
 			;;
 		esac
+		PART_NAME_NEED_TO_CHECK=${PART_NAME_NEED_TO_CHECK%:*}
+		if [ -z "$PART_NAME_NEED_TO_CHECK" ]; then
+			break
+		fi
 	done
 }
 
