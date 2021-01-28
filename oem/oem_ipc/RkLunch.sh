@@ -85,7 +85,7 @@ fi
 export MEDIA_DEV=/dev/block/by-name/media
 export FSTYPE=ext4
 
-if [ ! -f $MEDIA_DEV ]; then
+if [ ! -L $MEDIA_DEV ]; then
 	echo "media part not exit, do nothing";
 	exit
 fi
