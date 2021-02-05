@@ -7,6 +7,8 @@ export RK_ARCH=arm
 # Uboot defconfig
 #export RK_UBOOT_DEFCONFIG=rv1126
 export RK_UBOOT_DEFCONFIG=rv1126-ab
+# Uboot defconfig fragment, config rk-sfc.config if sdcard upgrade
+export RK_UBOOT_DEFCONFIG_FRAGMENT=rk-sfc.config
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 #export RK_SPL_DEFCONFIG=rv1126
@@ -73,7 +75,25 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# Define package-file for update.img
-export RK_PACKAGE_FILE=rv1126-package-file-spi-nand-uvc
-#choose enable Linux A/B
-export RK_LINUX_AB_ENABLE=true
+# Define package-file for update_ab.img
+export RK_PACKAGE_FILE_AB=rv1126-package-file-spi-nand-uvc-ab
+# Define package-file for update_ota.img
+export RK_PACKAGE_FILE_OTA=rv1126-package-file-spi-nand-uvc-ota
+
+##########################################################
+# To support sdcard update firmware for A/B system
+# 1. Use recovery to boot into sdcard
+# 2. Update update_ab.img into storage media (eMMC or Nand)
+# Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
+#
+# Define package-file for sdcard update update_sdcard.img
+# export RK_PACKAGE_FILE_SDCARD_UPDATE=sdcard-update-package-file
+# Recovery config
+# export RK_CFG_RECOVERY=
+# Recovery image format type: fit(flattened image tree)
+# export RK_RECOVERY_FIT_ITS=boot4recovery.its
+# To boot into sdcard reccovery for update_sdcard.img
+# export RK_SDUPDATE_AB_MISC=sdupdate-ab-misc.img
+# parameter for sdcard update update_sdcard.img
+# export RK_PARAMETER_SDUPDATE=parameter-sdupdate.txt
+##########################################################
