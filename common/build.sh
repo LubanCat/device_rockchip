@@ -219,6 +219,7 @@ function usage()
 	echo "firmware           -pack all the image we need to boot up system"
 	echo "updateimg          -pack update image"
 	echo "otapackage         -pack ab update otapackage image"
+	echo "sdpackage          -pack update sdcard package image (sdupdate.img-data)"
 	echo "save               -save images, patches, commands used to debug"
 	echo "allsave            -build all & firmware & updateimg & save"
 	echo "check              -check the environment of building"
@@ -605,22 +606,24 @@ function build_updateimg(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
-	if [ "$RK_LINUX_AB_ENABLE" == "true" ];then
-		echo "Make Linux a/b update.img."
+	cd $PACK_TOOL_DIR/rockdev
+
+	if [ -f "$RK_PACKAGE_FILE_AB" ]; then
+		build_sdcard_package
 		build_otapackage
-                cd $PACK_TOOL_DIR/rockdev
+
+		cd $PACK_TOOL_DIR/rockdev
+		echo "Make Linux a/b update_ab.img."
 		source_package_file_name=`ls -lh package-file | awk -F ' ' '{print $NF}'`
-		ln -fs "$RK_PACKAGE_FILE"-ab package-file
+		ln -fs "$RK_PACKAGE_FILE_AB" package-file
 		./mkupdate.sh
 		mv update.img $IMAGE_PATH/update_ab.img
 		ln -fs $source_package_file_name package-file
 	else
 		echo "Make update.img"
-	        cd $PACK_TOOL_DIR/rockdev
 
 		if [ -f "$RK_PACKAGE_FILE" ]; then
 			source_package_file_name=`ls -lh package-file | awk -F ' ' '{print $NF}'`
-
 			ln -fs "$RK_PACKAGE_FILE" package-file
 			./mkupdate.sh
 			ln -fs $source_package_file_name package-file
@@ -637,13 +640,32 @@ function build_otapackage(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
-	echo "Make ota ab update.img"
-	source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+	echo "Make ota ab update_ota.img"
 	cd $PACK_TOOL_DIR/rockdev
-	ln -fs "$RK_PACKAGE_FILE"-ota package-file
-	./mkupdate.sh
-	mv update.img $IMAGE_PATH/update_ota.img
-	ln -fs $source_package_file_name package-file
+	if [ -f "$RK_PACKAGE_FILE_OTA" ]; then
+		source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+		ln -fs "$RK_PACKAGE_FILE_OTA" package-file
+		./mkupdate.sh
+		mv update.img $IMAGE_PATH/update_ota.img
+		ln -fs $source_package_file_name package-file
+	fi
+
+	finish_build
+}
+
+function build_sdcard_package(){
+	IMAGE_PATH=$TOP_DIR/rockdev
+	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
+
+	echo "Make sdcard update update_sdcard.img"
+	cd $PACK_TOOL_DIR/rockdev
+	if [ -f "$RK_PACKAGE_FILE_SDCARD_UPDATE" ]; then
+		source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
+		ln -fs "$RK_PACKAGE_FILE_SDCARD_UPDATE" package-file
+		./mkupdate.sh
+		mv update.img $IMAGE_PATH/update_sdcard.img
+		ln -fs $source_package_file_name package-file
+	fi
 
 	finish_build
 }
@@ -730,6 +752,7 @@ for option in ${OPTIONS}; do
 		firmware) build_firmware ;;
 		updateimg) build_updateimg ;;
 		otapackage) build_otapackage ;;
+		sdpackage) build_sdcard_package ;;
 		toolchain) build_toolchain ;;
 		spl) build_spl ;;
 		uboot) build_uboot ;;
