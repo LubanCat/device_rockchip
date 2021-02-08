@@ -6,6 +6,8 @@ export RK_CHIP=RV1126
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126
+# Uboot defconfig fragment, config rk-sfc.config if sdcard upgrade
+export RK_UBOOT_DEFCONFIG_FRAGMENT=rk-sfc.config
 # Uboot update loader (spl)
 export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
@@ -26,6 +28,8 @@ export RK_PARAMETER=parameter-fit-nand-256M.txt
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
+# Recovery image format type: fit(flattened image tree)
+export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config

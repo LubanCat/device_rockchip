@@ -43,5 +43,25 @@ MIC_NUM=6
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
-#choose enable Linux A/B
-export RK_LINUX_AB_ENABLE=
+# Define package-file for update_ab.img
+export RK_PACKAGE_FILE_AB=
+# Define package-file for ota update_ota.img
+export RK_PACKAGE_FILE_OTA=
+
+##########################################################
+# To support sdcard update firmware for A/B system
+# 1. Use recovery to boot into sdcard
+# 2. Update update_ab.img into storage media (eMMC or Nand)
+# Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
+#
+# Define package-file for sdcard update update_sdcard.img
+# export RK_PACKAGE_FILE_SDCARD_UPDATE=sdcard-update-package-file
+# Recovery config
+# export RK_CFG_RECOVERY=
+# Recovery image format type: fit(flattened image tree)
+# export RK_RECOVERY_FIT_ITS=
+# To boot into sdcard reccovery for update_sdcard.img
+# export RK_SDUPDATE_AB_MISC=sdupdate-ab-misc.img
+# parameter for sdcard update update_sdcard.img
+# export RK_PARAMETER_SDUPDATE=parameter-sdupdate.txt
+##########################################################
