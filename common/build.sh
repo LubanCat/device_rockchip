@@ -109,12 +109,26 @@ function usageuboot()
 {
 	check_config RK_UBOOT_DEFCONFIG || return 0
 
+	cd u-boot
 	echo "cd u-boot"
-	echo "./make.sh $RK_UBOOT_DEFCONFIG" \
-		"${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG}" \
-		"${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG}" \
-		"${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG}" \
-		"${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
+	if [ -f "configs/$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
+		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
+			echo "make ${RK_UBOOT_DEFCONFIG}_defconfig $RK_UBOOT_DEFCONFIG_FRAGMENT"
+		else
+			echo "make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT"
+		fi
+		echo "./make.sh \
+			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
+			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
+			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
+			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
+	else
+		echo "./make.sh $RK_UBOOT_DEFCONFIG" \
+			"${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG}" \
+			"${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG}" \
+			"${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG}" \
+			"${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
+	fi
 
 	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
 		echo "./make.sh --spl"
@@ -123,6 +137,8 @@ function usageuboot()
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
 		echo "./make.sh --idblock --spl"
 	fi
+
+	finish_build
 }
 
 function usagerootfs()
@@ -258,11 +274,25 @@ function build_uboot(){
 
 	cd u-boot
 	rm -f *_loader_*.bin
-	./make.sh $RK_UBOOT_DEFCONFIG \
-		${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
-		${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
-		${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
-		${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}
+
+	if [ -f "configs/$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
+		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
+			make ${RK_UBOOT_DEFCONFIG}_defconfig $RK_UBOOT_DEFCONFIG_FRAGMENT
+		else
+			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
+		fi
+		./make.sh \
+			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
+			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
+			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
+			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}
+	else
+		./make.sh $RK_UBOOT_DEFCONFIG \
+			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
+			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
+			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
+			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}
+	fi
 
 	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
 		rm -f *spl.bin
