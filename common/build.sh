@@ -224,6 +224,8 @@ function usage()
 	echo "allsave            -build all & firmware & updateimg & save"
 	echo "check              -check the environment of building"
 	echo "info               -see the current board building information"
+	echo "app/<pkg>          -build packages in the dir of app/*"
+	echo "external/<pkg>     -build packages in the dir of external/*"
 	echo ""
 	echo "Default option is 'allsave'."
 }
@@ -264,6 +266,53 @@ function build_check(){
 				echo "    sudo apt-get install $src"
 			fi
 		done
+}
+
+function build_pkg() {
+	check_config RK_CFG_BUILDROOT || check_config RK_CFG_RAMBOOT || check_config RK_CFG_RECOVERY || check_config RK_CFG_PCBA || return 0
+
+	local target_pkg=$1
+	target_pkg=${target_pkg%*/}
+
+	if [ ! -d $target_pkg ];then
+		echo "build pkg: error: not found package $target_pkg"
+		return 1
+	fi
+
+	if ! eval [ $rk_package_mk_arrry ];then
+		rk_package_mk_arrry=( $(find buildroot/package/rockchip/ -name "*.mk" | sort) )
+	fi
+
+	local pkg_mk pkg_config_in pkg_br pkg_final_target pkg_final_target_upper pkg_cfg
+
+	for it in ${rk_package_mk_arrry[@]}
+	do
+		pkg_final_target=$(basename $it)
+		pkg_final_target=${pkg_final_target%%.mk*}
+		pkg_final_target_upper=${pkg_final_target^^}
+		pkg_final_target_upper=${pkg_final_target_upper//-/_}
+		if grep "${pkg_final_target_upper}_SITE.*$target_pkg" $it &>/dev/null; then
+			pkg_mk=$it
+			pkg_config_in=$(dirname $pkg_mk)/Config.in
+			pkg_br=BR2_PACKAGE_$pkg_final_target_upper
+			break
+		fi
+	done
+
+	for cfg in RK_CFG_BUILDROOT RK_CFG_RAMBOOT RK_CFG_RECOVERY RK_CFG_PCBA
+	do
+		if eval [ \$$cfg ] ;then
+			pkg_cfg=$( eval "echo \$$cfg" )
+			if grep -wq ${pkg_br}=y buildroot/output/$pkg_cfg/.config; then
+				echo "Found $pkg_br in buildroot/output/$pkg_cfg/.config "
+				make ${pkg_final_target}-rebuild O=buildroot/output/$pkg_cfg
+			else
+				echo "[SKIP BUILD $target_pkg] NOT Found ${pkg_br}=y in buildroot/output/$pkg_cfg/.config"
+			fi
+		fi
+	done
+
+	finish_build
 }
 
 function build_uboot(){
@@ -765,6 +814,7 @@ for option in ${OPTIONS}; do
 		recovery) build_recovery ;;
 		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
+		app/*|external/*) build_pkg $option ;;
 		*) usage ;;
 	esac
 done
