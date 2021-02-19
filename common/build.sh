@@ -720,10 +720,6 @@ function build_sdcard_package(){
 	local parameter_sdupdate=$TOP_DIR/device/rockchip/rockimg/$rk_parameter_sdupdate
 	local recovery_img=$TOP_DIR/buildroot/output/$RK_UPDATE_SDCARD_CFG_RECOVERY/images/recovery.img
 
-	echo "debug rk_sdupdate_ab_misc=${rk_sdupdate_ab_misc}"
-	echo "debug rk_parameter_sdupdate=${rk_parameter_sdupdate}"
-	echo "debug rk_package_file_sdcard_update=${rk_package_file_sdcard_update}"
-
 	if [ $RK_UPDATE_SDCARD_CFG_RECOVERY ]; then
 		if [ -f $recovery_img ]; then
 			echo -n "create recovery.img..."
