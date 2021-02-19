@@ -82,19 +82,11 @@ export RK_PACKAGE_FILE_AB=rv1126-package-file-spi-nand-256MB-ab
 export RK_PACKAGE_FILE_OTA=rv1126-package-file-spi-nand-256MB-ota
 
 ##########################################################
-# To support sdcard update firmware for A/B system
-# 1. Use recovery to boot into sdcard
-# 2. Update update_ab.img into storage media (eMMC or Nand)
-# Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
-#
-# Define package-file for sdcard update update_sdcard.img
-export RK_PACKAGE_FILE_SDCARD_UPDATE=sdcard-update-package-file
-# Recovery config
-export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
-# Recovery image format type: fit(flattened image tree)
+### enable build update_sdcard.img
+### Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
+# export RK_UPDATE_SDCARD_ENABLE_FOR_AB=true
+### Recovery config
+export RK_UPDATE_SDCARD_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
+### Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# To boot into sdcard reccovery for update_sdcard.img
-export RK_SDUPDATE_AB_MISC=sdupdate-ab-misc.img
-# parameter for sdcard update update_sdcard.img
-export RK_PARAMETER_SDUPDATE=parameter-sdupdate.txt
 ##########################################################
