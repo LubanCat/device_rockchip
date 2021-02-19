@@ -705,15 +705,33 @@ function build_otapackage(){
 function build_sdcard_package(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
+	SDUPDATE_AB_MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_SDUPDATE_AB_MISC
+	PARAMETER_SDUPDATE=$TOP_DIR/device/rockchip/rockimg/$RK_PARAMETER_SDUPDATE
 
 	echo "Make sdcard update update_sdcard.img"
 	cd $PACK_TOOL_DIR/rockdev
 	if [ -f "$RK_PACKAGE_FILE_SDCARD_UPDATE" ]; then
+
+		if [ $RK_PARAMETER_SDUPDATE ]; then
+			if [ -f $PARAMETER_SDUPDATE ]; then
+				echo -n "create sdcard update image parameter..."
+				ln -rsf $PARAMETER_SDUPDATE $IMAGE_PATH/
+			fi
+		fi
+
+		if [ $RK_SDUPDATE_AB_MISC ]; then
+			if [ -f $SDUPDATE_AB_MISC_IMG ]; then
+				echo -n "create sdupdate ab misc.img..."
+				ln -rsf $SDUPDATE_AB_MISC_IMG $IMAGE_PATH/
+			fi
+		fi
+
 		source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
 		ln -fs "$RK_PACKAGE_FILE_SDCARD_UPDATE" package-file
 		./mkupdate.sh
 		mv update.img $IMAGE_PATH/update_sdcard.img
 		ln -fs $source_package_file_name package-file
+		rm -f $IMAGE_PATH/$RK_SDUPDATE_AB_MISC $IMAGE_PATH/$RK_PARAMETER_SDUPDATE
 	fi
 
 	finish_build
