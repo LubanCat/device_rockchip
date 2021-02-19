@@ -570,6 +570,11 @@ function build_rootfs(){
 }
 
 function build_recovery(){
+
+	if [ "$RK_UPDATE_SDCARD_ENABLE_FOR_AB" = "true" ] ;then
+		RK_CFG_RECOVERY=$RK_UPDATE_SDCARD_CFG_RECOVERY
+	fi
+
 	check_config RK_CFG_RECOVERY || return 0
 
 	echo "==========Start building recovery=========="
@@ -703,35 +708,57 @@ function build_otapackage(){
 }
 
 function build_sdcard_package(){
-	IMAGE_PATH=$TOP_DIR/rockdev
-	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
-	SDUPDATE_AB_MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_SDUPDATE_AB_MISC
-	PARAMETER_SDUPDATE=$TOP_DIR/device/rockchip/rockimg/$RK_PARAMETER_SDUPDATE
+
+	check_config RK_UPDATE_SDCARD_ENABLE_FOR_AB || return 0
+
+	local image_path=$TOP_DIR/rockdev
+	local pack_tool_dir=$TOP_DIR/tools/linux/Linux_Pack_Firmware
+	local rk_sdupdate_ab_misc=${RK_SDUPDATE_AB_MISC:=sdupdate-ab-misc.img}
+	local rk_parameter_sdupdate=${RK_PARAMETER_SDUPDATE:=parameter-sdupdate.txt}
+	local rk_package_file_sdcard_update=${RK_PACKAGE_FILE_SDCARD_UPDATE:=sdcard-update-package-file}
+	local sdupdate_ab_misc_img=$TOP_DIR/device/rockchip/rockimg/$rk_sdupdate_ab_misc
+	local parameter_sdupdate=$TOP_DIR/device/rockchip/rockimg/$rk_parameter_sdupdate
+	local recovery_img=$TOP_DIR/buildroot/output/$RK_UPDATE_SDCARD_CFG_RECOVERY/images/recovery.img
+
+	echo "debug rk_sdupdate_ab_misc=${rk_sdupdate_ab_misc}"
+	echo "debug rk_parameter_sdupdate=${rk_parameter_sdupdate}"
+	echo "debug rk_package_file_sdcard_update=${rk_package_file_sdcard_update}"
+
+	if [ $RK_UPDATE_SDCARD_CFG_RECOVERY ]; then
+		if [ -f $recovery_img ]; then
+			echo -n "create recovery.img..."
+			ln -rsf $recovery_img $image_path/recovery.img
+		else
+			echo "error: $recovery_img not found!"
+			return 1
+		fi
+	fi
+
 
 	echo "Make sdcard update update_sdcard.img"
-	cd $PACK_TOOL_DIR/rockdev
-	if [ -f "$RK_PACKAGE_FILE_SDCARD_UPDATE" ]; then
+	cd $pack_tool_dir/rockdev
+	if [ -f "$rk_package_file_sdcard_update" ]; then
 
-		if [ $RK_PARAMETER_SDUPDATE ]; then
-			if [ -f $PARAMETER_SDUPDATE ]; then
+		if [ $rk_parameter_sdupdate ]; then
+			if [ -f $parameter_sdupdate ]; then
 				echo -n "create sdcard update image parameter..."
-				ln -rsf $PARAMETER_SDUPDATE $IMAGE_PATH/
+				ln -rsf $parameter_sdupdate $image_path/
 			fi
 		fi
 
-		if [ $RK_SDUPDATE_AB_MISC ]; then
-			if [ -f $SDUPDATE_AB_MISC_IMG ]; then
+		if [ $rk_sdupdate_ab_misc ]; then
+			if [ -f $sdupdate_ab_misc_img ]; then
 				echo -n "create sdupdate ab misc.img..."
-				ln -rsf $SDUPDATE_AB_MISC_IMG $IMAGE_PATH/
+				ln -rsf $sdupdate_ab_misc_img $image_path/
 			fi
 		fi
 
-		source_package_file_name=`ls -lh $PACK_TOOL_DIR/rockdev/package-file | awk -F ' ' '{print $NF}'`
-		ln -fs "$RK_PACKAGE_FILE_SDCARD_UPDATE" package-file
+		source_package_file_name=`ls -lh $pack_tool_dir/rockdev/package-file | awk -F ' ' '{print $NF}'`
+		ln -fs "$rk_package_file_sdcard_update" package-file
 		./mkupdate.sh
-		mv update.img $IMAGE_PATH/update_sdcard.img
+		mv update.img $image_path/update_sdcard.img
 		ln -fs $source_package_file_name package-file
-		rm -f $IMAGE_PATH/$RK_SDUPDATE_AB_MISC $IMAGE_PATH/$RK_PARAMETER_SDUPDATE
+		rm -f $image_path/$rk_sdupdate_ab_misc $image_path/$rk_parameter_sdupdate $image_path/recovery.img
 	fi
 
 	finish_build
