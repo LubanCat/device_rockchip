@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ADB_EN=on
+DFU_EN=off
 if ( echo $2 |grep -q "off" ); then
 ADB_EN=off
 fi
@@ -246,6 +247,19 @@ uac2_rndis)
 esac
 
 ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6 ${USB_CONFIGS_DIR}/f1
+
+if [ $DFU_EN = on ];then
+  mkdir /sys/kernel/config/usb_gadget/rockchip/functions/dfu.gs0
+  CONFIG_STR=`cat /sys/kernel/config/usb_gadget/rockchip/configs/b.1/strings/0x409/configuration`
+  STR=${CONFIG_STR}_dfu
+  echo $STR > ${USB_CONFIGS_DIR}/strings/0x409/configuration
+  USB_CNT=`echo $STR | awk -F"_" '{print NF-1}'`
+  let USB_CNT=USB_CNT+1
+  echo "dfu on++++++ ${USB_CNT}"
+  ln -s ${USB_FUNCTIONS_DIR}/dfu.gs0 ${USB_CONFIGS_DIR}/f${USB_CNT}
+  ADB_EN=off
+  sleep .5
+fi
 
 if [ $ADB_EN = on ];then
   mkdir ${USB_FUNCTIONS_DIR}/ffs.adb
