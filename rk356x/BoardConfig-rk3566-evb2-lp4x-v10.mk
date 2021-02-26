@@ -9,7 +9,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
+export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rk3566-evb2-lp4x-v10-linux
 # boot image type
