@@ -291,7 +291,7 @@ function build_pkg() {
 		pkg_final_target=${pkg_final_target%%.mk*}
 		pkg_final_target_upper=${pkg_final_target^^}
 		pkg_final_target_upper=${pkg_final_target_upper//-/_}
-		if grep "${pkg_final_target_upper}_SITE.*$target_pkg" $it &>/dev/null; then
+		if grep "${pkg_final_target_upper}_SITE.*$target_pkg$" $it &>/dev/null; then
 			pkg_mk=$it
 			pkg_config_in=$(dirname $pkg_mk)/Config.in
 			pkg_br=BR2_PACKAGE_$pkg_final_target_upper
