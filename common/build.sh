@@ -494,16 +494,19 @@ function build_yocto(){
 }
 
 function build_debian(){
-	echo "=========Start building debian========="
-
-	case $RK_ARCH in
-		arm) ARCH=armhf ;;
+	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
+	case $ARCH in
+		arm|armhf) ARCH=armhf ;;
 		*) ARCH=arm64 ;;
 	esac
 
+	echo "=========Start building debian for $ARCH========="
+
 	cd debian
-	[ ! -e linaro-buster-alip-*.tar.gz ] && \
+	if [ ! -e linaro-buster-$ARCH.tar.gz ]; then
 		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+		ln -rsf linaro-buster-alip-*.tar.gz linaro-buster-$ARCH.tar.gz
+	fi
 
 	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
 	./mk-image.sh
