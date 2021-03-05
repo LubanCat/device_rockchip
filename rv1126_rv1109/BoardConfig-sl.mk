@@ -13,7 +13,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1
+export RK_KERNEL_DTS=rv1126-rmsl-ddr3-v1
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -54,3 +54,5 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
+# define USB_FW_VERSION
+export USB_FW_VERSION=0.0.1
