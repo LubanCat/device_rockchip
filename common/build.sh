@@ -295,21 +295,20 @@ function build_pkg() {
 			pkg_mk=$it
 			pkg_config_in=$(dirname $pkg_mk)/Config.in
 			pkg_br=BR2_PACKAGE_$pkg_final_target_upper
-			break
-		fi
-	done
 
-	for cfg in RK_CFG_BUILDROOT RK_CFG_RAMBOOT RK_CFG_RECOVERY RK_CFG_PCBA
-	do
-		if eval [ \$$cfg ] ;then
-			pkg_cfg=$( eval "echo \$$cfg" )
-			if grep -wq ${pkg_br}=y buildroot/output/$pkg_cfg/.config; then
-				echo "Found $pkg_br in buildroot/output/$pkg_cfg/.config "
-				make ${pkg_final_target}-dirclean O=buildroot/output/$pkg_cfg
-				make ${pkg_final_target}-rebuild O=buildroot/output/$pkg_cfg
-			else
-				echo "[SKIP BUILD $target_pkg] NOT Found ${pkg_br}=y in buildroot/output/$pkg_cfg/.config"
-			fi
+			for cfg in RK_CFG_BUILDROOT RK_CFG_RAMBOOT RK_CFG_RECOVERY RK_CFG_PCBA
+			do
+				if eval [ \$$cfg ] ;then
+					pkg_cfg=$( eval "echo \$$cfg" )
+					if grep -wq ${pkg_br}=y buildroot/output/$pkg_cfg/.config; then
+						echo "Found $pkg_br in buildroot/output/$pkg_cfg/.config "
+						make ${pkg_final_target}-dirclean O=buildroot/output/$pkg_cfg
+						make ${pkg_final_target}-rebuild O=buildroot/output/$pkg_cfg
+					else
+						echo "[SKIP BUILD $target_pkg] NOT Found ${pkg_br}=y in buildroot/output/$pkg_cfg/.config"
+					fi
+				fi
+			done
 		fi
 	done
 
