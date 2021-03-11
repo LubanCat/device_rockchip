@@ -6,6 +6,7 @@ killall mediaserver
 killall storage_manager
 killall netserver
 killall dbserver
+killall startup_app_ipc
 killall ispserver
 echo "Stop Application ..."
 
