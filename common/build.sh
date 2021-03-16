@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export LC_ALL=C
+export LD_LIBRARY_PATH=
 unset RK_CFG_TOOLCHAIN
 
 err_handler() {
