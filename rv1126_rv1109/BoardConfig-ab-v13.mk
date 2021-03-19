@@ -23,7 +23,7 @@ export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-ab-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_ab
+export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
