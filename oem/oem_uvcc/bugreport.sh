@@ -67,6 +67,12 @@ get_isp_status()
   cat /proc/rkisp* > ${bugreport}/isp_data/rkisp_data1
   sleep 1
   cat /proc/rkisp* > ${bugreport}/isp_data/rkisp_data2
+  echo "report rkcif info..."
+  cat /proc/rkcif* > ${bugreport}/isp_data/rkcif_data0
+  sleep 1
+  cat /proc/rkcif* > ${bugreport}/isp_data/rkcif_data1
+  sleep 1
+  cat /proc/rkcif* > ${bugreport}/isp_data/rkcif_data2
   echo "report media-ctl info..."
   media-ctl -p > ${bugreport}/isp_data/media-ctl-p_info
   media-ctl -d /dev/media0 -p > ${bugreport}/isp_data/media-ctl-p-media0_info
