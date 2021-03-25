@@ -93,6 +93,13 @@ do
 		continue
 	fi
 
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		if echo $line | grep -wq "uboot-ignore"; then
+			echo "Enable Security boot, Skip uboot-ignore ..."
+			continue
+		fi
+	fi
+
 	echo "$line" >> $target_its_file
 done < $src_its_file
 

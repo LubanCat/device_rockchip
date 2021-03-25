@@ -332,6 +332,17 @@ then
 	fi
 fi
 
+if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+	if [ -f $TOP_DIR/u-boot/boot.img ]
+	then
+	        echo -n "Enable ramdisk security bootup, create boot.img..."
+	        ln -rsf $TOP_DIR/u-boot/boot.img $ROCKDEV/boot.img
+	        echo "done."
+	else
+		echo "warning: $TOP_DIR/u-boot/boot.img  not found!"
+	fi
+fi
+
 check_partition_size
 
 echo -e "\e[36m Image: image in rockdev is ready \e[0m"
