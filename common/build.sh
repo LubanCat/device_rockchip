@@ -97,6 +97,30 @@ unset_board_config_all
 [ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
 source device/rockchip/common/Version.mk
 
+function prebuild_uboot()
+{
+	UBOOT_COMPILE_COMMANDS="\
+			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
+			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
+			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
+			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
+	UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
+
+	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
+		UBOOT_COMPILE_COMMANDS="--spl-new $UBOOT_COMPILE_COMMANDS"
+		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
+	fi
+
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		UBOOT_COMPILE_COMMANDS=" \
+			--boot_img $(cd $TOP_DIR && realpath ./rockdev/boot.img) \
+			--burn-key-hash $UBOOT_COMPILE_COMMANDS \
+			${RK_ROLLBACK_INDEX_BOOT:+--rollback-index-boot $RK_ROLLBACK_INDEX_BOOT} \
+			${RK_ROLLBACK_INDEX_UBOOT:+--rollback-index-uboot $RK_ROLLBACK_INDEX_UBOOT} "
+		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
+	fi
+}
+
 function usagekernel()
 {
 	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
@@ -109,6 +133,7 @@ function usagekernel()
 function usageuboot()
 {
 	check_config RK_UBOOT_DEFCONFIG || return 0
+	prebuild_uboot
 
 	cd u-boot
 	echo "cd u-boot"
@@ -118,21 +143,9 @@ function usageuboot()
 		else
 			echo "make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT"
 		fi
-		echo "./make.sh \
-			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
-			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
-			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
-			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
+		echo "./make.sh $UBOOT_COMPILE_COMMANDS"
 	else
-		echo "./make.sh $RK_UBOOT_DEFCONFIG" \
-			"${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG}" \
-			"${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG}" \
-			"${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG}" \
-			"${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
-	fi
-
-	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
-		echo "./make.sh --spl"
+		echo "./make.sh $RK_UBOOT_DEFCONFIG $UBOOT_COMPILE_COMMANDS"
 	fi
 
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
@@ -318,6 +331,7 @@ function build_pkg() {
 
 function build_uboot(){
 	check_config RK_UBOOT_DEFCONFIG || return 0
+	prebuild_uboot
 
 	echo "============Start building uboot============"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
@@ -325,6 +339,12 @@ function build_uboot(){
 
 	cd u-boot
 	rm -f *_loader_*.bin
+	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
+		rm -f *spl.bin
+	fi
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		rm -f $TOP_DIR/u-boot/boot.img
+	fi
 
 	if [ -f "configs/$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
 		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
@@ -332,31 +352,24 @@ function build_uboot(){
 		else
 			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
 		fi
-		./make.sh \
-			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
-			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
-			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
-			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}
+		./make.sh $UBOOT_COMPILE_COMMANDS
 	else
 		./make.sh $RK_UBOOT_DEFCONFIG \
-			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
-			${RK_SPL_INI_CONFIG:+../rkbin/RKBOOT/$RK_SPL_INI_CONFIG} \
-			${RK_UBOOT_SIZE_CONFIG:+--sz-uboot $RK_UBOOT_SIZE_CONFIG} \
-			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}
-	fi
-
-	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
-		rm -f *spl.bin
-		./make.sh --spl
+			$UBOOT_COMPILE_COMMANDS
 	fi
 
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
 		./make.sh --idblock --spl
 	fi
 
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		ln -rsf $TOP_DIR/u-boot/boot.img $TOP_DIR/rockdev/
+	fi
+
 	finish_build
 }
 
+# TODO: build_spl can be replaced by build_uboot with define RK_LOADER_UPDATE_SPL
 function build_spl(){
 	check_config RK_SPL_DEFCONFIG || return 0
 
@@ -619,12 +632,17 @@ function build_all(){
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
 
-	#note: if build spl, it will delete loader.bin in uboot directory,
-	# so can not build uboot and spl at the same time.
-	if [ -z $RK_SPL_DEFCONFIG ]; then
-		build_uboot
-	else
-		build_spl
+	# NOTE: On secure boot-up world, if the images build with fit(flattened image tree)
+	#       we will build kernel and ramboot firstly,
+	#       and then copy images into u-boot to sign the images.
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ];then
+		#note: if build spl, it will delete loader.bin in uboot directory,
+		# so can not build uboot and spl at the same time.
+		if [ -z $RK_SPL_DEFCONFIG ]; then
+			build_uboot
+		else
+			build_spl
+		fi
 	fi
 
 	build_loader
@@ -633,6 +651,16 @@ function build_all(){
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
 	build_ramboot
+
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		#note: if build spl, it will delete loader.bin in uboot directory,
+		# so can not build uboot and spl at the same time.
+		if [ -z $RK_SPL_DEFCONFIG ]; then
+			build_uboot
+		else
+			build_spl
+		fi
+	fi
 
 	finish_build
 }
