@@ -2,6 +2,20 @@
 #
 
 TRY_CNT=0
+check_uvc_suspend()
+{
+  if [ -e /tmp/uvc_goto_suspend ];then
+     echo "uvc go to suspend now"
+     killall ispserver
+     killall aiserver
+     sleep 2
+     if [ -e /tmp/uvc_goto_suspend ];then
+       rm /tmp/uvc_goto_suspend -rf
+       echo mem > /sys/power/state
+     fi
+  fi
+}
+
 check_uvc_buffer()
 {
   if [ "$TRY_CNT" -gt 0 ];then
@@ -74,6 +88,7 @@ usb_irq_set()
 dbserver &
 ispserver -n &
 stop_unused_daemon
+#uac_app &
 /oem/usb_config.sh rndis
 usb_irq_set
 uvc_app &
@@ -85,8 +100,10 @@ do
   check_alive dbserver
   check_alive ispserver
   check_alive uvc_app
+#  check_alive uac_app
   check_alive aiserver
 #  check_uvc_buffer
+#  check_uvc_suspend
   sleep 2
   check_alive smart_display_service
 done
