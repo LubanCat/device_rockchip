@@ -227,16 +227,18 @@ uac2)
    echo "config uvc and uac2..."
    ;;
 uac1_rndis)
-   uac_device_config uac1
+   #uac_device_config uac1
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
+   uac_device_config uac1
    echo "uvc_uac1_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac1 rndis..."
    ;;
 uac2_rndis)
-   uac_device_config uac2
+   #uac_device_config uac2
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
+   uac_device_config uac2
    echo "uvc_uac2_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac2 rndis..."
    ;;
