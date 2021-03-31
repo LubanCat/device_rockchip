@@ -127,7 +127,7 @@ uvc_device_config()
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/hs/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/ss/h
 }
-uac_device_config()
+uac1_device_config()
 {
   UAC=$1
   mkdir ${USB_FUNCTIONS_DIR}/${UAC}.gs0
@@ -140,6 +140,23 @@ uac_device_config()
   echo 3 > ${UAC_GS0}/c_chmask
   echo 2 > ${UAC_GS0}/c_ssize
   echo 1 > ${UAC_GS0}/c_feature_unit
+  echo 8000,16000,44100,48000 > ${UAC_GS0}/c_srate
+
+  ln -s ${UAC_GS0} ${USB_CONFIGS_DIR}/f2
+}
+uac2_device_config()
+{
+  UAC=$1
+  mkdir ${USB_FUNCTIONS_DIR}/${UAC}.gs0
+  UAC_GS0=${USB_FUNCTIONS_DIR}/${UAC}.gs0
+  echo 3 > ${UAC_GS0}/p_chmask
+  echo 2 > ${UAC_GS0}/p_ssize
+  echo 0 > ${UAC_GS0}/p_feature_unit
+  echo 8000,16000,44100,48000 > ${UAC_GS0}/p_srate
+
+  echo 3 > ${UAC_GS0}/c_chmask
+  echo 2 > ${UAC_GS0}/c_ssize
+  echo 0 > ${UAC_GS0}/c_feature_unit
   echo 8000,16000,44100,48000 > ${UAC_GS0}/c_srate
 
   ln -s ${UAC_GS0} ${USB_CONFIGS_DIR}/f2
@@ -217,12 +234,12 @@ rndis)
    echo "config uvc and rndis..."
    ;;
 uac1)
-   uac_device_config uac1
+   uac1_device_config uac1
    echo "uvc_uac1" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac1..."
    ;;
 uac2)
-   uac_device_config uac2
+   uac2_device_config uac2
    echo "uvc_uac2" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac2..."
    ;;
@@ -230,7 +247,7 @@ uac1_rndis)
    #uac_device_config uac1
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
-   uac_device_config uac1
+   uac1_device_config uac1
    echo "uvc_uac1_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac1 rndis..."
    ;;
@@ -238,7 +255,7 @@ uac2_rndis)
    #uac_device_config uac2
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
-   uac_device_config uac2
+   uac2_device_config uac2
    echo "uvc_uac2_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac2 rndis..."
    ;;
