@@ -137,7 +137,7 @@ function usageuboot()
 
 	cd u-boot
 	echo "cd u-boot"
-	if [ -f "configs/$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
+	if [ -n "$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
 		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
 			echo "make ${RK_UBOOT_DEFCONFIG}_defconfig $RK_UBOOT_DEFCONFIG_FRAGMENT"
 		else
@@ -346,7 +346,7 @@ function build_uboot(){
 		rm -f $TOP_DIR/u-boot/boot.img
 	fi
 
-	if [ -f "configs/$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
+	if [ -n "$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
 		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
 			make ${RK_UBOOT_DEFCONFIG}_defconfig $RK_UBOOT_DEFCONFIG_FRAGMENT
 		else
