@@ -259,6 +259,71 @@ function build_info(){
 	echo "`env |grep "^RK_" | grep -v "=$" | sort`"
 }
 
+function build_check_power_domain(){
+	local dump_kernel_dtb_file
+	local tmp_phandle_file
+	local tmp_io_domain_file
+	local tmp_regulator_microvolt_file
+	local tmp_final_target
+	local tmp_none_item
+	local kernel_file_dtb_dts
+
+	if [ "$RK_ARCH" == "arm" ]; then
+		kernel_file_dtb_dts="${TOP_DIR}/kernel/arch/arm/boot/dts/$RK_KERNEL_DTS"
+	else
+		kernel_file_dtb_dts="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS"
+	fi
+
+	dump_kernel_dtb_file=${kernel_file_dtb_dts}.dump.dts
+	tmp_phandle_file=`mktemp`
+	tmp_io_domain_file=`mktemp`
+	tmp_regulator_microvolt_file=`mktemp`
+	tmp_final_target=`mktemp`
+
+	dtc -I dtb -O dts -o ${dump_kernel_dtb_file} ${kernel_file_dtb_dts}.dtb 2>/dev/null
+	grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file | grep -a supply > $tmp_io_domain_file
+	awk '{print "phandle = " $3}' $tmp_io_domain_file > $tmp_phandle_file
+
+
+	while IFS= read -r item_phandle && IFS= read -u 3 -r item_domain
+	do
+		echo "${item_domain% *}" >> $tmp_regulator_microvolt_file
+		tmp_none_item=${item_domain% *}
+		cmds="grep -Pzo \"{(\\n|\w|-|;|=|<|>|\\\"|_|\s)*"$item_phandle\"
+
+		eval "$cmds $dump_kernel_dtb_file | strings | grep "regulator-m..-microvolt" >> $tmp_regulator_microvolt_file" || \
+			eval "sed -i \"/${tmp_none_item}/d\" $tmp_regulator_microvolt_file" && continue
+
+		echo >> $tmp_regulator_microvolt_file
+	done < $tmp_phandle_file 3<$tmp_io_domain_file
+
+	while read -r regulator_val
+	do
+		if echo ${regulator_val} | grep supply &>/dev/null; then
+			echo -e "\n\n\e[1;33m${regulator_val%*=}\e[0m" >> $tmp_final_target
+		else
+			tmp_none_item=${regulator_val##*<}
+			tmp_none_item=${tmp_none_item%%>*}
+			echo -e "${regulator_val%%<*} \e[1;31m$(( $tmp_none_item / 1000 ))mV\e[0m" >> $tmp_final_target
+		fi
+	done < $tmp_regulator_microvolt_file
+
+	echo -e "\e[41;1;30m PLEASE CHECK BOARD GPIO POWER DOMAIN CONFIGURATION !!!!!\e[0m"
+	echo -e "\e[41;1;30m <<< ESPECIALLY Wi-Fi/Flash/Ethernet IO power domain >>> !!!!!\e[0m"
+	echo -e "\e[41;1;30m Check Node [pmu_io_domains] in the file: ${kernel_file_dtb_dts}.dts \e[0m"
+	echo
+	echo -e "\e[41;1;30m 请再次确认板级的电源域配置！！！！！！\e[0m"
+	echo -e "\e[41;1;30m <<< 特别是Wi-Fi，FLASH，以太网这几路IO电源的配置 >>> ！！！！！\e[0m"
+	echo -e "\e[41;1;30m 检查内核文件 ${kernel_file_dtb_dts}.dts 的节点 [pmu_io_domains] \e[0m"
+	cat $tmp_final_target
+
+	rm -f $tmp_phandle_file
+	rm -f $tmp_regulator_microvolt_file
+	rm -f $tmp_io_domain_file
+	rm -f $tmp_final_target
+	rm -f $dump_kernel_dtb_file
+}
+
 function build_check(){
 	local build_depend_cfg="build-depend-tools.txt"
 	common_product_build_tools="device/rockchip/common/$build_depend_cfg"
@@ -415,6 +480,8 @@ function build_kernel(){
 		$COMMON_DIR/mk-fitimage.sh $TOP_DIR/kernel/$RK_BOOT_IMG \
 			$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
 	fi
+
+	build_check_power_domain
 
 	finish_build
 }
@@ -826,6 +893,8 @@ function build_allsave(){
 	build_firmware
 	build_updateimg
 	build_save
+
+	build_check_power_domain
 
 	finish_build
 }
