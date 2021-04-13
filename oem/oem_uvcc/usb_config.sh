@@ -211,8 +211,9 @@ echo 0x0200 > /sys/kernel/config/usb_gadget/rockchip/bcdUSB
 echo 239 > /sys/kernel/config/usb_gadget/rockchip/bDeviceClass
 echo 2 > /sys/kernel/config/usb_gadget/rockchip/bDeviceSubClass
 echo 1 > /sys/kernel/config/usb_gadget/rockchip/bDeviceProtocol
-
-echo "2020" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/serialnumber
+SERIAL_NUM=`cat /proc/cpuinfo |grep Serial | awk -F ":" '{print $2}'`
+echo "serialnumber is $SERIAL_NUM"
+echo $SERIAL_NUM > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/serialnumber
 echo "rockchip" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/manufacturer
 echo "UVC" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/product
 echo 0x1 > /sys/kernel/config/usb_gadget/rockchip/os_desc/b_vendor_code
