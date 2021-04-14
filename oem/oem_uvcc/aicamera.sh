@@ -2,13 +2,37 @@
 #
 
 TRY_CNT=0
+get_pid(){
+   ps -A | grep "$1" | awk '{print $1}'
+}
+wait_process_killed(){
+   if [ "$2" = "" ]; then return; fi
+   while [ "$(get_pid $1)" = "$2" ]
+   do
+     sleep 0.1
+   done
+}
+
 check_uvc_suspend()
 {
   if [ -e /tmp/uvc_goto_suspend ];then
      echo "uvc go to suspend now"
+     ispserver_pid=$(get_pid ispserver)
+     aiserver_pid=$(get_pid aiserver)
      killall ispserver
      killall aiserver
-     sleep 2
+     wait_process_killed ispserver ${ispserver_pid}
+     wait_process_killed aiserver ${aiserver_pid}
+     CNT=0
+     while [ "$CNT" -gt 20 ]
+     do
+       if [ -e /tmp/uvc_goto_suspend ];then
+          sleep 0.1
+          let CNT=CNT+1
+       else
+          CNT=100
+       fi
+     done
      if [ -e /tmp/uvc_goto_suspend ];then
        rm /tmp/uvc_goto_suspend -rf
        echo mem > /sys/power/state
