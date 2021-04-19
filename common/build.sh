@@ -889,6 +889,7 @@ function build_save(){
 }
 
 function build_allsave(){
+	rm -fr $TOP_DIR/rockdev
 	build_all
 	build_firmware
 	build_updateimg
