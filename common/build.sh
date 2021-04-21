@@ -257,6 +257,21 @@ function build_info(){
 	echo "Target BoardConfig: `realpath $BOARD_CONFIG`"
 	echo "Target Misc config:"
 	echo "`env |grep "^RK_" | grep -v "=$" | sort`"
+
+	local kernel_file_dtb
+
+	if [ "$RK_ARCH" == "arm" ]; then
+		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+	else
+		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+	fi
+
+	rm -f $kernel_file_dtb
+
+	cd kernel
+	make ARCH=$RK_ARCH dtbs -j$RK_JOBS
+
+	build_check_power_domain
 }
 
 function build_check_power_domain(){
