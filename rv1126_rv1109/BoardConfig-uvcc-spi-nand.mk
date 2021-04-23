@@ -8,10 +8,10 @@ export RK_ARCH=arm
 export RK_UBOOT_DEFCONFIG=rv1126
 # Uboot defconfig fragment, config rk-sfc.config if sdcard upgrade, rv1126-ab.config for AB system bootup
 export RK_UBOOT_DEFCONFIG_FRAGMENT="rv1126-ab.config rk-sfc.config"
+# Uboot update loader (spl)
+export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
-#export RK_SPL_DEFCONFIG=rv1126
-export RK_SPL_DEFCONFIG=rv1126-ab
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
