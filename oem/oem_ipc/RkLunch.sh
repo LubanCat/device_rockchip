@@ -77,6 +77,9 @@ else
   HasAudio=1
 fi
 
+# TODO:
+HasAudio=0
+
 if [ $HasDisplay -eq 1 ]; then
 	if [ $HasHDMI -eq 1 ]; then
 		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
