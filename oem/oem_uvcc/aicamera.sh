@@ -36,6 +36,9 @@ check_uvc_buffer()
 }
 check_alive()
 {
+  if [[ ! -f "/oem/usr/bin/$1"  && ! -f "/usr/bin/$1" ]]; then
+   return 1
+  fi
   PID=`busybox ps |grep $1 |grep -v grep | wc -l`
   if [ $PID -le 0 ];then
      if [ "$1"x == "uvc_app"x ];then
@@ -44,8 +47,9 @@ check_alive()
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
        echo none > /sys/kernel/config/usb_gadget/rockchip/UDC
        rmdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
-       echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/unbind
-       echo ffd00000.dwc3  > /sys/bus/platform/drivers/dwc3/bind
+       UDC=`ls /sys/class/udc/| awk '{print $1}'`
+       echo $UDC  > /sys/bus/platform/drivers/dwc3/unbind
+       echo $UDC  > /sys/bus/platform/drivers/dwc3/bind
        /oem/usb_config.sh rndis off #disable adb
        usb_irq_set
        uvc_app &
