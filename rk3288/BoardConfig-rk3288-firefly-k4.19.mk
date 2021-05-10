@@ -7,15 +7,15 @@ export RK_UBOOT_DEFCONFIG=rk3288
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3288-evb-rk808-linux
+export RK_KERNEL_DTS=rk3288-firefly
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter.txt
+export RK_PARAMETER=parameter-4.19.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3288
+export RK_CFG_BUILDROOT=rockchip_rk3288_4.19
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3288_recovery
 # ramboot config
@@ -28,8 +28,6 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3288
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# yocto machine
-export RK_YOCTO_MACHINE=rockchip-rk3288-evb
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs

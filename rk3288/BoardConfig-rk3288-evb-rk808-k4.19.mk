@@ -13,9 +13,9 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter.txt
+export RK_PARAMETER=parameter-4.19.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3288
+export RK_CFG_BUILDROOT=rockchip_rk3288_4.19
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3288_recovery
 # ramboot config
