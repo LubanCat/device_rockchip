@@ -2,10 +2,10 @@
 #
 
 #vi_aging adjust
-io -4 0xfe801048 0x40
+#io -4 0xfe801048 0x40
 
-export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
-export VIV_VX_MAX_SOC_OT_NUMBER=16
+#export VIV_VX_ENABLE_NN_DDR_BURST_SIZE_256B=0
+#export VIV_VX_MAX_SOC_OT_NUMBER=16
 
 if [ -e /sys/firmware/devicetree/base/__symbols__/gc4c33 ] ;then
   echo "isp sensor is gc4c33,disable HDR"
