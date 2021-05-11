@@ -15,7 +15,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-tb.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v13-tb-emmc
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-tb-spi-nor
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -29,7 +29,7 @@ export RK_CFG_RECOVERY=
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_evb_tb
+export RK_CFG_RAMBOOT=rockchip_rv1126_evb_spi_nor_tb
 # Pcba config
 export RK_CFG_PCBA=
 # Build jobs
@@ -55,4 +55,4 @@ export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define package-file for update.img
-export RK_PACKAGE_FILE=
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nor-tb
