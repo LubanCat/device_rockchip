@@ -23,9 +23,9 @@ export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3568_uvc
 # Recovery config
-export RK_CFG_RECOVERY=
+export RK_CFG_RECOVERY=rockchip_rk356x_recovery
 # Recovery image format type: fit(flattened image tree)
-export RK_RECOVERY_FIT_ITS=
+export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
