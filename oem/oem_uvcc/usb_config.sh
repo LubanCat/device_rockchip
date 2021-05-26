@@ -84,7 +84,14 @@ uvc_device_config()
 {
   mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6
   echo 3072 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxpacket
-  echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
+  UDC=`ls /sys/class/udc/| awk '{print $1}'`
+  if [ "$UDC"x = "fcc00000.dwc3"x ]; then
+     echo "rk3568 uvc config dwc3"
+     echo 4 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
+     echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxburst
+  else
+     echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
+  fi
   #echo 1 > /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming_bulk
 
   mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/control/header/h
