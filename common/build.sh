@@ -396,8 +396,8 @@ function build_pkg() {
 					pkg_cfg=$( eval "echo \$$cfg" )
 					if grep -wq ${pkg_br}=y buildroot/output/$pkg_cfg/.config; then
 						echo "Found $pkg_br in buildroot/output/$pkg_cfg/.config "
-						make ${pkg_final_target}-dirclean O=buildroot/output/$pkg_cfg
-						make ${pkg_final_target}-rebuild O=buildroot/output/$pkg_cfg
+						make -C buildroot/output/$pkg_cfg ${pkg_final_target}-dirclean O=buildroot/output/$pkg_cfg
+						make -C buildroot/output/$pkg_cfg ${pkg_final_target}-rebuild O=buildroot/output/$pkg_cfg
 					else
 						echo "[SKIP BUILD $target_pkg] NOT Found ${pkg_br}=y in buildroot/output/$pkg_cfg/.config"
 					fi
