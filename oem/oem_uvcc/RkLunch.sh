@@ -11,6 +11,10 @@ if [ -e /sys/firmware/devicetree/base/__symbols__/gc4c33 ] ;then
   echo "isp sensor is gc4c33,disable HDR"
   export HDR_MODE=0
 else
+if [ -e /sys/firmware/devicetree/base/__symbols__/ov5695 ] ;then
+  echo "isp sensor is ov5695,disable HDR"
+  export HDR_MODE=0
+else
 if [ -e /sys/firmware/devicetree/base/__symbols__/os04a10 ] ;then
   echo "isp sensor is os04a10,enable HDR"
   export HDR_MODE=1
@@ -25,6 +29,7 @@ if [ -e /sys/firmware/devicetree/base/__symbols__/ov4689 ] ;then
 else
   echo "unkonw sensor,disable HDR default"
   export HDR_MODE=0
+fi
 fi
 fi
 fi
