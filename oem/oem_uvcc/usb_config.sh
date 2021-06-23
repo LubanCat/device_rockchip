@@ -88,7 +88,7 @@ uvc_device_config()
   if [ "$UDC"x = "fcc00000.dwc3"x ]; then
      echo "rk3568 uvc config dwc3"
      echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
-     echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxburst
+     echo 4 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxburst
   else
      echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
   fi
@@ -101,7 +101,12 @@ uvc_device_config()
   mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/uncompressed/u
   configure_uvc_resolution_yuyv 320 240
   configure_uvc_resolution_yuyv 640 480
-  configure_uvc_resolution_yuyv_720p 1280 720
+  if [ "$UDC"x = "fcc00000.dwc3"x ]; then
+    configure_uvc_resolution_yuyv 1280 720
+    configure_uvc_resolution_yuyv 1920 1080
+  else
+    configure_uvc_resolution_yuyv_720p 1280 720
+  fi
 
   ##mjpeg support config
   mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m
