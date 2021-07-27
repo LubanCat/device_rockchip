@@ -5,7 +5,7 @@ export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk3128
 # Trust ini config
-export RK_TRUST_INI_CONFIG=RK3126TOS_LADDR.ini
+export RK_TRUST_INI_CONFIG=RK3128TOS.ini
 # Uboot size
 export RK_UBOOT_SIZE_CONFIG=1024\ 2
 # Trust size
