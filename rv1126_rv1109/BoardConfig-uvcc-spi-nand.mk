@@ -18,6 +18,7 @@ export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-uvc-spi-nand.config"
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-ai-cam-ddr3-v1-spi-nand
+#export RK_KERNEL_DTS=rv1126-ai-cam-audio-ddr3-v1-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
