@@ -1,1 +1,1 @@
-BoardConfig-rk3288-evb-rk808-k4.19.mk
+BoardConfig-rk3288-evb-rk808.mk

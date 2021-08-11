@@ -1,1 +1,1 @@
-BoardConfig-px30-evb-ddr3-v11-k4.19.mk
+BoardConfig-px30-evb-ddr3-v11.mk

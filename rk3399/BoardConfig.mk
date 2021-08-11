@@ -1,1 +1,1 @@
-BoardConfig-rk3399-evb-ind-lpddr4-k4.19.mk
+BoardConfig-rk3399-evb-ind-lpddr4.mk

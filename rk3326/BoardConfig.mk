@@ -1,1 +1,1 @@
-BoardConfig-rk3326-evb-lp3-v10-k4.19.mk
+BoardConfig-rk3326-evb-lp3-v10.mk
