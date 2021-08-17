@@ -9,9 +9,9 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-dictionary-pen.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v13
+export RK_KERNEL_DTS=rv1126-dictionary-pen-v11
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
