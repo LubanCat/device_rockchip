@@ -49,7 +49,7 @@ export CAMERA_MAX_WIDTH=${camera_max_width}
 export CAMERA_MAX_HEIGHT=${camera_max_height}
 
 #line config
-isp_line=$((${camera_max_height} / 2))
+isp_line=0 #$((${camera_max_height} / 2))
 ispp_line=0  #$((${camera_max_height} / 4 * 3 ))    #no fec
 cif_line=$((${camera_max_height} / 4 * 3 ))
 echo "isp_line= $isp_line , ispp_line= $isp_line, cif_line= $cif_line"
