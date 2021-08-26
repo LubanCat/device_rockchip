@@ -55,7 +55,7 @@ cif_line=$((${camera_max_height} / 4 * 3 ))
 echo "isp_line= $isp_line , ispp_line= $isp_line, cif_line= $cif_line"
 echo $isp_line > /sys/module/video_rkisp/parameters/wait_line
 echo $ispp_line > /sys/module/video_rkispp/parameters/wait_line
-echo $cif_line > /sys/devices/platform/rkcif_mipi_lvds/line_int_num
+echo $cif_line > /sys/devices/platform/rkcif_mipi_lvds/wait_line
 
 #rockit log level ctrl: 1:fatal error; 2: error; 3: warning; 4:infomational; 5:debug level; 6:verbose
 export rt_log_level=3
