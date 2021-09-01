@@ -83,10 +83,12 @@ configure_uvc_resolution_h265()
 hid_device_config()
 {
   mkdir ${USB_FUNCTIONS_DIR}/hid.usb0
-  echo 1 > ${USB_FUNCTIONS_DIR}/hid.usb0/protocol # keyboard
-  echo 1 > ${USB_FUNCTIONS_DIR}/hid.usb0/subclass
-  echo 8 > ${USB_FUNCTIONS_DIR}/hid.usb0/report_length
-  echo -ne \\x05\\x01\\x09\\x06\\xa1\\x01\\x05\\x07\\x19\\xe0\\x29\\xe7\\x15\\x00\\x25\\x01\\x75\\x01\\x95\\x08\\x81\\x02\\x95\\x01\\x75\\x08\\x81\\x03\\x95\\x05\\x75\\x01\\x05\\x08\\x19\\x01\\x29\\x05\\x91\\x02\\x95\\x01\\x75\\x03\\x91\\x03\\x95\\x06\\x75\\x08\\x15\\x00\\x25\\x65\\x05\\x07\\x19\\x00\\x29\\x65\\x81\\x00\\xc0 > ${USB_FUNCTIONS_DIR}/hid.usb0/report_desc
+  #echo 1 > ${USB_FUNCTIONS_DIR}/hid.usb0/protocol # keyboard
+  #echo 1 > ${USB_FUNCTIONS_DIR}/hid.usb0/subclass
+  echo 1 > ${USB_FUNCTIONS_DIR}/hid.usb0/report_length
+
+  #Volume Up/Down Mute Consumer Devices
+  echo -ne \\x05\\x0c\\x09\\x01\\xa1\\x01\\x15\\x00\\x25\\x01\\x09\\xe9\\x09\\xea\\x75\\x01\\x95\\x02\\x81\\x06\\x09\\xe2\\x95\\x01\\x81\\x06\\x95\\x05\\x81\\x07\\xc0 > ${USB_FUNCTIONS_DIR}/hid.usb0/report_desc
   ln -s ${USB_FUNCTIONS_DIR}/hid.usb0 ${USB_CONFIGS_DIR}/f$1
 }
 uvc_device_config()
@@ -292,7 +294,7 @@ uac2_rndis)
    echo "config uvc and uac2 rndis..."
    ;;
 uac1_hid)
-   uac2_device_config uac1
+   uac1_device_config uac1
    hid_device_config 3
    echo "uvc_uac1_hid" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc + uac1 + hid ..."
