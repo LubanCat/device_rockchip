@@ -111,6 +111,7 @@ uvc_device_config()
   ##YUYV support config
   mkdir /sys/kernel/config/usb_gadget/rockchip/functions/uvc.gs6/streaming/uncompressed/u
   configure_uvc_resolution_yuyv 320 240
+  configure_uvc_resolution_yuyv 640 360
   configure_uvc_resolution_yuyv 640 480
   if [ "$UDC"x = "fcc00000.dwc3"x ]; then
     configure_uvc_resolution_yuyv 1280 720
