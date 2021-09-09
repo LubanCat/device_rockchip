@@ -78,7 +78,7 @@ else
 fi
 
 # TODO:
-HasAudio=0
+# HasAudio=0
 
 if [ $HasDisplay -eq 1 ]; then
 	if [ $HasHDMI -eq 1 ]; then
