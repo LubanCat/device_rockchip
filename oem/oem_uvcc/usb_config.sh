@@ -2,6 +2,7 @@
 
 ADB_EN=on
 DFU_EN=off
+MTP_EN=off
 if ( echo $2 |grep -q "off" ); then
 ADB_EN=off
 fi
@@ -90,6 +91,15 @@ hid_device_config()
   #Volume Up/Down Mute Consumer Devices
   echo -ne \\x05\\x0c\\x09\\x01\\xa1\\x01\\x15\\x00\\x25\\x01\\x09\\xe9\\x09\\xea\\x75\\x01\\x95\\x02\\x81\\x06\\x09\\xe2\\x95\\x01\\x81\\x06\\x95\\x05\\x81\\x07\\xc0 > ${USB_FUNCTIONS_DIR}/hid.usb0/report_desc
   ln -s ${USB_FUNCTIONS_DIR}/hid.usb0 ${USB_CONFIGS_DIR}/f$1
+}
+mtp_device_config()
+{
+  mkdir ${USB_FUNCTIONS_DIR}/mtp.gs0
+  echo "MTP" > ${USB_FUNCTIONS_DIR}/mtp.gs0/os_desc/interface.MTP/compatible_id
+  echo 1 > ${USB_FUNCTIONS_DIR}/../os_desc/use
+  echo "mtp on++++++ f$1"
+  ln -s ${USB_FUNCTIONS_DIR}/mtp.gs0 ${USB_CONFIGS_DIR}/f$1
+  MTP_EN=on
 }
 uvc_device_config()
 {
@@ -276,8 +286,14 @@ uac2)
    ;;
 hid)
    hid_device_config 2
+   echo "uvc_hid" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and hid..."
     ;;
+mtp)
+   mtp_device_config 2
+   echo "uvc_mtp" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
+   echo "config uvc and mtp..."
+   ;;
 uac1_rndis)
    #uac_device_config uac1
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
@@ -341,6 +357,10 @@ fi
 
 UDC=`ls /sys/class/udc/| awk '{print $1}'`
 echo $UDC > /sys/kernel/config/usb_gadget/rockchip/UDC
+
+if [ $MTP_EN = on ];then
+    start-stop-daemon --start --quiet --background --exec /usr/bin/mtp-server
+fi
 
 if [ "$1" ]; then
   pre_run_rndis $1
