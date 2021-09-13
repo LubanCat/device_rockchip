@@ -20,6 +20,8 @@ export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-slc-nand.config
 export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
+# kernel image format type: fit(flattened image tree)
+export RK_KERNEL_FIT_ITS=boot.its
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
