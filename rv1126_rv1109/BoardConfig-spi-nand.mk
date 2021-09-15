@@ -22,6 +22,8 @@ export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nand
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
+# kernel image format type: fit(flattened image tree)
+export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-fit-nand-256M.txt
 # Buildroot config
