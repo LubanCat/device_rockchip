@@ -67,10 +67,16 @@ check_alive()
   if [ $PID -le 0 ];then
      if [ "$1"x == "uvc_app"x ];then
        echo " uvc app die ,restart it and usb reprobe !!!"
+       killall adbd
+       killall uac_app &
        sleep 1
+       killall -9 adbd
+       killall -9 uac_app
        rm -rf /sys/kernel/config/usb_gadget/rockchip/configs/b.1/f*
        echo none > /sys/kernel/config/usb_gadget/rockchip/UDC
        rmdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
+       rmdir /sys/kernel/config/usb_gadget/rockchip/functions/ffs.adb
+       rmdir /sys/kernel/config/usb_gadget/rockchip/functions/uac*
        UDC=`ls /sys/class/udc/| awk '{print $1}'`
        echo $UDC  > /sys/bus/platform/drivers/dwc3/unbind
        echo $UDC  > /sys/bus/platform/drivers/dwc3/bind
