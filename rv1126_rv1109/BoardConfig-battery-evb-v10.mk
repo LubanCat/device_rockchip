@@ -11,9 +11,9 @@ export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-battery-evb-v11.config"
+export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-battery-evb.config"
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-bat-evb-v11
+export RK_KERNEL_DTS=rv1126-bat-evb-v10
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -25,7 +25,7 @@ export RK_PARAMETER=parameter-tb.txt
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_battery_evb
+export RK_CFG_RAMBOOT=rockchip_rv1126_battery_evb_v10
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # Pcba config
