@@ -252,6 +252,15 @@ function build_info(){
 		echo "No found target board config!!!"
 	fi
 
+	if [ -f .repo/manifest.xml ]; then
+		local sdk_ver=""
+		sdk_ver=`grep "include name"  .repo/manifest.xml | awk -F\" '{print $2}'`
+		sdk_ver=`realpath .repo/manifests/${sdk_ver}`
+		echo "Build SDK version: `basename ${sdk_ver}`"
+	else
+		echo "Not found .repo/manifest.xml [ignore] !!!"
+	fi
+
 	echo "Current Building Information:"
 	echo "Target Product: $TARGET_PRODUCT_DIR"
 	echo "Target BoardConfig: `realpath $BOARD_CONFIG`"
