@@ -11,7 +11,7 @@ export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-battery-evb-v11.config"
+export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-battery-evb.config"
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-bat-evb-v11
 # boot image type
@@ -43,7 +43,7 @@ export RK_USERDATA_FS_TYPE=ext2
 # OEM config
 export RK_OEM_DIR=oem_empty
 # OEM build on buildroot
-export RK_OEM_BUILDIN_BUILDROOT=YES
+export RK_OEM_BUILDIN_BUILDROOT=NO
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #misc image
