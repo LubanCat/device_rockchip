@@ -108,8 +108,8 @@ uvc_device_config()
   UDC=`ls /sys/class/udc/| awk '{print $1}'`
   if [ "$UDC"x = "fcc00000.dwc3"x ]; then
      echo "rk3568 uvc config dwc3"
-     echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
-     echo 4 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxburst
+     echo 4 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
+     echo 5 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming_maxburst
   else
      echo 2 > ${USB_FUNCTIONS_DIR}/uvc.gs6/uvc_num_request
   fi
