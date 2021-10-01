@@ -22,6 +22,7 @@ OEM_DIR=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_OEM_DIR
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/wipe_all-misc.img
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
+ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
@@ -61,13 +62,20 @@ else
 fi
 
 
-if [ -f $ROOTFS_IMG ]
+if [ $RK_ROOTFS_IMG ]
 then
-	echo -n "create rootfs.img..."
-	cp -aL $ROOTFS_IMG $ROCKDEV/rootfs.img
-	echo "done."
-else
-	echo -e "\e[31m error: $ROOTFS_IMG not found! \e[0m"
+	if [ -f $ROOTFS_IMG ]
+	then
+		echo -n "create rootfs.img..."
+		ln -rsf $ROOTFS_IMG $ROCKDEV/rootfs.img
+		echo "done."
+	else
+		echo "warning: $ROOTFS_IMG not found!"
+		if [ -f $ROOTFS_IMG_SOURCE ];then
+			echo "Fallback to $ROOTFS_IMG_SOURCE"
+			ln -rsf $ROOTFS_IMG_SOURCE $ROCKDEV/rootfs.img
+		fi
+	fi
 fi
 
 if [ -f $PARAMETER ]
