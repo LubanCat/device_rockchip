@@ -19,11 +19,11 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-orion.txt
+export RK_PARAMETER=parameter-buildroot-rk3588.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_orion
+export RK_CFG_BUILDROOT=rockchip_rk3588
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_orion_recovery
+export RK_CFG_RECOVERY=rockchip_rk3588_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
@@ -33,7 +33,7 @@ export RK_CFG_PCBA=
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=orion
+export RK_TARGET_PRODUCT=rk3588
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # yocto machine
