@@ -355,6 +355,26 @@ function build_check_power_domain(){
 	rm -f $dump_kernel_dtb_file
 }
 
+function build_check_cross_compile(){
+	ARCH=${RK_KERNEL_ARCH:-${RK_ARCH}}
+	case $ARCH in
+	arm|armhf)
+		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf" ]; then
+		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
+		fi
+		;;
+	arm64|aarch64)
+		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu" ]; then
+		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+		fi
+		;;
+	*)
+		echo "the $ARCH not supported for now, please check it again\n"
+		;;
+	esac
+	export CROSS_COMPILE=$CROSS_COMPILE
+}
+
 function build_check(){
 	local build_depend_cfg="build-depend-tools.txt"
 	common_product_build_tools="device/rockchip/common/$build_depend_cfg"
@@ -504,6 +524,8 @@ function build_kernel(){
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=========================================="
 
+	build_check_cross_compile
+
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
 	make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
@@ -525,6 +547,8 @@ function build_modules(){
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=================================================="
+
+	build_check_cross_compile
 
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
