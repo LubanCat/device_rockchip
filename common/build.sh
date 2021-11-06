@@ -361,18 +361,19 @@ function build_check_cross_compile(){
 	arm|armhf)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf" ]; then
 		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
+		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	arm64|aarch64)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu" ]; then
 		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	*)
 		echo "the $ARCH not supported for now, please check it again\n"
 		;;
 	esac
-	export CROSS_COMPILE=$CROSS_COMPILE
 }
 
 function build_check(){
