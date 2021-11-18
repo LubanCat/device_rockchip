@@ -113,7 +113,7 @@ function prebuild_uboot()
 
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		UBOOT_COMPILE_COMMANDS=" \
-			--boot_img $(cd $TOP_DIR && realpath ./rockdev/boot.img) \
+			--boot_img $TOP_DIR/u-boot/boot.img \
 			--burn-key-hash $UBOOT_COMPILE_COMMANDS \
 			${RK_ROLLBACK_INDEX_BOOT:+--rollback-index-boot $RK_ROLLBACK_INDEX_BOOT} \
 			${RK_ROLLBACK_INDEX_UBOOT:+--rollback-index-uboot $RK_ROLLBACK_INDEX_UBOOT} "
@@ -454,13 +454,19 @@ function build_uboot(){
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "========================================="
 
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+		if [ -n "$RK_CFG_RAMBOOT" ];then
+			build_ramboot
+		else
+			build_kernel
+		fi
+		cp -f $TOP_DIR/rockdev/boot.img $TOP_DIR/u-boot/boot.img
+	fi
+
 	cd u-boot
 	rm -f *_loader_*.bin
 	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
 		rm -f *spl.bin
-	fi
-	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
-		rm -f $TOP_DIR/u-boot/boot.img
 	fi
 
 	if [ -n "$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
@@ -533,6 +539,10 @@ function build_kernel(){
 	if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS" ]; then
 		$COMMON_DIR/mk-fitimage.sh $TOP_DIR/kernel/$RK_BOOT_IMG \
 			$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
+	fi
+
+	if [ -f "$TOP_DIR/kernel/$RK_BOOT_IMG" ]; then
+		ln -sf  $TOP_DIR/kernel/$RK_BOOT_IMG $TOP_DIR/rockdev/boot.img
 	fi
 
 	build_check_power_domain
