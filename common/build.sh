@@ -542,6 +542,7 @@ function build_kernel(){
 	fi
 
 	if [ -f "$TOP_DIR/kernel/$RK_BOOT_IMG" ]; then
+		mkdir -p $TOP_DIR/rockdev
 		ln -sf  $TOP_DIR/kernel/$RK_BOOT_IMG $TOP_DIR/rockdev/boot.img
 	fi
 
