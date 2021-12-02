@@ -5,4 +5,4 @@
 
 export enable_encoder_debug=0
 
-cvr_app &
+LD_PRELOAD=/oem/libthird_media.so cvr_app &
