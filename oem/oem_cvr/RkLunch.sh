@@ -5,4 +5,6 @@
 
 export enable_encoder_debug=0
 
+export rt_vo_disable_vop=0
+
 LD_PRELOAD=/oem/libthird_media.so cvr_app &
