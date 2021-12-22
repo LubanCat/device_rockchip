@@ -11,7 +11,7 @@ export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-snapshot.config"
+export RK_KERNEL_DEFCONFIG_FRAGMENT="rv1126-tb.config rv1126-trailcamera.config"
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-trailcamera
 # boot image type
