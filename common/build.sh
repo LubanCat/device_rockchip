@@ -624,6 +624,17 @@ function build_multi-npu_boot(){
 	finish_build
 }
 
+function kernel_version(){
+	VERSION_KEYS="VERSION PATCHLEVEL"
+	VERSION=""
+
+	for k in $VERSION_KEYS; do
+		v=$(grep "^$k = " $1/Makefile | cut -d' ' -f3)
+		VERSION=${VERSION:+${VERSION}.}$v
+	done
+	echo $VERSION
+}
+
 function build_yocto(){
 	check_config RK_YOCTO_MACHINE || return 0
 
@@ -631,13 +642,14 @@ function build_yocto(){
 	echo "TARGET_MACHINE=$RK_YOCTO_MACHINE"
 	echo "====================================="
 
+	KERNEL_VERSION=$(kernel_version kernel/)
+
 	cd yocto
 	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -r conf/include/rksdk.conf \
-		$(grep -wq "PATCHLEVEL = 19" ../../kernel/Makefile && \
-			echo "-r conf/include/kernel-4.19.conf")
+		-r conf/include/kernel-$KERNEL_VERSION.conf
 
 	finish_build
 }
