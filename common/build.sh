@@ -356,22 +356,22 @@ function build_check_power_domain(){
 }
 
 function build_check_cross_compile(){
-	ARCH=${RK_KERNEL_ARCH:-${RK_ARCH}}
-	case $ARCH in
+
+	case $RK_ARCH in
 	arm|armhf)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
-		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
+			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	arm64|aarch64)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
-		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	*)
-		echo "the $ARCH not supported for now, please check it again\n"
+		echo "the $RK_ARCH not supported for now, please check it again\n"
 		;;
 	esac
 }
@@ -448,6 +448,7 @@ function build_pkg() {
 
 function build_uboot(){
 	check_config RK_UBOOT_DEFCONFIG || return 0
+	build_check_cross_compile
 	prebuild_uboot
 
 	echo "============Start building uboot============"
@@ -478,7 +479,7 @@ function build_uboot(){
 		./make.sh $UBOOT_COMPILE_COMMANDS
 	else
 		./make.sh $RK_UBOOT_DEFCONFIG \
-			$UBOOT_COMPILE_COMMANDS
+			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
 	fi
 
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
