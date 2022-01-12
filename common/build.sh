@@ -665,12 +665,12 @@ function build_debian(){
 	echo "=========Start building debian for $ARCH========="
 
 	cd debian
-	if [ ! -e linaro-buster-$ARCH.tar.gz ]; then
-		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
-		ln -rsf linaro-buster-alip-*.tar.gz linaro-buster-$ARCH.tar.gz
+	if [ ! -e linaro-$RK_DEBIAN_VERSON-$ARCH.tar.gz ]; then
+		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
+	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
 
 	finish_build

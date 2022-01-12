@@ -36,6 +36,8 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ubi
+# Set debian version (debian10: buster, debian11: bullseye)
+export RK_DEBIAN_VERSION=buster
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path

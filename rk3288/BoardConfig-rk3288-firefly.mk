@@ -28,6 +28,10 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3288
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
+# Set debian version (debian10: buster, debian11: bullseye)
+export RK_DEBIAN_VERSION=buster
+# yocto machine
+export RK_YOCTO_MACHINE=rockchip-rk3288-evb
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
