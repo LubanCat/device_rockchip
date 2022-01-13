@@ -477,9 +477,15 @@ function build_uboot(){
 			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
 		fi
 		./make.sh $UBOOT_COMPILE_COMMANDS
-	else
+	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
 		./make.sh $RK_UBOOT_DEFCONFIG \
 			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
+	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
+		./make.sh $RK_UBOOT_DEFCONFIG \
+			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
+	else
+		./make.sh $RK_UBOOT_DEFCONFIG \
+			$UBOOT_COMPILE_COMMANDS
 	fi
 
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
