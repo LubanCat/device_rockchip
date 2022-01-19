@@ -30,7 +30,7 @@ fi
 
 if [ $FLASH_TYPE = all ]
 then
-	$UPGRADETOOL ul $LOADER
+	$UPGRADETOOL ul -noreset $LOADER
 	$UPGRADETOOL di -p $PARAMETER
 	$UPGRADETOOL di -uboot $UBOOT
 	$UPGRADETOOL di -trust $TRUST
@@ -45,7 +45,7 @@ fi
 
 if [ $FLASH_TYPE = tb ]
 then
-	$UPGRADETOOL ul $LOADER
+	$UPGRADETOOL ul -noreset $LOADER
 	$UPGRADETOOL di -p $PARAMETER
 	$UPGRADETOOL di -uboot $UBOOT
 	$UPGRADETOOL di -b $BOOT
@@ -53,7 +53,7 @@ then
 fi
 
 if [ $FLASH_TYPE = norecovery ]; then
-	$UPGRADETOOL ul $LOADER
+	$UPGRADETOOL ul -noreset $LOADER
 	$UPGRADETOOL di -p $PARAMETER
 	$UPGRADETOOL di -uboot $UBOOT
 	$UPGRADETOOL di -trust $TRUST
