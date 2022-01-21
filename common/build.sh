@@ -246,6 +246,7 @@ function usage()
 	echo "app/<pkg>          -build packages in the dir of app/*"
 	echo "external/<pkg>     -build packages in the dir of external/*"
 	echo ""
+	echo "createkeys         -create secureboot root keys"
 	echo "security-rootfs    -build rootfs and some relevant images with security paramter"
 	echo "security-boot      -build boot with security paramter"
 	echo ""
@@ -789,6 +790,47 @@ function build_pcba(){
 	finish_build
 }
 
+BOOT_FIXED_CONFIGS="
+	CONFIG_BLK_DEV_DM
+	CONFIG_DM_CRYPT
+	CONFIG_BLK_DEV_CRYPTOLOOP
+	CONFIG_DM_VERITY"
+
+UBOOT_FIXED_CONFIGS="
+	CONFIG_FIT_SIGNATURE
+	CONFIG_SPL_FIT_SIGNATURE"
+
+function defconfig_check() {
+	# 1. defconfig 2. fixed config
+	echo debug-$1
+	for i in $2
+	do
+		echo "look for $i"
+		result=$(cat $1 | grep "${i}=y" -w || echo "No found")
+		if [ "$result" = "No found" ]; then
+			echo "${i} Not found"
+			return -1;
+		fi
+	done
+	return 0
+}
+
+function check_security_condition(){
+	# check security enabled
+	test -z "$RK_SYSTEM_CHECK_METHOD" && return 0
+
+	if [ ! -d u-boot/keys ]; then
+		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
+		echo "       Create it by ./build.sh createkeys or move your key to it"
+		return -1
+	fi
+
+	echo "check kernel defconfig"
+	defconfig_check kernel/arch/$RK_ARCH/configs/$RK_KERNEL_DEFCONFIG "$BOOT_FIXED_CONFIGS"
+	echo "check uboot defconfig"
+	defconfig_check u-boot/configs/${RK_UBOOT_DEFCONFIG}_defconfig "$UBOOT_FIXED_CONFIGS"
+}
+
 function build_all(){
 	echo "============================================"
 	echo "TARGET_ARCH=$RK_ARCH"
@@ -817,6 +859,7 @@ function build_all(){
 		fi
 	fi
 
+	check_security_condition
 	build_loader
 	build_kernel
 	build_toolchain
@@ -1005,6 +1048,16 @@ function build_allsave(){
 	finish_build
 }
 
+function create_keys() {
+	test -d u-boot/keys && echo "ERROR: u-boot/keys has existed" && return -1
+
+	mkdir u-boot/keys -p
+	./rkbin/tools/rk_sign_tool kk --bits 2048 --out u-boot/keys
+	ln -s privateKey.pem u-boot/keys/dev.key
+	ln -s publicKey.pem u-boot/keys/dev.pubkey
+	openssl req -batch -new -x509 -key u-boot/keys/dev.key -out u-boot/keys/dev.crt
+}
+
 #=========================
 # build targets
 #=========================
@@ -1063,6 +1116,7 @@ for option in ${OPTIONS}; do
 		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
 		app/*|external/*) build_pkg $option ;;
+		createkeys) create_keys ;;
 		security-rootfs)
 			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
 				echo "No security paramter found in .BoardConfig.mk"
