@@ -35,7 +35,7 @@ function fixup_part()
 	FS_TYPE=${3:-auto}
 	OPT=${4:-defaults}
 
-	sed -i "#[[:space:]]${MOUNT}[[:space:]]#d" ${TARGET_DIR}/etc/fstab
+	sed -i "/[[:space:]]${MOUNT//\//\\\/}[[:space:]]/d" ${TARGET_DIR}/etc/fstab
 
 	echo -e "${DEV}\t${MOUNT}\t${FS_TYPE}\t${OPT}\t0 2" >> \
 		${TARGET_DIR}/etc/fstab
