@@ -111,10 +111,15 @@ function prebuild_uboot()
 		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
 	fi
 
+	if [ "$RK_SECURITY_OTP_DEBUG" != "true" ]; then
+		UBOOT_COMPILE_COMMANDS="$UBOOT_COMPILE_COMMANDS --burn-key-hash"
+	fi
+
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		UBOOT_COMPILE_COMMANDS=" \
 			--boot_img $TOP_DIR/u-boot/boot.img \
-			--burn-key-hash $UBOOT_COMPILE_COMMANDS \
+			--recovery_img $TOP_DIR/u-boot/recovery.img \
+			$UBOOT_COMPILE_COMMANDS \
 			${RK_ROLLBACK_INDEX_BOOT:+--rollback-index-boot $RK_ROLLBACK_INDEX_BOOT} \
 			${RK_ROLLBACK_INDEX_UBOOT:+--rollback-index-uboot $RK_ROLLBACK_INDEX_UBOOT} "
 		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
@@ -240,6 +245,9 @@ function usage()
 	echo "info               -see the current board building information"
 	echo "app/<pkg>          -build packages in the dir of app/*"
 	echo "external/<pkg>     -build packages in the dir of external/*"
+	echo ""
+	echo "security-rootfs    -build rootfs and some relevant images with security paramter"
+	echo "security-boot      -build boot with security paramter"
 	echo ""
 	echo "Default option is 'allsave'."
 }
@@ -461,7 +469,12 @@ function build_uboot(){
 		else
 			build_kernel
 		fi
+
+		if [ -n "$RK_CFG_RECOVERY" ]; then
+			build_recovery
+		fi
 		cp -f $TOP_DIR/rockdev/boot.img $TOP_DIR/u-boot/boot.img
+		cp -f $TOP_DIR/rockdev/recovery.img $TOP_DIR/u-boot/recovery.img || true
 	fi
 
 	cd u-boot
@@ -494,6 +507,7 @@ function build_uboot(){
 
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		ln -rsf $TOP_DIR/u-boot/boot.img $TOP_DIR/rockdev/
+		ln -rsf $TOP_DIR/u-boot/recovery.img $TOP_DIR/rockdev/ || true
 	fi
 
 	finish_build
@@ -755,6 +769,9 @@ function build_recovery(){
 
 	/usr/bin/time -f "you take %E to build recovery" \
 		$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY
+
+	ln -rsf buildroot/output/$RK_CFG_RECOVERY/images/recovery.img \
+		rockdev/recovery.img
 
 	finish_build
 }
@@ -1046,6 +1063,27 @@ for option in ${OPTIONS}; do
 		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
 		app/*|external/*) build_pkg $option ;;
+		security-rootfs)
+			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
+				echo "No security paramter found in .BoardConfig.mk"
+				exit 0
+			fi
+
+			build_rootfs
+			build_ramboot
+			build_uboot
+			echo "please update rootfs.img / boot.img / uboot.img"
+			;;
+		security-boot)
+			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
+				echo "No security paramter found in .BoardConfig.mk"
+				exit 0
+			fi
+
+			build_kernel
+			build_ramboot
+			build_uboot
+			;;
 		*) usage ;;
 	esac
 done
