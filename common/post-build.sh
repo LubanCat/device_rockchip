@@ -71,9 +71,21 @@ function add_build_info()
 		${TARGET_DIR}/etc/os-release
 }
 
+function add_dirs_and_links()
+{
+	echo "Adding dirs and links..."
+
+	cd ${TARGET_DIR}
+	mkdir -p mnt/sdcard mnt/usb0
+	ln -sf media/usb0 udisk
+	ln -sf mnt/sdcard sdcard
+	ln -sf userdata data
+}
+
 echo "Executing $(basename $0)..."
 
 add_build_info $@
 [ -f ${TARGET_DIR}/etc/fstab ] && fixup_fstab
+add_dirs_and_links
 
 exit 0
