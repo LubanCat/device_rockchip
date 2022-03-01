@@ -247,7 +247,7 @@ function usage()
 	echo "external/<pkg>     -build packages in the dir of external/*"
 	echo ""
 	echo "createkeys         -create secureboot root keys"
-	echo "security-rootfs    -build rootfs and some relevant images with security paramter"
+	echo "security-rootfs    -build rootfs and some relevant images with security paramter (just for dm-v)"
 	echo "security-boot      -build boot with security paramter"
 	echo ""
 	echo "Default option is 'allsave'."
@@ -315,6 +315,20 @@ function build_check_power_domain(){
 	tmp_grep_file=`mktemp`
 
 	dtc -I dtb -O dts -o ${dump_kernel_dtb_file} ${kernel_file_dtb_dts}.dtb 2>/dev/null
+
+	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-E" ] ; then
+		if ! grep "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file > /dev/null 2>&1 ; then
+			echo "Please add: "
+			echo "        optee: optee {"
+			echo "                compatible = \"linaro,optee-tz\";"
+			echo "                method = \"smc\";"
+			echo "                status = \"okay\";"
+			echo "        }"
+			echo "To your dts file"
+			return -1;
+		fi
+	fi
+
 	if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
 		echo "Not Found io-domains in ${kernel_file_dtb_dts}.dts"
 		rm -f $tmp_grep_file
@@ -800,6 +814,9 @@ UBOOT_FIXED_CONFIGS="
 	CONFIG_FIT_SIGNATURE
 	CONFIG_SPL_FIT_SIGNATURE"
 
+RECOVERY_FIXED_CONFIGS="
+	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
+
 function defconfig_check() {
 	# 1. defconfig 2. fixed config
 	echo debug-$1
@@ -823,6 +840,33 @@ function check_security_condition(){
 		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
 		echo "       Create it by ./build.sh createkeys or move your key to it"
 		return -1
+	fi
+
+	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-E" ]; then
+		if [ ! -e u-boot/keys/root_passwd ]; then
+			echo "ERROR: No root passwd(u-boot/keys/root_passwd) found in u-boot"
+			echo "       echo your root key for sudo to u-boot/keys/root_passwd"
+			echo "       some operations need supper user permission when create encrypt image"
+			return -1
+		fi
+
+		if [ ! -e u-boot/keys/system_enc_key ]; then
+			echo "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
+			echo "       Create it by ./build.sh createkeys or move your key to it"
+			return -1
+		fi
+
+		BOOT_FIXED_CONFIGS="${BOOT_FIXED_CONFIGS}
+				   CONFIG_TEE
+				   CONFIG_OPTEE"
+		defconfig_check buildroot/configs/${RK_CFG_RECOVERY}_defconfig "$RECOVERY_FIXED_CONFIGS"
+		result=$(cat "buildroot/configs/${RK_CFG_RECOVERY}_defconfig" | \
+			 grep "BR2_ROOTFS_OVERLAY" | grep "board/rockchip/common/security-recovery-overlay" || \
+			 echo "No found")
+		if [ "$result" = "No found" ]; then
+			echo "No found board/rockchip/common/security-recovery-overlay in ${RK_CFG_RECOVERY}_defconfig"
+			return -1;
+		fi
 	fi
 
 	echo "check kernel defconfig"
@@ -1056,6 +1100,8 @@ function create_keys() {
 	ln -s privateKey.pem u-boot/keys/dev.key
 	ln -s publicKey.pem u-boot/keys/dev.pubkey
 	openssl req -batch -new -x509 -key u-boot/keys/dev.key -out u-boot/keys/dev.crt
+
+	openssl rand -out u-boot/keys/system_enc_key -hex 32
 }
 
 #=========================
