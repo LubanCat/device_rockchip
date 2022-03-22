@@ -832,6 +832,15 @@ function defconfig_check() {
 	return 0
 }
 
+function find_string_in_config(){
+	result=$(cat "$2" | grep "$1" || echo "No found")
+	if [ "$result" = "No found" ]; then
+		echo "No found $1 in $2"
+		return -1;
+	fi
+	return 0;
+}
+
 function check_security_condition(){
 	# check security enabled
 	test -z "$RK_SYSTEM_CHECK_METHOD" && return 0
@@ -860,13 +869,8 @@ function check_security_condition(){
 				   CONFIG_TEE
 				   CONFIG_OPTEE"
 		defconfig_check buildroot/configs/${RK_CFG_RECOVERY}_defconfig "$RECOVERY_FIXED_CONFIGS"
-		result=$(cat "buildroot/configs/${RK_CFG_RECOVERY}_defconfig" | \
-			 grep "BR2_ROOTFS_OVERLAY" | grep "board/rockchip/common/security-recovery-overlay" || \
-			 echo "No found")
-		if [ "$result" = "No found" ]; then
-			echo "No found board/rockchip/common/security-recovery-overlay in ${RK_CFG_RECOVERY}_defconfig"
-			return -1;
-		fi
+		find_string_in_config "BR2_ROOTFS_OVERLAY=\".*board/rockchip/common/security-recovery-overlay" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
+		find_string_in_config "#include \".*tee.config\"" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
 	fi
 
 	echo "check kernel defconfig"
