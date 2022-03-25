@@ -8,8 +8,8 @@ RK_LEGACY_PARTITIONS=" \
 	${RK_USERDATA_FS_TYPE:+userdata:/userdata:${RK_USERDATA_FS_TYPE}}
 "
 
-# <dev>:<mount point>:<fs type>:<source dir>, for example:
-# RK_EXTRA_PARTITIONS="oem:/oem:ext2:oem_normal userdata:/userdata:vfat:userdata_empty"
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>, for example:
+# RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal userdata:/userdata:vfat:errors=remount-ro:userdata_empty"
 RK_EXTRA_PARTITIONS=${RK_EXTRA_PARTITIONS:-${RK_LEGACY_PARTITIONS}}
 
 function fixup_root()
