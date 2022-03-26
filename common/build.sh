@@ -111,10 +111,15 @@ function prebuild_uboot()
 		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
 	fi
 
+	if [ "$RK_SECURITY_OTP_DEBUG" != "true" ]; then
+		UBOOT_COMPILE_COMMANDS="$UBOOT_COMPILE_COMMANDS --burn-key-hash"
+	fi
+
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		UBOOT_COMPILE_COMMANDS=" \
 			--boot_img $TOP_DIR/u-boot/boot.img \
-			--burn-key-hash $UBOOT_COMPILE_COMMANDS \
+			--recovery_img $TOP_DIR/u-boot/recovery.img \
+			$UBOOT_COMPILE_COMMANDS \
 			${RK_ROLLBACK_INDEX_BOOT:+--rollback-index-boot $RK_ROLLBACK_INDEX_BOOT} \
 			${RK_ROLLBACK_INDEX_UBOOT:+--rollback-index-uboot $RK_ROLLBACK_INDEX_UBOOT} "
 		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
@@ -224,8 +229,8 @@ function usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-	echo "debian             -build debian10 buster/x11 rootfs"
-	echo "distro             -build debian10 buster/wayland rootfs"
+	echo "debian             -build debian rootfs"
+	echo "distro             -build distro rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -240,6 +245,10 @@ function usage()
 	echo "info               -see the current board building information"
 	echo "app/<pkg>          -build packages in the dir of app/*"
 	echo "external/<pkg>     -build packages in the dir of external/*"
+	echo ""
+	echo "createkeys         -create secureboot root keys"
+	echo "security-rootfs    -build rootfs and some relevant images with security paramter"
+	echo "security-boot      -build boot with security paramter"
 	echo ""
 	echo "Default option is 'allsave'."
 }
@@ -356,22 +365,22 @@ function build_check_power_domain(){
 }
 
 function build_check_cross_compile(){
-	ARCH=${RK_KERNEL_ARCH:-${RK_ARCH}}
-	case $ARCH in
+
+	case $RK_ARCH in
 	arm|armhf)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
-		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
+			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	arm64|aarch64)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
-		CROSS_COMPILE=$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
 	*)
-		echo "the $ARCH not supported for now, please check it again\n"
+		echo "the $RK_ARCH not supported for now, please check it again\n"
 		;;
 	esac
 }
@@ -448,6 +457,7 @@ function build_pkg() {
 
 function build_uboot(){
 	check_config RK_UBOOT_DEFCONFIG || return 0
+	build_check_cross_compile
 	prebuild_uboot
 
 	echo "============Start building uboot============"
@@ -460,7 +470,12 @@ function build_uboot(){
 		else
 			build_kernel
 		fi
+
+		if [ -n "$RK_CFG_RECOVERY" ]; then
+			build_recovery
+		fi
 		cp -f $TOP_DIR/rockdev/boot.img $TOP_DIR/u-boot/boot.img
+		cp -f $TOP_DIR/rockdev/recovery.img $TOP_DIR/u-boot/recovery.img || true
 	fi
 
 	cd u-boot
@@ -476,6 +491,12 @@ function build_uboot(){
 			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
 		fi
 		./make.sh $UBOOT_COMPILE_COMMANDS
+	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
+		./make.sh $RK_UBOOT_DEFCONFIG \
+			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
+	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
+		./make.sh $RK_UBOOT_DEFCONFIG \
+			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
 	else
 		./make.sh $RK_UBOOT_DEFCONFIG \
 			$UBOOT_COMPILE_COMMANDS
@@ -487,6 +508,7 @@ function build_uboot(){
 
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		ln -rsf $TOP_DIR/u-boot/boot.img $TOP_DIR/rockdev/
+		ln -rsf $TOP_DIR/u-boot/recovery.img $TOP_DIR/rockdev/ || true
 	fi
 
 	finish_build
@@ -664,12 +686,12 @@ function build_debian(){
 	echo "=========Start building debian for $ARCH========="
 
 	cd debian
-	if [ ! -e linaro-buster-$ARCH.tar.gz ]; then
-		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
-		ln -rsf linaro-buster-alip-*.tar.gz linaro-buster-$ARCH.tar.gz
+	if [ ! -e linaro-$RK_DEBIAN_VERSON-$ARCH.tar.gz ]; then
+		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
+	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
 
 	finish_build
@@ -749,6 +771,9 @@ function build_recovery(){
 	/usr/bin/time -f "you take %E to build recovery" \
 		$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY
 
+	ln -rsf buildroot/output/$RK_CFG_RECOVERY/images/recovery.img \
+		rockdev/recovery.img
+
 	finish_build
 }
 
@@ -763,6 +788,47 @@ function build_pcba(){
 		$COMMON_DIR/mk-ramdisk.sh pcba.img $RK_CFG_PCBA
 
 	finish_build
+}
+
+BOOT_FIXED_CONFIGS="
+	CONFIG_BLK_DEV_DM
+	CONFIG_DM_CRYPT
+	CONFIG_BLK_DEV_CRYPTOLOOP
+	CONFIG_DM_VERITY"
+
+UBOOT_FIXED_CONFIGS="
+	CONFIG_FIT_SIGNATURE
+	CONFIG_SPL_FIT_SIGNATURE"
+
+function defconfig_check() {
+	# 1. defconfig 2. fixed config
+	echo debug-$1
+	for i in $2
+	do
+		echo "look for $i"
+		result=$(cat $1 | grep "${i}=y" -w || echo "No found")
+		if [ "$result" = "No found" ]; then
+			echo "${i} Not found"
+			return -1;
+		fi
+	done
+	return 0
+}
+
+function check_security_condition(){
+	# check security enabled
+	test -z "$RK_SYSTEM_CHECK_METHOD" && return 0
+
+	if [ ! -d u-boot/keys ]; then
+		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
+		echo "       Create it by ./build.sh createkeys or move your key to it"
+		return -1
+	fi
+
+	echo "check kernel defconfig"
+	defconfig_check kernel/arch/$RK_ARCH/configs/$RK_KERNEL_DEFCONFIG "$BOOT_FIXED_CONFIGS"
+	echo "check uboot defconfig"
+	defconfig_check u-boot/configs/${RK_UBOOT_DEFCONFIG}_defconfig "$UBOOT_FIXED_CONFIGS"
 }
 
 function build_all(){
@@ -793,6 +859,7 @@ function build_all(){
 		fi
 	fi
 
+	check_security_condition
 	build_loader
 	build_kernel
 	build_toolchain
@@ -981,6 +1048,16 @@ function build_allsave(){
 	finish_build
 }
 
+function create_keys() {
+	test -d u-boot/keys && echo "ERROR: u-boot/keys has existed" && return -1
+
+	mkdir u-boot/keys -p
+	./rkbin/tools/rk_sign_tool kk --bits 2048 --out u-boot/keys
+	ln -s privateKey.pem u-boot/keys/dev.key
+	ln -s publicKey.pem u-boot/keys/dev.pubkey
+	openssl req -batch -new -x509 -key u-boot/keys/dev.key -out u-boot/keys/dev.crt
+}
+
 #=========================
 # build targets
 #=========================
@@ -1039,6 +1116,28 @@ for option in ${OPTIONS}; do
 		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
 		app/*|external/*) build_pkg $option ;;
+		createkeys) create_keys ;;
+		security-rootfs)
+			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
+				echo "No security paramter found in .BoardConfig.mk"
+				exit 0
+			fi
+
+			build_rootfs
+			build_ramboot
+			build_uboot
+			echo "please update rootfs.img / boot.img / uboot.img"
+			;;
+		security-boot)
+			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
+				echo "No security paramter found in .BoardConfig.mk"
+				exit 0
+			fi
+
+			build_kernel
+			build_ramboot
+			build_uboot
+			;;
 		*) usage ;;
 	esac
 done
