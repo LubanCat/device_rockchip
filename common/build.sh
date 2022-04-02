@@ -284,6 +284,7 @@ function usage()
 	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "lunch              -list current SDK boards and switch to specified board config"
 	echo "uboot              -build uboot"
+	echo "uefi		 -build uefi"
 	echo "spl                -build spl"
 	echo "loader             -build loader"
 	echo "kernel             -build kernel"
@@ -532,6 +533,32 @@ function build_pkg() {
 			done
 		fi
 	done
+
+	finish_build
+}
+
+function build_uefi(){
+	build_check_cross_compile
+	local kernel_file_dtb
+
+	if [ "$RK_ARCH" == "arm" ]; then
+		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+	else
+		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+	fi
+
+	echo "============Start building uefi============"
+	echo "Copy kernel dtb $kernel_file_dtb to uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb"
+	echo "========================================="
+	if [ ! -f $kernel_file_dtb ]; then
+		echo "Please compile the kernel before"
+		return -1
+	fi
+
+	cp $kernel_file_dtb uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb
+	cd uefi
+	./make.sh $RK_UBOOT_DEFCONFIG
+	cd -
 
 	finish_build
 }
@@ -1242,6 +1269,7 @@ for option in ${OPTIONS}; do
 		toolchain) build_toolchain ;;
 		spl) build_spl ;;
 		uboot) build_uboot ;;
+		uefi) build_uefi ;;
 		loader) build_loader ;;
 		kernel) build_kernel ;;
 		modules) build_modules ;;
