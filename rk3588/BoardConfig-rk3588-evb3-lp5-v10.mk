@@ -29,7 +29,7 @@ export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
-export RK_CFG_PCBA=
+export RK_CFG_PCBA=rockchip_rk3588_pcba
 # Build jobs
 export RK_JOBS=12
 # target chip
