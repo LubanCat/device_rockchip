@@ -700,7 +700,7 @@ function build_debian(){
 	echo "=========Start building debian for $ARCH========="
 
 	cd debian
-	if [ ! -e linaro-$RK_DEBIAN_VERSON-$ARCH.tar.gz ]; then
+	if [ ! -e linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
 		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
