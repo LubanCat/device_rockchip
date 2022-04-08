@@ -102,14 +102,11 @@ if [ "$MODE" = "DM-V" ]; then
 	TMP_OFFSET=`cat ${ROOT_HASH_OFFSET}`
 	sed -i "s/OFFSET=/OFFSET=${TMP_OFFSET}/" ${INIT_FILE}
 	sed -i "s/HASH=/HASH=${TMP_HASH}/" ${INIT_FILE}
-	sed -i "s/BLOCK=/BLOCK=${PARTITION_NUM}/" ${INIT_FILE}
 	sed -i "s/ENC_EN=/ENC_EN=false/" ${INIT_FILE}
 elif [ "$MODE" = "DM-E" ]; then
 	source ${TEMPDIR}/enc.info
 
-	sed -i "s/BLOCK=/BLOCK=${PARTITION_NUM}/" ${INIT_FILE}
 	sed -i "s/ENC_EN=/ENC_EN=true/" ${INIT_FILE}
-	sed -i "s/OFFSET=/OFFSET=${sectors}/" ${INIT_FILE}
 	sed -i "s/CIPHER=/CIPHER=${cipher}/" ${INIT_FILE}
 
 	echo "Generate misc with key"
