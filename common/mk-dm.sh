@@ -30,14 +30,6 @@ fi
 ROOT_HASH=${TEMPDIR}/root.hash
 ROOT_HASH_OFFSET=${TEMPDIR}/root.offset
 INIT_FILE=${TOP_DIR}/buildroot/board/rockchip/common/security-ramdisk-overlay/init
-PARTITION_CMD=`cat $TOP_DIR/device/rockchip/${RK_TARGET_PRODUCT}/${RK_PARAMETER} | grep CMDLINE`
-
-if [ -z "`echo ${PARTITION_CMD} | grep \(rootfs\)`" ]; then
-	echo -e "\033[41;1m ERROR: no rootfs in parameter \033[0m"
-	exit -1
-fi
-
-PARTITION_NUM=`echo ${PARTITION_CMD} | sed "s/\(rootfs\).*/,/g" | grep -o , | wc -l`
 ROOTFS_INFO=`ls -l ${INPUT}`
 
 PACK=TRUE
