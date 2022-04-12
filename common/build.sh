@@ -245,6 +245,7 @@ function usage()
 	echo "createkeys         -create secureboot root keys"
 	echo "security-rootfs    -build rootfs and some relevant images with security paramter (just for dm-v)"
 	echo "security-boot      -build boot with security paramter"
+	echo "security_check     -check security paramter if it's good"
 	echo ""
 	echo "Default option is 'allsave'."
 }
@@ -800,7 +801,11 @@ function defconfig_check() {
 		echo "look for $i"
 		result=$(cat $1 | grep "${i}=y" -w || echo "No found")
 		if [ "$result" = "No found" ]; then
-			echo "${i} Not found"
+			echo -e "\e[41;1;37mSecurity: No found config ${i} in $1 \e[0m"
+			echo "make sure your config include this list"
+			echo "---------------------------------------"
+			echo "$2"
+			echo "---------------------------------------"
 			return -1;
 		fi
 	done
@@ -810,7 +815,7 @@ function defconfig_check() {
 function find_string_in_config(){
 	result=$(cat "$2" | grep "$1" || echo "No found")
 	if [ "$result" = "No found" ]; then
-		echo "No found $1 in $2"
+		echo "Security: No found string $1 in $2"
 		return -1;
 	fi
 	return 0;
@@ -852,6 +857,8 @@ function check_security_condition(){
 	defconfig_check kernel/arch/$RK_ARCH/configs/$RK_KERNEL_DEFCONFIG "$BOOT_FIXED_CONFIGS"
 	echo "check uboot defconfig"
 	defconfig_check u-boot/configs/${RK_UBOOT_DEFCONFIG}_defconfig "$UBOOT_FIXED_CONFIGS"
+
+	echo "Security: finish check"
 }
 
 function build_all(){
@@ -1152,6 +1159,7 @@ for option in ${OPTIONS}; do
 			build_uboot
 			echo "please update rootfs.img / boot.img / uboot.img"
 			;;
+		security_check) check_security_condition ;;
 		security-boot)
 			if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
 				echo "No security paramter found in .BoardConfig.mk"
