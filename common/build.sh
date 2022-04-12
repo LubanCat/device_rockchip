@@ -117,10 +117,11 @@ function prebuild_uboot()
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		UBOOT_COMPILE_COMMANDS=" \
 			--boot_img $TOP_DIR/u-boot/boot.img \
-			--recovery_img $TOP_DIR/u-boot/recovery.img \
 			$UBOOT_COMPILE_COMMANDS \
 			${RK_ROLLBACK_INDEX_BOOT:+--rollback-index-boot $RK_ROLLBACK_INDEX_BOOT} \
 			${RK_ROLLBACK_INDEX_UBOOT:+--rollback-index-uboot $RK_ROLLBACK_INDEX_UBOOT} "
+		test -z "${RK_PACKAGE_FILE_AB}" && \
+			UBOOT_COMPILE_COMMANDS="$UBOOT_COMPILE_COMMANDS --recovery_img $TOP_DIR/u-boot/recovery.img"
 		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
 	fi
 }
@@ -519,7 +520,8 @@ function build_uboot(){
 
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		ln -rsf $TOP_DIR/u-boot/boot.img $TOP_DIR/rockdev/
-		ln -rsf $TOP_DIR/u-boot/recovery.img $TOP_DIR/rockdev/ || true
+		test -z "${RK_PACKAGE_FILE_AB}" && \
+			ln -rsf $TOP_DIR/u-boot/recovery.img $TOP_DIR/rockdev/ || true
 	fi
 
 	finish_build
@@ -752,6 +754,10 @@ function build_recovery(){
 		RK_CFG_RECOVERY=$RK_UPDATE_SDCARD_CFG_RECOVERY
 	fi
 
+	if [ ! -z "$RK_PACKAGE_FILE_AB" ]; then
+		return 0
+	fi
+
 	check_config RK_CFG_RECOVERY || return 0
 
 	echo "==========Start building recovery=========="
@@ -786,11 +792,23 @@ BOOT_FIXED_CONFIGS="
 	CONFIG_BLK_DEV_CRYPTOLOOP
 	CONFIG_DM_VERITY"
 
+BOOT_OPTEE_FIXED_CONFIGS="
+	CONFIG_TEE
+	CONFIG_OPTEE"
+
 UBOOT_FIXED_CONFIGS="
 	CONFIG_FIT_SIGNATURE
 	CONFIG_SPL_FIT_SIGNATURE"
 
+UBOOT_AB_FIXED_CONFIGS="
+	CONFIG_ANDROID_AB"
+
 RECOVERY_FIXED_CONFIGS="
+	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
+
+ROOTFS_AB_FIXED_CONFIGS="
+	BR2_PACKAGE_RECOVERY
+	BR2_PACKAGE_RECOVERY_BOOTCONTROL
 	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
 
 function defconfig_check() {
@@ -846,15 +864,24 @@ function check_security_condition(){
 		fi
 
 		BOOT_FIXED_CONFIGS="${BOOT_FIXED_CONFIGS}
-				   CONFIG_TEE
-				   CONFIG_OPTEE"
-		defconfig_check buildroot/configs/${RK_CFG_RECOVERY}_defconfig "$RECOVERY_FIXED_CONFIGS"
-		find_string_in_config "BR2_ROOTFS_OVERLAY=\".*board/rockchip/common/security-recovery-overlay" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
-		find_string_in_config "#include \".*tee.config\"" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
+				    ${BOOT_OPTEE_FIXED_CONFIGS}"
+
+		if [ -z "${RK_PACKAGE_FILE_AB}" ]; then
+			defconfig_check buildroot/configs/${RK_CFG_RECOVERY}_defconfig "$RECOVERY_FIXED_CONFIGS"
+			find_string_in_config "#include \".*tee.config\"" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
+			find_string_in_config "BR2_ROOTFS_OVERLAY=\".*board/rockchip/common/security-recovery-overlay" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
+		fi
 	fi
 
 	echo "check kernel defconfig"
 	defconfig_check kernel/arch/$RK_ARCH/configs/$RK_KERNEL_DEFCONFIG "$BOOT_FIXED_CONFIGS"
+
+	if [ ! -z "${RK_PACKAGE_FILE_AB}" ]; then
+		UBOOT_FIXED_CONFIGS="${UBOOT_FIXED_CONFIGS}
+				     ${UBOOT_AB_FIXED_CONFIGS}"
+
+		defconfig_check buildroot/configs/${RK_CFG_BUILDROOT}_defconfig "$ROOTFS_AB_FIXED_CONFIGS"
+	fi
 	echo "check uboot defconfig"
 	defconfig_check u-boot/configs/${RK_UBOOT_DEFCONFIG}_defconfig "$UBOOT_FIXED_CONFIGS"
 
