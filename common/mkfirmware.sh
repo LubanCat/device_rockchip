@@ -58,6 +58,13 @@ if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
 	fi
 fi
 
+partition_size_kb() {
+	PART_NAME=$1
+	PART_STR=$(grep -oE "[^,^:^\(]*\(${PART_NAME}[\)_:][^\)]*\)" $PARAMETER)
+	PART_SIZE=$(echo $PART_STR | grep -oE "^[^@^-]*")
+	echo $(( ${PART_SIZE:-0} / 2 ))
+}
+
 # NOT support the grow partition
 get_partition_size() {
 	echo $PARAMETER
@@ -233,7 +240,12 @@ then
 			echo "chown -R www-data:www-data $OEM_DIR/www" >> $OEM_FAKEROOT_SCRIPT
 		fi
 		if [ "$RK_OEM_FS_TYPE" = "ubi" ]; then
-			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE ${RK_OEM_PARTITION_SIZE:-$oem_part_size_bytes} oem $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $OEM_FAKEROOT_SCRIPT
+			if [ -n "$RK_OEM_PARTITION_SIZE" ]; then
+				SIZE_KB=$(( $RK_OEM_PARTITION_SIZE / 1024 ))
+			else
+				SIZE_KB=$(partition_size_kb oem)
+			fi
+			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE ${SIZE_KB}K oem $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $OEM_FAKEROOT_SCRIPT
 		else
 			echo "$MKIMAGE $OEM_DIR $ROCKDEV/oem.img $RK_OEM_FS_TYPE"  >> $OEM_FAKEROOT_SCRIPT
 		fi
@@ -256,7 +268,12 @@ then
 		echo "#!/bin/sh" > $USERDATA_FAKEROOT_SCRIPT
 		echo "set -e" >> $USERDATA_FAKEROOT_SCRIPT
 		if [ "$RK_USERDATA_FS_TYPE" = "ubi" ]; then
-			echo "$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE $RK_USERDATA_PARTITION_SIZE userdata $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $USERDATA_FAKEROOT_SCRIPT
+			if [ -n "$RK_USERDATA_PARTITION_SIZE" ]; then
+				SIZE_KB=$(( $RK_USERDATA_PARTITION_SIZE / 1024 ))
+			else
+				SIZE_KB=$(partition_size_kb userdata)
+			fi
+			echo "$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE ${SIZE_KB}K userdata $RK_UBI_PAGE_SIZE $RK_UBI_BLOCK_SIZE"  >> $USERDATA_FAKEROOT_SCRIPT
 		else
 			echo "$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE"  >> $USERDATA_FAKEROOT_SCRIPT
 		fi
