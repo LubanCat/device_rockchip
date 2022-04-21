@@ -46,9 +46,9 @@ echo $SIZE_KB | grep -vq [^0-9] || usage
 if [ "$FS_TYPE" = "ubi" ]; then
     UBI_VOL_NAME=${LABEL:-test}
     # default page size 2KB
-    DEFAULT_UBI_PAGE_SIZE=${6:-2048}
+    DEFAULT_UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
     # default block size 128KB
-    DEFAULT_UBI_BLOCK_SIZE=${7:-0x20000}
+    DEFAULT_UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
 fi
 
 TEMP=$(mktemp -u)
@@ -98,7 +98,8 @@ mkimage()
 {
     echo "Making $TARGET from $SRC_DIR with size(${SIZE_KB}KB)"
     rm -rf $TARGET
-    dd of=$TARGET bs=1K seek=$SIZE_KB count=0 2>&1 || fatal "Failed to dd image!"
+    dd of=$TARGET bs=1K seek=$SIZE_KB count=0 &>/dev/null || \
+        fatal "Failed to dd image!"
     case $FS_TYPE in
         ext[234])
             if mke2fs -h 2>&1 | grep -wq "\-d"; then
