@@ -18,15 +18,16 @@ fatal()
 
 usage()
 {
-    fatal "Usage: $0 <src_dir> <target_image> <fs_type> [size(M|K)|auto(0)]"
+    fatal "Usage: $0 <src_dir> <target_image> <fs_type> <size(M|K)|auto(0)> [label]"
 }
 
-[ ! $# -lt 3 ] || usage
+[ ! $# -lt 4 ] || usage
 
 export SRC_DIR=$1
 export TARGET=$2
 FS_TYPE=$3
-SIZE=${4:-auto}
+SIZE=$4
+LABEL=$5
 
 case $SIZE in
     auto)
@@ -43,7 +44,7 @@ esac
 echo $SIZE_KB | grep -vq [^0-9] || usage
 
 if [ "$FS_TYPE" = "ubi" ]; then
-    UBI_VOL_NAME=${5:-test}
+    UBI_VOL_NAME=${LABEL:-test}
     # default page size 2KB
     DEFAULT_UBI_PAGE_SIZE=${6:-2048}
     # default block size 128KB
@@ -101,24 +102,25 @@ mkimage()
     case $FS_TYPE in
         ext[234])
             if mke2fs -h 2>&1 | grep -wq "\-d"; then
-                mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR || return -1
+                mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR \
+                    || return -1
             else
                 echo "Detected old mke2fs(doesn't support '-d' option)!"
                 mke2fs -t $FS_TYPE $TARGET || return -1
                 copy_to_image || return -1
             fi
             # Set max-mount-counts to 0, and disable the time-dependent checking.
-            tune2fs -c 0 -i 0 $TARGET
+            tune2fs -c 0 -i 0 $TARGET ${LABEL:+-L $LABEL}
             ;;
         msdos|fat|vfat)
             # Use fat32 by default
-            mkfs.vfat -F 32 $TARGET && \
+            mkfs.vfat -F 32 $TARGET ${LABEL:+-n $LABEL} && \
                 MTOOLS_SKIP_CHECK=1 \
                 mcopy -bspmn -D s -i $TARGET $SRC_DIR/* ::/
             ;;
         ntfs)
             # Enable compression
-            mkntfs -FCQ $TARGET
+            mkntfs -FCQ $TARGET ${LABEL:+-L $LABEL}
             if check_host_tool ntfscp; then
                 copy_to_ntfs
             else
