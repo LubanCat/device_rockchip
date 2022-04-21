@@ -56,7 +56,7 @@ function fixup_fstab()
 			;;
 	esac
 
-	for part in ${RK_EXTRA_PARTITIONS}; do
+	for part in ${RK_EXTRA_PARTITIONS//@/ }; do
 		fixup_part $(echo "${part}" | xargs -d':')
 	done
 }
