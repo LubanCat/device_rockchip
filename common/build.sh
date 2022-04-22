@@ -870,9 +870,6 @@ UBOOT_FIXED_CONFIGS="
 UBOOT_AB_FIXED_CONFIGS="
 	CONFIG_ANDROID_AB"
 
-RECOVERY_FIXED_CONFIGS="
-	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
-
 ROOTFS_UPDATE_ENGINEBIN_CONFIGS="
 	BR2_PACKAGE_RECOVERY
 	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
@@ -935,12 +932,6 @@ function check_security_condition(){
 
 		BOOT_FIXED_CONFIGS="${BOOT_FIXED_CONFIGS}
 				    ${BOOT_OPTEE_FIXED_CONFIGS}"
-
-		if [ -z "${RK_PACKAGE_FILE_AB}" ]; then
-			defconfig_check buildroot/configs/${RK_CFG_RECOVERY}_defconfig "$RECOVERY_FIXED_CONFIGS"
-			find_string_in_config "#include \".*tee.config\"" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
-			find_string_in_config "BR2_ROOTFS_OVERLAY=\".*board/rockchip/common/security-recovery-overlay" "buildroot/configs/${RK_CFG_RECOVERY}_defconfig"
-		fi
 	fi
 
 	echo "check kernel defconfig"
