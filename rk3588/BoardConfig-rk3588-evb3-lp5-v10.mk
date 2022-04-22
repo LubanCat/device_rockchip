@@ -44,16 +44,13 @@ export RK_YOCTO_MACHINE=rockchip-rk3588-evb
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ext2
-#OEM config
-export RK_OEM_DIR=oem_normal
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS=" \
+	oem:/oem:ext2:defaults:oem_normal:auto:resize
+	userdata:/userdata:ext2:defaults:userdata_normal:auto:resize
+"
 # OEM build on buildroot
 #export RK_OEM_BUILDIN_BUILDROOT=YES
-#userdata config
-export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
 #choose enable distro module
