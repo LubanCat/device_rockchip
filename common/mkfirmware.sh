@@ -30,7 +30,14 @@ ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$DEV_DIR/$RK_TARGET_PRODUCT/$RK_PARAMETER
 MISC_IMG=$DEV_DIR/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
-ROOTFS_IMG_SOURCE=$IMG_DIR/rootfs.$RK_ROOTFS_TYPE
+
+if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
+	ROOTFS_IMG_SOURCE=$IMG_DIR/security-system.img
+else
+	ROOTFS_IMG_SOURCE=$IMG_DIR/rootfs.$RK_ROOTFS_TYPE
+fi
+
+
 RAMBOOT_IMG=$OUT_DIR/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$OUT_DIR/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
@@ -247,9 +254,12 @@ link_image_optional "$LOADER" MiniLoaderAll.bin "$SPL"
 
 if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ]; then
     for part in boot recovery rootfs;do
+        test -e $TOP_DIR/u-boot/${part}.img &&
         link_image "$TOP_DIR/u-boot/${part}.img" ${part}.img && \
-            message "Enabled ramdisk security $part..."
+            message "Enabled ramdisk security $part..." || true
     done
+
+
 fi
 
 pack_extra_partitions
