@@ -95,7 +95,6 @@ if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
 fi
 unset_board_config_all
 [ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
-source device/rockchip/common/Version.mk
 
 function prebuild_uboot()
 {
