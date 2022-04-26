@@ -179,8 +179,6 @@ function usagerootfs()
 			;;
 		debian)
 			;;
-		distro)
-			;;
 		*)
 			echo "make"
 			;;
@@ -230,7 +228,6 @@ function usage()
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
 	echo "debian             -build debian rootfs"
-	echo "distro             -build distro rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -711,21 +708,6 @@ function build_debian(){
 	finish_build
 }
 
-function build_distro(){
-	check_config RK_DISTRO_DEFCONFIG || return 0
-
-	echo "===========Start building distro==========="
-	echo "TARGET_ARCH=$RK_ARCH"
-	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
-	echo "========================================"
-
-	cd distro
-	make $RK_DISTRO_DEFCONFIG
-	/usr/bin/time -f "you take %E to build distro" distro/make.sh
-
-	finish_build
-}
-
 function build_rootfs(){
 	check_config RK_ROOTFS_IMG || return 0
 
@@ -745,12 +727,6 @@ function build_rootfs(){
 			build_debian
 			ln -rsf debian/linaro-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
-			;;
-		distro)
-			build_distro
-			for f in $(ls distro/output/images/rootfs.*);do
-				ln -rsf $f $RK_ROOTFS_DIR/
-			done
 			;;
 		*)
 			build_buildroot
@@ -939,7 +915,6 @@ function build_cleanall(){
 	cd -
 	rm -rf buildroot/output
 	rm -rf yocto/build/tmp
-	rm -rf distro/output
 	rm -rf debian/binary
 
 	finish_build
@@ -1159,7 +1134,7 @@ for option in ${OPTIONS}; do
 		loader) build_loader ;;
 		kernel) build_kernel ;;
 		modules) build_modules ;;
-		rootfs|buildroot|debian|distro|yocto) build_rootfs $option ;;
+		rootfs|buildroot|debian|yocto) build_rootfs $option ;;
 		pcba) build_pcba ;;
 		ramboot) build_ramboot ;;
 		recovery) build_recovery ;;
