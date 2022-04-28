@@ -177,6 +177,8 @@ function usagerootfs()
 	case "${RK_ROOTFS_SYSTEM:-buildroot}" in
 		yocto)
 			;;
+		ubuntu)
+			;;
 		debian)
 			;;
 		distro)
@@ -229,6 +231,7 @@ function usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
+	echo "ubuntu             -build ubuntu rootfs"
 	echo "debian             -build debian rootfs"
 	echo "distro             -build distro rootfs"
 	echo "pcba               -build pcba"
@@ -547,6 +550,7 @@ function build_kernel(){
 	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel============"
+	echo "TARGET_RK_JOBS       =$RK_JOBS"
 	echo "TARGET_ARCH          =$RK_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
@@ -577,6 +581,7 @@ function build_modules(){
 	check_config RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel modules============"
+	echo "TARGET_RK_JOBS       =$RK_JOBS"
 	echo "TARGET_ARCH          =$RK_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
@@ -676,6 +681,27 @@ function build_yocto(){
 	finish_build
 }
 
+function build_ubuntu(){
+	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
+	case $ARCH in
+		arm|armhf) ARCH=armhf ;;
+		*) ARCH=arm64 ;;
+	esac
+
+	echo "=========Start building ubuntu for $ARCH========="
+	echo "==== RK_UBUNTU_VERSION: $RK_UBUNTU_VERSION ARCH: $ARCH ===="
+	cd ubuntu
+	if [ ! -e ubuntu-base-desktop-$ARCH.tar.gz ]; then
+		ARCH=arm64  ./mk-base-desktop-ubuntu.sh
+	fi
+
+	VERSION=debug ARCH=arm64 RELEASE=desktop ./mk-rootfs.sh
+
+	./mk-image.sh
+
+	finish_build
+}
+
 function build_debian(){
 	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
 	case $ARCH in
@@ -686,7 +712,7 @@ function build_debian(){
 	echo "=========Start building debian for $ARCH========="
 
 	cd debian
-	if [ ! -e linaro-$RK_DEBIAN_VERSON-$ARCH.tar.gz ]; then
+	if [ ! -e linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz ]; then
 		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
@@ -725,6 +751,11 @@ function build_rootfs(){
 		yocto)
 			build_yocto
 			ln -rsf yocto/build/latest/rootfs.img \
+				$RK_ROOTFS_DIR/rootfs.ext4
+			;;
+		ubuntu)
+			build_ubuntu
+			ln -rsf ubuntu/ubuntu-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		debian)
@@ -1109,7 +1140,7 @@ for option in ${OPTIONS}; do
 		loader) build_loader ;;
 		kernel) build_kernel ;;
 		modules) build_modules ;;
-		rootfs|buildroot|debian|distro|yocto) build_rootfs $option ;;
+		rootfs|buildroot|ubuntu|debian|distro|yocto) build_rootfs $option ;;
 		pcba) build_pcba ;;
 		ramboot) build_ramboot ;;
 		recovery) build_recovery ;;

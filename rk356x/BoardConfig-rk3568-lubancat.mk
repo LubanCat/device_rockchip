@@ -31,13 +31,15 @@ export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # Build jobs
-export RK_JOBS=12
+export RK_JOBS=24
 # target chip
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # Set debian version (debian10: buster, debian11: bullseye)
 export RK_DEBIAN_VERSION=buster
+# Set ubuntu version (ubuntu18: bionic, ubuntu20: )
+export RK_UBUNTU_VERSION=bionic
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path
