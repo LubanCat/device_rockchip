@@ -47,6 +47,7 @@ function fixup_part()
     MOUNT_OPTS="$(partition_arg "$*" 4 defaults)"
 
     sed -i "/[[:space:]]${MOUNT//\//\\\/}[[:space:]]/d" ${TARGET_DIR}/etc/fstab
+    sed -i "/^${DEV//\//\\\/}[[:space:]]/d" ${TARGET_DIR}/etc/fstab
 
     echo -e "${DEV}\t${MOUNT}\t${FS_TYPE}\t${MOUNT_OPTS}\t0 2" >> \
         ${TARGET_DIR}/etc/fstab
@@ -75,6 +76,11 @@ function fixup_fstab()
     echo -e "pstore\t/sys/fs/pstore\tpstore\tdefaults\t0 0" >> \
         ${TARGET_DIR}/etc/fstab
 
+    if echo $TARGET_DIR | grep -qE "_recovery/target/*$"; then
+        fixup_part "/dev/sda1:/mnt/usb_storage:vfat:defaults::"
+        fixup_part "/dev/mmcblk1p1:/mnt/external_sd:vfat:defaults::"
+    fi
+
     for part in ${RK_EXTRA_PARTITIONS//@/ }; do
         fixup_part $part
     done
@@ -96,7 +102,9 @@ function add_dirs_and_links()
 
     cd ${TARGET_DIR}
     mkdir -p mnt/sdcard mnt/usb0
-    ln -sf media/usb0 udisk
+    ln -sf mnt/usb0 mnt/usb_storage
+    ln -sf mnt/sdcard mnt/external_sd
+    ln -sf mnt/usb0 udisk
     ln -sf mnt/sdcard sdcard
     ln -sf userdata data
 }
