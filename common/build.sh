@@ -682,7 +682,7 @@ function build_yocto(){
 }
 
 function build_ubuntu(){
-	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
+	ARCH=${RK_UBUNTU_ARCH:-${RK_ARCH}}
 	case $ARCH in
 		arm|armhf) ARCH=armhf ;;
 		*) ARCH=arm64 ;;
