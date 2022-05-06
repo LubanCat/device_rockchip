@@ -270,11 +270,9 @@ link_image_optional "$LOADER" MiniLoaderAll.bin "$SPL"
 if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ]; then
     for part in boot recovery rootfs;do
         test -e $TOP_DIR/u-boot/${part}.img &&
-        link_image "$TOP_DIR/u-boot/${part}.img" ${part}.img && \
-            message "Enabled ramdisk security $part..." || true
+            link_image "$TOP_DIR/u-boot/${part}.img" ${part}.img && \
+                message "Enabled ramdisk security $part..." || true
     done
-
-
 fi
 
 pack_extra_partitions
