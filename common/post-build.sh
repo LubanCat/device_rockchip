@@ -67,6 +67,14 @@ function fixup_fstab()
             ;;
     esac
 
+    sed -i "/[[:space:]]debugfs[[:space:]]/d" ${TARGET_DIR}/etc/fstab
+    echo -e "debugfs\t/sys/kernel/debug\tdebugfs\tdefaults\t0 0" >> \
+        ${TARGET_DIR}/etc/fstab
+
+    sed -i "/[[:space:]]pstore[[:space:]]/d" ${TARGET_DIR}/etc/fstab
+    echo -e "pstore\t/sys/fs/pstore\tpstore\tdefaults\t0 0" >> \
+        ${TARGET_DIR}/etc/fstab
+
     for part in ${RK_EXTRA_PARTITIONS//@/ }; do
         fixup_part $part
     done
