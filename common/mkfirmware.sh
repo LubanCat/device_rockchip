@@ -202,7 +202,22 @@ pack_extra_partitions() {
 
         MOUNT="$(partition_arg "$part" 2 "/$PART_NAME")"
         FS_TYPE="$(partition_arg "$part" 3)"
-        SRC="$DEV_DIR/$PART_NAME/$(partition_arg "$part" 5 "$PART_NAME")"
+
+        SRC="$(partition_arg "$part" 5)"
+
+        # Src is either none or relative path to device/rockchip/<name>/
+        # or absolute path
+        case "$SRC" in
+            "")
+                continue
+                ;;
+            /*)
+                ;;
+            *)
+                SRC="$DEV_DIR/$PART_NAME/$SRC"
+                ;;
+        esac
+
         SIZE="$(partition_arg "$part" 6 auto)"
         OPTS="$(partition_arg "$part" 7)"
         LABEL=
