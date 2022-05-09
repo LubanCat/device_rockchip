@@ -56,9 +56,7 @@ fatal() {
     exit -1
 }
 
-# Clean all
 mkdir -p $ROCKDEV
-rm -rf $ROCKDEV/*
 
 # Require buildroot host tools to do image packing.
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
