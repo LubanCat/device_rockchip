@@ -689,13 +689,13 @@ function build_ubuntu(){
 	esac
 
 	echo "=========Start building ubuntu for $ARCH========="
-	echo "==== RK_UBUNTU_VERSION: $RK_UBUNTU_VERSION ARCH: $ARCH ===="
+	echo "==== RK_UBUNTU_VERSION: $RK_UBUNTU_VERSION   ARCH: $ARCH ===="
 	cd ubuntu
-	if [ ! -e ubuntu-base-desktop-$ARCH.tar.gz ]; then
-		ARCH=arm64  ./mk-base-desktop-ubuntu.sh
+	if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH.tar.gz ]; then
+		ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 	fi
 
-	VERSION=debug ARCH=arm64 RELEASE=desktop ./mk-rootfs.sh
+	VERSION=debug ARCH=arm64 ./mk-$RK_ROOTFS_TARGET-rootfs.sh
 
 	./mk-image.sh
 
@@ -924,6 +924,7 @@ function build_cleanall(){
 	rm -rf yocto/build/tmp
 	rm -rf distro/output
 	rm -rf debian/binary
+	rm -rf ubuntu/binary
 
 	finish_build
 }
