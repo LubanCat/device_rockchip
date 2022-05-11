@@ -36,8 +36,6 @@ export RK_JOBS=24
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# Set ubuntu version (ubuntu18: bionic, ubuntu20: )
-export RK_UBUNTU_VERSION=bionic
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path
@@ -62,3 +60,9 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # 定义默认rootfs为ubuntu
 export RK_ROOTFS_SYSTEM=ubuntu
+# Set ubuntu version (ubuntu18: bionic, ubuntu20: )
+export RK_UBUNTU_VERSION=bionic
+# 定义默认rootfs是否为桌面版  desktop :桌面版 	console ：控制台版
+export RK_ROOTFS_TARGET=console
+# 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
+export RK_ROOTFS_DEBUG=debug
