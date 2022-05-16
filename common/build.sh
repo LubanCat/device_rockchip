@@ -691,13 +691,21 @@ function build_ubuntu(){
 	echo "=========Start building ubuntu for $ARCH========="
 	echo "==== RK_UBUNTU_VERSION: $RK_UBUNTU_VERSION   ARCH: $ARCH ===="
 	cd ubuntu
-	if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH.tar.gz ]; then
-		ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
+
+
+	if [ ! -e ubuntu-rootfs.img ]; then
+		echo "[ No ubuntu-rootfs.img, Run Make Ubuntu Scripts ]"
+		if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH.tar.gz ]; then
+			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
+		fi
+
+		VERSION=debug ARCH=arm64 MALI=$RK_ROOTFS_GPU ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+
+		./mk-image.sh
+	else
+		echo "[ Already Exists IMG,   Skip Make Ubuntu Scripts ]"
+		echo "[ Delate ubuntu-rootfs.img To Rebuild Ubuntu IMG ]"
 	fi
-
-	VERSION=debug ARCH=arm64 ./mk-$RK_ROOTFS_TARGET-rootfs.sh
-
-	./mk-image.sh
 
 	finish_build
 }
