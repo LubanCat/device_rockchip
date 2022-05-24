@@ -68,5 +68,3 @@ export RK_UBUNTU_VERSION=bionic
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=debug
-# 定义rootfs安装的GPU驱动型号,命名参考文件 overlay/etc/init.d/rockchip.sh
-export RK_ROOTFS_GPU=bifrost-g52-g2p0

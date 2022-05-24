@@ -699,7 +699,7 @@ function build_ubuntu(){
 			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 		fi
 
-		VERSION=debug ARCH=arm64 MALI=$RK_ROOTFS_GPU ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+		VERSION=debug ARCH=arm64 ./mk-$RK_ROOTFS_TARGET-rootfs.sh
 
 		./mk-image.sh
 	else

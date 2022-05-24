@@ -20,6 +20,8 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
+# 分区表对应的打包文件
+export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3568
 # Recovery config
@@ -47,13 +49,13 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
-export RK_OEM_DIR=oem_normal
+export RK_OEM_DIR=
 # OEM build on buildroot
 #export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config
-export RK_USERDATA_DIR=userdata_normal
+export RK_USERDATA_DIR=
 #misc image
-export RK_MISC=wipe_all-misc.img
+export RK_MISC=blank-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
@@ -63,6 +65,6 @@ export RK_ROOTFS_SYSTEM=ubuntu
 # Set ubuntu version (ubuntu18: bionic, ubuntu20: )
 export RK_UBUNTU_VERSION=bionic
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	console ：控制台版
-export RK_ROOTFS_TARGET=console
+export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=debug
