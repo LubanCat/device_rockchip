@@ -1,1 +1,1 @@
-BoardConfig-LubanCat-rk3568-LBC-buildroot.mk
+BoardConfig-LubanCat2-buildroot.mk
