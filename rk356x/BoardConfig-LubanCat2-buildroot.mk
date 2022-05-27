@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3568
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk3568_lubancat2_defconfig
+export RK_KERNEL_DEFCONFIG=lubancat2_buildroot_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
