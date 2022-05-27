@@ -153,7 +153,7 @@ legacy_partion() {
     PART_NAME="$1"
     SRC="$2"
     FS_TYPE="$3"
-    SIZE_KB="${4:-0}"
+    SIZE="${4:-0}"
     MOUNT="/$PART_NAME"
     OPT=""
 
@@ -165,7 +165,19 @@ legacy_partion() {
         OPT="fixed"
     fi
 
-    echo "$PART_NAME:$MOUNT:$FS_TYPE:defaults:$SRC:${SIZE_KB}K:$OPT"
+    case $SIZE in
+        *k|*K)
+            SIZE=${SIZE//k/K}
+            ;;
+        *m|*M)
+            SIZE=${SIZE//m/M}
+            ;;
+        *)
+            SIZE=$(( ${SIZE} / 1024 ))K # default is bytes
+            ;;
+    esac
+
+    echo "$PART_NAME:$MOUNT:$FS_TYPE:defaults:$SRC:${SIZE}:$OPT"
 }
 
 RK_LEGACY_PARTITIONS=" \
