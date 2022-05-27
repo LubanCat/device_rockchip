@@ -18,10 +18,11 @@ fatal()
 
 usage()
 {
+    echo $@
     fatal "Usage: $0 <src_dir> <target_image> <fs_type> <size(M|K)|auto(0)> [label]"
 }
 
-[ ! $# -lt 4 ] || usage
+[ ! $# -lt 4 ] || usage "Not enough args${@+: $0 $@}"
 
 export SRC_DIR=$1
 export TARGET=$2
@@ -34,14 +35,14 @@ case $SIZE in
         SIZE_KB=0
         ;;
     *K)
-        SIZE_KB=${SIZE%K}
+        SIZE_KB=$(( ${SIZE%K} ))
         ;;
     *)
         SIZE_KB=$(( ${SIZE%M} * 1024 )) # default is MB
         ;;
 esac
 
-echo $SIZE_KB | grep -vq [^0-9] || usage
+echo $SIZE_KB | grep -vq [^0-9] || usage "Invalid size: $SIZE_KB"
 
 if [ "$FS_TYPE" = "ubi" ]; then
     UBI_VOL_NAME=${LABEL:-test}
@@ -53,7 +54,7 @@ fi
 
 TEMP=$(mktemp -u)
 
-[ -d "$SRC_DIR" ] || usage
+[ -d "$SRC_DIR" ] || usage "No such src dir: $SRC_DIR"
 
 copy_to_ntfs()
 {
@@ -244,7 +245,6 @@ case $FS_TYPE in
         mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 --pad=0x400000 -s 0x1000 -n
         ;;
     *)
-        echo "File system: $FS_TYPE not supported."
-        usage
+        usage "File system: $FS_TYPE not supported."
         ;;
 esac
