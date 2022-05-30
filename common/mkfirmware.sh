@@ -41,7 +41,7 @@ RECOVERY_IMG=$OUT_DIR/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
-LOADER=$(echo $TOP_DIR/u-boot/*_loader_v*.bin | head -1)
+LOADER=$(echo $TOP_DIR/u-boot/*_loader_*v*.bin | head -1)
 SPL=$(echo $TOP_DIR/u-boot/*_loader_spl.bin | head -1)
 MKIMAGE=$SCRIPT_DIR/mk-image.sh
 
