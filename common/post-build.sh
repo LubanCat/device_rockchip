@@ -77,8 +77,8 @@ function fixup_fstab()
         ${TARGET_DIR}/etc/fstab
 
     if echo $TARGET_DIR | grep -qE "_recovery/target/*$"; then
-        fixup_part "/dev/sda1:/mnt/usb_storage:vfat:defaults::"
-        fixup_part "/dev/mmcblk1p1:/mnt/external_sd:vfat:defaults::"
+        fixup_part "/dev/sda1:/mnt/udisk:auto:defaults::"
+        fixup_part "/dev/mmcblk1p1:/mnt/sdcard:auto:defaults::"
     fi
 
     for part in ${RK_EXTRA_PARTITIONS//@/ }; do
@@ -101,10 +101,12 @@ function add_dirs_and_links()
     echo "Adding dirs and links..."
 
     cd ${TARGET_DIR}
-    mkdir -p mnt/sdcard mnt/usb0
-    ln -sf mnt/usb0 mnt/usb_storage
-    ln -sf mnt/sdcard mnt/external_sd
-    ln -sf mnt/usb0 udisk
+
+    rm -rf mnt/* udisk sdcard data
+    mkdir -p mnt/sdcard mnt/udisk
+    ln -sf udisk mnt/usb_storage
+    ln -sf sdcard mnt/external_sd
+    ln -sf mnt/udisk udisk
     ln -sf mnt/sdcard sdcard
     ln -sf userdata data
 }
