@@ -9,7 +9,7 @@ export TRUST_PACK_IGNORE_BL32=
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3358-evb-ddr3-v10-linux
+export RK_KERNEL_DTS=rk3358m-vehicle-v10
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
