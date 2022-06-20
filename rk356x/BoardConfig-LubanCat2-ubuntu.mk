@@ -62,11 +62,9 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # 定义默认rootfs为ubuntu
 export RK_ROOTFS_SYSTEM=ubuntu
-# Set ubuntu version (ubuntu18.04: bionic, ubuntu20.04: )
-export RK_UBUNTU_VERSION=bionic
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	console ：控制台版
-export RK_ROOTFS_TARGET=desktop
+export RK_ROOTFS_TARGET=console
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=debug
+export RK_ROOTFS_DEBUG=none
 # 定义添加的GPU加速包对应型号
 export RK_ROOTFS_GPU=rk3568
