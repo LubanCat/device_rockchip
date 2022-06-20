@@ -562,6 +562,7 @@ function build_kernel(){
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
 	make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
+	# make ARCH=$RK_ARCH -j$RK_JOBS
 	if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS" ]; then
 		$COMMON_DIR/mk-fitimage.sh $TOP_DIR/kernel/$RK_BOOT_IMG \
 			$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
@@ -689,7 +690,7 @@ function build_ubuntu(){
 	esac
 
 	echo "=========Start building ubuntu for $ARCH========="
-	echo "==== RK_UBUNTU_VERSION: $RK_UBUNTU_VERSION   ARCH: $ARCH ===="
+	echo "==RK_ROOTFS_DEBUG:$RK_ROOTFS_DEBUG RK_ROOTFS_TARGET:$RK_ROOTFS_TARGET=="
 	cd ubuntu
 
 
@@ -699,7 +700,7 @@ function build_ubuntu(){
 			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 		fi
 
-		VERSION=debug ARCH=arm64 ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-$RK_ROOTFS_TARGET-rootfs.sh
 
 		./mk-image.sh
 	else
@@ -718,15 +719,23 @@ function build_debian(){
 	esac
 
 	echo "=========Start building debian for $ARCH========="
-
+	echo "==== RK_DEBIAN_VERSION: $RK_DEBIAN_VERSION   ARCH: $ARCH ===="
 	cd debian
-	if [ ! -e linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz ]; then
-		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
-		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
+
+	if [ ! -e linaro-rootfs.img ]; then
+		echo "[ No linaro-rootfs.img, Run Make Debian Scripts ]"
+		if [ ! -e linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
+			RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH ./mk-base-debian.sh
+			# ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
+		fi
+
+		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET.sh
+		./mk-image.sh
+	else
+		echo "[ Already Exists IMG,   Skip Make Debian Scripts ]"
+		echo "[ Delate linaro-rootfs.img To Rebuild Debian IMG ]"
 	fi
 
-	VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
-	./mk-image.sh
 
 	finish_build
 }
