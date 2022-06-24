@@ -34,13 +34,17 @@ rk_ramdisk_build_init()
 {
 	echo "Try to build init for $1"
 
-	SYSTEM_IMAGE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.squashfs
+	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-V" ]; then
+		SYSTEM_IMAGE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.squashfs
+	else
+		SYSTEM_IMAGE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.${RK_ROOTFS_TYPE}
+	fi
 	if [ ! -e "$SYSTEM_IMAGE" ]; then
 		echo "ERROR: Please build system first"
 		exit -1
 	fi
 
-	$COMMON_DIR/mk-dm.sh dm-v $SYSTEM_IMAGE
+	$COMMON_DIR/mk-dm.sh $1 $SYSTEM_IMAGE
 }
 
 COMMON_DIR=$(cd `dirname $0`; pwd)
@@ -100,10 +104,9 @@ eval ROOTFS_IMAGE=\$${RAMDISK_TYPE}_IMG
 
 if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 	case "$RK_SYSTEM_CHECK_METHOD" in
-	"DM-V")
-		rk_ramdisk_build_init "DM-V"
+	"DM-V" | "DM-E")
+		rk_ramdisk_build_init $RK_SYSTEM_CHECK_METHOD
 		;;
-	# TODO: add DM-S for system encrypt
 	*)
 		echo "do nothing ($RK_SYSTEM_CHECK_METHOD)"
 	esac
