@@ -3,33 +3,37 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3128
+export RK_UBOOT_DEFCONFIG=rk3126
 # Trust ini config
-export RK_TRUST_INI_CONFIG=RK3128TOS.ini
+export RK_TRUST_INI_CONFIG=RK3126TOS_LADDR.ini
 # Uboot size
 export RK_UBOOT_SIZE_CONFIG=1024\ 2
 # Trust size
 export RK_TRUST_SIZE_CONFIG=1024\ 2
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
+# Kernel defconfig fragment
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rk3126_linux.config
 # Kernel dts
-export RK_KERNEL_DTS=rk3128-fireprime
+export RK_KERNEL_DTS=rk3126c-evb-ddr3-v10-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-buildroot-rk3126.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk312x
+export RK_CFG_BUILDROOT=rockchip_rk3126c
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk312x_recovery
+# ramboot config
+export RK_CFG_RAMBOOT=
 # Pcba config
-export RK_CFG_PCBA=rockchip_rk3128_pcba
+export RK_CFG_PCBA=rockchip_rk3126c_pcba
 # Build jobs
 export RK_JOBS=12
 # target chip
-export RK_TARGET_PRODUCT=rk3128
+export RK_TARGET_PRODUCT=rk3126c
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
@@ -44,3 +48,5 @@ export RK_OEM_DIR=oem_normal
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
+#choose enable distro module
+export RK_DISTRO_MODULE=
