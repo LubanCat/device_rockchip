@@ -68,3 +68,5 @@ export RK_ROOTFS_TARGET=desktop
 export RK_ROOTFS_DEBUG=none
 # 定义添加的GPU加速包对应型号
 export RK_ROOTFS_GPU=rockchip_rk3566
+# 使用exboot内核分区
+export RK_EXTBOOT=true

@@ -286,12 +286,14 @@ function usage()
 	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "lunch              -list current SDK boards and switch to specified board config"
 	echo "uboot              -build uboot"
-	echo "uefi		 -build uefi"
+	echo "uefi               -build uefi"
 	echo "spl                -build spl"
 	echo "loader             -build loader"
 	echo "kernel             -build kernel"
+	echo "kerneldeb          -build kernel deb"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
+	echo "extboot            -build extlinux boot.img, boot from EFI partition"
 	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
@@ -679,6 +681,89 @@ function build_kernel(){
 	finish_build
 }
 
+function build_kerneldeb(){
+	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
+
+	build_check_cross_compile
+
+	echo "============Start building kernel deb============"
+	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
+	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
+	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
+	echo "=========================================="
+	pwd
+	cd kernel
+	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
+	make ARCH=$RK_ARCH bindeb-pkg RK_KERNEL_DTS=$RK_KERNEL_DTS -j$RK_JOBS
+	finish_build
+}
+
+function build_extboot(){
+	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
+
+	echo "============Start building kernel============"
+	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
+	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
+	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
+	echo "=========================================="
+	pwd
+
+	build_check_cross_compile
+
+	cd kernel
+	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
+	make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
+	make ARCH=$RK_ARCH dtbs -j$RK_JOBS
+	
+	echo -e "\e[36m Generate extLinuxBoot image start\e[0m"
+
+	EXTBOOT_IMG=${TOP_DIR}/kernel/extboot.img
+	EXTBOOT_DIR=${TOP_DIR}/kernel/extboot
+	rm -rf ${EXTBOOT_DIR} && mkdir -p ${EXTBOOT_DIR}/extlinux
+
+    KERNEL_VERSION=$(cat $TOP_DIR/kernel/include/config/kernel.release)
+	echo "label rk-kernel.dtb linux-$KERNEL_VERSION" > $EXTBOOT_DIR/extlinux/extlinux.conf
+
+    cp ${TOP_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
+	echo -e "\tkernel /Image-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+
+    if [ "$RK_ARCH" == "arm64" ];then
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DIR
+    else
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DIR
+    fi
+    cp -f $EXTBOOT_DIR/${RK_KERNEL_DTS}.dtb $EXTBOOT_DIR/rk-kernel.dtb
+
+    echo -e "\tfdt /rk-kernel.dtb" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+
+    if [[ -e ${TOP_DIR}/kernel/ramdisk.img ]]; then
+        cp ${TOP_DIR}/kernel/ramdisk.img $EXTBOOT_DIR/initrd-$KERNEL_VERSION
+        echo -e "\tinitrd /initrd-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+    fi
+
+    cp ${TOP_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
+    cp ${TOP_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
+    cp ${TOP_DIR}/kernel/logo.bmp ${TOP_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/ || true
+
+    make ARCH=$RK_ARCH INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=$EXTBOOT_DIR modules_install
+    rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/build
+    rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/source
+
+    rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
+    # fakeroot mkfs.ext4 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
+	fakeroot mkfs.fat -F 16 -n "boot" $EXTBOOT_IMG
+
+	mkdir -p $EXTBOOT_DIR.tmp
+	sudo mount $EXTBOOT_IMG $EXTBOOT_DIR.tmp
+	sudo cp -rf $EXTBOOT_DIR/* $EXTBOOT_DIR.tmp
+	sudo umount $EXTBOOT_DIR.tmp
+    sudo rm -rf $EXTBOOT_DIR.tmp
+
+	finish_build
+}
+
 function build_modules(){
 	check_config RK_KERNEL_DEFCONFIG || return 0
 
@@ -1062,7 +1147,13 @@ function build_all(){
 
 	check_security_condition
 	build_loader
-	build_kernel
+
+	if [ "$RK_EXTBOOT" = "true" ]; then
+		build_extboot
+	else
+		build_kernel
+	fi
+
 	build_toolchain
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
@@ -1324,6 +1415,8 @@ for option in ${OPTIONS}; do
 		uefi) build_uefi ;;
 		loader) build_loader ;;
 		kernel) build_kernel ;;
+		kerneldeb) build_kerneldeb ;;
+		extboot) build_extboot ;;
 		modules) build_modules ;;
 		rootfs|buildroot|ubuntu|debian|distro|yocto) build_rootfs $option ;;
 		pcba) build_pcba ;;
