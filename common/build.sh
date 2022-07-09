@@ -719,24 +719,26 @@ function build_extboot(){
 	
 	echo -e "\e[36m Generate extLinuxBoot image start\e[0m"
 
+    KERNEL_VERSION=$(cat $TOP_DIR/kernel/include/config/kernel.release)
+
 	EXTBOOT_IMG=${TOP_DIR}/kernel/extboot.img
 	EXTBOOT_DIR=${TOP_DIR}/kernel/extboot
-	rm -rf ${EXTBOOT_DIR} && mkdir -p ${EXTBOOT_DIR}/extlinux
+	EXTBOOT_DTB=${EXTBOOT_DIR}/usr/lib/linux-image-${KERNEL_VERSION}/
 
-    KERNEL_VERSION=$(cat $TOP_DIR/kernel/include/config/kernel.release)
-	echo "label rk-kernel.dtb linux-$KERNEL_VERSION" > $EXTBOOT_DIR/extlinux/extlinux.conf
+	rm -rf $EXTBOOT_DIR
+	mkdir -p $EXTBOOT_DTB/overlay
 
     cp ${TOP_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
-	echo -e "\tkernel /Image-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 
     if [ "$RK_ARCH" == "arm64" ];then
-    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DIR
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DTB
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/*.dtbo $EXTBOOT_DTB/overlay
+		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/uEnv*.txt $EXTBOOT_DIR/
     else
-    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DIR
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DTB
+    	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/overlay/*.dtbo $EXTBOOT_DTB/overlay
     fi
-    cp -f $EXTBOOT_DIR/${RK_KERNEL_DTS}.dtb $EXTBOOT_DIR/rk-kernel.dtb
-
-    echo -e "\tfdt /rk-kernel.dtb" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+    cp -f $EXTBOOT_DTB/${RK_KERNEL_DTS}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
     if [[ -e ${TOP_DIR}/kernel/ramdisk.img ]]; then
         cp ${TOP_DIR}/kernel/ramdisk.img $EXTBOOT_DIR/initrd-$KERNEL_VERSION
