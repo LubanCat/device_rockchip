@@ -733,7 +733,7 @@ function build_extboot(){
     if [ "$RK_ARCH" == "arm64" ];then
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/*.dtbo $EXTBOOT_DTB/overlay
-		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/uEnv*.txt $EXTBOOT_DIR/
+		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/uEnv/uEnv*.txt $EXTBOOT_DIR/
     else
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/overlay/*.dtbo $EXTBOOT_DTB/overlay
@@ -754,14 +754,14 @@ function build_extboot(){
     rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/source
 
     rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
-    # fakeroot mkfs.ext4 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
-	fakeroot mkfs.fat -F 16 -n "boot" $EXTBOOT_IMG
+    fakeroot mkfs.ext4 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
+	# fakeroot mkfs.fat -F 16 -n "boot" $EXTBOOT_IMG
 
-	mkdir -p $EXTBOOT_DIR.tmp
-	sudo mount $EXTBOOT_IMG $EXTBOOT_DIR.tmp
-	sudo cp -rf $EXTBOOT_DIR/* $EXTBOOT_DIR.tmp
-	sudo umount $EXTBOOT_DIR.tmp
-    sudo rm -rf $EXTBOOT_DIR.tmp
+	# mkdir -p $EXTBOOT_DIR.tmp
+	# sudo mount $EXTBOOT_IMG $EXTBOOT_DIR.tmp
+	# sudo cp -rf $EXTBOOT_DIR/* $EXTBOOT_DIR.tmp
+	# sudo umount $EXTBOOT_DIR.tmp
+    # sudo rm -rf $EXTBOOT_DIR.tmp
 
 	finish_build
 }
