@@ -66,5 +66,5 @@ export RK_ROOTFS_SYSTEM=ubuntu
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=debug
-# 定义添加的GPU加速包对应型号
-export RK_ROOTFS_GPU=rk3568
+# 使用exboot内核分区
+export RK_EXTBOOT=true
