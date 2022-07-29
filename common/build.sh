@@ -723,17 +723,18 @@ function build_extboot(){
 
 	EXTBOOT_IMG=${TOP_DIR}/kernel/extboot.img
 	EXTBOOT_DIR=${TOP_DIR}/kernel/extboot
-	EXTBOOT_DTB=${EXTBOOT_DIR}/usr/lib/linux-image-${KERNEL_VERSION}/
+	EXTBOOT_DTB=${EXTBOOT_DIR}/dtb/
 
 	rm -rf $EXTBOOT_DIR
 	mkdir -p $EXTBOOT_DTB/overlay
+	mkdir -p $EXTBOOT_DIR/uEnv
 
     cp ${TOP_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
 
     if [ "$RK_ARCH" == "arm64" ];then
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/*.dtbo $EXTBOOT_DTB/overlay
-		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/uEnv/uEnv*.txt $EXTBOOT_DIR/
+		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
     else
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/overlay/*.dtbo $EXTBOOT_DTB/overlay
@@ -1335,7 +1336,7 @@ function build_allsave(){
 	build_all
 	build_firmware
 	build_updateimg
-	build_save
+	# build_save
 
 	build_check_power_domain
 
