@@ -114,8 +114,7 @@ fi
 
 # build ramdisk
 echo "====Start build $RAMDISK_CFG===="
-$TOP_DIR/buildroot/utils/brmake
-if [ $? -eq 0 ]; then
+if $TOP_DIR/buildroot/utils/brmake; then
     echo "log saved on $TOP_DIR/br.log"
     echo "====Build $RAMDISK_CFG ok!===="
 else
