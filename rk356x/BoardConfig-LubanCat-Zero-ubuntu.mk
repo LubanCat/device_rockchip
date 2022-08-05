@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=lubancat2_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3566-lubancat-zero-w
+export RK_KERNEL_DTS=rk3566-lubancat-zero
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -55,7 +55,7 @@ export RK_OEM_DIR=
 #userdata config
 export RK_USERDATA_DIR=
 #misc image
-export RK_MISC=blank-misc.img
+export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
@@ -63,8 +63,8 @@ export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # 定义默认rootfs为ubuntu
 export RK_ROOTFS_SYSTEM=ubuntu
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	console ：控制台版
-export RK_ROOTFS_TARGET=console
+export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=debug
+export RK_ROOTFS_DEBUG=none
 # 使用exboot内核分区
 export RK_EXTBOOT=true

@@ -19,13 +19,13 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-fit.txt
+export RK_PARAMETER=parameter-ubuntu-fit.txt
 # 分区表对应的打包文件
 export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3568
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk356x_recovery
+export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
@@ -55,7 +55,7 @@ export RK_OEM_DIR=
 #userdata config
 export RK_USERDATA_DIR=
 #misc image
-export RK_MISC=blank-misc.img
+export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
@@ -65,6 +65,6 @@ export RK_ROOTFS_SYSTEM=ubuntu
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	console ：控制台版
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=debug
+export RK_ROOTFS_DEBUG=none
 # 使用exboot内核分区
 export RK_EXTBOOT=true
