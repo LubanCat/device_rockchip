@@ -25,7 +25,7 @@ export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3566
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk356x_recovery
+export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config

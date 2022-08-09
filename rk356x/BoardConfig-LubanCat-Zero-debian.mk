@@ -53,7 +53,7 @@ export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
-export RK_MISC=blank-misc.img
+export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
