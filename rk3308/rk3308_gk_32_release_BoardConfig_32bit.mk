@@ -5,7 +5,7 @@ export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk3308-aarch32
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_debug_defconfig
+export RK_KERNEL_DEFCONFIG=rk3308_linux_aarch32_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk3308-voice-module-board-v11-aarch32
 # boot image type
@@ -35,7 +35,7 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config: /oem/dueros/aispeech-6mic-64bit/aispeech-2mic-64bit/aispeech-4mic-32bit/aispeech-2mic-32bit/aispeech-2mic-kongtiao-32bit/iflytekSDK/CaeDemo_VAD/smart_voice
-export RK_OEM_DIR=oem
+export RK_OEM_DIR=oem_empty
 #userdata config
 export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
