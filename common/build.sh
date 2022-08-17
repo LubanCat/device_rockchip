@@ -748,7 +748,7 @@ function build_extboot(){
 
     cp ${TOP_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
     cp ${TOP_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
-    cp ${TOP_DIR}/kernel/logo.bmp ${TOP_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/ || true
+    cp ${TOP_DIR}/kernel/logo.bmp $EXTBOOT_DIR/
 
     make ARCH=$RK_ARCH INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=$EXTBOOT_DIR modules_install
     rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/build
