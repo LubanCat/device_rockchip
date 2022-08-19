@@ -82,6 +82,7 @@ function fixup_fstab()
     esac
 
     fixup_basic proc /proc
+    fixup_basic devtmpfs /dev
     fixup_basic devpts /dev/pts mode=0620,ptmxmode=0666,gid=5
     fixup_basic tmpfs /dev/shm nosuid,nodev,noexec
     fixup_basic sysfs /sys
