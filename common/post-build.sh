@@ -53,7 +53,7 @@ function fixup_part()
 
     # Dev is either <name> or /dev/.../<name>
     [ "$DEV" ] || return 0
-    echo $DEV | grep -qE "^/" || DEV="PARTLABEL=$DEV"
+    echo $DEV | grep -qE "^/" || DEV="LABEL=$DEV"
 
     MOUNT="$(partition_arg "$*" 2 "/${DEV##*[/=]}")"
     FS_TYPE="$(partition_arg "$*" 3 ext2)"
