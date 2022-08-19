@@ -23,7 +23,20 @@ function fixup_root()
         ${TARGET_DIR}/etc/fstab
 }
 
-partition_arg() {
+function fixup_basic()
+{
+    echo "Fixing up basic partition: $@"
+
+    FS_TYPE="$1"
+    MOUNT_POINT="$2"
+    MOUNT_OPTS="${3:-defaults}"
+
+    sed -i "/[[:space:]]$FS_TYPE[[:space:]]/d" ${TARGET_DIR}/etc/fstab
+    echo -e "${FS_TYPE}\t${MOUNT_POINT}\t${FS_TYPE}\t${MOUNT_OPTS}\t0 0" >> \
+        ${TARGET_DIR}/etc/fstab
+}
+
+function partition_arg() {
     PART="$1"
     I="$2"
     DEFAULT="$3"
@@ -68,13 +81,12 @@ function fixup_fstab()
             ;;
     esac
 
-    sed -i "/[[:space:]]debugfs[[:space:]]/d" ${TARGET_DIR}/etc/fstab
-    echo -e "debugfs\t/sys/kernel/debug\tdebugfs\tdefaults\t0 0" >> \
-        ${TARGET_DIR}/etc/fstab
-
-    sed -i "/[[:space:]]pstore[[:space:]]/d" ${TARGET_DIR}/etc/fstab
-    echo -e "pstore\t/sys/fs/pstore\tpstore\tdefaults\t0 0" >> \
-        ${TARGET_DIR}/etc/fstab
+    fixup_basic proc /proc
+    fixup_basic devpts /dev/pts mode=0620,ptmxmode=0666,gid=5
+    fixup_basic tmpfs /dev/shm nosuid,nodev,noexec
+    fixup_basic sysfs /sys
+    fixup_basic debugfs /sys/kernel/debug
+    fixup_basic pstore /sys/fs/pstore
 
     if echo $TARGET_DIR | grep -qE "_recovery/target/*$"; then
         fixup_part "/dev/sda1:/mnt/udisk:auto:defaults::"
