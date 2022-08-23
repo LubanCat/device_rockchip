@@ -60,7 +60,7 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
-# Set debian version (debian10: buster, debian11: bullseye)
+# Set debian version (debian10: buster)
 export RK_DEBIAN_VERSION=buster
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	base ：控制台版
 export RK_ROOTFS_TARGET=desktop

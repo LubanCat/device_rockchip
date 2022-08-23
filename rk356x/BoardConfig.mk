@@ -1,1 +1,1 @@
-BoardConfig-LubanCat2-buildroot.mk
+BoardConfig-LubanCat2-debian.mk
