@@ -47,3 +47,10 @@ export RK_MISC=wipe_all-misc.img
 export RK_DISTRO_MODULE=
 # loader name
 export RK_LOADER_NAME=*_loader_uart4_v*.bin
+# Define WiFi BT chip
+# # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
+# # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
+# # Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
+export RK_WIFIBT_CHIP=AP6256
+# # Define BT ttySX
+export RK_WIFIBT_TTY=ttyS0

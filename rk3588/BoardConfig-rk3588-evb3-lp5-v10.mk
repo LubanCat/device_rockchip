@@ -59,3 +59,10 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file
 export RK_PACKAGE_FILE=rk3588-package-file
+# Define WiFi BT chip
+# Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
+# Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
+# Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
+export RK_WIFIBT_CHIP=ALL_AP
+# Define BT ttySX
+export RK_WIFIBT_TTY=ttyS8
