@@ -7,11 +7,11 @@ export RK_UBOOT_DEFCONFIG=rk3568
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=lubancat2_defconfig
+export RK_KERNEL_DEFCONFIG=lubancat2_buildroot_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3568-lubancat2
+export RK_KERNEL_DTS=rk3568-lubancat2-n
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -30,12 +30,16 @@ export RK_RECOVERY_FIT_ITS=boot4recovery.its
 export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
-# 构建线程数
+# Build jobs
 export RK_JOBS=24
 # target chip
 export RK_TARGET_PRODUCT=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
+# Set debian version (debian10: buster, debian11: bullseye)
+export RK_DEBIAN_VERSION=buster
+# Set ubuntu version (ubuntu18: bionic, ubuntu20: )
+export RK_UBUNTU_VERSION=bionic
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # rootfs image path
@@ -58,11 +62,3 @@ export RK_MISC=wipe_all-misc.img
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# 定义默认rootfs为 debian
-export RK_ROOTFS_SYSTEM=debian
-# 设置 debian 版本 (debian10: buster)
-export RK_DEBIAN_VERSION=buster
-# 定义默认rootfs是否为桌面版  desktop :桌面版 	base ：控制台版
-export RK_ROOTFS_TARGET=base
-# 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=debug
