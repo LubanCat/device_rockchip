@@ -1,10 +1,11 @@
 #!/bin/bash -e
 
-TARGET_DIR=$1
+TARGET_DIR=$(realpath $1)
 shift
 
 FSTAB="${TARGET_DIR}/etc/fstab"
 OS_RELEASE="${TARGET_DIR}/etc/os-release"
+INFO_DIR="${TARGET_DIR}/info"
 
 RK_LEGACY_PARTITIONS=" \
     ${RK_OEM_FS_TYPE:+oem:/oem:${RK_OEM_FS_TYPE}}
@@ -117,13 +118,57 @@ function fixup_fstab()
     done
 }
 
+function fixup_os_release()
+{
+    KEY=$1
+    shift
+
+    sed -i "/^$KEY=/d" "$OS_RELEASE"
+    echo "$KEY=\"$@\"" >> "$OS_RELEASE"
+}
+
+function kernel_version(){
+	VERSION_KEYS="VERSION PATCHLEVEL"
+	VERSION=""
+
+	for k in $VERSION_KEYS; do
+		v=$(grep "^$k = " $1/Makefile | cut -d' ' -f3)
+		VERSION=${VERSION:+${VERSION}.}$v
+	done
+	echo ${VERSION:-unknown}
+}
+
 function add_build_info()
 {
-    [ -f "$OS_RELEASE" ] && sed -i "/^BUILD_ID=/d" "$OS_RELEASE"
+    [ -f "$OS_RELEASE" ] || touch "$OS_RELEASE"
 
-    echo "Adding build-info to /etc/os-release..."
-    echo "BUILD_INFO=\"$(whoami)@$(hostname) $(date)${@:+ - $@}\"" >> \
-        "$OS_RELEASE"
+    echo "Adding information to /etc/os-release..."
+
+    KVER=$(kernel_version kernel/)
+
+    fixup_os_release BUILD_INFO "$(whoami)@$(hostname) $(date)${@:+ - $@}"
+    fixup_os_release KERNEL "$KVER - ${RK_KERNEL_DEFCONFIG:-unkown}"
+
+    mkdir -p "$INFO_DIR"
+
+    .repo/repo/repo manifest -r -o "$INFO_DIR"/manifest.xml
+
+    cp device/rockchip/.BoardConfig.mk "$INFO_DIR"/BoardConfig.xml
+
+    cp kernel/.config "$INFO_DIR"/config-$KVER
+    cp kernel/System.map "$INFO_DIR"/System.map-$KVER
+
+    EXTRA_FILES=" \
+    /etc/os-release /etc/fstab /var/log /tmp/mountall.log \
+    /proc/version /proc/cmdline /proc/kallsyms /proc/interrupts /proc/cpuinfo \
+    /proc/softirqs /proc/device-tree /proc/diskstats /proc/iomem \
+    /proc/meminfo /proc/partitions /proc/slabinfo \
+    /proc/rk_dmabuf /proc/rkcif-mipi-lvds /proc/rkisp0-vir0 \
+    /sys/kernel/debug/wakeup_sources /sys/kernel/debug/clk/clk_summary \
+    /sys/kernel/debug/gpio /sys/kernel/debug/pinctrl/ \
+    /sys/kernel/debug/dma_buf /sys/kernel/debug/dri \
+    "
+    ln -sf $EXTRA_FILES "$INFO_DIR"/
 }
 
 function add_dirs_and_links()
@@ -142,6 +187,13 @@ function add_dirs_and_links()
 }
 
 echo "Executing $(basename $0)..."
+
+SCRIPT_PATH=$(realpath ${BASH_SOURCE})
+SCRIPT_DIR=$(dirname ${SCRIPT_PATH})
+TOP_DIR=${SCRIPT_DIR}/../../..
+echo Top of tree: ${TOP_DIR}
+
+cd ${TOP_DIR:-.}
 
 add_build_info $@
 [ -f "$FSTAB" ] && fixup_fstab
