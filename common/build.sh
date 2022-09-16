@@ -362,7 +362,7 @@ function build_info(){
 	cd kernel
 	make ARCH=$RK_ARCH dtbs -j$RK_JOBS
 
-	build_check_power_domain
+	# build_check_power_domain
 }
 
 function build_check_power_domain(){
@@ -676,7 +676,7 @@ function build_kernel(){
 			$TOP_DIR/u-boot/boot.img
 	fi
 
-	build_check_power_domain
+	# build_check_power_domain
 
 	finish_build
 }
@@ -1304,9 +1304,17 @@ function build_sdcard_package(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
-	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+	DATE=$(date  +%Y%m%d)
+
+	if [ "${RK_ROOTFS_SYSTEM}" != "buildroot" ];then
+		ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$RK_DEBIAN_VERSION"_"$DATE"
+	else
+		ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$DATE"
+	fi
+
+	ZIP_NAME="$(echo $ZIP_NAME | tr '[:lower:]' '[:upper:]')"
+	
+	STUB_PATH=IMAGE/$ZIP_NAME
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
@@ -1323,6 +1331,11 @@ function build_save(){
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
+	cd $STUB_PATH/IMAGES/
+	mv update.img  ${ZIP_NAME}_Update.img
+	zip -o ../${ZIP_NAME}_Update.zip ${ZIP_NAME}_Update.img
+	cd -
+
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
 	echo "KERNEL: defconfig: $RK_KERNEL_DEFCONFIG, dts: $RK_KERNEL_DTS" >> $STUB_PATH/build_cmd_info
@@ -1338,7 +1351,7 @@ function build_allsave(){
 	build_updateimg
 	# build_save
 
-	build_check_power_domain
+	# build_check_power_domain
 
 	finish_build
 }
