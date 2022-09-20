@@ -47,6 +47,13 @@ export RK_DISTRO_MODULE=
 export RK_PACKAGE_FILE_AB=
 # Define package-file for ota update_ota.img
 export RK_PACKAGE_FILE_OTA=
+# Define WiFi BT chip
+# # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
+# # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
+# # Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
+export RK_WIFIBT_CHIP=AP6255
+# # Define BT ttySX
+export RK_WIFIBT_TTY=ttyS0
 
 ##########################################################
 ### enable build update_sdcard.img
