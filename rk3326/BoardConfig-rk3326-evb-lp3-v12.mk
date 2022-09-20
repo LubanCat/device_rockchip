@@ -57,6 +57,6 @@ export RK_DISTRO_MODULE=
 # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
 # Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
-export RK_WIFIBT_CHIP=ALL_AP
+export RK_WIFIBT_CHIP=AP6212A1
 # Define BT ttySX
 export RK_WIFIBT_TTY=ttyS1
