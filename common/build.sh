@@ -911,7 +911,11 @@ function build_debian(){
 	esac
 
 	echo "=========Start building debian for $ARCH========="
-	echo "==== RK_DEBIAN_VERSION: $RK_DEBIAN_VERSION   ARCH: $ARCH ===="
+	echo "RK_DEBIAN_VERSION: $RK_DEBIAN_VERSION"
+	echo "RK_ROOTFS_TARGET: $RK_ROOTFS_TARGET"
+	echo "RK_ROOTFS_DEBUG: $RK_ROOTFS_DEBUG"
+	echo " "
+
 	cd debian
 
 	if [ ! -e linaro-rootfs.img ]; then
@@ -1307,7 +1311,11 @@ function build_save(){
 	DATE=$(date  +%Y%m%d)
 
 	if [ "${RK_ROOTFS_SYSTEM}" != "buildroot" ];then
-		ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$RK_DEBIAN_VERSION"_"$DATE"
+		if [ "${RK_ROOTFS_SYSTEM}" != "debian" ];then
+			ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM""$RK_UBUNTU_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE"
+		else
+			ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$RK_DEBIAN_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE"
+		fi
 	else
 		ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$DATE"
 	fi
