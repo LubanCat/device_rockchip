@@ -9,7 +9,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rk3588_linux.config
 # Kernel dts
 export RK_KERNEL_DTS=rk3588-evb7-lp4-v10-linux
 # boot image type
