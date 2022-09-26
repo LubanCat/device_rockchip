@@ -6,6 +6,7 @@ shift
 FSTAB="${TARGET_DIR}/etc/fstab"
 OS_RELEASE="${TARGET_DIR}/etc/os-release"
 INFO_DIR="${TARGET_DIR}/info"
+REBOOT_WRAPPER=busybox-reboot
 
 RK_LEGACY_PARTITIONS=" \
     ${RK_OEM_FS_TYPE:+oem:/oem:${RK_OEM_FS_TYPE}}
@@ -91,6 +92,8 @@ function fixup_fstab()
 {
     echo "Fixing up /etc/fstab..."
 
+    [ -f "$FSTAB" ] || return 0
+
     case "${RK_ROOTFS_TYPE}" in
         ext[234])
             fixup_root ${RK_ROOTFS_TYPE}
@@ -171,6 +174,21 @@ function add_build_info()
     ln -sf $EXTRA_FILES "$INFO_DIR"/
 }
 
+function fixup_reboot()
+{
+    echo "Fixup busybox reboot commands..."
+
+    cd "$TARGET_DIR"
+
+    echo $(realpath sbin/reboot) | grep -q busybox$ || return 0
+
+    install -D -m 0755 $SCRIPT_DIR/data/$REBOOT_WRAPPER sbin/$REBOOT_WRAPPER
+
+    for cmd in halt reboot poweroff shutdown; do
+        ln -sf $REBOOT_WRAPPER sbin/$cmd
+    done
+}
+
 function add_dirs_and_links()
 {
     echo "Adding dirs and links..."
@@ -196,7 +214,8 @@ echo Top of tree: ${TOP_DIR}
 cd ${TOP_DIR:-.}
 
 add_build_info $@
-[ -f "$FSTAB" ] && fixup_fstab
+fixup_fstab
+fixup_reboot
 add_dirs_and_links
 
 exit 0
