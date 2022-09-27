@@ -924,12 +924,10 @@ function build_wifibt(){
 	rm -rf $TARGET_ROOTFS_DIR/system/lib/modules/
 	rm -rf $TARGET_ROOTFS_DIR/system/etc/firmware/
 	rm -rf $TARGET_ROOTFS_DIR/vendor/
-	rm -rf $TARGET_ROOTFS_DIR/lib/firmware/
         rm -rf $TARGET_ROOTFS_DIR/usr/lib/modules/
         mkdir -p $TARGET_ROOTFS_DIR/usr/lib/modules/
 	mkdir -p $TARGET_ROOTFS_DIR/system/lib/modules/
 	mkdir -p $TARGET_ROOTFS_DIR/system/etc/firmware/
-	mkdir -p $TARGET_ROOTFS_DIR/lib/firmware/
 	mkdir -p $TARGET_ROOTFS_DIR/lib/firmware/rtlbt/
 
 	echo "create link system->vendor"
