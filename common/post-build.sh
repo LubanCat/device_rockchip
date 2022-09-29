@@ -1,23 +1,33 @@
 #!/bin/bash -e
 
-TARGET_DIR=$(realpath $1)
+echo "Executing $(basename "$0")..."
+
+SCRIPT_PATH=$(realpath "$BASH_SOURCE")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+TOP_DIR="$SCRIPT_DIR/../../.."
+echo "Top of tree: $TOP_DIR"
+
+TARGET_DIR=$(realpath "$1")
 shift
 
-FSTAB="${TARGET_DIR}/etc/fstab"
-OS_RELEASE="${TARGET_DIR}/etc/os-release"
-INFO_DIR="${TARGET_DIR}/info"
+FSTAB="$TARGET_DIR/etc/fstab"
+OS_RELEASE="$TARGET_DIR/etc/os-release"
+
+# The repo tool might not work when path is too long.
+INFO_DIR=$(realpath --relative-base="$TOP_DIR" "$TARGET_DIR/info")
+
 REBOOT_WRAPPER=busybox-reboot
 
 RK_LEGACY_PARTITIONS=" \
-    ${RK_OEM_FS_TYPE:+oem:/oem:${RK_OEM_FS_TYPE}}
-    ${RK_USERDATA_FS_TYPE:+userdata:/userdata:${RK_USERDATA_FS_TYPE}}
+    ${RK_OEM_FS_TYPE:+oem:/oem:$RK_OEM_FS_TYPE}
+    ${RK_USERDATA_FS_TYPE:+userdata:/userdata:$RK_USERDATA_FS_TYPE}
 "
 
 # <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
 # for example:
 # RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal:256M:fixed
 # userdata:/userdata:vfat:errors=remount-ro:userdata_empty:auto"
-RK_EXTRA_PARTITIONS=${RK_EXTRA_PARTITIONS:-${RK_LEGACY_PARTITIONS}}
+RK_EXTRA_PARTITIONS="${RK_EXTRA_PARTITIONS:-$RK_LEGACY_PARTITIONS}"
 
 function fixup_root()
 {
@@ -46,9 +56,9 @@ function fixup_part()
     fi
 
     # Append new entry
-    echo -e "${SRC}\t${MOUNT}\t${FS_TYPE}\t${MOUNT_OPTS}\t0 $PASS" >> "$FSTAB"
+    echo -e "$SRC\t$MOUNT\t$FS_TYPE\t$MOUNT_OPTS\t0 $PASS" >> "$FSTAB"
 
-    mkdir -p "${TARGET_DIR}/${MOUNT}"
+    mkdir -p "$TARGET_DIR/$MOUNT"
 }
 
 function fixup_basic_part()
@@ -90,13 +100,15 @@ function fixup_device_part()
 
 function fixup_fstab()
 {
-    echo "Fixing up /etc/fstab..."
-
     [ -f "$FSTAB" ] || return 0
 
-    case "${RK_ROOTFS_TYPE}" in
+    echo "Fixing up /etc/fstab..."
+
+    cd "$TARGET_DIR"
+
+    case "$RK_ROOTFS_TYPE" in
         ext[234])
-            fixup_root ${RK_ROOTFS_TYPE}
+            fixup_root "$RK_ROOTFS_TYPE"
             ;;
         *)
             fixup_root auto
@@ -111,9 +123,9 @@ function fixup_fstab()
     fixup_basic_part debugfs /sys/kernel/debug
     fixup_basic_part pstore /sys/fs/pstore
 
-    if echo $TARGET_DIR | grep -qE "_recovery/target/*$"; then
-        fixup_device_part "/dev/sda1:/mnt/udisk:auto:defaults::"
-        fixup_device_part "/dev/mmcblk1p1:/mnt/sdcard:auto:defaults::"
+    if echo "$TARGET_DIR" | grep -qE "_recovery/target/*$"; then
+        fixup_device_part /dev/sda1:/mnt/udisk:auto:defaults::
+        fixup_device_part /dev/mmcblk1p1:/mnt/sdcard:auto:defaults::
     fi
 
     for part in ${RK_EXTRA_PARTITIONS//@/ }; do
@@ -131,14 +143,14 @@ function fixup_os_release()
 }
 
 function kernel_version(){
-	VERSION_KEYS="VERSION PATCHLEVEL"
-	VERSION=""
+    VERSION_KEYS="VERSION PATCHLEVEL"
+    VERSION=""
 
-	for k in $VERSION_KEYS; do
-		v=$(grep "^$k = " $1/Makefile | cut -d' ' -f3)
-		VERSION=${VERSION:+${VERSION}.}$v
-	done
-	echo ${VERSION:-unknown}
+    for k in $VERSION_KEYS; do
+        v=$(grep "^$k = " $1/Makefile | cut -d' ' -f3)
+        VERSION=${VERSION:+$VERSION.}$v
+    done
+    echo ${VERSION:-unknown}
 }
 
 function add_build_info()
@@ -147,6 +159,8 @@ function add_build_info()
 
     echo "Adding information to /etc/os-release..."
 
+    cd "$TOP_DIR"
+
     KVER=$(kernel_version kernel/)
 
     fixup_os_release BUILD_INFO "$(whoami)@$(hostname) $(date)${@:+ - $@}"
@@ -154,12 +168,12 @@ function add_build_info()
 
     mkdir -p "$INFO_DIR"
 
-    python3 .repo/repo/repo manifest -r -o "$INFO_DIR"/manifest.xml
+    python3 .repo/repo/repo manifest -r -o "$INFO_DIR/manifest.xml"
 
-    cp device/rockchip/.BoardConfig.mk "$INFO_DIR"/BoardConfig.xml
+    cp device/rockchip/.BoardConfig.mk "$INFO_DIR/BoardConfig.xml"
 
-    cp kernel/.config "$INFO_DIR"/config-$KVER
-    cp kernel/System.map "$INFO_DIR"/System.map-$KVER
+    cp kernel/.config "$INFO_DIR/config-$KVER"
+    cp kernel/System.map "$INFO_DIR/System.map-$KVER"
 
     EXTRA_FILES=" \
     /etc/os-release /etc/fstab /var/log /tmp/mountall.log \
@@ -171,7 +185,7 @@ function add_build_info()
     /sys/kernel/debug/gpio /sys/kernel/debug/pinctrl/ \
     /sys/kernel/debug/dma_buf /sys/kernel/debug/dri \
     "
-    ln -sf $EXTRA_FILES "$INFO_DIR"/
+    ln -sf $EXTRA_FILES "$INFO_DIR/"
 }
 
 function fixup_reboot()
@@ -180,9 +194,9 @@ function fixup_reboot()
 
     cd "$TARGET_DIR"
 
-    echo $(realpath sbin/reboot) | grep -q busybox$ || return 0
+    echo "$(realpath sbin/reboot)" | grep -q "busybox$" || return 0
 
-    install -D -m 0755 $SCRIPT_DIR/data/$REBOOT_WRAPPER sbin/$REBOOT_WRAPPER
+    install -D -m 0755 "$SCRIPT_DIR/data/$REBOOT_WRAPPER" sbin/$REBOOT_WRAPPER
 
     for cmd in halt reboot poweroff shutdown; do
         ln -sf $REBOOT_WRAPPER sbin/$cmd
@@ -203,15 +217,6 @@ function add_dirs_and_links()
     ln -sf mnt/sdcard sdcard
     ln -sf userdata data
 }
-
-echo "Executing $(basename $0)..."
-
-SCRIPT_PATH=$(realpath ${BASH_SOURCE})
-SCRIPT_DIR=$(dirname ${SCRIPT_PATH})
-TOP_DIR=${SCRIPT_DIR}/../../..
-echo Top of tree: ${TOP_DIR}
-
-cd ${TOP_DIR:-.}
 
 add_build_info $@
 fixup_fstab
