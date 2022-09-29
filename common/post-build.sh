@@ -87,9 +87,9 @@ function fixup_device_part()
 
     DEV="$(partition_arg "$*" 1)"
 
-    # Dev is either <name> or /dev/.../<name>
+    # Dev is either <name> or /dev/.../<name> or <UUID|LABEL|PARTLABEL>=xxx
     [ "$DEV" ] || return 0
-    echo $DEV | grep -qE "^/" || DEV="LABEL=$DEV"
+    echo $DEV | grep -qE "^/|=" || DEV="LABEL=$DEV"
 
     MOUNT="$(partition_arg "$*" 2 "/${DEV##*[/=]}")"
     FS_TYPE="$(partition_arg "$*" 3 ext2)"
