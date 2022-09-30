@@ -196,7 +196,7 @@ function fixup_reboot()
 
     cd "$TARGET_DIR"
 
-    echo "$(realpath sbin/reboot)" | grep -q "busybox$" || return 0
+    [ $(readlink sbin/reboot) = busybox ] || return 0
 
     install -D -m 0755 "$SCRIPT_DIR/data/$REBOOT_WRAPPER" sbin/$REBOOT_WRAPPER
 
