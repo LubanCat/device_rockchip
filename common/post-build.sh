@@ -122,6 +122,7 @@ function fixup_fstab()
     fixup_basic_part devpts /dev/pts mode=0620,ptmxmode=0666,gid=5
     fixup_basic_part tmpfs /dev/shm nosuid,nodev,noexec
     fixup_basic_part sysfs /sys
+    fixup_basic_part configfs /sys/kernel/config
     fixup_basic_part debugfs /sys/kernel/debug
     fixup_basic_part pstore /sys/fs/pstore
 
