@@ -178,7 +178,9 @@ function add_build_info()
     cp kernel/System.map "$INFO_DIR/System.map-$KVER"
 
     EXTRA_FILES=" \
-    /etc/os-release /etc/fstab /var/log /tmp/mountall.log \
+    /etc/os-release /etc/fstab /var/log \
+    /tmp/usbdevice.log /tmp/bootanim.log \
+    /tmp/resize-all.log /tmp/mount-all.log \
     /proc/version /proc/cmdline /proc/kallsyms /proc/interrupts /proc/cpuinfo \
     /proc/softirqs /proc/device-tree /proc/diskstats /proc/iomem \
     /proc/meminfo /proc/partitions /proc/slabinfo \
