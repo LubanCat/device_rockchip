@@ -171,7 +171,7 @@ function add_build_info()
 
     mkdir -p "$INFO_DIR"
 
-    python3 .repo/repo/repo manifest -r -o "$INFO_DIR/manifest.xml"
+    yes | python3 .repo/repo/repo manifest -r -o "$INFO_DIR/manifest.xml"
 
     cp device/rockchip/.BoardConfig.mk "$INFO_DIR/BoardConfig.xml"
 

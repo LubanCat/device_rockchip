@@ -1587,7 +1587,7 @@ function build_save(){
 		"$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+	yes | .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
