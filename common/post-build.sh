@@ -41,7 +41,7 @@ function fixup_root()
 
 function fixup_part()
 {
-    echo "Fixing up partition: ${@//: }"
+    echo "Fixing up partition: ${@//:/ }"
 
     SRC="$1"
     MOUNT="$2"
@@ -85,7 +85,7 @@ function partition_arg() {
 
 function fixup_device_part()
 {
-    echo "Fixing up device partition: ${@//: }"
+    echo "Fixing up device partition: ${@//:/ }"
 
     DEV="$(partition_arg "$*" 1)"
 
