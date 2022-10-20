@@ -50,3 +50,10 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-emmc-tb
+# Define WiFi BT chip
+# Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
+# Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
+# Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
+export RK_WIFIBT_CHIP=AP6256
+# Define BT ttySX
+export RK_WIFIBT_TTY=ttyS0

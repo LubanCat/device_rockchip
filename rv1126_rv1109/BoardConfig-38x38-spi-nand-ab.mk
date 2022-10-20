@@ -92,3 +92,10 @@ export RK_UPDATE_SDCARD_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
 ### Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 ##########################################################
+# Define WiFi BT chip
+# Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
+# Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
+# Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
+export RK_WIFIBT_CHIP=ALL_AP
+# Define BT ttySX
+export RK_WIFIBT_TTY=ttyS0
