@@ -451,10 +451,16 @@ function build_check_cross_compile(){
 
 	case $RK_ARCH in
 	arm|armhf)
-		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
-			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
-		export CROSS_COMPILE=$CROSS_COMPILE
+		if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
+			if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf" ]; then
+				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin/arm-rockchip830-linux-gnueabihf-
+			fi
+		else
+			if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
+				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
+			fi
 		fi
+		export CROSS_COMPILE=$CROSS_COMPILE
 		;;
 	arm64|aarch64)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
@@ -920,8 +926,12 @@ function build_wifibt(){
 		make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_usb_driver ARCH=$WIFI_ARCH CROSS_COMPILE=$CROSS_COMPILE
 	fi
 
-	echo "building rkwifibt-app"
-	make -C $RKWIFIBT_APP CC=$RKWIFIBT_APP_GCC SYSROOT=$RKWIFIBT_APP_SYSROOT ARCH=$RK_ARCH
+	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
+		echo "target is rv1126_rv1109, skip $RKWIFIBT_APP"
+	else
+		echo "building rkwifibt-app"
+		make -C $RKWIFIBT_APP CC=$RKWIFIBT_APP_GCC SYSROOT=$RKWIFIBT_APP_SYSROOT ARCH=$RK_ARCH
+	fi
 
 	echo "chmod +x tools"
 	chmod 755 $RKWIFIBT/tools/brcm_tools/brcm_patchram_plus1
