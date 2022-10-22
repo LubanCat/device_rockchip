@@ -291,12 +291,12 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build buildroot as default"
+	echo "rootfs             -build rootfs (default is buildroot)"
 	echo "buildroot          -build buildroot rootfs"
-	echo "ramboot            -build ramboot image"
-	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
 	echo "debian             -build debian rootfs"
+	echo "ramboot            -build ramboot image"
+	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -943,8 +943,8 @@ function build_wifibt(){
 	rm -rf $TARGET_ROOTFS_DIR/system/lib/modules/
 	rm -rf $TARGET_ROOTFS_DIR/system/etc/firmware/
 	rm -rf $TARGET_ROOTFS_DIR/vendor/
-        rm -rf $TARGET_ROOTFS_DIR/usr/lib/modules/
-        mkdir -p $TARGET_ROOTFS_DIR/usr/lib/modules/
+	rm -rf $TARGET_ROOTFS_DIR/usr/lib/modules/
+	mkdir -p $TARGET_ROOTFS_DIR/usr/lib/modules/
 	mkdir -p $TARGET_ROOTFS_DIR/system/lib/modules/
 	mkdir -p $TARGET_ROOTFS_DIR/system/etc/firmware/
 	mkdir -p $TARGET_ROOTFS_DIR/lib/firmware/rtlbt/
@@ -1224,14 +1224,16 @@ function build_debian(){
 function build_rootfs(){
 	check_config RK_ROOTFS_IMG || return 0
 
+	ROOTFS=${1:-${RK_ROOTFS_SYSTEM:-buildroot}}
+
 	RK_ROOTFS_DIR=.rootfs
 	ROOTFS_IMG=${RK_ROOTFS_IMG##*/}
 
 	rm -rf $RK_ROOTFS_IMG $RK_ROOTFS_DIR
 	mkdir -p ${RK_ROOTFS_IMG%/*} $RK_ROOTFS_DIR
-	echo "rootfs dir $RK_ROOTFS_DIR"
+	echo "$ROOTFS rootfs dir: $RK_ROOTFS_DIR"
 
-	case "$1" in
+	case "$ROOTFS" in
 		yocto)
 			build_yocto
 			ln -rsf yocto/build/latest/rootfs.img \
@@ -1242,14 +1244,18 @@ function build_rootfs(){
 			ln -rsf debian/linaro-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
-		*)
+		buildroot)
 			build_buildroot
 			build_wifibt
-                        #fixed requires second compilation issue
+			#fixed requires second compilation issue
 			build_buildroot
 			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
 				ln -rsf $f $RK_ROOTFS_DIR/
 			done
+			;;
+		*)
+			echo "$ROOTFS not supported!"
+			exit 1
 			;;
 	esac
 
@@ -1440,7 +1446,7 @@ function build_all(){
 	build_loader
 	build_kernel
 	build_toolchain
-	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
+	build_rootfs
 	build_recovery
 	build_ramboot
 
@@ -1703,7 +1709,8 @@ for option in ${OPTIONS}; do
 			build_wifibt $2 $3
 			exit 1 ;;
 		modules) build_modules ;;
-		rootfs|buildroot|debian|yocto) build_rootfs $option ;;
+		buildroot|debian|yocto) build_rootfs $option ;;
+		rootfs) build_rootfs ;;
 		pcba) build_pcba ;;
 		ramboot) build_ramboot ;;
 		recovery) build_recovery ;;
