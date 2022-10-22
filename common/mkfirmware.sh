@@ -14,18 +14,6 @@ cd $TOP_DIR
 DEV_DIR="$TOP_DIR/device/rockchip"
 OUT_DIR="$TOP_DIR/buildroot/output"
 IMG_DIR="$OUT_DIR/$RK_CFG_BUILDROOT/images"
-
-function unset_board_config_all()
-{
-    local tmp_file=`mktemp`
-    grep -o "^export.*RK_.*=" `find $DEV_DIR -name "Board*.mk" -type f` -h \
-        | sort | uniq > $tmp_file
-    source $tmp_file
-    rm -f $tmp_file
-}
-unset_board_config_all
-
-source $DEV_DIR/.BoardConfig.mk
 ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$DEV_DIR/$RK_TARGET_PRODUCT/$RK_PARAMETER
 MISC_IMG=$DEV_DIR/rockimg/$RK_MISC
@@ -55,17 +43,6 @@ fatal() {
 }
 
 mkdir -p $ROCKDEV
-
-# Require buildroot host tools to do image packing.
-if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
-    message "Source buildroot/build/envsetup.sh"
-    if [ "${RK_CFG_RAMBOOT}" ];then
-        source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RAMBOOT
-    fi
-    if [ "${RK_CFG_BUILDROOT}" ];then
-        source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
-    fi
-fi
 
 # Parse size limit from parameter.txt, 0 means unlimited or not exists.
 partition_size_kb() {
