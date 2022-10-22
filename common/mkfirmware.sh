@@ -13,17 +13,17 @@ cd $TOP_DIR
 
 DEV_DIR="$TOP_DIR/device/rockchip"
 OUT_DIR="$TOP_DIR/buildroot/output"
-IMG_DIR="$OUT_DIR/$RK_CFG_BUILDROOT/images"
+BUILDROOT_DIR="$OUT_DIR/$RK_CFG_BUILDROOT/images"
 ROCKDEV=$TOP_DIR/rockdev
 PARAMETER=$DEV_DIR/$RK_TARGET_PRODUCT/$RK_PARAMETER
 MISC_IMG=$DEV_DIR/rockimg/$RK_MISC
+
+ROOTFS_IMG=$RK_ROOTFS_IMG
 if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
-	ROOTFS_IMG=$IMG_DIR/security-system.img
-else
-	ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
+	ROOTFS_IMG_FALLBACK=$ROOTFS_IMG
+	ROOTFS_IMG=$BUILDROOT_DIR/security-system.img
 fi
 
-ROOTFS_IMG_SOURCE=$IMG_DIR/rootfs.$RK_ROOTFS_TYPE
 RAMBOOT_IMG=$OUT_DIR/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$OUT_DIR/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
@@ -247,10 +247,10 @@ link_image_optional "$LOADER" MiniLoaderAll.bin "$SPL"
     link_image_optional "$DEV_DIR/rockimg/misc.img" misc.img "$MISC_IMG"
 
 [ "$RK_ROOTFS_IMG" ] && \
-    link_image_optional "$ROOTFS_IMG" rootfs.img "$ROOTFS_IMG_SOURCE"
+    link_image_optional "$ROOTFS_IMG" rootfs.img "$ROOTFS_IMG_FALLBACK"
 
 [ "${RK_OEM_BUILDIN_BUILDROOT}" = "YES" ] && \
-    link_image_optional "$IMG_DIR/oem.img" oem.img
+    link_image_optional "$BUILDROOT_DIR/oem.img" oem.img
 
 if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ]; then
     for part in boot recovery rootfs;do
