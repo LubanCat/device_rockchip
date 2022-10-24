@@ -693,6 +693,10 @@ function build_kerneldeb(){
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=========================================="
 	pwd
+
+	rm -f linux-*.buildinfo linux-*.changes
+	rm -f linux-headers-*.deb linux-image-*.deb linux-libc-dev*.deb
+
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
 	make ARCH=$RK_ARCH bindeb-pkg RK_KERNEL_DTS=$RK_KERNEL_DTS -j$RK_JOBS
@@ -728,6 +732,7 @@ function build_extboot(){
 	rm -rf $EXTBOOT_DIR
 	mkdir -p $EXTBOOT_DTB/overlay
 	mkdir -p $EXTBOOT_DIR/uEnv
+	mkdir -p $EXTBOOT_DIR/kerneldeb
 
     cp ${TOP_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
 
@@ -750,9 +755,12 @@ function build_extboot(){
     cp ${TOP_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
     cp ${TOP_DIR}/kernel/logo.bmp $EXTBOOT_DIR/
 
-    make ARCH=$RK_ARCH INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=$EXTBOOT_DIR modules_install
-    rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/build
-    rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/source
+    cp ${TOP_DIR}/linux-headers-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
+    cp ${TOP_DIR}/linux-image-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
+
+    # make ARCH=$RK_ARCH INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=$EXTBOOT_DIR modules_install
+    # rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/build
+    # rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/source
 
     rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
     fakeroot mkfs.ext4 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
@@ -1156,6 +1164,7 @@ function build_all(){
 	build_loader
 
 	if [ "$RK_EXTBOOT" = "true" ]; then
+		build_kerneldeb
 		build_extboot
 	else
 		build_kernel
