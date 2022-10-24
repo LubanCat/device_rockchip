@@ -15,7 +15,7 @@ export RK_KERNEL_DTS=rk3568-evb1-ddr4-v10-linux-spi-nor
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
+export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image.lz4
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=zboot.its
 # parameter for GPT table
@@ -40,8 +40,6 @@ export RK_ROOTFS_TYPE=squashfs
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs

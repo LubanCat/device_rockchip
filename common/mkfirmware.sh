@@ -2,36 +2,14 @@
 
 set -e
 
-if ! which fakeroot; then
+if ! which fakeroot &>/dev/null; then
     echo "fakeroot not found! (sudo apt-get install fakeroot)"
     exit -1
 fi
 
-SCRIPT_DIR=$(dirname $(realpath $BASH_SOURCE))
-TOP_DIR=$(realpath $SCRIPT_DIR/../../..)
-cd $TOP_DIR
-
-DEV_DIR="$TOP_DIR/device/rockchip"
-OUT_DIR="$TOP_DIR/buildroot/output"
-BUILDROOT_DIR="$OUT_DIR/$RK_CFG_BUILDROOT/images"
-ROCKDEV=$TOP_DIR/rockdev
-PARAMETER=$DEV_DIR/$RK_TARGET_PRODUCT/$RK_PARAMETER
-MISC_IMG=$DEV_DIR/rockimg/$RK_MISC
-
-ROOTFS_IMG=$RK_ROOTFS_IMG
-if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
-	ROOTFS_IMG_FALLBACK=$ROOTFS_IMG
-	ROOTFS_IMG=$BUILDROOT_DIR/security-system.img
-fi
-
-RAMBOOT_IMG=$OUT_DIR/$RK_CFG_RAMBOOT/images/ramboot.img
-RECOVERY_IMG=$OUT_DIR/$RK_CFG_RECOVERY/images/recovery.img
-TRUST_IMG=$TOP_DIR/u-boot/trust.img
-UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
-BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
-LOADER=$(echo $TOP_DIR/u-boot/*_loader_*v*.bin | head -1)
-SPL=$(echo $TOP_DIR/u-boot/*_loader_spl.bin | head -1)
-MKIMAGE=$SCRIPT_DIR/mk-image.sh
+PARAMETER=device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
+MISC_IMG=device/rockchip/rockimg/${RK_MISC:-blank-misc.img}
+MKIMAGE=device/rockchip/common/mk-image.sh
 
 message() {
     echo -e "\e[36m $@ \e[0m"
@@ -42,7 +20,7 @@ fatal() {
     exit -1
 }
 
-mkdir -p $ROCKDEV
+mkdir -p rockdev
 
 # Parse size limit from parameter.txt, 0 means unlimited or not exists.
 partition_size_kb() {
@@ -52,21 +30,6 @@ partition_size_kb() {
     echo $(( ${PART_SIZE:-0} / 2 ))
 }
 
-# Assert the image's size smaller than parameter.txt's limit
-assert_size() {
-    PART_NAME="$1"
-    IMG="$2"
-
-    PART_SIZE=$(partition_size_kb $PART_NAME)
-    [ "$PART_SIZE" -gt 0 ] || return 0
-
-    IMG_SIZE=$(stat -c "%s" "$IMG")
-
-    if [ $PART_SIZE -lt $(( $IMG_SIZE / 1024 )) ]; then
-        fatal "error: $IMG's size exceed parameter.txt's limit!"
-    fi
-}
-
 link_image() {
     SRC="$1"
     DST="$2"
@@ -74,17 +37,17 @@ link_image() {
 
     message "Linking $DST from $SRC..."
 
-    if [ ! -e "$SRC" ]; then
-        if [ -e "$FALLBACK" ]; then
+    if [ ! -f "$SRC" ]; then
+        if [ -f "$FALLBACK" ]; then
             SRC="$FALLBACK"
             message "Fallback to $SRC"
         else
             message "warning: $SRC not found!"
+            return 1
         fi
     fi
 
-    ln -rsf "$SRC" "$ROCKDEV/$DST"
-    assert_size "${DST%.img}" "$SRC"
+    ln -rsf "$SRC" "rockdev/$DST"
 
     message "Done linking $DST"
 }
@@ -101,7 +64,7 @@ pack_image() {
     LABEL="$5"
     EXTRA_CMD="$6"
 
-    FAKEROOT_SCRIPT="$ROCKDEV/${DST%.img}.fs"
+    FAKEROOT_SCRIPT="rockdev/${DST%.img}.fs"
 
     message "Packing $DST from $SRC..."
 
@@ -113,14 +76,12 @@ pack_image() {
     cat << EOF > $FAKEROOT_SCRIPT
 #!/bin/sh -e
 $EXTRA_CMD
-$MKIMAGE "$SRC" "$ROCKDEV/$DST" "$FS_TYPE" "$SIZE" "$LABEL"
+$MKIMAGE "$SRC" "rockdev/$DST" "$FS_TYPE" "$SIZE" "$LABEL"
 EOF
 
     chmod a+x "$FAKEROOT_SCRIPT"
     fakeroot -- "$FAKEROOT_SCRIPT"
     rm -f "$FAKEROOT_SCRIPT"
-
-    assert_size "${DST%.img}" "$ROCKDEV/$DST"
 
     message "Done packing $DST"
 }
@@ -199,7 +160,7 @@ pack_extra_partitions() {
             /*)
                 ;;
             *)
-                SRC="$DEV_DIR/$PART_NAME/$SRC"
+                SRC="device/rockchip/$PART_NAME/$SRC"
                 ;;
         esac
 
@@ -211,7 +172,7 @@ pack_extra_partitions() {
         # Special handling for oem
         if [ "$PART_NAME" = oem ]; then
             # Skip packing oem when builtin
-            [ "${RK_OEM_BUILDIN_BUILDROOT}" != "YES" ] || continue
+            [ -z "${RK_OEM_BUILDIN_BUILDROOT}" ] || continue
 
             if [ -d "$SRC/www" ]; then
                 EXTRA_CMD="chown -R www-data:www-data $SRC/www"
@@ -229,37 +190,30 @@ pack_extra_partitions() {
 }
 
 link_image_optional "$PARAMETER" parameter.txt
-
-link_image_optional "$UBOOT_IMG" uboot.img
-
-[ "$RK_UBOOT_FORMAT_TYPE" != "fit" ] && \
-    link_image_optional "$TRUST_IMG" trust.img
-
-link_image_optional "$LOADER" MiniLoaderAll.bin "$SPL"
-
-[ "$RK_BOOT_IMG" ] && link_image_optional "$BOOT_IMG" boot.img
-
-[ $RK_CFG_RAMBOOT ] && link_image_optional "$RAMBOOT_IMG" boot.img
-
-[ "$RK_CFG_RECOVERY" ] && link_image_optional "$RECOVERY_IMG" recovery.img
-
-[ "$RK_MISC" ] && \
-    link_image_optional "$DEV_DIR/rockimg/misc.img" misc.img "$MISC_IMG"
-
-[ "$RK_ROOTFS_IMG" ] && \
-    link_image_optional "$ROOTFS_IMG" rootfs.img "$ROOTFS_IMG_FALLBACK"
-
-[ "${RK_OEM_BUILDIN_BUILDROOT}" = "YES" ] && \
-    link_image_optional "$BUILDROOT_DIR/oem.img" oem.img
-
-if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ]; then
-    for part in boot recovery rootfs;do
-        test -e $TOP_DIR/u-boot/${part}.img &&
-            link_image "$TOP_DIR/u-boot/${part}.img" ${part}.img && \
-                message "Enabled ramdisk security $part..." || true
-    done
-fi
+link_image_optional "$MISC_IMG" misc.img
 
 pack_extra_partitions
 
-message "Images in $ROCKDEV are ready!"
+echo "Packed files:"
+for f in rockdev/*; do
+	NAME=$(basename "$f")
+
+	echo -n "$NAME"
+	if [ -L "$f" ]; then
+		echo -n "($(readlink -f "$f"))"
+	fi
+
+	FILE_SIZE=$(ls -lLh $f | xargs | cut -d' ' -f 5)
+	echo ": $FILE_SIZE"
+
+	echo "$NAME" | grep -q ".img$" || continue
+
+	# Assert the image's size smaller than parameter.txt's limit
+	PART_SIZE="$(partition_size_kb "${NAME%.img}")"
+	FILE_SIZE_KB="$(( $(stat -Lc "%s" "$f") / 1024 ))"
+	if [ "$PART_SIZE" -gt 0 -a "$PART_SIZE" -lt "$FILE_SIZE_KB" ]; then
+		fatal "error: $IMG's size exceed parameter.txt's limit!"
+	fi
+done
+
+message "Images in rockdev are ready!"

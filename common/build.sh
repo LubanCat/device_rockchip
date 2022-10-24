@@ -2,7 +2,6 @@
 
 export LC_ALL=C
 export LD_LIBRARY_PATH=
-unset RK_CFG_TOOLCHAIN
 
 err_handler() {
 	ret=$?
@@ -85,6 +84,7 @@ CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
 cd $TOP_DIR
+mkdir -p rockdev
 
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 TARGET_PRODUCT="$TOP_DIR/device/rockchip/.target_product"
@@ -95,6 +95,18 @@ if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
 fi
 unset_board_config_all
 [ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
+
+# Compat with legacy configs
+if [ "$RK_CFG_RAMBOOT" ]; then
+	export RK_CFG_BUILDROOT=$RK_CFG_RAMBOOT
+	export RK_RAMBOOT=true
+	unset RK_CFG_RAMBOOT
+
+	case "$RK_RAMBOOT_TYPE" in
+		ROMFS) RK_ROOTFS_TYPE=romfs;;
+		*) RK_ROOTFS_TYPE=cpio.gz;;
+	esac
+fi
 
 function prebuild_uboot()
 {
@@ -171,7 +183,6 @@ function usage()
 	echo "buildroot          -build buildroot rootfs"
 	echo "yocto              -build yocto rootfs"
 	echo "debian             -build debian rootfs"
-	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
@@ -222,9 +233,9 @@ function build_info(){
 	local kernel_file_dtb
 
 	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+		kernel_file_dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
 	else
-		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+		kernel_file_dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
 	fi
 
 	rm -f $kernel_file_dtb
@@ -245,9 +256,9 @@ function build_check_power_domain(){
 	local kernel_file_dtb_dts
 
 	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb_dts="${TOP_DIR}/kernel/arch/arm/boot/dts/$RK_KERNEL_DTS"
+		kernel_file_dtb_dts="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS"
 	else
-		kernel_file_dtb_dts="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS"
+		kernel_file_dtb_dts="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS"
 	fi
 
 	dump_kernel_dtb_file=${kernel_file_dtb_dts}.dump.dts
@@ -326,18 +337,18 @@ function build_check_cross_compile(){
 	case $RK_ARCH in
 	arm|armhf)
 		if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
-			if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf" ]; then
+			if [ -d "prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf" ]; then
 				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin/arm-rockchip830-linux-gnueabihf-
 			fi
 		else
-			if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
+			if [ -d "prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
 				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
 			fi
 		fi
 		export CROSS_COMPILE=$CROSS_COMPILE
 		;;
 	arm64|aarch64)
-		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
+		if [ -d "prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
 			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
@@ -376,9 +387,9 @@ function build_uefi(){
 	local kernel_file_dtb
 
 	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+		kernel_file_dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
 	else
-		kernel_file_dtb="${TOP_DIR}/kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+		kernel_file_dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
 	fi
 
 	echo "============Start building uefi============"
@@ -392,7 +403,6 @@ function build_uefi(){
 	cp $kernel_file_dtb uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb
 	cd uefi
 	./make.sh $RK_UBOOT_DEFCONFIG
-	cd -
 
 	finish_build
 }
@@ -420,10 +430,10 @@ function build_uboot(){
 			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
 		fi
 		./make.sh $UBOOT_COMPILE_COMMANDS
-	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
+	elif [ -d prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf ]; then
 		./make.sh $RK_UBOOT_DEFCONFIG \
 			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
-	elif [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
+	elif [ -d prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu ]; then
 		./make.sh $RK_UBOOT_DEFCONFIG \
 			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
 	else
@@ -435,10 +445,22 @@ function build_uboot(){
 		./make.sh --idblock --spl
 	fi
 
+	cd ..
+
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
-		ln -rsf $TOP_DIR/u-boot/boot.img $TOP_DIR/rockdev/
+		ln -rsf u-boot/boot.img rockdev/
 		test -z "${RK_PACKAGE_FILE_AB}" && \
-			ln -rsf $TOP_DIR/u-boot/recovery.img $TOP_DIR/rockdev/ || true
+			ln -rsf u-boot/recovery.img rockdev/ || true
+	fi
+
+	LOADER="$(echo u-boot/*_loader_*v*.bin | head -1)"
+	SPL="$(echo u-boot/*_loader_spl.bin | head -1)"
+	ln -rsf "${LOADER:-$SPL}" rockdev/MiniLoaderAll.bin
+
+	ln -rsf u-boot/uboot.img rockdev/
+
+	if [ "$RK_UBOOT_FORMAT_TYPE" != "fit" ]; then
+		ln -rsf u-boot/trust.img rockdev/
 	fi
 
 	finish_build
@@ -456,6 +478,10 @@ function build_spl(){
 	rm -f *spl.bin
 	./make.sh $RK_SPL_DEFCONFIG
 	./make.sh --spl
+	cd ..
+
+	SPL="$(echo u-boot/*_loader_spl.bin | head -1)"
+	ln -rsf "$SPL" rockdev/MiniLoaderAll.bin
 
 	finish_build
 }
@@ -485,23 +511,20 @@ function build_kernel(){
 
 	build_check_cross_compile
 
-	cd kernel
-	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
-	make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
-	if [ -f "$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS" ]; then
-		$COMMON_DIR/mk-fitimage.sh $TOP_DIR/kernel/$RK_BOOT_IMG \
-			$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
+	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG \
+		$RK_KERNEL_DEFCONFIG_FRAGMENT
+	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
+
+	ITS=device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
+	if [ -f "$ITS" ]; then
+		$COMMON_DIR/mk-fitimage.sh kernel/$RK_BOOT_IMG \
+			$ITS $RK_KERNEL_IMG
 	fi
 
-	if [ -f "$TOP_DIR/kernel/$RK_BOOT_IMG" ]; then
-		mkdir -p $TOP_DIR/rockdev
-		ln -sf  $TOP_DIR/kernel/$RK_BOOT_IMG $TOP_DIR/rockdev/boot.img
-	fi
+	ln -rsf kernel/$RK_BOOT_IMG rockdev/boot.img
 
-	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
-		cp $TOP_DIR/kernel/$RK_BOOT_IMG \
-			$TOP_DIR/u-boot/boot.img
-	fi
+	# For security
+	cp rockdev/boot.img u-boot/
 
 	build_check_power_domain
 
@@ -779,7 +802,7 @@ function build_wifibt(){
 	echo "create link system->vendor"
 	cd $TARGET_ROOTFS_DIR/
 	rm -rf $TARGET_ROOTFS_DIR/vendor
-	ln -sf system $TARGET_ROOTFS_DIR/vendor
+	ln -rsf system $TARGET_ROOTFS_DIR/vendor
 	cd -
 
 	echo "copy tools/sh to rootfs"
@@ -955,31 +978,19 @@ function build_toolchain(){
 function build_buildroot(){
 	check_config RK_CFG_BUILDROOT || return 0
 
-	echo "==========Start building buildroot=========="
+	ROOTFS_DIR=$1
+
+	echo "==========Start building buildroot rootfs =========="
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "========================================="
 
-	/usr/bin/time -f "you take %E to build builroot" \
-		$COMMON_DIR/mk-buildroot.sh $BOARD_CONFIG
+	DST_DIR=.buildroot
 
-	finish_build
-}
+	/usr/bin/time -f "you take %E to build buildroot" \
+		$COMMON_DIR/mk-buildroot.sh $RK_CFG_BUILDROOT $DST_DIR
 
-function build_ramboot(){
-	check_config RK_CFG_RAMBOOT || return 0
-
-	echo "=========Start building ramboot========="
-	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
-	echo "====================================="
-
-	/usr/bin/time -f "you take %E to build ramboot" \
-		$COMMON_DIR/mk-ramdisk.sh ramboot.img $RK_CFG_RAMBOOT
-
-	ln -rsf buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img \
-		rockdev/boot.img
-
-	cp buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img \
-		u-boot/boot.img
+	rm -rf $ROOTFS_DIR
+	ln -rsf $DST_DIR $ROOTFS_DIR
 
 	finish_build
 }
@@ -988,7 +999,7 @@ function build_multi-npu_boot(){
 	check_config RK_MULTINPU_BOOT || return 0
 
 	echo "=========Start building multi-npu boot========="
-	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
+	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "====================================="
 
 	/usr/bin/time -f "you take %E to build multi-npu boot" \
@@ -1011,14 +1022,14 @@ function kernel_version(){
 function build_yocto(){
 	check_config RK_YOCTO_MACHINE || return 0
 
-	echo "=========Start building ramboot========="
+	echo "=========Start building yocto rootfs========="
 	echo "TARGET_MACHINE=$RK_YOCTO_MACHINE"
 	echo "====================================="
 
 	KERNEL_VERSION=$(kernel_version kernel/)
 
 	cd yocto
-	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
+	ln -rsf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -r conf/include/rksdk.conf \
@@ -1034,10 +1045,10 @@ function build_debian(){
 		*) ARCH=arm64 ;;
 	esac
 
-	echo "=========Start building debian for $ARCH========="
+	echo "=========Start building debian ($ARCH) rootfs========="
 
 	cd debian
-	if [ ! -e linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
+	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
 		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 		ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
@@ -1049,36 +1060,34 @@ function build_debian(){
 }
 
 function build_rootfs(){
-	check_config RK_ROOTFS_IMG || return 0
+	check_config RK_ROOTFS_TYPE || return 0
 
 	ROOTFS=${1:-${RK_ROOTFS_SYSTEM:-buildroot}}
+	ROOTFS_IMG=rootfs.${RK_ROOTFS_TYPE}
+	ROOTFS_DIR=.rootfs
 
-	RK_ROOTFS_DIR=.rootfs
-	ROOTFS_IMG=${RK_ROOTFS_IMG##*/}
+	echo "==========Start building rootfs($ROOTFS) to $ROOTFS_DIR=========="
 
-	rm -rf $RK_ROOTFS_IMG $RK_ROOTFS_DIR
-	mkdir -p ${RK_ROOTFS_IMG%/*} $RK_ROOTFS_DIR
-	echo "$ROOTFS rootfs dir: $RK_ROOTFS_DIR"
+	rm -rf $ROOTFS_DIR
+	mkdir -p $ROOTFS_DIR
 
 	case "$ROOTFS" in
 		yocto)
 			build_yocto
 			ln -rsf yocto/build/latest/rootfs.img \
-				$RK_ROOTFS_DIR/rootfs.ext4
+				$ROOTFS_DIR/rootfs.ext4
 			;;
 		debian)
 			build_debian
 			ln -rsf debian/linaro-rootfs.img \
-				$RK_ROOTFS_DIR/rootfs.ext4
+				$ROOTFS_DIR/rootfs.ext4
 			;;
 		buildroot)
-			build_buildroot
+			build_buildroot $ROOTFS_DIR
 			build_wifibt
-			#fixed requires second compilation issue
-			build_buildroot
-			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
-				ln -rsf $f $RK_ROOTFS_DIR/
-			done
+
+			# Recompile for wifibt
+			build_buildroot $ROOTFS_DIR
 			;;
 		*)
 			echo "$ROOTFS not supported!"
@@ -1086,12 +1095,42 @@ function build_rootfs(){
 			;;
 	esac
 
-	if [ ! -f "$RK_ROOTFS_DIR/$ROOTFS_IMG" ]; then
+	if [ ! -f "$ROOTFS_DIR/$ROOTFS_IMG" ]; then
 		echo "There's no $ROOTFS_IMG generated..."
 		exit 1
 	fi
 
-	ln -rsf $RK_ROOTFS_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
+	ln -rsf $ROOTFS_DIR/$ROOTFS_IMG rockdev/rootfs.img
+
+	[ ! -f $ROOTFS_DIR/oem.img ] || ln -rsf $ROOTFS_DIR/oem.img rockdev/
+
+	if [ "$RK_RAMBOOT" ]; then
+		/usr/bin/time -f "you take %E to pack ramboot image" \
+			$COMMON_DIR/mk-ramdisk.sh rockdev/rootfs.img \
+			$ROOTFS_DIR/ramboot.img \
+		ln -rsf $ROOTFS_DIR/ramboot.img rockdev/boot.img
+
+		# For security
+		cp rockdev/boot.img u-boot/
+	fi
+
+	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ]; then
+		echo "Try to build init for $RK_SYSTEM_CHECK_METHOD"
+
+		if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-V" ]; then
+			SYSTEM_IMG=rootfs.squashfs
+		else
+			SYSTEM_IMG=$ROOTFS_IMG
+		fi
+		if [ ! -f "$ROOTFS_DIR/$SYSTEM_IMG" ]; then
+			echo "There's no $SYSTEM_IMG generated..."
+			exit -1
+		fi
+
+		$COMMON_DIR/mk-dm.sh $RK_SYSTEM_CHECK_METHOD \
+			$ROOTFS_DIR/$SYSTEM_IMG
+		ln -rsf $ROOTFS_DIR/security-system.img rockdev/rootfs.img
+	fi
 
 	finish_build
 }
@@ -1108,18 +1147,23 @@ function build_recovery(){
 
 	check_config RK_CFG_RECOVERY || return 0
 
-	echo "==========Start building recovery=========="
+	echo "==========Start building recovery(buildroot)=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "========================================"
 
-	/usr/bin/time -f "you take %E to build recovery" \
-		$COMMON_DIR/mk-ramdisk.sh recovery.img $RK_CFG_RECOVERY
+	DST_DIR=.recovery
 
-	ln -rsf buildroot/output/$RK_CFG_RECOVERY/images/recovery.img \
-		rockdev/recovery.img
+	/usr/bin/time -f "you take %E to build recovery(buildroot)" \
+		$COMMON_DIR/mk-buildroot.sh $RK_CFG_RECOVERY $DST_DIR
 
-	cp buildroot/output/$RK_CFG_RECOVERY/images/recovery.img \
-		u-boot/recovery.img
+	/usr/bin/time -f "you take %E to pack recovery image" \
+		$COMMON_DIR/mk-ramdisk.sh $DST_DIR/rootfs.cpio.gz \
+		$DST_DIR/recovery.img \
+		device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS
+	ln -rsf $DST_DIR/recovery.img rockdev/
+
+	# For security
+	cp rockdev/recovery.img u-boot/
 
 	finish_build
 }
@@ -1127,12 +1171,19 @@ function build_recovery(){
 function build_pcba(){
 	check_config RK_CFG_PCBA || return 0
 
-	echo "==========Start building pcba=========="
+	echo "==========Start building pcba(buildroot)=========="
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "===================================="
 
-	/usr/bin/time -f "you take %E to build pcba" \
-		$COMMON_DIR/mk-ramdisk.sh pcba.img $RK_CFG_PCBA
+	DST_DIR=.pcba
+
+	/usr/bin/time -f "you take %E to build pcba(buildroot)" \
+		$COMMON_DIR/mk-buildroot.sh $RK_CFG_PCBA $DST_DIR
+
+	/usr/bin/time -f "you take %E to pack pcba image" \
+		$COMMON_DIR/mk-ramdisk.sh $DST_DIR/rootfs.cpio.gz \
+		$DST_DIR/pcba.img
+	ln -rsf $DST_DIR/pcba.img rockdev/
 
 	finish_build
 }
@@ -1201,14 +1252,14 @@ function check_security_condition(){
 	fi
 
 	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-E" ]; then
-		if [ ! -e u-boot/keys/root_passwd ]; then
+		if [ ! -f u-boot/keys/root_passwd ]; then
 			echo "ERROR: No root passwd(u-boot/keys/root_passwd) found in u-boot"
 			echo "       echo your root key for sudo to u-boot/keys/root_passwd"
 			echo "       some operations need supper user permission when create encrypt image"
 			return -1
 		fi
 
-		if [ ! -e u-boot/keys/system_enc_key ]; then
+		if [ ! -f u-boot/keys/system_enc_key ]; then
 			echo "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
 			echo "       Create it by ./build.sh createkeys or move your key to it"
 			return -1
@@ -1232,7 +1283,7 @@ function check_security_condition(){
 
 	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-E" ]; then
 		echo "check ramdisk defconfig"
-		defconfig_check buildroot/configs/${RK_CFG_RAMBOOT}_defconfig "$ROOTFS_UPDATE_ENGINEBIN_CONFIGS"
+		defconfig_check buildroot/configs/${RK_CFG_BUILDROOT}_defconfig "$ROOTFS_UPDATE_ENGINEBIN_CONFIGS"
 	fi
 
 	echo "check rootfs defconfig"
@@ -1253,7 +1304,7 @@ function build_all(){
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
-	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
+	echo "TARGET_RAMBOOT=$RK_RAMBOOT"
 	echo "============================================"
 
 	# NOTE: On secure boot-up world, if the images build with fit(flattened image tree)
@@ -1275,7 +1326,6 @@ function build_all(){
 	build_toolchain
 	build_rootfs
 	build_recovery
-	build_ramboot
 
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		#note: if build spl, it will delete loader.bin in uboot directory,
@@ -1293,14 +1343,10 @@ function build_all(){
 function build_cleanall(){
 	echo "clean uboot, kernel, rootfs, recovery"
 
-	cd u-boot
-	make distclean
-	cd -
-	cd kernel
-	make distclean
-	cd -
+	make -C u-boot distclean
+	make -C kernel distclean
 	rm -rf buildroot/output
-	rm -rf yocto/build/tmp
+	rm -rf yocto/build/tmp yocto/build/*cache
 	rm -rf debian/binary
 
 	finish_build
@@ -1447,6 +1493,7 @@ function build_save(){
 
 function build_allsave(){
 	rm -fr $TOP_DIR/rockdev
+	mkdir -p $TOP_DIR/rockdev
 	build_all
 	build_firmware
 	build_updateimg
@@ -1526,22 +1573,20 @@ for option in ${OPTIONS}; do
 			build_wifibt $2 $3
 			exit 1 ;;
 		modules) build_modules ;;
-		buildroot|debian|yocto) build_rootfs $option ;;
 		rootfs) build_rootfs ;;
+		buildroot|debian|yocto) build_rootfs $option ;;
 		pcba) build_pcba ;;
-		ramboot) build_ramboot ;;
 		recovery) build_recovery ;;
 		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
 		createkeys) create_keys ;;
-		security_boot) security_is_enabled; build_ramboot; build_uboot boot ;;
+		security_boot) security_is_enabled; build_rootfs; build_uboot boot ;;
 		security_uboot) security_is_enabled; build_uboot uboot ;;
 		security_recovery) security_is_enabled; build_recovery; build_uboot recovery ;;
 		security_check) check_security_condition ;;
 		security_rootfs)
 			security_is_enabled
 			build_rootfs
-			build_ramboot
 			build_uboot
 			echo "please update rootfs.img / boot.img"
 			;;

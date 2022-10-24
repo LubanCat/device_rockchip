@@ -42,8 +42,6 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs

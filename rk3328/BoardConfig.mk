@@ -32,8 +32,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=buster
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3328-evb
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

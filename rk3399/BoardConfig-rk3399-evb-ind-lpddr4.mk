@@ -32,8 +32,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3399-sapphire-excavator
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs

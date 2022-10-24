@@ -38,8 +38,6 @@ export RK_TARGET_PRODUCT=rk312x
 export RK_ROOTFS_TYPE=ext4
 # Set debian version (debian10: buster, debian11: bullseye)
 export RK_DEBIAN_VERSION=buster
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

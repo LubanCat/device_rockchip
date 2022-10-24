@@ -28,8 +28,6 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rk3399pro
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=
-# rootfs image path
-export RK_ROOTFS_IMG=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat

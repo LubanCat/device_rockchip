@@ -21,7 +21,7 @@ PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
 OEM_DIR=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_OEM_DIR
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/wipe_all-misc.img
-ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
+ROOTFS_IMG=$TOP_DIR/rockdev/rootfs.$RK_ROOTFS_TYPE
 ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
@@ -62,7 +62,7 @@ else
 fi
 
 
-if [ $RK_ROOTFS_IMG ]
+if [ $RK_ROOTFS_TYPE ]
 then
 	if [ -f $ROOTFS_IMG ]
 	then

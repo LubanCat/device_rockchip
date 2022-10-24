@@ -15,8 +15,7 @@ export RK_KERNEL_DTS=rk3326-evb-lp3-v12-linux
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
-export RK_KERNEL_ZIMG=kernel/arch/arm64/boot/Image.lz4
+export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image.lz4
 # parameter for GPT table
 export RK_PARAMETER=parameter.txt
 # Buildroot config
@@ -39,8 +38,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=buster
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3326-evb
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

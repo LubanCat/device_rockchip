@@ -38,8 +38,6 @@ export RK_JOBS=12
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2
 # export RK_ROOTFS_TYPE=squashfs
-# rootfs image path
-# export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including jffs2 squashfs
