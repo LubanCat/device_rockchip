@@ -342,7 +342,7 @@ function build_setup_cross_compile(){
 		TOOLCHAIN_OS=none
 	fi
 
-	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/linux-x86/aarch64/gcc-arm-*)"
+	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/linux-x86/${RK_ARCH/arm64/aarch64}/gcc-arm-*)"
 	GCC=$(find "$TOOLCHAIN_DIR" -name "*-gcc" | grep "${TOOLCHAIN_OS}[^/]*$")
 	if [ ! -x "$GCC" ]; then
 		echo "No prebuilt GCC toolchain!"
