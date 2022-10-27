@@ -332,31 +332,22 @@ function build_check_power_domain(){
 	rm -f $dump_kernel_dtb_file
 }
 
-function build_check_cross_compile(){
+function build_setup_cross_compile(){
+	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ]; then
+		TOOLCHAIN_OS=rockchip
+	else
+		TOOLCHAIN_OS=none
+	fi
 
-	case $RK_ARCH in
-	arm|armhf)
-		if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
-			if [ -d "prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf" ]; then
-				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin/arm-rockchip830-linux-gnueabihf-
-			fi
-		else
-			if [ -d "prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
-				CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
-			fi
-		fi
-		export CROSS_COMPILE=$CROSS_COMPILE
-		;;
-	arm64|aarch64)
-		if [ -d "prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu" ]; then
-			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
-		export CROSS_COMPILE=$CROSS_COMPILE
-		fi
-		;;
-	*)
-		echo "the $RK_ARCH not supported for now, please check it again\n"
-		;;
-	esac
+	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/linux-x86/aarch64/gcc-arm-*)"
+	GCC=$(find "$TOOLCHAIN_DIR" -name "*-gcc" | grep "${TOOLCHAIN_OS}[^/]*$")
+	if [ ! -x "$GCC" ]; then
+		echo "No prebuilt GCC toolchain!"
+		return 1
+	fi
+
+	export CROSS_COMPILE="${GCC%gcc}"
+	echo "Using prebuilt GCC toolchain: $CROSS_COMPILE"
 }
 
 function build_check(){
@@ -383,7 +374,7 @@ function build_check(){
 }
 
 function build_uefi(){
-	build_check_cross_compile
+	build_setup_cross_compile
 	local kernel_file_dtb
 
 	if [ "$RK_ARCH" == "arm" ]; then
@@ -409,7 +400,7 @@ function build_uefi(){
 
 function build_uboot(){
 	check_config RK_UBOOT_DEFCONFIG || return 0
-	build_check_cross_compile
+	build_setup_cross_compile
 	prebuild_uboot
 	prebuild_security_uboot $@
 
@@ -425,21 +416,16 @@ function build_uboot(){
 
 	if [ -n "$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
 		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
-			make ${RK_UBOOT_DEFCONFIG}_defconfig $RK_UBOOT_DEFCONFIG_FRAGMENT
+			UBOOT_CONFIGS="${RK_UBOOT_DEFCONFIG}_defconfig"
 		else
-			make ${RK_UBOOT_DEFCONFIG}.config $RK_UBOOT_DEFCONFIG_FRAGMENT
+			UBOOT_CONFIGS="${RK_UBOOT_DEFCONFIG}.config"
 		fi
-		./make.sh $UBOOT_COMPILE_COMMANDS
-	elif [ -d prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf ]; then
-		./make.sh $RK_UBOOT_DEFCONFIG \
-			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
-	elif [ -d prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu ]; then
-		./make.sh $RK_UBOOT_DEFCONFIG \
-			$UBOOT_COMPILE_COMMANDS CROSS_COMPILE=$CROSS_COMPILE
+		UBOOT_CONFIGS="$UBOOT_CONFIGS $RK_UBOOT_DEFCONFIG_FRAGMENT"
 	else
-		./make.sh $RK_UBOOT_DEFCONFIG \
-			$UBOOT_COMPILE_COMMANDS
+		UBOOT_CONFIGS="$RK_UBOOT_DEFCONFIG"
 	fi
+	./make.sh $UBOOT_CONFIGS $UBOOT_COMPILE_COMMANDS \
+		CROSS_COMPILE=$CROSS_COMPILE
 
 	if [ "$RK_IDBLOCK_UPDATE_SPL" = "true" ]; then
 		./make.sh --idblock --spl
@@ -509,7 +495,7 @@ function build_kernel(){
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=========================================="
 
-	build_check_cross_compile
+	build_setup_cross_compile
 
 	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG \
 		$RK_KERNEL_DEFCONFIG_FRAGMENT
@@ -532,7 +518,8 @@ function build_kernel(){
 }
 
 function build_wifibt(){
-	build_check_cross_compile
+	build_setup_cross_compile
+
 	case $RK_ARCH in
 	arm|armhf)
 		WIFI_ARCH=arm
@@ -599,165 +586,165 @@ function build_wifibt(){
 
 	if [[ "$WIFI_CHIP" =~ "ALL_AP" ]];then
 		echo "building bcmdhd sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building bcmdhd pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
 		fi
 		if [ -n "$WIFI_USB" ]; then
 			echo "building rtl8188fu usb"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j8
 		fi
 		echo "building rtl8189fs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8723ds sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8821cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8822cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8852bs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building rtl8852be pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" =~ "ALL_CY" ]];then
 		echo "building CYW4354"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4354_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		echo "building CYW4373"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4373_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		echo "building CYW43438"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43438_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		echo "building CYW43455"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43455_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		echo "building CYW5557X"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building CYW5557X_PCIE"
 			cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 			echo "building CYW54591_PCIE"
 			cp $RKWIFIBT/drivers/infineon/chips/CYW54591_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 		fi
 		echo "building CYW54591"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 
 		if [ -n "$WIFI_USB" ]; then
 			echo "building rtl8188fu usb"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j8
 		fi
 		echo "building rtl8189fs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8723ds sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8821cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8822cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j8
 		echo "building rtl8852bs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building rtl8852be pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" =~ "AP6" ]];then
 		if [[ "$WIFI_CHIP" = "AP6275_PCIE" ]];then
 			echo "building bcmdhd pcie driver"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
 		else
 			echo "building bcmdhd sdio driver"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
+			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW4354" ]];then
 		echo "building CYW4354"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4354_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW4373" ]];then
 		echo "building CYW4373"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4373_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43438" ]];then
 		echo "building CYW43438"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43438_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43455" ]];then
 		echo "building CYW43455"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43455_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X" ]];then
 		echo "building CYW5557X"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X_PCIE" ]];then
 		echo "building CYW5557X_PCIE"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591" ]];then
 		echo "building CYW54591"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591_PCIE" ]];then
 		echo "building CYW54591_PCIE"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH -j8
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8188FU" ]];then
 		echo "building rtl8188fu driver"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8189FS" ]];then
 		echo "building rtl8189fs driver"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8723DS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8821CS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8822CS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8852BS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8852BE" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be CROSS_COMPILE=$CROSS_COMPILE ARCH=$WIFI_ARCH modules -j32
+		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j32
 	fi
 
 	echo "building brcm_tools"
@@ -771,9 +758,9 @@ function build_wifibt(){
 	make -C $RKWIFIBT/tools/rtk_hciattach/ CC=$TARGET_CC
 
 	echo "building realtek bt drivers"
-	make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_uart_driver ARCH=$WIFI_ARCH CROSS_COMPILE=$CROSS_COMPILE
+	make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_uart_driver ARCH=$WIFI_ARCH
 	if [ -n "$WIFI_USB" ]; then
-		make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_usb_driver ARCH=$WIFI_ARCH CROSS_COMPILE=$CROSS_COMPILE
+		make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_usb_driver ARCH=$WIFI_ARCH
 	fi
 
 	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
@@ -953,7 +940,7 @@ function build_modules(){
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=================================================="
 
-	build_check_cross_compile
+	build_setup_cross_compile
 
 	cd kernel
 	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
