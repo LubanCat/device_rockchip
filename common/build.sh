@@ -176,6 +176,9 @@ function usage()
 	echo "uefi		 -build uefi"
 	echo "spl                -build spl"
 	echo "loader             -build loader"
+	echo "kernel-4.4         -build kernel 4.4"
+	echo "kernel-4.19        -build kernel 4.19"
+	echo "kernel-5.10        -build kernel 5.10"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
@@ -996,6 +999,8 @@ function build_multi-npu_boot(){
 }
 
 function kernel_version(){
+	[ -d "$1" ] || return 0
+
 	VERSION_KEYS="VERSION PATCHLEVEL"
 	VERSION=""
 
@@ -1524,8 +1529,9 @@ OPTIONS="${@:-allsave}"
 [ -f "device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT" ] \
 	&& source "device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT"  # board hooks
 
-for option in ${OPTIONS}; do
-	echo "processing option: $option"
+# Pre options
+unset POST_OPTIONS
+for option in $OPTIONS; do
 	case $option in
 		BoardConfig*.mk)
 			option=device/rockchip/$RK_TARGET_PRODUCT/$option
@@ -1541,6 +1547,35 @@ for option in ${OPTIONS}; do
 			ln -rsf $CONF $BOARD_CONFIG
 			;;
 		lunch) build_select_board ;;
+		kernel-4.4|kernel-4.19|kernel-5.10)
+			RK_KERNEL_VERSION=${option#kernel-}
+			;;
+		*) POST_OPTIONS="$POST_OPTIONS $option";;
+	esac
+done
+
+# Fallback to current kernel
+RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version kernel/)}
+
+# Fallback to 5.10 kernel
+RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10)}
+
+# Update kernel
+if [ "$(kernel_version kernel/)" != "$RK_KERNEL_VERSION" ]; then
+	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
+	echo "switching to $KERNEL_DIR"
+	if [ ! -d "$KERNEL_DIR" ]; then
+		echo "not exist!"
+		exit 1
+	fi
+	rm -rf kernel
+	ln -rsf $KERNEL_DIR kernel
+fi
+
+# Post options
+for option in $POST_OPTIONS; do
+	echo "processing option: $option"
+	case $option in
 		all) build_all ;;
 		save) build_save ;;
 		allsave) build_allsave ;;
