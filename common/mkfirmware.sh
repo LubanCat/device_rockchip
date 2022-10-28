@@ -212,7 +212,7 @@ for f in rockdev/*; do
 	PART_SIZE="$(partition_size_kb "${NAME%.img}")"
 	FILE_SIZE_KB="$(( $(stat -Lc "%s" "$f") / 1024 ))"
 	if [ "$PART_SIZE" -gt 0 -a "$PART_SIZE" -lt "$FILE_SIZE_KB" ]; then
-		fatal "error: $IMG's size exceed parameter.txt's limit!"
+		fatal "error: $NAME's size exceed parameter.txt's limit!"
 	fi
 done
 
