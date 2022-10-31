@@ -181,7 +181,6 @@ function usage()
 	echo "kernel-5.10        -build kernel 5.10"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
-	echo "toolchain          -build toolchain"
 	echo "rootfs             -build rootfs (default is buildroot)"
 	echo "buildroot          -build buildroot rootfs"
 	echo "yocto              -build yocto rootfs"
@@ -952,19 +951,6 @@ function build_modules(){
 	finish_build
 }
 
-function build_toolchain(){
-	check_config RK_CFG_TOOLCHAIN || return 0
-
-	echo "==========Start building toolchain =========="
-	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
-	echo "========================================="
-
-	/usr/bin/time -f "you take %E to build toolchain" \
-		$COMMON_DIR/mk-toolchain.sh $BOARD_CONFIG
-
-	finish_build
-}
-
 function build_buildroot(){
 	check_config RK_CFG_BUILDROOT || return 0
 
@@ -1292,7 +1278,6 @@ function build_all(){
 	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS"
-	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
@@ -1315,7 +1300,6 @@ function build_all(){
 	check_security_condition
 	build_loader
 	build_kernel
-	build_toolchain
 	build_rootfs
 	build_recovery
 
@@ -1585,7 +1569,6 @@ for option in $POST_OPTIONS; do
 		updateimg) build_updateimg ;;
 		otapackage) build_otapackage ;;
 		sdpackage) build_sdcard_package ;;
-		toolchain) build_toolchain ;;
 		spl) build_spl ;;
 		uboot) build_uboot ;;
 		uefi) build_uefi ;;
