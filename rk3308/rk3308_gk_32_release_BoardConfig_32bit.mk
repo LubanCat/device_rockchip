@@ -39,8 +39,6 @@ export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define WiFi BT chip
 # # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY

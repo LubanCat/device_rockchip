@@ -22,5 +22,3 @@ export RK_CFG_PCBA=rockchip_rk1808_pcba
 export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk1808
-#choose enable distro module
-export RK_DISTRO_MODULE=

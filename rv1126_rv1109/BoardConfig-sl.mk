@@ -48,8 +48,6 @@ export RK_OEM_DIR=oem_empty
 export RK_USERDATA_DIR=userdata_sl
 #misc image
 export RK_MISC=
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
 # define USB_FW_VERSION

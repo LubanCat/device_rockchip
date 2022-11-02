@@ -20,8 +20,6 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image.lz4
 export RK_PARAMETER=parameter.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3326_64
-# Debian 10 config
-export RK_DISTRO_DEFCONFIG=rk3326_defconfig
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_recovery
 # ramboot config
@@ -48,8 +46,6 @@ export RK_OEM_DIR=oem_normal
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define WiFi BT chip
 # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY

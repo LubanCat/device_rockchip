@@ -39,8 +39,6 @@ export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define package-file for update_ab.img
 export RK_PACKAGE_FILE_AB=
 # Define package-file for ota update_ota.img

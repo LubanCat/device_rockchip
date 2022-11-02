@@ -46,8 +46,6 @@ export RK_OEM_BUILDIN_BUILDROOT=YES
 export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-emmc-tb
 # Define WiFi BT chip

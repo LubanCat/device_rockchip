@@ -73,8 +73,6 @@ export RK_USERDATA_DIR=
 #
 #misc image
 export RK_MISC=blank-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img

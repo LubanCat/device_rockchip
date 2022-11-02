@@ -38,5 +38,3 @@ export RK_OEM_DIR=oem_empty
 export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=

@@ -40,7 +40,5 @@ export RK_OEM_DIR=
 export RK_USERDATA_DIR=
 #misc image
 export RK_MISC=
-#choose enable distro module
-export RK_DISTRO_MODULE=
 #enable multi-npu-boot image auto-build
 export RK_MULTINPU_BOOT=y

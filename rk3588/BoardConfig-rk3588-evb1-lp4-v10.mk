@@ -51,8 +51,6 @@ export RK_EXTRA_PARTITIONS=" \
 #export RK_OEM_BUILDIN_BUILDROOT=YES
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file

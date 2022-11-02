@@ -41,8 +41,6 @@ export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # loader name
 export RK_LOADER_NAME=*_loader_uart4_v*.bin
 # Define WiFi BT chip

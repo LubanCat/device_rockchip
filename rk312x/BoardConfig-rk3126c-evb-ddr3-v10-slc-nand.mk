@@ -50,8 +50,6 @@ export RK_OEM_DIR=oem_normal
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
-#choose enable distro module
-export RK_DISTRO_MODULE=
 
 export RK_USERDATA_PARTITION_SIZE=0xB400000
 export RK_OEM_PARTITION_SIZE=0x1400000
