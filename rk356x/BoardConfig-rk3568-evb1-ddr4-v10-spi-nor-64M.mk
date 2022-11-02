@@ -52,8 +52,6 @@ export RK_USERDATA_FS_TYPE=jffs2
 export RK_USERDATA_NODE=/dev/mtdblock5
 #OEM config
 export RK_OEM_DIR=oem_sample
-# OEM build on buildroot
-#export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image

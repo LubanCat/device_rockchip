@@ -47,8 +47,6 @@ export RK_EXTRA_PARTITIONS=" \
 	oem:/oem:ext2:defaults:oem_normal:auto:resize
 	userdata:/userdata:ext2:defaults:userdata_normal:auto:resize
 "
-# OEM build on buildroot
-#export RK_OEM_BUILDIN_BUILDROOT=YES
 #misc image
 export RK_MISC=wipe_all-misc.img
 # Define pre-build script for this board

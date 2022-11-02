@@ -40,8 +40,6 @@ export RK_OEM_FS_TYPE=ext2
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
 export RK_OEM_DIR=oem_normal
-# OEM build on buildroot
-#export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image

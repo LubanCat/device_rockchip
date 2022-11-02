@@ -50,8 +50,6 @@ export RK_OEM_FS_TYPE=
 export RK_USERDATA_FS_TYPE=ubi
 #OEM config
 export RK_OEM_DIR=
-# OEM build on buildroot
-export RK_OEM_BUILDIN_BUILDROOT=
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
 #
