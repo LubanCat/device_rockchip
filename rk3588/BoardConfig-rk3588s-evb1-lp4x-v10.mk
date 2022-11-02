@@ -49,8 +49,6 @@ export RK_EXTRA_PARTITIONS=" \
 "
 #misc image
 export RK_MISC=wipe_all-misc.img
-# Define pre-build script for this board
-export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file
 export RK_PACKAGE_FILE=rk3588-package-file
 # Define WiFi BT chip

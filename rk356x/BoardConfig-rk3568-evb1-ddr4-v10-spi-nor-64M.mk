@@ -56,8 +56,6 @@ export RK_OEM_DIR=oem_sample
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=
-# Define pre-build script for this board
-export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file
 export RK_PACKAGE_FILE=rk356x-package-file-spi-nor
 # Define WiFi BT chip

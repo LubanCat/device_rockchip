@@ -61,8 +61,6 @@ export RK_UPDATE_SDCARD_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 ##########################################################
 
-# Define pre-build script for this board
-export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define WiFi BT chip
 # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY

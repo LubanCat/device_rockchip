@@ -48,8 +48,6 @@ export RK_OEM_DIR=oem_empty
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
-# Define pre-build script for this board
-export RK_BOARD_PRE_BUILD_SCRIPT=
 # Define WiFi BT chip
 # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY

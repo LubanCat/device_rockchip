@@ -1,8 +1,8 @@
 #!/bin/bash
 
-function dirclean()
+dirclean()
 {
-	make  \
+	make -f buildroot/Makefile \
 		dbserver-dirclean \
 		common_algorithm-dirclean \
 		ipcweb-backend-dirclean \
@@ -20,10 +20,10 @@ function dirclean()
 		rockface-dirclean \
 		CallFunIpc-dirclean \
 		isp2-ipc-dirclean \
-	###
+###
 }
 
-function sync_mod()
+sync_mod()
 {
 	.repo/repo/repo sync -c --no-tags \
 		app/dbserver \
@@ -45,9 +45,9 @@ function sync_mod()
 ###
 }
 
-function rebuild()
+rebuild()
 {
-	make  \
+	make -f buildroot/Makefile \
 		dbserver-rebuild \
 		common_algorithm-rebuild \
 		libgdbus-rebuild \
@@ -69,29 +69,15 @@ function rebuild()
 }
 
 unset NEW_OPTS
-if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
-export TARGET_OUTPUT_DIR="$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT"
-else
-if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
-export TARGET_OUTPUT_DIR="$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT"
-fi
-fi
 for option in ${OPTIONS}; do
         echo "processing board option: $option"
         case $option in
-                # handle board commands
-                app-clean)
-						dirclean
-						exit 0
-                        ;;
-                app-rebuild)
-						rebuild
-						exit 0
-                        ;;
-                app-sync)
-						sync_mod
-						exit 0
-                        ;;
+		# handle board commands
+		app-clean|app-rebuild|app-sync)
+			source buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+			eval ${option/-/_}
+			exit 0
+			;;
                 *)
                         NEW_OPTS="$NEW_OPTS $option"
                         ;;

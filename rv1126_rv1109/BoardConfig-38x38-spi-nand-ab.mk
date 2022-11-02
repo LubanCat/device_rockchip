@@ -70,8 +70,6 @@ export RK_UBI_BLOCK_SIZE=0x20000
 #
 #misc image
 export RK_MISC=blank-misc.img
-# Define pre-build script for this board
-export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update_ab.img
 export RK_PACKAGE_FILE_AB=rv1126-package-file-spi-nand-256MB-ab
 # Define package-file for ota update_ota.img

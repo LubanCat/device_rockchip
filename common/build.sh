@@ -1543,8 +1543,12 @@ security_is_enabled()
 
 OPTIONS="${@:-allsave}"
 
-[ -f "$TARGET_PRODUCT_DIR/$RK_BOARD_PRE_BUILD_SCRIPT" ] \
-	&& source "$TARGET_PRODUCT_DIR/$RK_BOARD_PRE_BUILD_SCRIPT"  # board hooks
+echo $TARGET_PRODUCT_DIR $RK_CFG_BUILDROOT
+if [ -d "$TARGET_PRODUCT_DIR/build-hooks/" ]; then
+	for hook in $(find "$TARGET_PRODUCT_DIR/build-hooks" -name "*.sh"); do
+		source "$hook"
+	done
+fi
 
 # Pre options
 unset POST_OPTIONS
