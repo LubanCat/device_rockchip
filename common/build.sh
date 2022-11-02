@@ -3,7 +3,8 @@
 export LC_ALL=C
 export LD_LIBRARY_PATH=
 
-err_handler() {
+err_handler()
+{
 	ret=$?
 	[ "$ret" -eq 0 ] && return
 
@@ -15,12 +16,14 @@ err_handler() {
 trap 'err_handler' ERR
 set -eE
 
-function finish_build(){
+finish_build()
+{
 	echo "Running ${FUNCNAME[1]} succeeded."
 	cd $TOP_DIR
 }
 
-function check_config(){
+check_config()
+{
 	unset missing
 	for var in $@; do
 		eval [ \$$var ] && continue
@@ -34,7 +37,7 @@ function check_config(){
 	return 1
 }
 
-function choose_target_board()
+choose_target_board()
 {
 	echo
 	echo "You're building on Linux"
@@ -56,7 +59,7 @@ function choose_target_board()
 	fi
 }
 
-function build_select_board()
+build_select_board()
 {
 	RK_TARGET_BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
 
@@ -72,7 +75,7 @@ function build_select_board()
 	echo "switching to board: `realpath $BOARD_CONFIG`"
 }
 
-function unset_board_config_all()
+unset_board_config_all()
 {
 	local tmp_file=`mktemp`
 	grep -oh "^export.*RK_.*=" `find device -name "Board*.mk"` > $tmp_file
@@ -80,15 +83,14 @@ function unset_board_config_all()
 	rm -f $tmp_file
 }
 
-CMD=`realpath $0`
-COMMON_DIR=`dirname $CMD`
-TOP_DIR=$(realpath $COMMON_DIR/../../..)
-cd $TOP_DIR
+COMMON_DIR="$(dirname "$(realpath "$0")")"
+TOP_DIR="$(realpath "$COMMON_DIR/../../..")"
+cd "$TOP_DIR"
 mkdir -p rockdev
 
-BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
+BOARD_CONFIG="$TOP_DIR/device/rockchip/.BoardConfig.mk"
 TARGET_PRODUCT="$TOP_DIR/device/rockchip/.target_product"
-TARGET_PRODUCT_DIR=$(realpath ${TARGET_PRODUCT})
+TARGET_PRODUCT_DIR="$(realpath "${TARGET_PRODUCT}")"
 
 if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
 	build_select_board
@@ -108,7 +110,7 @@ if [ "$RK_CFG_RAMBOOT" ]; then
 	esac
 fi
 
-function prebuild_uboot()
+prebuild_uboot()
 {
 	UBOOT_COMPILE_COMMANDS="\
 			${RK_TRUST_INI_CONFIG:+../rkbin/RKTRUST/$RK_TRUST_INI_CONFIG} \
@@ -130,7 +132,7 @@ function prebuild_uboot()
 	fi
 }
 
-function prebuild_security_uboot()
+prebuild_security_uboot()
 {
 	local mode=$1
 
@@ -165,7 +167,7 @@ function prebuild_security_uboot()
 	fi
 }
 
-function usage()
+usage()
 {
 	echo "Usage: build.sh [OPTIONS]"
 	echo "Available options:"
@@ -209,7 +211,8 @@ function usage()
 	echo "Default option is 'allsave'."
 }
 
-function build_info(){
+build_info()
+{
 	if [ ! -L $TARGET_PRODUCT_DIR ];then
 		echo "No found target product!!!"
 	fi
@@ -248,7 +251,8 @@ function build_info(){
 	build_check_power_domain
 }
 
-function build_check_power_domain(){
+build_check_power_domain()
+{
 	local dump_kernel_dtb_file
 	local tmp_phandle_file
 	local tmp_io_domain_file
@@ -334,7 +338,8 @@ function build_check_power_domain(){
 	rm -f $dump_kernel_dtb_file
 }
 
-function build_setup_cross_compile(){
+build_setup_cross_compile()
+{
 	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ]; then
 		TOOLCHAIN_OS=rockchip
 	else
@@ -352,10 +357,11 @@ function build_setup_cross_compile(){
 	echo "Using prebuilt GCC toolchain: $CROSS_COMPILE"
 }
 
-function build_check(){
+build_check()
+{
 	local build_depend_cfg="build-depend-tools.txt"
 	common_product_build_tools="device/rockchip/common/$build_depend_cfg"
-	target_product_build_tools="device/rockchip/$RK_TARGET_PRODUCT/$build_depend_cfg"
+	target_product_build_tools="$TARGET_PRODUCT_DIR/$build_depend_cfg"
 	cat $common_product_build_tools $target_product_build_tools 2>/dev/null | while read chk_item
 		do
 			chk_item=${chk_item###*}
@@ -375,7 +381,8 @@ function build_check(){
 		done
 }
 
-function build_uefi(){
+build_uefi()
+{
 	build_setup_cross_compile
 	local kernel_file_dtb
 
@@ -400,7 +407,8 @@ function build_uefi(){
 	finish_build
 }
 
-function build_uboot(){
+build_uboot()
+{
 	check_config RK_UBOOT_DEFCONFIG || return 0
 	build_setup_cross_compile
 	prebuild_uboot
@@ -455,7 +463,8 @@ function build_uboot(){
 }
 
 # TODO: build_spl can be replaced by build_uboot with define RK_LOADER_UPDATE_SPL
-function build_spl(){
+build_spl()
+{
 	check_config RK_SPL_DEFCONFIG || return 0
 
 	echo "============Start building spl============"
@@ -474,7 +483,8 @@ function build_spl(){
 	finish_build
 }
 
-function build_loader(){
+build_loader()
+{
 	check_config RK_LOADER_BUILD_TARGET || return 0
 
 	echo "============Start building loader============"
@@ -487,7 +497,8 @@ function build_loader(){
 	finish_build
 }
 
-function build_kernel(){
+build_kernel()
+{
 	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel============"
@@ -503,10 +514,10 @@ function build_kernel(){
 		$RK_KERNEL_DEFCONFIG_FRAGMENT
 	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
 
-	ITS=device/rockchip/$RK_TARGET_PRODUCT/$RK_KERNEL_FIT_ITS
+	ITS="$TARGET_PRODUCT_DIR/$RK_KERNEL_FIT_ITS"
 	if [ -f "$ITS" ]; then
 		$COMMON_DIR/mk-fitimage.sh kernel/$RK_BOOT_IMG \
-			$ITS $RK_KERNEL_IMG
+			"$ITS" $RK_KERNEL_IMG
 	fi
 
 	ln -rsf kernel/$RK_BOOT_IMG rockdev/boot.img
@@ -519,7 +530,8 @@ function build_kernel(){
 	finish_build
 }
 
-function build_wifibt(){
+build_wifibt()
+{
 	build_setup_cross_compile
 
 	case $RK_ARCH in
@@ -933,7 +945,8 @@ function build_wifibt(){
 	#exit 0
 }
 
-function build_modules(){
+build_modules()
+{
 	check_config RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel modules============"
@@ -951,7 +964,8 @@ function build_modules(){
 	finish_build
 }
 
-function build_buildroot(){
+build_buildroot()
+{
 	check_config RK_CFG_BUILDROOT || return 0
 
 	ROOTFS_DIR=$1
@@ -971,7 +985,8 @@ function build_buildroot(){
 	finish_build
 }
 
-function build_multi-npu_boot(){
+build_multi-npu_boot()
+{
 	check_config RK_MULTINPU_BOOT || return 0
 
 	echo "=========Start building multi-npu boot========="
@@ -984,7 +999,8 @@ function build_multi-npu_boot(){
 	finish_build
 }
 
-function kernel_version(){
+kernel_version()
+{
 	[ -d "$1" ] || return 0
 
 	VERSION_KEYS="VERSION PATCHLEVEL"
@@ -997,7 +1013,8 @@ function kernel_version(){
 	echo $VERSION
 }
 
-function build_yocto(){
+build_yocto()
+{
 	check_config RK_YOCTO_MACHINE || return 0
 
 	echo "=========Start building yocto rootfs========="
@@ -1016,7 +1033,8 @@ function build_yocto(){
 	finish_build
 }
 
-function build_debian(){
+build_debian()
+{
 	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
 	case $ARCH in
 		arm|armhf) ARCH=armhf ;;
@@ -1037,7 +1055,8 @@ function build_debian(){
 	finish_build
 }
 
-function build_rootfs(){
+build_rootfs()
+{
 	check_config RK_ROOTFS_TYPE || return 0
 
 	ROOTFS=${1:-${RK_ROOTFS_SYSTEM:-buildroot}}
@@ -1113,7 +1132,8 @@ function build_rootfs(){
 	finish_build
 }
 
-function build_recovery(){
+build_recovery()
+{
 
 	if [ "$RK_UPDATE_SDCARD_ENABLE_FOR_AB" = "true" ] ;then
 		RK_CFG_RECOVERY=$RK_UPDATE_SDCARD_CFG_RECOVERY
@@ -1137,7 +1157,7 @@ function build_recovery(){
 	/usr/bin/time -f "you take %E to pack recovery image" \
 		$COMMON_DIR/mk-ramdisk.sh $DST_DIR/rootfs.cpio.gz \
 		$DST_DIR/recovery.img \
-		device/rockchip/$RK_TARGET_PRODUCT/$RK_RECOVERY_FIT_ITS
+		"$TARGET_PRODUCT_DIR/$RK_RECOVERY_FIT_ITS"
 	ln -rsf $DST_DIR/recovery.img rockdev/
 
 	# For security
@@ -1146,7 +1166,8 @@ function build_recovery(){
 	finish_build
 }
 
-function build_pcba(){
+build_pcba()
+{
 	check_config RK_CFG_PCBA || return 0
 
 	echo "==========Start building pcba(buildroot)=========="
@@ -1191,7 +1212,8 @@ ROOTFS_AB_FIXED_CONFIGS="
 	$ROOTFS_UPDATE_ENGINEBIN_CONFIGS
 	BR2_PACKAGE_RECOVERY_BOOTCONTROL"
 
-function defconfig_check() {
+defconfig_check()
+{
 	# 1. defconfig 2. fixed config
 	echo debug-$1
 	for i in $2
@@ -1210,7 +1232,8 @@ function defconfig_check() {
 	return 0
 }
 
-function find_string_in_config(){
+find_string_in_config()
+{
 	result=$(cat "$2" | grep "$1" || echo "No found")
 	if [ "$result" = "No found" ]; then
 		echo "Security: No found string $1 in $2"
@@ -1219,7 +1242,8 @@ function find_string_in_config(){
 	return 0;
 }
 
-function check_security_condition(){
+check_security_condition()
+{
 	# check security enabled
 	test -z "$RK_SYSTEM_CHECK_METHOD" && return 0
 
@@ -1270,7 +1294,8 @@ function check_security_condition(){
 	echo "Security: finish check"
 }
 
-function build_all(){
+build_all()
+{
 	echo "============================================"
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
@@ -1316,7 +1341,8 @@ function build_all(){
 	finish_build
 }
 
-function build_cleanall(){
+build_cleanall()
+{
 	echo "clean uboot, kernel, rootfs, recovery"
 
 	make -C u-boot distclean
@@ -1328,13 +1354,15 @@ function build_cleanall(){
 	finish_build
 }
 
-function build_firmware(){
+build_firmware()
+{
 	./mkfirmware.sh $BOARD_CONFIG
 
 	finish_build
 }
 
-function build_updateimg(){
+build_updateimg()
+{
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
@@ -1368,7 +1396,8 @@ function build_updateimg(){
 	finish_build
 }
 
-function build_otapackage(){
+build_otapackage()
+{
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
@@ -1385,7 +1414,8 @@ function build_otapackage(){
 	finish_build
 }
 
-function build_sdcard_package(){
+build_sdcard_package()
+{
 
 	check_config RK_UPDATE_SDCARD_ENABLE_FOR_AB || return 0
 
@@ -1438,7 +1468,8 @@ function build_sdcard_package(){
 	finish_build
 }
 
-function build_save(){
+build_save()
+{
 	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d.%H%M)
 	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
@@ -1467,7 +1498,8 @@ function build_save(){
 	finish_build
 }
 
-function build_allsave(){
+build_allsave()
+{
 	rm -fr $TOP_DIR/rockdev
 	mkdir -p $TOP_DIR/rockdev
 	build_all
@@ -1480,7 +1512,8 @@ function build_allsave(){
 	finish_build
 }
 
-function create_keys() {
+create_keys()
+{
 	test -d u-boot/keys && echo "ERROR: u-boot/keys has existed" && return -1
 
 	mkdir u-boot/keys -p
@@ -1495,7 +1528,7 @@ function create_keys() {
 	openssl rand -out u-boot/keys/system_enc_key -hex 32
 }
 
-function security_is_enabled()
+security_is_enabled()
 {
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
 		echo "No security paramter found in .BoardConfig.mk"
@@ -1510,15 +1543,15 @@ function security_is_enabled()
 
 OPTIONS="${@:-allsave}"
 
-[ -f "device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT" ] \
-	&& source "device/rockchip/$RK_TARGET_PRODUCT/$RK_BOARD_PRE_BUILD_SCRIPT"  # board hooks
+[ -f "$TARGET_PRODUCT_DIR/$RK_BOARD_PRE_BUILD_SCRIPT" ] \
+	&& source "$TARGET_PRODUCT_DIR/$RK_BOARD_PRE_BUILD_SCRIPT"  # board hooks
 
 # Pre options
 unset POST_OPTIONS
 for option in $OPTIONS; do
 	case $option in
 		BoardConfig*.mk)
-			option=device/rockchip/$RK_TARGET_PRODUCT/$option
+			option="$TARGET_PRODUCT_DIR/$option"
 			;&
 		*.mk)
 			CONF=$(realpath $option)
