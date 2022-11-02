@@ -22,7 +22,6 @@ export RK_CFG_RECOVERY=rockchip_rk3308_robot_recovery
 export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3308_pcba
-# Build jobs
 export RK_JOBS=20
 # target chip
 export RK_TARGET_PRODUCT=rk3308

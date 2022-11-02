@@ -32,8 +32,6 @@ export RK_RECOVERY_FIT_ITS=boot-tb.its
 export RK_CFG_RAMBOOT=rockchip_rv1126_evb_spi_nor_tb
 # Pcba config
 export RK_CFG_PCBA=
-# Build jobs
-export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2

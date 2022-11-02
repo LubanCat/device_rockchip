@@ -245,8 +245,7 @@ build_info()
 
 	rm -f $kernel_file_dtb
 
-	cd kernel
-	make ARCH=$RK_ARCH dtbs -j$RK_JOBS
+	$KMAKE dtbs
 
 	build_check_power_domain
 }
@@ -338,7 +337,7 @@ build_check_power_domain()
 	rm -f $dump_kernel_dtb_file
 }
 
-build_setup_cross_compile()
+setup_cross_compile()
 {
 	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ]; then
 		TOOLCHAIN_OS=rockchip
@@ -355,6 +354,10 @@ build_setup_cross_compile()
 
 	export CROSS_COMPILE="${GCC%gcc}"
 	echo "Using prebuilt GCC toolchain: $CROSS_COMPILE"
+
+	NUM_CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
+	JLEVEL=${RK_JOBS:-$(( $NUM_CPUS + 1 ))}
+	KMAKE="make -C kernel/ ARCH=$RK_ARCH -j$JLEVEL"
 }
 
 build_check()
@@ -383,7 +386,7 @@ build_check()
 
 build_uefi()
 {
-	build_setup_cross_compile
+	setup_cross_compile
 	local kernel_file_dtb
 
 	if [ "$RK_ARCH" == "arm" ]; then
@@ -410,7 +413,7 @@ build_uefi()
 build_uboot()
 {
 	check_config RK_UBOOT_DEFCONFIG || return 0
-	build_setup_cross_compile
+	setup_cross_compile
 	prebuild_uboot
 	prebuild_security_uboot $@
 
@@ -508,11 +511,10 @@ build_kernel()
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=========================================="
 
-	build_setup_cross_compile
+	setup_cross_compile
 
-	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG \
-		$RK_KERNEL_DEFCONFIG_FRAGMENT
-	make -C kernel ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS
+	$KMAKE $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
+	$KMAKE $RK_KERNEL_DTS.img
 
 	ITS="$TARGET_PRODUCT_DIR/$RK_KERNEL_FIT_ITS"
 	if [ -f "$ITS" ]; then
@@ -532,20 +534,23 @@ build_kernel()
 
 build_wifibt()
 {
-	build_setup_cross_compile
+	setup_cross_compile
 
-	case $RK_ARCH in
-	arm|armhf)
-		WIFI_ARCH=arm
-		RKWIFIBT_APP_GCC=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/arm-buildroot-linux-gnueabihf-gcc
-		RKWIFIBT_APP_SYSROOT=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/arm-buildroot-linux-gnueabihf/sysroot
-		;;
-	arm64|aarch64)
-		WIFI_ARCH=arm64
-		RKWIFIBT_APP_GCC=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/aarch64-buildroot-linux-gnu-gcc
-		RKWIFIBT_APP_SYSROOT=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/aarch64-buildroot-linux-gnu/sysroot
-		;;
-	esac
+	BUILDROOT_OUTDIR=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/
+	BUILDROOT_HOST_DIR=$BUILDROOT_OUTDIR/host/
+
+	if grep -wq aarch64 "$BUILDROOT_OUTDIR/.config" 2>/dev/null; then
+		BUILDROOT_ARCH=arm64
+	else
+		BUILDROOT_ARCH=arm
+	fi
+
+	BUILDROOT_GCC="$(echo $BUILDROOT_HOST_DIR/bin/*buildroot*-gcc)"
+	BUILDROOT_SYSROOT="$(echo $BUILDROOT_HOST_DIR/*/sysroot/)"
+	if [ ! -x "$BUILDROOT_GCC" -o ! -d "$BUILDROOT_SYSROOT" ]; then
+		echo "ERROR: Buildroot not ready!"
+		exit -1
+	fi
 
 	if [ -n "$1" ]; then
 		WIFI_CHIP=$1
@@ -595,170 +600,170 @@ build_wifibt()
 	echo WIFI_CHIP=$WIFI_CHIP
 	echo BT_TTY_DEV=$BT_TTY_DEV
 	echo TARGET_ROOTFS_DIR=$TARGET_ROOTFS_DIR
-	echo RKWIFIBT_APP_GCC=$RKWIFIBT_APP_GCC
-	echo RKWIFIBT_APP_SYSROOT=$RKWIFIBT_APP_SYSROOT
+	echo BUILDROOT_GCC=$BUILDROOT_GCC
+	echo BUILDROOT_SYSROOT=$BUILDROOT_SYSROOT
 
 	if [[ "$WIFI_CHIP" =~ "ALL_AP" ]];then
 		echo "building bcmdhd sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
+		$KMAKE M=$RKWIFIBT/drivers/bcmdhd CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building bcmdhd pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
+			$KMAKE M=$RKWIFIBT/drivers/bcmdhd CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
 		fi
 		if [ -n "$WIFI_USB" ]; then
 			echo "building rtl8188fu usb"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j8
+			$KMAKE M=$RKWIFIBT/drivers/rtl8188fu modules
 		fi
 		echo "building rtl8189fs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8189fs modules
 		echo "building rtl8723ds sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8723ds modules
 		echo "building rtl8821cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8821cs modules
 		echo "building rtl8822cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8822cs modules
 		echo "building rtl8852bs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
+		$KMAKE M=$RKWIFIBT/drivers/rtl8852bs modules DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building rtl8852be pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
+			$KMAKE M=$RKWIFIBT/drivers/rtl8852be modules DRV_PATH=$RKWIFIBT/drivers/rtl8852be
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" =~ "ALL_CY" ]];then
 		echo "building CYW4354"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4354_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW4373"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4373_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW43438"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43438_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW43455"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43455_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW5557X"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building CYW5557X_PCIE"
 			cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+			$KMAKE M=$RKWIFIBT/drivers/infineon
 			echo "building CYW54591_PCIE"
 			cp $RKWIFIBT/drivers/infineon/chips/CYW54591_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+			$KMAKE M=$RKWIFIBT/drivers/infineon
 		fi
 		echo "building CYW54591"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 
 		if [ -n "$WIFI_USB" ]; then
 			echo "building rtl8188fu usb"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j8
+			$KMAKE M=$RKWIFIBT/drivers/rtl8188fu modules
 		fi
 		echo "building rtl8189fs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8189fs modules
 		echo "building rtl8723ds sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8723ds modules
 		echo "building rtl8821cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8821cs modules
 		echo "building rtl8822cs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j8
+		$KMAKE M=$RKWIFIBT/drivers/rtl8822cs modules
 		echo "building rtl8852bs sdio"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
+		$KMAKE M=$RKWIFIBT/drivers/rtl8852bs modules DRV_PATH=$RKWIFIBT/drivers/rtl8852bs
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building rtl8852be pcie"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j8 DRV_PATH=$RKWIFIBT/drivers/rtl8852be
+			$KMAKE M=$RKWIFIBT/drivers/rtl8852be modules DRV_PATH=$RKWIFIBT/drivers/rtl8852be
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" =~ "AP6" ]];then
 		if [[ "$WIFI_CHIP" = "AP6275_PCIE" ]];then
 			echo "building bcmdhd pcie driver"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
+			$KMAKE M=$RKWIFIBT/drivers/bcmdhd CONFIG_BCMDHD=m CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
 		else
 			echo "building bcmdhd sdio driver"
-			make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/bcmdhd ARCH=$WIFI_ARCH -j8 CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
+			$KMAKE M=$RKWIFIBT/drivers/bcmdhd CONFIG_BCMDHD=m CONFIG_BCMDHD_SDIO=y CONFIG_BCMDHD_PCIE=
 		fi
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW4354" ]];then
 		echo "building CYW4354"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4354_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW4373" ]];then
 		echo "building CYW4373"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW4373_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43438" ]];then
 		echo "building CYW43438"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43438_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43455" ]];then
 		echo "building CYW43455"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW43455_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X" ]];then
 		echo "building CYW5557X"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X_PCIE" ]];then
 		echo "building CYW5557X_PCIE"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW5557X_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591" ]];then
 		echo "building CYW54591"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591_PCIE" ]];then
 		echo "building CYW54591_PCIE"
 		cp $RKWIFIBT/drivers/infineon/chips/CYW54591_PCIE_Makefile $RKWIFIBT/drivers/infineon/Makefile -r
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/infineon ARCH=$WIFI_ARCH -j8
+		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8188FU" ]];then
 		echo "building rtl8188fu driver"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8188fu ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8188fu modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8189FS" ]];then
 		echo "building rtl8189fs driver"
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8189fs ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8189fs modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8723DS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8723ds ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8723ds modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8821CS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8821cs ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8821cs modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8822CS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8822cs ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8822cs modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8852BS" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852bs ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8852bs modules
 	fi
 
 	if [[ "$WIFI_CHIP" = "RTL8852BE" ]];then
-		make -C $TOP_DIR/kernel M=$RKWIFIBT/drivers/rtl8852be ARCH=$WIFI_ARCH modules -j32
+		$KMAKE M=$RKWIFIBT/drivers/rtl8852be modules
 	fi
 
 	echo "building brcm_tools"
@@ -772,16 +777,17 @@ build_wifibt()
 	make -C $RKWIFIBT/tools/rtk_hciattach/ CC=$TARGET_CC
 
 	echo "building realtek bt drivers"
-	make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_uart_driver ARCH=$WIFI_ARCH
+	$KMAKE M=$RKWIFIBT/drivers/bluetooth_uart_driver
 	if [ -n "$WIFI_USB" ]; then
-		make -C $TOP_DIR/kernel/ M=$RKWIFIBT/drivers/bluetooth_usb_driver ARCH=$WIFI_ARCH
+		$KMAKE M=$RKWIFIBT/drivers/bluetooth_usb_driver
 	fi
 
 	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
 		echo "target is rv1126_rv1109, skip $RKWIFIBT_APP"
 	else
 		echo "building rkwifibt-app"
-		make -C $RKWIFIBT_APP CC=$RKWIFIBT_APP_GCC SYSROOT=$RKWIFIBT_APP_SYSROOT ARCH=$RK_ARCH
+		make -C $RKWIFIBT_APP CC=$BUILDROOT_GCC \
+			SYSROOT=$BUILDROOT_SYSROOT ARCH=$BUILDROOT_ARCH
 	fi
 
 	echo "chmod +x tools"
@@ -807,7 +813,7 @@ build_wifibt()
 	cd -
 
 	echo "copy tools/sh to rootfs"
-	cp $RKWIFIBT/bin/$WIFI_ARCH/* $TARGET_ROOTFS_DIR/usr/bin/
+	cp $RKWIFIBT/bin/$BUILDROOT_ARCH/* $TARGET_ROOTFS_DIR/usr/bin/
 	cp $RKWIFIBT/sh/wifi_start.sh $TARGET_ROOTFS_DIR/usr/bin/
 	cp $RKWIFIBT/sh/wifi_ap6xxx_rftest.sh $TARGET_ROOTFS_DIR/usr/bin/
 	cp $RKWIFIBT/conf/wpa_supplicant.conf $TARGET_ROOTFS_DIR/etc/
@@ -955,11 +961,10 @@ build_modules()
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=================================================="
 
-	build_setup_cross_compile
+	setup_cross_compile
 
-	cd kernel
-	make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
-	make ARCH=$RK_ARCH modules -j$RK_JOBS
+	$KMAKE $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
+	$KMAKE modules
 
 	finish_build
 }

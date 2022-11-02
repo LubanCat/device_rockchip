@@ -24,8 +24,6 @@ export RK_CFG_RECOVERY=rockchip_px30_robot_recovery
 export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_px30_pcba
-# Build jobs
-export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=px30
 # Set rootfs type, including ext2 ext4 squashfs

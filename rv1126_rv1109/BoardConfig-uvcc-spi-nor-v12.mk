@@ -33,8 +33,6 @@ export RK_CFG_RECOVERY=
 export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
-# Build jobs
-export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2

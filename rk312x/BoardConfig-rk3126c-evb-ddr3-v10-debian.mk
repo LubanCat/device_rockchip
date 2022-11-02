@@ -30,8 +30,6 @@ export RK_CFG_RECOVERY=rockchip_rk312x_recovery
 export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3126c_pcba
-# Build jobs
-export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk312x
 # Set rootfs type, including ext2 ext4 squashfs

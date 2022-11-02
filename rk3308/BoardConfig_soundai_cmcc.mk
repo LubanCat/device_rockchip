@@ -20,8 +20,6 @@ export RK_CFG_BUILDROOT=rockchip_rk3308_soundai_release
 export RK_CFG_RECOVERY=rockchip_rk3308_recovery
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3308_pcba
-# Build jobs
-export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rk3308
 # Set rootfs type, including ext2 ext4 squashfs
