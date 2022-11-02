@@ -169,15 +169,11 @@ pack_extra_partitions() {
         LABEL="$PART_NAME"
         EXTRA_CMD=
 
-        # Special handling for oem
-        if [ "$PART_NAME" = oem ]; then
-            # Skip packing oem when builtin
-            [ -z "${RK_OEM_BUILDIN_BUILDROOT}" ] || continue
-
-            if [ -d "$SRC/www" ]; then
-                EXTRA_CMD="chown -R www-data:www-data $SRC/www"
-            fi
-        fi
+        # Skip existing prebuilt images
+        if [ -f rockdev/$PART_NAME.img ]; then
+		message "Skip packing existing rockdev/$PART_NAME.img"
+		continue
+	fi
 
         # Skip boot time resize by adding a tag file
         echo $OPTS | grep -wq fixed || touch "$SRC/.fixed"
