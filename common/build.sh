@@ -198,7 +198,6 @@ usage()
 	echo "sdpackage          -pack update sdcard package image (update_sdcard.img)"
 	echo "save               -save images, patches, commands used to debug"
 	echo "allsave            -build all & firmware & updateimg & save"
-	echo "check              -check the environment of building"
 	echo "info               -see the current board building information"
 	echo ""
 	echo "createkeys         -create secureboot root keys"
@@ -358,30 +357,6 @@ setup_cross_compile()
 	NUM_CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 	JLEVEL=${RK_JOBS:-$(( $NUM_CPUS + 1 ))}
 	KMAKE="make -C kernel/ ARCH=$RK_ARCH -j$JLEVEL"
-}
-
-build_check()
-{
-	local build_depend_cfg="build-depend-tools.txt"
-	common_product_build_tools="device/rockchip/common/$build_depend_cfg"
-	target_product_build_tools="$TARGET_PRODUCT_DIR/$build_depend_cfg"
-	cat $common_product_build_tools $target_product_build_tools 2>/dev/null | while read chk_item
-		do
-			chk_item=${chk_item###*}
-			if [ -z "$chk_item" ]; then
-				continue
-			fi
-
-			dst=${chk_item%%,*}
-			src=${chk_item##*,}
-			echo "**************************************"
-			if eval $dst &>/dev/null;then
-				echo "Check [OK]: $dst"
-			else
-				echo "Please install ${dst%% *} first"
-				echo "    sudo apt-get install $src"
-			fi
-		done
 }
 
 build_uefi()
@@ -1605,7 +1580,6 @@ for option in $POST_OPTIONS; do
 		all) build_all ;;
 		save) build_save ;;
 		allsave) build_allsave ;;
-		check) build_check ;;
 		cleanall) build_cleanall ;;
 		firmware) build_firmware ;;
 		updateimg) build_updateimg ;;
