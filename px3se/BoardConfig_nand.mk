@@ -18,8 +18,6 @@ export RK_PARAMETER=parameter-nand.txt
 export RK_CFG_BUILDROOT=rockchip_px3se
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_px3se_recovery
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_px3se_pcba
 # target chip

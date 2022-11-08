@@ -18,8 +18,6 @@ export RK_PARAMETER=parameter.txt
 export RK_CFG_BUILDROOT=rockchip_rk3399
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3399_recovery
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3399_pcba
 # target chip
@@ -30,8 +28,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3399-sapphire-excavator
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

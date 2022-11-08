@@ -20,8 +20,6 @@ export RK_PARAMETER=parameter-robot.txt
 export RK_CFG_BUILDROOT=rockchip_rk3326_robot64
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3326_robot_recovery
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3326_pcba
 # target chip

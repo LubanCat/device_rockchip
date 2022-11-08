@@ -18,8 +18,6 @@ export RK_PARAMETER=parameter-buildroot.txt
 export RK_CFG_BUILDROOT=rockchip_rk1806_ficial_gate
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk1806_recovery
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk1806_pcba
 # target chip

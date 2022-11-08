@@ -22,22 +22,18 @@ export RK_BOOT_IMG=zboot.img
 export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-spi-nor-tb-32M.txt
-# Buildroot config
-export RK_CFG_BUILDROOT=
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_evb_spi_nor_tb
+export RK_CFG_BUILDROOT=rockchip_rv1126_evb_spi_nor_tb
+export RK_RAMBOOT=true
+export RK_ROOTFS_TYPE=romfs
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
-# Set rootfs type, including squashfs jffs2
-# export RK_ROOTFS_TYPE=squashfs
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including jffs2 squashfs
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including jffs2, fat, squashfs

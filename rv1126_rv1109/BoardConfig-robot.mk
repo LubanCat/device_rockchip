@@ -26,16 +26,12 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_robot
 export RK_CFG_RECOVERY=rockchip_rv1126_robot_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

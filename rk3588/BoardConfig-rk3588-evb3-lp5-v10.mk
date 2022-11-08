@@ -26,8 +26,6 @@ export RK_CFG_BUILDROOT=rockchip_rk3588
 export RK_CFG_RECOVERY=rockchip_rk3588_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3588_pcba
 # target chip
@@ -38,8 +36,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3588-evb
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
 export RK_EXTRA_PARTITIONS=" \
 	oem:/oem:ext2:defaults:oem_normal:auto:resize

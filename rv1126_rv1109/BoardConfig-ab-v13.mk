@@ -24,16 +24,12 @@ export RK_KERNEL_FIT_ITS=boot.its
 export RK_PARAMETER=parameter-ab-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

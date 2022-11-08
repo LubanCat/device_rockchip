@@ -20,8 +20,6 @@ export RK_PARAMETER=parameter-buildroot.txt
 export RK_CFG_BUILDROOT=rockchip_rk1808-multi
 # Recovery config
 export RK_CFG_RECOVERY=
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip

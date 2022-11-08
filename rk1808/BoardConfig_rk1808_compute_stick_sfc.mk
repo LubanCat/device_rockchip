@@ -14,10 +14,10 @@ export RK_BOOT_IMG=boot.img
 export RK_PARAMETER=parameter-compute-stick.txt
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
-# Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk1808_compute_stick
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rk1808_compute_stick
+export RK_CFG_BUILDROOT=rockchip_rk1808_compute_stick
+export RK_RAMBOOT=true
+export RK_ROOTFS_TYPE=cpio.gz
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk1808_pcba
 # target chip

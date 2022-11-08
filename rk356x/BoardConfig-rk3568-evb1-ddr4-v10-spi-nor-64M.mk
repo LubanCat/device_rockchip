@@ -26,8 +26,6 @@ export RK_CFG_BUILDROOT=rockchip_rk356x_libs
 export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
@@ -38,8 +36,6 @@ export RK_ROOTFS_TYPE=squashfs
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=jffs2
 # Set oem node

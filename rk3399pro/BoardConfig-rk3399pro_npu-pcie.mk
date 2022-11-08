@@ -14,12 +14,12 @@ export RK_BOOT_IMG=
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-npu.txt
-# Buildroot config
-export RK_CFG_BUILDROOT=
 # Recovery config
 export RK_CFG_RECOVERY=
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rk3399pro-npu-multi-cam
+export RK_CFG_BUILDROOT=rockchip_rk3399pro-npu-multi-cam
+export RK_RAMBOOT=true
+export RK_ROOTFS_TYPE=cpio.gz
 # Pcba config
 export RK_CFG_PCBA=
 # target chip

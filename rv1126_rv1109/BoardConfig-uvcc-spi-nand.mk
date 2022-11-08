@@ -30,16 +30,12 @@ export RK_PARAMETER=parameter-fit-128M-ab.txt
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc_spi_nand
 # Recovery config
 export RK_CFG_RECOVERY=
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat

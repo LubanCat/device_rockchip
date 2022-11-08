@@ -98,18 +98,6 @@ fi
 unset_board_config_all
 [ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
 
-# Compat with legacy configs
-if [ "$RK_CFG_RAMBOOT" ]; then
-	export RK_CFG_BUILDROOT=$RK_CFG_RAMBOOT
-	export RK_RAMBOOT=true
-	unset RK_CFG_RAMBOOT
-
-	case "$RK_RAMBOOT_TYPE" in
-		ROMFS) RK_ROOTFS_TYPE=romfs;;
-		*) RK_ROOTFS_TYPE=cpio.gz;;
-	esac
-fi
-
 prebuild_uboot()
 {
 	UBOOT_COMPILE_COMMANDS="\

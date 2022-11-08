@@ -26,22 +26,20 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
-# Buildroot config
-#export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc
 # Recovery config
 export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
-export RK_CFG_RAMBOOT=rockchip_rv1126_rv1109_ramboot_uvcc
+export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_ramboot_uvcc
+export RK_RAMBOOT=true
+export RK_ROOTFS_TYPE=cpio.gz
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=cpio.gz
-# Set ramboot image type
-export RK_RAMBOOT_TYPE=CPIO
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat

@@ -18,8 +18,6 @@ export RK_PARAMETER=parameter.txt
 export RK_CFG_BUILDROOT=rockchip_rk3328
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk3328_recovery
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3328_pcba
 # target chip

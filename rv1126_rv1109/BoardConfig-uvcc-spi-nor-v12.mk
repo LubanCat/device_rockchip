@@ -29,16 +29,12 @@ export RK_PARAMETER=parameter-spi-nor-16M.txt
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc_spi_nor
 # Recovery config
 export RK_CFG_RECOVERY=
-# ramboot config
-export RK_CFG_RAMBOOT=
 # Pcba config
 export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2
 export RK_ROOTFS_TYPE=squashfs
-# Set ramboot image type
-# export RK_RAMBOOT_TYPE=
 # Set oem partition type, including jffs2 squashfs
 export RK_OEM_FS_TYPE=
 # Set userdata partition type, including jffs2, fat, squashfs
