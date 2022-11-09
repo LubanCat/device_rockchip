@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target arch
-export RK_ARCH=arm
+export RK_KERNEL_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk3036
 # Kernel defconfig

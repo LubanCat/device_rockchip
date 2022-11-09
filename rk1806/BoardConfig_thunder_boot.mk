@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target arch
-export RK_ARCH=arm64
+export RK_KERNEL_ARCH=arm64
 # SPL defconfig
 export RK_SPL_DEFCONFIG=rk1808
 # Kernel defconfig

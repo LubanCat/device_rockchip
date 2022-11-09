@@ -203,15 +203,13 @@ build_info()
 	echo "Target Misc config:"
 	echo "`env |grep "^RK_" | grep -v "=$" | sort`"
 
-	local kernel_file_dtb
-
-	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+	if [ "$RK_KERNEL_ARCH" == "arm" ]; then
+		dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
 	else
-		kernel_file_dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+		dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
 	fi
 
-	rm -f $kernel_file_dtb
+	rm -f $dtb
 
 	$KMAKE dtbs
 
@@ -226,22 +224,21 @@ build_check_power_domain()
 	local tmp_regulator_microvolt_file
 	local tmp_final_target
 	local tmp_none_item
-	local kernel_file_dtb_dts
 
-	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb_dts="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS"
+	if [ "$RK_KERNEL_ARCH" == "arm" ]; then
+		dts="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS"
 	else
-		kernel_file_dtb_dts="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS"
+		dts="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS"
 	fi
 
-	dump_kernel_dtb_file=${kernel_file_dtb_dts}.dump.dts
+	dump_kernel_dtb_file=${dts}.dump.dts
 	tmp_phandle_file=`mktemp`
 	tmp_io_domain_file=`mktemp`
 	tmp_regulator_microvolt_file=`mktemp`
 	tmp_final_target=`mktemp`
 	tmp_grep_file=`mktemp`
 
-	dtc -I dtb -O dts -o ${dump_kernel_dtb_file} ${kernel_file_dtb_dts}.dtb 2>/dev/null
+	dtc -I dtb -O dts -o ${dump_kernel_dtb_file} ${dts}.dtb 2>/dev/null
 
 	if [ "$RK_SYSTEM_CHECK_METHOD" = "DM-E" ] ; then
 		if ! grep "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file > /dev/null 2>&1 ; then
@@ -257,7 +254,7 @@ build_check_power_domain()
 	fi
 
 	if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
-		echo "Not Found io-domains in ${kernel_file_dtb_dts}.dts"
+		echo "Not Found io-domains in ${dts}.dts"
 		rm -f $tmp_grep_file
 		return 0
 	fi
@@ -291,11 +288,11 @@ build_check_power_domain()
 
 	echo -e "\e[41;1;30m PLEASE CHECK BOARD GPIO POWER DOMAIN CONFIGURATION !!!!!\e[0m"
 	echo -e "\e[41;1;30m <<< ESPECIALLY Wi-Fi/Flash/Ethernet IO power domain >>> !!!!!\e[0m"
-	echo -e "\e[41;1;30m Check Node [pmu_io_domains] in the file: ${kernel_file_dtb_dts}.dts \e[0m"
+	echo -e "\e[41;1;30m Check Node [pmu_io_domains] in the file: ${dts}.dts \e[0m"
 	echo
 	echo -e "\e[41;1;30m 请再次确认板级的电源域配置！！！！！！\e[0m"
 	echo -e "\e[41;1;30m <<< 特别是Wi-Fi，FLASH，以太网这几路IO电源的配置 >>> ！！！！！\e[0m"
-	echo -e "\e[41;1;30m 检查内核文件 ${kernel_file_dtb_dts}.dts 的节点 [pmu_io_domains] \e[0m"
+	echo -e "\e[41;1;30m 检查内核文件 ${dts}.dts 的节点 [pmu_io_domains] \e[0m"
 	cat $tmp_final_target
 
 	rm -f $tmp_phandle_file
@@ -313,8 +310,9 @@ setup_cross_compile()
 		TOOLCHAIN_OS=none
 	fi
 
-	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/linux-x86/${RK_ARCH/arm64/aarch64}/gcc-arm-*)"
-	GCC=$(find "$TOOLCHAIN_DIR" -name "*-gcc" | grep "${TOOLCHAIN_OS}[^/]*$")
+	TOOLCHAIN_ARCH=${RK_KERNEL_ARCH/arm64/aarch64}
+	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH/gcc-arm-*)"
+	GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc")"
 	if [ ! -x "$GCC" ]; then
 		echo "No prebuilt GCC toolchain!"
 		return 1
@@ -325,29 +323,28 @@ setup_cross_compile()
 
 	NUM_CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 	JLEVEL=${RK_JOBS:-$(( $NUM_CPUS + 1 ))}
-	KMAKE="make -C kernel/ ARCH=$RK_ARCH -j$JLEVEL"
+	KMAKE="make -C kernel/ ARCH=$RK_KERNEL_ARCH -j$JLEVEL"
 }
 
 build_uefi()
 {
 	setup_cross_compile
-	local kernel_file_dtb
 
-	if [ "$RK_ARCH" == "arm" ]; then
-		kernel_file_dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
+	if [ "$RK_KERNEL_ARCH" == "arm" ]; then
+		dtb="kernel/arch/arm/boot/dts/${RK_KERNEL_DTS}.dtb"
 	else
-		kernel_file_dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
+		dtb="kernel/arch/arm64/boot/dts/rockchip/${RK_KERNEL_DTS}.dtb"
 	fi
 
 	echo "============Start building uefi============"
-	echo "Copy kernel dtb $kernel_file_dtb to uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb"
+	echo "Copy kernel dtb $dtb to uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb"
 	echo "========================================="
-	if [ ! -f $kernel_file_dtb ]; then
+	if [ ! -f $dtb ]; then
 		echo "Please compile the kernel before"
 		return -1
 	fi
 
-	cp $kernel_file_dtb uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb
+	cp $dtb uefi/edk2-platforms/Platform/Rockchip/DeviceTree/rk3588.dtb
 	cd uefi
 	./make.sh $RK_UBOOT_DEFCONFIG
 
@@ -449,7 +446,7 @@ build_kernel()
 	check_config RK_KERNEL_DTS RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel============"
-	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
@@ -900,7 +897,7 @@ build_modules()
 	check_config RK_KERNEL_DEFCONFIG || return 0
 
 	echo "============Start building kernel modules============"
-	echo "TARGET_ARCH          =$RK_ARCH"
+	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=================================================="
@@ -984,7 +981,7 @@ build_yocto()
 
 build_debian()
 {
-	ARCH=${RK_DEBIAN_ARCH:-${RK_ARCH}}
+	ARCH=${RK_DEBIAN_ARCH:-${RK_KERNEL_ARCH}}
 	case $ARCH in
 		arm|armhf) ARCH=armhf ;;
 		*) ARCH=arm64 ;;
@@ -1221,7 +1218,9 @@ check_security_condition()
 	fi
 
 	echo "check kernel defconfig"
-	defconfig_check kernel/arch/$RK_ARCH/configs/$RK_KERNEL_DEFCONFIG "$BOOT_FIXED_CONFIGS"
+	defconfig_check \
+		kernel/arch/$RK_KERNEL_ARCH/configs/$RK_KERNEL_DEFCONFIG \
+		"$BOOT_FIXED_CONFIGS"
 
 	if [ ! -z "${RK_PACKAGE_FILE_AB}" ]; then
 		UBOOT_FIXED_CONFIGS="${UBOOT_FIXED_CONFIGS}
@@ -1246,7 +1245,7 @@ check_security_condition()
 build_all()
 {
 	echo "============================================"
-	echo "TARGET_ARCH=$RK_ARCH"
+	echo "TARGET_KERNEL_ARCH=$RK_KERNEL_ARCH"
 	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"

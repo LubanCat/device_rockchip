@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target arch
-export RK_ARCH=arm64
+export RK_KERNEL_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rk3308
 # SPL INI

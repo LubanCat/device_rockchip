@@ -10,7 +10,7 @@ build_normal_security_boot()
 	openssl dgst -sha256 -binary -out "$DIGEST" "$ROOTFS_IMG"
 	DIGEST_SIZE=$(stat -c "%s" "$ROOTFS_IMG")
 
-	if [ "$RK_ARCH" == "arm" ]; then
+	if [ "$RK_KERNEL_ARCH" == "arm" ]; then
 		ITS="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS.dts"
 	else
 		ITS="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS.dts"

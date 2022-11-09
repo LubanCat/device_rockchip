@@ -42,7 +42,7 @@ if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
 fi
 
 if [ "${RK_OEM_DIR}" == "dueros"  ];then
-	if [ $RK_ARCH == arm ];then
+	if [ $RK_KERNEL_ARCH == arm ];then
 		TARGET_ARM_TYPE=arm32
 	else
 		TARGET_ARM_TYPE=arm64

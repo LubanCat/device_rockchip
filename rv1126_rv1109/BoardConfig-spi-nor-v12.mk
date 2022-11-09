@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target arch
-export RK_ARCH=arm
+export RK_KERNEL_ARCH=arm
 # build idblock.bin and update SPL
 export RK_IDBLOCK_UPDATE_SPL=true
 # Uboot defconfig

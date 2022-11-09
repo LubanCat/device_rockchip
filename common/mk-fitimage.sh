@@ -13,7 +13,7 @@ if [ ! -f $ITS ]; then
 	exit -1
 fi
 
-if [ "$RK_ARCH" == "arm" ]; then
+if [ "$RK_KERNEL_ARCH" == "arm" ]; then
 	KERNEL_DTB="kernel/arch/arm/boot/dts/$RK_KERNEL_DTS.dtb"
 else
 	KERNEL_DTB="kernel/arch/arm64/boot/dts/rockchip/$RK_KERNEL_DTS.dtb"
