@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Target chip
-export RK_CHIP=RV1126
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Target chip
-export RK_CHIP=RV1126
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
@@ -34,5 +32,3 @@ export RK_OEM_DIR=oem_empty
 export RK_USERDATA_DIR=userdata_sl
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
-# define USB_FW_VERSION
-export USB_FW_VERSION=0.0.1

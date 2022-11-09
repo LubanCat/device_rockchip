@@ -32,12 +32,8 @@ export RK_DEBIAN_VERSION=bullseye
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
 # Set oem partition type, including ext2 squashfs
 export RK_OEM_FS_TYPE=jffs2
-# Set oem node
-export RK_OEM_NODE=/dev/mtdblock4
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=jffs2
-# Set userdata node
-export RK_USERDATA_NODE=/dev/mtdblock5
 #OEM config
 export RK_OEM_DIR=oem_sample
 #userdata config

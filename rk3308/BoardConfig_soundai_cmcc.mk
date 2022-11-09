@@ -30,8 +30,6 @@ export RK_OEM_FS_TYPE=ext2
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config: /oem/dueros/aispeech-6mic-64bit/aispeech-2mic-64bit/aispeech-4mic-32bit/aispeech-2mic-32bit/aispeech-2mic-kongtiao-32bit/iflytekSDK/CaeDemo_VAD/smart_voice
 export RK_OEM_DIR=cmcc_soundai
-#Build oem to rootfs 
-export RK_BUILD_OEM_ROOTFS=false
 #userdata config
 export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
