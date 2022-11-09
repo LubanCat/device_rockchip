@@ -26,7 +26,7 @@ export RK_PARAMETER=parameter-fit-nand-256M-ab.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
 #

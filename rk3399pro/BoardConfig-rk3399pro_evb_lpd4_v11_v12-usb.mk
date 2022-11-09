@@ -21,7 +21,7 @@ export RK_CFG_RECOVERY=rockchip_rk3399pro_recovery
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3399pro_pcba
 # target chip
-export RK_TARGET_PRODUCT=rk3399pro
+export RK_CHIP=rk3399pro
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # Set debian version (debian10: buster, debian11: bullseye)

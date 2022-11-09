@@ -21,7 +21,7 @@ export RK_CFG_RECOVERY=rockchip_rk3229_recovery
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3229_pcba
 # target chip
-export RK_TARGET_PRODUCT=rk3229
+export RK_CHIP=rk3229
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 #misc image

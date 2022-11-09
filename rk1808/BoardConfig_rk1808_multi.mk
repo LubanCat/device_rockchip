@@ -17,6 +17,6 @@ export RK_PARAMETER=parameter-buildroot.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk1808-multi
 # target chip
-export RK_TARGET_PRODUCT=rk1808
+export RK_CHIP=rk1808
 #enable multi-npu-boot image auto-build
 export RK_MULTINPU_BOOT=y

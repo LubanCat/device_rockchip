@@ -32,9 +32,9 @@ for part in ${RK_EXTRA_PARTITIONS//@/ }; do
 done
 
 ROCKDEV=$TOP_DIR/rockdev
-PRODUCT_PATH=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT
-PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
-OEM_DIR=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_OEM_DIR
+PRODUCT_PATH=$TOP_DIR/device/rockchip/$RK_CHIP
+PARAMETER=$TOP_DIR/device/rockchip/$RK_CHIP/$RK_PARAMETER
+OEM_DIR=$TOP_DIR/device/rockchip/$RK_CHIP/$RK_OEM_DIR
 USER_DATA_DIR=$TOP_DIR/device/rockchip/userdata/$RK_USERDATA_DIR
 MISC_IMG=$TOP_DIR/device/rockchip/rockimg/wipe_all-misc.img
 ROOTFS_IMG=$TOP_DIR/rockdev/rootfs.$RK_ROOTFS_TYPE
@@ -63,7 +63,7 @@ if [ "${RK_OEM_DIR}" == "dueros"  ];then
 		TARGET_ARM_TYPE=arm32
 	else
 		TARGET_ARM_TYPE=arm64
-		PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/parameter-64bit-dueros.txt
+		PARAMETER=$TOP_DIR/device/rockchip/$RK_CHIP/parameter-64bit-dueros.txt
 	fi
 	OEM_DIR=${ROCKDEV}/.oem
 	rm -rf ${OEM_DIR}

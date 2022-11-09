@@ -39,7 +39,7 @@ check_config()
 
 choose_board()
 {
-	BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
+	BOARD_ARRAY=( $(cd ${CHIP_DIR}/; ls BoardConfig*.mk | sort) )
 
 	RK_TARGET_BOARD_ARRAY_LEN=${#BOARD_ARRAY[@]}
 	if [ $RK_TARGET_BOARD_ARRAY_LEN -eq 0 ]; then
@@ -66,7 +66,7 @@ choose_board()
 		BOARD=BoardConfig.mk
 	fi
 
-	ln -rsf "$TARGET_PRODUCT_DIR/$BOARD" "$BOARD_CONFIG"
+	ln -rsf "$CHIP_DIR/$BOARD" "$BOARD_CONFIG"
 	echo "switching to board: $(realpath $BOARD_CONFIG)"
 }
 
@@ -76,8 +76,7 @@ cd "$TOP_DIR"
 mkdir -p rockdev
 
 BOARD_CONFIG="$TOP_DIR/device/rockchip/.BoardConfig.mk"
-TARGET_PRODUCT="$TOP_DIR/device/rockchip/.target_product"
-TARGET_PRODUCT_DIR="$(realpath "${TARGET_PRODUCT}")"
+CHIP_DIR="$(realpath $TOP_DIR/device/rockchip/.target_product)"
 
 prebuild_uboot()
 {
@@ -181,8 +180,8 @@ usage()
 
 build_info()
 {
-	if [ ! -L $TARGET_PRODUCT_DIR ];then
-		echo "No found target product!!!"
+	if [ ! -L $CHIP_DIR ];then
+		echo "No found target chip!!!"
 	fi
 	if [ ! -L $BOARD_CONFIG ];then
 		echo "No found target board config!!!"
@@ -198,7 +197,7 @@ build_info()
 	fi
 
 	echo "Current Building Information:"
-	echo "Target Product: $TARGET_PRODUCT_DIR"
+	echo "Target Chip: $CHIP_DIR"
 	echo "Target BoardConfig: `realpath $BOARD_CONFIG`"
 	echo "Target Misc config:"
 	echo "`env |grep "^RK_" | grep -v "=$" | sort`"
@@ -304,7 +303,7 @@ build_check_power_domain()
 
 setup_cross_compile()
 {
-	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ]; then
+	if [ "$RK_CHIP" = "rv1126_rv1109" ]; then
 		TOOLCHAIN_OS=rockchip
 	else
 		TOOLCHAIN_OS=none
@@ -457,7 +456,7 @@ build_kernel()
 	$KMAKE $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT
 	$KMAKE $RK_KERNEL_DTS.img
 
-	ITS="$TARGET_PRODUCT_DIR/$RK_KERNEL_FIT_ITS"
+	ITS="$CHIP_DIR/$RK_KERNEL_FIT_ITS"
 	if [ -f "$ITS" ]; then
 		$COMMON_DIR/mk-fitimage.sh kernel/$RK_BOOT_IMG \
 			"$ITS" $RK_KERNEL_IMG
@@ -723,7 +722,7 @@ build_wifibt()
 		$KMAKE M=$RKWIFIBT/drivers/bluetooth_usb_driver
 	fi
 
-	if [ "$RK_TARGET_PRODUCT" = "rv1126_rv1109" ];then
+	if [ "$RK_CHIP" = "rv1126_rv1109" ];then
 		echo "target is rv1126_rv1109, skip $RKWIFIBT_APP"
 	else
 		echo "building rkwifibt-app"
@@ -1103,7 +1102,7 @@ build_recovery()
 	/usr/bin/time -f "you take %E to pack recovery image" \
 		$COMMON_DIR/mk-ramdisk.sh $DST_DIR/rootfs.cpio.gz \
 		$DST_DIR/recovery.img \
-		"$TARGET_PRODUCT_DIR/$RK_RECOVERY_FIT_ITS"
+		"$CHIP_DIR/$RK_RECOVERY_FIT_ITS"
 	ln -rsf $DST_DIR/recovery.img rockdev/
 
 	# For security
@@ -1246,7 +1245,7 @@ build_all()
 {
 	echo "============================================"
 	echo "TARGET_KERNEL_ARCH=$RK_KERNEL_ARCH"
-	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
+	echo "TARGET_PLATFORM=$RK_CHIP"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
 	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
@@ -1496,7 +1495,7 @@ unset POST_OPTIONS
 for option in $OPTIONS; do
 	case $option in
 		BoardConfig*.mk)
-			option="$TARGET_PRODUCT_DIR/$option"
+			option="$CHIP_DIR/$option"
 			;&
 		*.mk)
 			CONF=$(realpath $option)
@@ -1519,8 +1518,8 @@ done
 [ -r "$BOARD_CONFIG" ] || choose_board
 source $BOARD_CONFIG
 
-if [ -d "$TARGET_PRODUCT_DIR/build-hooks/" ]; then
-	for hook in $(find "$TARGET_PRODUCT_DIR/build-hooks" -name "*.sh"); do
+if [ -d "$CHIP_DIR/build-hooks/" ]; then
+	for hook in $(find "$CHIP_DIR/build-hooks" -name "*.sh"); do
 		source "$hook"
 	done
 fi

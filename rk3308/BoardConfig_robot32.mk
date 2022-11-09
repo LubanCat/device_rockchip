@@ -22,7 +22,7 @@ export RK_CFG_RECOVERY=rockchip_rk3308_robot_recovery
 export RK_CFG_PCBA=rockchip_rk3308_pcba
 export RK_JOBS=20
 # target chip
-export RK_TARGET_PRODUCT=rk3308
+export RK_CHIP=rk3308
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=squashfs
 #misc image

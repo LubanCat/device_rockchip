@@ -17,4 +17,4 @@ export RK_CFG_BUILDROOT=rockchip_rk3399pro-npu-multi-cam
 export RK_RAMBOOT=true
 export RK_ROOTFS_TYPE=cpio.gz
 # target chip
-export RK_TARGET_PRODUCT=rk3399pro
+export RK_CHIP=rk3399pro

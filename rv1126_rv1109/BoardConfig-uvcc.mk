@@ -23,7 +23,7 @@ export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # Define package-file for update.img

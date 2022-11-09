@@ -25,7 +25,7 @@ export RK_ROOTFS_TYPE=romfs
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-emmc-dualcam-tb
 # Define WiFi BT chip

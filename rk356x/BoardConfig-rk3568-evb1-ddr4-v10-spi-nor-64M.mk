@@ -23,7 +23,7 @@ export RK_CFG_BUILDROOT=rockchip_rk356x_libs
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # target chip
-export RK_TARGET_PRODUCT=rk356x
+export RK_CHIP=rk356x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=squashfs
 # Set debian version (debian10: buster, debian11: bullseye)

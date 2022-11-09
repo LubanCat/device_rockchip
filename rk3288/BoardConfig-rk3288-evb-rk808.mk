@@ -21,7 +21,7 @@ export RK_CFG_RECOVERY=rockchip_rk3288_recovery
 # Pcba config
 export RK_CFG_PCBA=rockchip_rk3288_pcba
 # target chip
-export RK_TARGET_PRODUCT=rk3288
+export RK_CHIP=rk3288
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # Set debian version (debian10: buster, debian11: bullseye)

@@ -7,7 +7,7 @@ if ! which fakeroot &>/dev/null; then
     exit -1
 fi
 
-PARAMETER=device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER
+PARAMETER=device/rockchip/$RK_CHIP/$RK_PARAMETER
 MISC_IMG=device/rockchip/rockimg/${RK_MISC:-blank-misc.img}
 MKIMAGE=device/rockchip/common/mk-image.sh
 

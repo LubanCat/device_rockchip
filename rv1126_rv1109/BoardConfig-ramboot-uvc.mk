@@ -29,7 +29,7 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_ramboot_uvcc
 export RK_RAMBOOT=true
 export RK_ROOTFS_TYPE=cpio.gz
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=cpio.gz
 # Define package-file for update.img

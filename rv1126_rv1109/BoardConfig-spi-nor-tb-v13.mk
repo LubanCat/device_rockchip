@@ -29,7 +29,7 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_evb_spi_nor_tb
 export RK_RAMBOOT=true
 export RK_ROOTFS_TYPE=romfs
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-spi-nor-tb
 # Define WiFi BT chip

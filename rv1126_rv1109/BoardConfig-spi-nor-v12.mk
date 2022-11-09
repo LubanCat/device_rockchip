@@ -29,7 +29,7 @@ export RK_PARAMETER=parameter-spi-nor-32M.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_tiny
 # target chip
-export RK_TARGET_PRODUCT=rv1126_rv1109
+export RK_CHIP=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2
 export RK_ROOTFS_TYPE=squashfs
 # Define package-file for update.img

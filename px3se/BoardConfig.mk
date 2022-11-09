@@ -21,7 +21,7 @@ export RK_CFG_RECOVERY=rockchip_px3se_recovery
 # Pcba config
 export RK_CFG_PCBA=rockchip_px3se_pcba
 # target chip
-export RK_TARGET_PRODUCT=px3se
+export RK_CHIP=px3se
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
 # yocto machine
