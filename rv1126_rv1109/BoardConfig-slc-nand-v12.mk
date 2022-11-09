@@ -34,10 +34,6 @@ export RK_RECOVERY_FIT_ITS=boot4recovery.its
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ubi
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ubi
 #
 # Set ubifs page size, 2048(2KB) or 4096(4KB)
 # Option.
@@ -46,14 +42,6 @@ export RK_USERDATA_FS_TYPE=ubi
 # Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
 # Option.
 # export RK_UBI_BLOCK_SIZE=0x20000
-#
-# Set userdata partition size (byte) if define RK_USERDATA_DIR
-# MUST, if userdata partition is grow partition.
-# export RK_USERDATA_PARTITION_SIZE=0x02760000
-#
-# Set oem partition size (byte)
-# Option. if not set, it will get from parameter auto.
-# export RK_OEM_PARTITION_SIZE=0x6400000
 #
 #misc image
 export RK_MISC=blank-misc.img

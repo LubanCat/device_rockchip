@@ -14,6 +14,23 @@ TOP_DIR=$(pwd)
 
 export RK_LOADER_NAME=
 
+for part in ${RK_EXTRA_PARTITIONS//@/ }; do
+	NAME=$(echo $part | cut -d':' -f1)
+	TYPE=$(echo $part | cut -d':' -f3)
+	DIR=$(echo $part | cut -d':' -f5)
+
+	case "$NAME" in
+		oem)
+			RK_OEM_FS_TYPE=$TYPE
+			RK_OEM_DIR=$DIR
+			;;
+		userdata)
+			RK_USERDATA_FS_TYPE=$TYPE
+			RK_USERDATA_DIR=$DIR
+			;;
+	esac
+done
+
 ROCKDEV=$TOP_DIR/rockdev
 PRODUCT_PATH=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT
 PARAMETER=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$RK_PARAMETER

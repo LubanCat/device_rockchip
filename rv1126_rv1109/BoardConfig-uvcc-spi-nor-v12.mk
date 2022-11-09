@@ -31,9 +31,7 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc_spi_nor
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including squashfs jffs2
 export RK_ROOTFS_TYPE=squashfs
-# Set userdata partition type, including jffs2, fat, squashfs
-export RK_USERDATA_FS_TYPE=jffs2
-#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
-export RK_USERDATA_DIR=userdata_empty
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-spi-nor-uvc
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="userdata:/userdata:jffs2:defaults:userdata_empty:auto:resize"

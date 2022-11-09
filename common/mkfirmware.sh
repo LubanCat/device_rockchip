@@ -86,49 +86,6 @@ EOF
     message "Done packing $DST"
 }
 
-# Convert legacy partition variables to new style
-legacy_partion() {
-    PART_NAME="$1"
-    SRC="$2"
-    FS_TYPE="$3"
-    SIZE="${4:-0}"
-    MOUNT="/$PART_NAME"
-    OPT=""
-
-    [ "$FS_TYPE" ] || return 0
-    [ "$SRC" ] || return 0
-
-    # Fixed size for ubi
-    if [ "$FS_TYPE" = ubi ]; then
-        OPT="fixed"
-    fi
-
-    case $SIZE in
-        *k|*K)
-            SIZE=${SIZE//k/K}
-            ;;
-        *m|*M)
-            SIZE=${SIZE//m/M}
-            ;;
-        *)
-            SIZE=$(( ${SIZE} / 1024 ))K # default is bytes
-            ;;
-    esac
-
-    echo "$PART_NAME:$MOUNT:$FS_TYPE:defaults:$SRC:${SIZE}:$OPT"
-}
-
-RK_LEGACY_PARTITIONS=" \
-    $(legacy_partion oem "$RK_OEM_DIR" "$RK_OEM_FS_TYPE" "$RK_OEM_PARTITION_SIZE")
-    $(legacy_partion userdata "$RK_USERDATA_DIR" "$RK_USERDATA_FS_TYPE" "$RK_USERDATA_PARTITION_SIZE")
-"
-
-# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
-# for example:
-# RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal:256M:fixed
-# userdata:/userdata:vfat:errors=remount-ro:userdata_empty:auto"
-RK_EXTRA_PARTITIONS="${RK_EXTRA_PARTITIONS:-${RK_LEGACY_PARTITIONS}}"
-
 partition_arg() {
     PART="$1"
     I="$2"

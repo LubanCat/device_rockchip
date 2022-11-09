@@ -30,14 +30,6 @@ export RK_ROOTFS_TYPE=squashfs
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3568-evb
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=jffs2
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=jffs2
-#OEM config
-export RK_OEM_DIR=oem_sample
-#userdata config
-export RK_USERDATA_DIR=userdata_normal
 # Define package-file
 export RK_PACKAGE_FILE=rk356x-package-file-spi-nor
 # Define WiFi BT chip
@@ -47,3 +39,5 @@ export RK_PACKAGE_FILE=rk356x-package-file-spi-nor
 export RK_WIFIBT_CHIP=AP6398S
 # Define BT ttySX
 export RK_WIFIBT_TTY=ttyS8
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:jffs2:defaults:oem_sample:auto:resize@userdata:/userdata:jffs2:defaults:userdata_normal:auto:resize"

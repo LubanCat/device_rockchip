@@ -24,14 +24,6 @@ export RK_CFG_PCBA=rockchip_rk1806_pcba
 export RK_TARGET_PRODUCT=rk1806
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ext2
-#OEM config
-export RK_OEM_DIR=oem_normal
-#userdata config
-export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
 # Define WiFi BT chip
@@ -39,3 +31,5 @@ export RK_MISC=wipe_all-misc.img
 # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
 # Single WiFi configuration: AP6256 or CYW43455: RK_WIFIBT_CHIP=AP6256
 export RK_WIFIBT_CHIP=ALL_AP
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal:auto:resize@userdata:/userdata:ext2:defaults:userdata_normal:auto:resize"

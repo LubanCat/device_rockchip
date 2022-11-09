@@ -18,17 +18,6 @@ INFO_DIR=$(realpath --relative-base="$TOP_DIR" "$TARGET_DIR/info")
 
 REBOOT_WRAPPER=busybox-reboot
 
-RK_LEGACY_PARTITIONS=" \
-    ${RK_OEM_FS_TYPE:+oem:/oem:$RK_OEM_FS_TYPE}
-    ${RK_USERDATA_FS_TYPE:+userdata:/userdata:$RK_USERDATA_FS_TYPE}
-"
-
-# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
-# for example:
-# RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal:256M:fixed
-# userdata:/userdata:vfat:errors=remount-ro:userdata_empty:auto"
-RK_EXTRA_PARTITIONS="${RK_EXTRA_PARTITIONS:-$RK_LEGACY_PARTITIONS}"
-
 function fixup_root()
 {
     echo "Fixing up rootfs type: $1"

@@ -28,14 +28,6 @@ export RK_RECOVERY_FIT_ITS=boot4recovery.its
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ext4
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ext2
-#OEM config
-export RK_OEM_DIR=oem_ipc
-#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
-export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
 # Define package-file for update.img
@@ -47,3 +39,5 @@ export RK_PACKAGE_FILE=rv1126_rv1109-package-file
 export RK_WIFIBT_CHIP=AP6256
 # Define BT ttySX
 export RK_WIFIBT_TTY=ttyS0
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_ipc:auto:resize@userdata:/userdata:ext2:defaults:userdata_normal:auto:resize"

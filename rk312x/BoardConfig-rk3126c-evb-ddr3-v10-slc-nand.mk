@@ -36,16 +36,8 @@ export RK_CFG_PCBA=rockchip_rk3126c_pcba
 export RK_TARGET_PRODUCT=rk312x
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=ubi
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ubi
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ubi
-#OEM config
-export RK_OEM_DIR=oem_normal
-#userdata config
-export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
 
-export RK_USERDATA_PARTITION_SIZE=0xB400000
-export RK_OEM_PARTITION_SIZE=0x1400000
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:ubi:defaults:oem_normal:20480K:fixed@userdata:/userdata:ubi:defaults:userdata_normal:184320K:fixed"

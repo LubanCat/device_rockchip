@@ -32,13 +32,7 @@ export RK_ROOTFS_TYPE=cpio.gz
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
 export RK_ROOTFS_TYPE=cpio.gz
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ext2
-#OEM config
-export RK_OEM_DIR=oem_uvcc
-#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
-export RK_USERDATA_DIR=userdata_normal
 # Define package-file for update.img
 #export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_uvcc:auto:resize@userdata:/userdata:ext2:defaults:userdata_normal:auto:resize"

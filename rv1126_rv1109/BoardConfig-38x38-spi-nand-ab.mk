@@ -29,8 +29,6 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ubi
 #
 # Set ubifs page size, 2048(2KB) or 4096(4KB)
 # Option.
@@ -39,15 +37,6 @@ export RK_UBI_PAGE_SIZE=2048
 # Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
 # Option.
 export RK_UBI_BLOCK_SIZE=0x20000
-#
-# Set userdata partition size (byte) if define RK_USERDATA_DIR
-# MUST, if userdata partition is grow partition.
-# export RK_USERDATA_PARTITION_SIZE=0x680000
-#
-# Set oem partition size (byte)
-# Option. if not set, it will get from parameter auto.
-# export RK_OEM_PARTITION_SIZE=0x6400000
-#
 #misc image
 export RK_MISC=blank-misc.img
 # Define package-file for update_ab.img

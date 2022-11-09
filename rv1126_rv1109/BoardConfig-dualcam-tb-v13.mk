@@ -26,10 +26,6 @@ export RK_ROOTFS_TYPE=romfs
 export RK_RECOVERY_FIT_ITS=boot-tb.its
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
-# Set userdata partition type, including ext2, fat
-export RK_USERDATA_FS_TYPE=ext2
-#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
-export RK_USERDATA_DIR=userdata_empty
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-emmc-dualcam-tb
 # Define WiFi BT chip
@@ -39,3 +35,5 @@ export RK_PACKAGE_FILE=rv1126-package-file-emmc-dualcam-tb
 export RK_WIFIBT_CHIP=ALL_AP
 # Define BT ttySX
 export RK_WIFIBT_TTY=ttyS0
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="userdata:/userdata:ext2:defaults:userdata_empty:auto:resize"

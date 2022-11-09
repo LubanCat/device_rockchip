@@ -36,11 +36,6 @@ export RK_ROOTFS_TYPE=ext4
 export RK_DEBIAN_VERSION=bullseye
 # yocto machine
 export RK_YOCTO_MACHINE=rockchip-rk3588-evb
-# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
-export RK_EXTRA_PARTITIONS=" \
-	oem:/oem:ext2:defaults:oem_normal:auto:resize
-	userdata:/userdata:ext2:defaults:userdata_normal:auto:resize
-"
 #misc image
 export RK_MISC=wipe_all-misc.img
 # Define package-file
@@ -52,3 +47,5 @@ export RK_PACKAGE_FILE=rk3588-package-file
 export RK_WIFIBT_CHIP=ALL_AP
 # Define BT ttySX
 export RK_WIFIBT_TTY=ttyS8
+# <dev>:<mount point>:<fs type>:<mount flags>:<source dir>:<image size(M|K|auto)>:[options]
+export RK_EXTRA_PARTITIONS="oem:/oem:ext2:defaults:oem_normal:auto:resize@userdata:/userdata:ext2:defaults:userdata_normal:auto:resize"
