@@ -35,10 +35,6 @@ export RK_USERDATA_DIR=userdata_empty
 MIC_NUM=6
 #misc image
 export RK_MISC=wipe_all-misc.img
-# Define package-file for update_ab.img
-export RK_PACKAGE_FILE_AB=
-# Define package-file for ota update_ota.img
-export RK_PACKAGE_FILE_OTA=
 # Define WiFi BT chip
 # # Compatible with Realtek and AP6XXX WiFi : RK_WIFIBT_CHIP=ALL_AP
 # # Compatible with Realtek and CYWXXX WiFi : RK_WIFIBT_CHIP=ALL_CY
@@ -51,8 +47,4 @@ export RK_WIFIBT_TTY=ttyS0
 ### enable build update_sdcard.img
 ### Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
 # export RK_UPDATE_SDCARD_ENABLE_FOR_AB=true
-### Recovery config
-# export RK_UPDATE_SDCARD_CFG_RECOVERY=
-### Recovery image format type: fit(flattened image tree)
-# export RK_RECOVERY_FIT_ITS=
 ##########################################################

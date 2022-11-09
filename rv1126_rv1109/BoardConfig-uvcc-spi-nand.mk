@@ -28,20 +28,12 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 export RK_PARAMETER=parameter-fit-128M-ab.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_uvcc_spi_nand
-# Recovery config
-export RK_CFG_RECOVERY=
-# Pcba config
-export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
-#OEM config
-export RK_OEM_DIR=
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #
@@ -61,8 +53,6 @@ export RK_USERDATA_PARTITION_SIZE=0x680000
 # Option. if not set, it will get from parameter auto.
 # export RK_OEM_PARTITION_SIZE=0x6400000
 #
-#misc image
-export RK_MISC=
 # Define package-file for update_ab.img
 export RK_PACKAGE_FILE_AB=rv1126-package-file-spi-nand-uvc-ab
 # Define package-file for update_ota.img
@@ -72,8 +62,6 @@ export RK_PACKAGE_FILE_OTA=rv1126-package-file-spi-nand-uvc-ota
 ### enable build update_sdcard.img
 ### Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
 # export RK_UPDATE_SDCARD_ENABLE_FOR_AB=true
-### Recovery config
-# export RK_UPDATE_SDCARD_CFG_RECOVERY=
 ### Recovery image format type: fit(flattened image tree)
 # export RK_RECOVERY_FIT_ITS=boot4recovery.its
 ##########################################################

@@ -8,8 +8,6 @@ export RK_UBOOT_DEFCONFIG=rv1126
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
-# Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-evb-ddr3-v13
 # boot image type
@@ -26,8 +24,6 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_cvr
 export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# Pcba config
-export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs

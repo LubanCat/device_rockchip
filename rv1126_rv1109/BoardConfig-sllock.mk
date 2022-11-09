@@ -20,16 +20,12 @@ export RK_BOOT_IMG=zboot.img
 export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
 # parameter for GPT table
 export RK_PARAMETER=parameter-sllock.txt
-# Recovery config
-export RK_CFG_RECOVERY=
 # ramboot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_sllock
 export RK_RAMBOOT=true
 export RK_ROOTFS_TYPE=romfs
 # ramboot idt config
 export RK_RECOVERY_FIT_ITS=boot-tb.its
-# Pcba config
-export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set oem partition type, including ext2 squashfs
@@ -40,8 +36,6 @@ export RK_USERDATA_FS_TYPE=ext2
 export RK_OEM_DIR=oem_empty
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
-#misc image
-export RK_MISC=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126-package-file-sllock
 # Define WiFi BT chip

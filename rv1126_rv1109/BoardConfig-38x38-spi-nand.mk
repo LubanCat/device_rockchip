@@ -14,8 +14,6 @@ export RK_LOADER_UPDATE_SPL=true
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
-# Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rv1109-38-v10-spi-nand
 # boot image type
@@ -32,20 +30,12 @@ export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_spi_nand
 export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_spi_nand_recovery
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
-# Pcba config
-export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs ubi
 export RK_ROOTFS_TYPE=ubi
-# Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
-#OEM config
-export RK_OEM_DIR=
-#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
-export RK_USERDATA_DIR=
 #
 # Set ubifs page size, 2048(2KB) or 4096(4KB)
 # Option.

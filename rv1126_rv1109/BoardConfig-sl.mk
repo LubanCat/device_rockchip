@@ -10,8 +10,6 @@ export RK_UBOOT_DEFCONFIG=rv1126
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
-# Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-rmsl-ddr3-v1
 # boot image type
@@ -22,10 +20,6 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_sl
-# Recovery config
-export RK_CFG_RECOVERY=
-# Pcba config
-export RK_CFG_PCBA=
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
@@ -38,8 +32,6 @@ export RK_USERDATA_FS_TYPE=ext2
 export RK_OEM_DIR=oem_empty
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_sl
-#misc image
-export RK_MISC=
 # Define package-file for update.img
 export RK_PACKAGE_FILE=rv1126_rv1109-package-file-uvc
 # define USB_FW_VERSION

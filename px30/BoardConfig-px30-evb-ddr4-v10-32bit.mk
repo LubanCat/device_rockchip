@@ -4,8 +4,6 @@
 export RK_ARCH=arm64
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=px30
-# Trust choose ignore bl32, including --ignore-bl32
-export TRUST_PACK_IGNORE_BL32=
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=px30_linux_defconfig
 # Kernel dts
