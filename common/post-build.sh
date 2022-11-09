@@ -7,9 +7,6 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 TOP_DIR="$SCRIPT_DIR/../../.."
 echo "Top of tree: $TOP_DIR"
 
-# Source it for yocto SDK
-source "$TOP_DIR/device/rockchip/.BoardConfig.mk"
-
 TARGET_DIR=$(realpath "$1")
 shift
 

@@ -16,9 +16,6 @@ cd $COMMON_DIR
 cd ../../..
 TOP_DIR=$(pwd)
 
-BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
-source $BOARD_CONFIG
-
 TEMPDIR=${OUTPUT}/tempfile
 if [ "$MODE" = "DM-E" ]; then
 	ROOTFS=${OUTPUT}/enc.img

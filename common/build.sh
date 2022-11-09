@@ -37,50 +37,37 @@ check_config()
 	return 1
 }
 
-choose_target_board()
+choose_board()
 {
+	BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
+
+	RK_TARGET_BOARD_ARRAY_LEN=${#BOARD_ARRAY[@]}
+	if [ $RK_TARGET_BOARD_ARRAY_LEN -eq 0 ]; then
+		echo "No available Board Config"
+		return -1
+	fi
+
 	echo
 	echo "You're building on Linux"
 	echo "Lunch menu...pick a combo:"
 	echo ""
 
 	echo "0. default BoardConfig.mk"
-	echo ${RK_TARGET_BOARD_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
+	echo ${BOARD_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
 
 	local INDEX
 	read -p "Which would you like? [0]: " INDEX
 	INDEX=$((${INDEX:-0} - 1))
 
 	if echo $INDEX | grep -vq [^0-9]; then
-		RK_BUILD_TARGET_BOARD="${RK_TARGET_BOARD_ARRAY[$INDEX]}"
+		BOARD="${BOARD_ARRAY[$INDEX]}"
 	else
 		echo "Lunching for Default BoardConfig.mk boards..."
-		RK_BUILD_TARGET_BOARD=BoardConfig.mk
-	fi
-}
-
-build_select_board()
-{
-	RK_TARGET_BOARD_ARRAY=( $(cd ${TARGET_PRODUCT_DIR}/; ls BoardConfig*.mk | sort) )
-
-	RK_TARGET_BOARD_ARRAY_LEN=${#RK_TARGET_BOARD_ARRAY[@]}
-	if [ $RK_TARGET_BOARD_ARRAY_LEN -eq 0 ]; then
-		echo "No available Board Config"
-		return
+		BOARD=BoardConfig.mk
 	fi
 
-	choose_target_board
-
-	ln -rfs $TARGET_PRODUCT_DIR/$RK_BUILD_TARGET_BOARD device/rockchip/.BoardConfig.mk
-	echo "switching to board: `realpath $BOARD_CONFIG`"
-}
-
-unset_board_config_all()
-{
-	local tmp_file=`mktemp`
-	grep -oh "^export.*RK_.*=" `find device -name "Board*.mk"` > $tmp_file
-	source $tmp_file
-	rm -f $tmp_file
+	ln -rsf "$TARGET_PRODUCT_DIR/$BOARD" "$BOARD_CONFIG"
+	echo "switching to board: $(realpath $BOARD_CONFIG)"
 }
 
 COMMON_DIR="$(dirname "$(realpath "$0")")"
@@ -91,12 +78,6 @@ mkdir -p rockdev
 BOARD_CONFIG="$TOP_DIR/device/rockchip/.BoardConfig.mk"
 TARGET_PRODUCT="$TOP_DIR/device/rockchip/.target_product"
 TARGET_PRODUCT_DIR="$(realpath "${TARGET_PRODUCT}")"
-
-if [ ! -L "$BOARD_CONFIG" -a  "$1" != "lunch" ]; then
-	build_select_board
-fi
-unset_board_config_all
-[ -L "$BOARD_CONFIG" ] && source $BOARD_CONFIG
 
 prebuild_uboot()
 {
@@ -1499,7 +1480,7 @@ create_keys()
 security_is_enabled()
 {
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" != "true" ]; then
-		echo "No security paramter found in .BoardConfig.mk"
+		echo "No security paramter found in $BOARD_CONFIG"
 		exit -1
 	fi
 }
@@ -1510,13 +1491,6 @@ security_is_enabled()
 #=========================
 
 OPTIONS="${@:-allsave}"
-
-echo $TARGET_PRODUCT_DIR $RK_CFG_BUILDROOT
-if [ -d "$TARGET_PRODUCT_DIR/build-hooks/" ]; then
-	for hook in $(find "$TARGET_PRODUCT_DIR/build-hooks" -name "*.sh"); do
-		source "$hook"
-	done
-fi
 
 # Pre options
 unset POST_OPTIONS
@@ -1535,13 +1509,22 @@ for option in $OPTIONS; do
 
 			ln -rsf $CONF $BOARD_CONFIG
 			;;
-		lunch) build_select_board ;;
+		lunch) choose_board ;;
 		kernel-4.4|kernel-4.19|kernel-5.10)
 			RK_KERNEL_VERSION=${option#kernel-}
 			;;
 		*) POST_OPTIONS="$POST_OPTIONS $option";;
 	esac
 done
+
+[ -r "$BOARD_CONFIG" ] || choose_board
+source $BOARD_CONFIG
+
+if [ -d "$TARGET_PRODUCT_DIR/build-hooks/" ]; then
+	for hook in $(find "$TARGET_PRODUCT_DIR/build-hooks" -name "*.sh"); do
+		source "$hook"
+	done
+fi
 
 # Fallback to current kernel
 RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version kernel/)}

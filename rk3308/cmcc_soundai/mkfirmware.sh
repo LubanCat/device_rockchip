@@ -12,7 +12,6 @@ cd ../../..
 TOP_DIR=$(pwd)
 
 export RK_LOADER_NAME=
-source $TOP_DIR/device/rockchip/.BoardConfig.mk
 
 ROCKDEV=$TOP_DIR/rockdev
 PRODUCT_PATH=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT
