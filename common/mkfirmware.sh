@@ -8,7 +8,7 @@ if ! which fakeroot &>/dev/null; then
 fi
 
 PARAMETER=device/rockchip/$RK_CHIP/$RK_PARAMETER
-MISC_IMG=device/rockchip/rockimg/${RK_MISC:-blank-misc.img}
+MISC_IMG=device/rockchip/common/images/${RK_MISC:-blank-misc.img}
 MKIMAGE=device/rockchip/common/mk-image.sh
 
 message() {
@@ -117,7 +117,7 @@ pack_extra_partitions() {
             /*)
                 ;;
             *)
-                SRC="device/rockchip/$PART_NAME/$SRC"
+                SRC="device/rockchip/common/images/$PART_NAME/$SRC"
                 ;;
         esac
 

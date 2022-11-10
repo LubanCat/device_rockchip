@@ -1362,8 +1362,8 @@ build_sdcard_package()
 	local rk_sdupdate_ab_misc=${RK_SDUPDATE_AB_MISC:=sdupdate-ab-misc.img}
 	local rk_parameter_sdupdate=${RK_PARAMETER_SDUPDATE:=parameter-sdupdate.txt}
 	local rk_package_file_sdcard_update=${RK_PACKAGE_FILE_SDCARD_UPDATE:=sdcard-update-package-file}
-	local sdupdate_ab_misc_img=$TOP_DIR/device/rockchip/rockimg/$rk_sdupdate_ab_misc
-	local parameter_sdupdate=$TOP_DIR/device/rockchip/rockimg/$rk_parameter_sdupdate
+	local sdupdate_ab_misc_img=$TOP_DIR/device/rockchip/common/images/$rk_sdupdate_ab_misc
+	local parameter_sdupdate=$TOP_DIR/device/rockchip/common/images/$rk_parameter_sdupdate
 	local recovery_img=$TOP_DIR/buildroot/output/$RK_UPDATE_SDCARD_CFG_RECOVERY/images/recovery.img
 
 	if [ $RK_UPDATE_SDCARD_CFG_RECOVERY ]; then
