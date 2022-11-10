@@ -1,0 +1,6 @@
+RK_BUILDROOT_CFG="rockchip_px30_32"
+RK_YOCTO_CFG="rockchip-px30-evb"
+RK_KERNEL_DTS_NAME="px30-evb-ddr3-v11-linux"
+RK_BOOT_IMG="zboot.img"
+RK_WIFIBT_CHIP="AP6212A1"
+RK_WIFIBT_TTY="ttyS1"

@@ -1,0 +1,5 @@
+RK_YOCTO_CFG="rockchip-px3se-evb"
+RK_KERNEL_DTS_NAME="px3se-evb"
+RK_BOOT_IMG="zboot.img"
+RK_WIFIBT_CHIP="RTL8723DS"
+RK_PARAMETER="parameter-buildroot.txt"

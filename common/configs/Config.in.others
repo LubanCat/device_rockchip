@@ -1,0 +1,30 @@
+#
+
+menu "Others configurations"
+
+config RK_UBIFS
+	bool "ubi filesystem params"
+
+if RK_UBIFS
+
+config RK_UBIFS_PAGE_SIZE
+	int "ubifs page size (KB)"
+	default "2048"
+
+config RK_UBIFS_BLOCK_SIZE
+	int "ubifs block size (KB)"
+	default "128"
+
+endif
+
+config RK_WIFIBT_CHIP
+	string "wifi/BT chip"
+	default "ALL_AP"
+	help
+	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
+
+config RK_WIFIBT_TTY
+	string "BT serial port"
+	default "ttyS0"
+
+endmenu # Others

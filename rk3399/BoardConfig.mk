@@ -1,1 +1,0 @@
-BoardConfig-rk3399-evb-ind-lpddr4.mk

@@ -1,0 +1,7 @@
+RK_BUILDROOT_CFG="rockchip_rv1126_rv1109_facial_gate"
+RK_KERNEL_CFG_FRAGMENTS="rv1126-facial-gate.config"
+RK_KERNEL_DTS_NAME="rv1109-evb-ddr3-v13-facial-gate"
+RK_BOOT_IMG="zboot.img"
+RK_USE_FIT_IMG=y
+RK_PARAMETER="parameter-facial-gate.txt"
+RK_EXTRA_PARTITION_1_SRC="oem_facial_gate"

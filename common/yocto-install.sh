@@ -1,1 +1,1 @@
-post-build.sh
+scripts/post-build.sh

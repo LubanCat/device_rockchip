@@ -1,0 +1,6 @@
+RK_BUILDROOT_CFG="rockchip_rk3326_32"
+RK_YOCTO_CFG="rockchip-rk3326-evb"
+RK_KERNEL_DTS_NAME="rk3326-evb-lp3-v12-linux"
+RK_BOOT_IMG="zboot.img"
+RK_WIFIBT_CHIP="AP6212A1"
+RK_WIFIBT_TTY="ttyS1"

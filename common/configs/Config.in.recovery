@@ -1,0 +1,21 @@
+#
+
+menu "Recovery (buildroot)"
+
+config RK_RECOVERY_CFG_FROM_ENV
+	string
+	option env="RK_RECOVERY_CFG"
+
+config RK_RECOVERY_CFG
+	string "buildroot recovery defconfig"
+	default RK_RECOVERY_CFG_FROM_ENV if RK_RECOVERY_CFG_FROM_ENV != ""
+
+if RK_USE_FIT_IMG
+
+config RK_RECOVERY_FIT_ITS
+	string "its script for FIT recovery image"
+	default "boot4recovery.its"
+
+endif
+
+endmenu # Recovery

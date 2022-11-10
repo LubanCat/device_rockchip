@@ -1,0 +1,5 @@
+RK_BUILDROOT_CFG="rockchip_rk1808-multi"
+RK_KERNEL_CFG="rk1808_x4_linux_defconfig"
+RK_KERNEL_DTS_NAME="rk1808-evb-x4"
+RK_UBOOT_CFG="rknpu-lion"
+RK_PARAMETER="parameter-buildroot.txt"

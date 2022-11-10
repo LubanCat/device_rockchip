@@ -1,0 +1,8 @@
+RK_BUILDROOT_CFG="rockchip_rv1126_rv1109_spi_nand"
+RK_ROOTFS_TYPE="ubi"
+RK_KERNEL_DTS_NAME="rv1109-38-v10-spi-nand"
+RK_BOOT_IMG="zboot.img"
+RK_USE_FIT_IMG=y
+RK_UBOOT_CFG_FRAGMENTS="rv1126-ab.config rk-sfc.config"
+RK_AB_UPDATE=y
+RK_PARAMETER="parameter-fit-nand-256M-ab.txt"

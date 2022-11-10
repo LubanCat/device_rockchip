@@ -1,1 +1,0 @@
-BoardConfig-rk3126c-evb-ddr3-v10.mk

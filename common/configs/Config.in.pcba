@@ -1,0 +1,16 @@
+#
+
+menu "PCBA test (buildroot)"
+
+config RK_PCBA_CFG_FROM_ENV
+	string
+	option env="RK_PCBA_CFG"
+
+config RK_PCBA_CFG
+	string "buildroot PCBA defconfig"
+	default "rockchip_rk3126c_pcba" if RK_CHIP = "rk3126c"
+	default "rockchip_rk3128_pcba" if RK_CHIP = "rk3128"
+	default "rockchip_px30_pcba" if RK_CHIP_FAMILY = "rk3358"
+	default RK_PCBA_CFG_FROM_ENV if RK_PCBA_CFG_FROM_ENV != ""
+
+endmenu # PCBA

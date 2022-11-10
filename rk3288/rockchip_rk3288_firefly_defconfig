@@ -1,0 +1,3 @@
+RK_YOCTO_CFG="rockchip-rk3288-evb"
+RK_KERNEL_DTS_NAME="rk3288-firefly"
+RK_BOOT_IMG="zboot.img"

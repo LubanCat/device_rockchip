@@ -1,0 +1,12 @@
+RK_BUILDROOT_CFG="rockchip_rk356x_libs"
+RK_YOCTO_CFG="rockchip-rk3568-evb"
+RK_ROOTFS_TYPE="squashfs"
+RK_KERNEL_DTS_NAME="rk3568-evb1-ddr4-v10-linux-spi-nor"
+RK_BOOT_IMG="zboot.img"
+RK_USE_FIT_IMG=y
+RK_WIFIBT_CHIP="AP6398S"
+RK_WIFIBT_TTY="ttyS8"
+RK_PARAMETER="parameter-buildroot-spi-nor-64M.txt"
+RK_EXTRA_PARTITION_1_FSTYPE="jffs2"
+RK_EXTRA_PARTITION_1_SRC="oem_sample"
+RK_EXTRA_PARTITION_2_FSTYPE="jffs2"

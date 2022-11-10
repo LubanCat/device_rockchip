@@ -1,0 +1,13 @@
+RK_BUILDROOT_CFG="rockchip_rv1126_battery_evb"
+RK_ROOTFS_TYPE="romfs"
+RK_ROOTFS_INITRD=y
+RK_KERNEL_CFG_FRAGMENTS="rv1126-tb.config rv1126-battery-evb.config"
+RK_KERNEL_DTS_NAME="rv1126-bat-evb-v11"
+RK_KERNEL_IMG_NAME="Image"
+RK_BOOT_IMG="zboot.img"
+RK_USE_FIT_IMG=y
+RK_RECOVERY_FIT_ITS="boot-tb.its"
+RK_UBOOT_CFG="rv1126-bat-emmc-tb"
+RK_PARAMETER="parameter-tb.txt"
+RK_EXTRA_PARTITION_1_SRC="oem_empty"
+RK_EXTRA_PARTITION_2_SRC="userdata_empty"

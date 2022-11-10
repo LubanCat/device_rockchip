@@ -1,0 +1,7 @@
+RK_ROOTFS_TYPE="squashfs"
+RK_KERNEL_CFG="rk3036_dongle_linux_defconfig"
+RK_KERNEL_DTS_NAME="rk3036-dongle"
+RK_BOOT_IMG="zboot.img"
+RK_PARAMETER="parameter-buildroot-128M.txt"
+RK_EXTRA_PARTITION_1_SRC="oem_empty"
+RK_EXTRA_PARTITION_2_SRC="userdata_empty"

@@ -1,0 +1,3 @@
+RK_KERNEL_DTS_NAME="rk3358-evb-ddr3-v10-linux"
+RK_BOOT_IMG="zboot.img"
+RK_WIFIBT_TTY="ttyS1"

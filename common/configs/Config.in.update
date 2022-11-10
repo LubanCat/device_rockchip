@@ -1,0 +1,19 @@
+#
+
+menu "Update (OTA and A/B)"
+
+config RK_OTA_PACKAGE_FILE
+	string "package-file for OTA"
+	default "package-file-ota"
+
+config RK_AB_UPDATE
+	bool "A/B update"
+
+if RK_AB_UPDATE
+
+config RK_AB_UPDATE_SDCARD
+	bool "SDcard update image for A/B update"
+
+endif
+
+endmenu # Update
