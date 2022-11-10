@@ -150,7 +150,6 @@ usage()
 	echo "buildroot          -build buildroot rootfs"
 	echo "yocto              -build yocto rootfs"
 	echo "debian             -build debian rootfs"
-	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -921,20 +920,6 @@ build_buildroot()
 	finish_build
 }
 
-build_multi-npu_boot()
-{
-	check_config RK_MULTINPU_BOOT || return 0
-
-	echo "=========Start building multi-npu boot========="
-	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
-	echo "====================================="
-
-	/usr/bin/time -f "you take %E to build multi-npu boot" \
-		$COMMON_DIR/mk-multi-npu_boot.sh
-
-	finish_build
-}
-
 kernel_version()
 {
 	[ -d "$1" ] || return 0
@@ -1558,7 +1543,6 @@ for option in $POST_OPTIONS; do
 		buildroot|debian|yocto) build_rootfs $option ;;
 		pcba) build_pcba ;;
 		recovery) build_recovery ;;
-		multi-npu_boot) build_multi-npu_boot ;;
 		info) build_info ;;
 		createkeys) create_keys ;;
 		security_boot) security_is_enabled; build_rootfs; build_uboot boot ;;

@@ -8,8 +8,6 @@ export RK_UBOOT_DEFCONFIG=rknpu-lion
 export RK_KERNEL_DEFCONFIG=rk1808_x4_linux_defconfig
 # main board kernel dts
 export RK_KERNEL_DTS=rk1808-evb-x4
-# second board kernel dts
-export RK_KERNEL_SECOND_DTS=rk1808-evb-x4-second
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
