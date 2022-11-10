@@ -87,11 +87,6 @@ prebuild_uboot()
 			${RK_TRUST_SIZE_CONFIG:+--sz-trust $RK_TRUST_SIZE_CONFIG}"
 	UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
 
-	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
-		UBOOT_COMPILE_COMMANDS="--spl-new $UBOOT_COMPILE_COMMANDS"
-		UBOOT_COMPILE_COMMANDS="$(echo $UBOOT_COMPILE_COMMANDS)"
-	fi
-
 	if [ "$RK_RAMDISK_SECURITY_BOOTUP" = "true" ];then
 		UBOOT_COMPILE_COMMANDS=" \
 			$UBOOT_COMPILE_COMMANDS \
@@ -363,9 +358,6 @@ build_uboot()
 
 	cd u-boot
 	rm -f *_loader_*.bin
-	if [ "$RK_LOADER_UPDATE_SPL" = "true" ]; then
-		rm -f *spl.bin
-	fi
 
 	if [ -n "$RK_UBOOT_DEFCONFIG_FRAGMENT" ]; then
 		if [ -f "configs/${RK_UBOOT_DEFCONFIG}_defconfig" ]; then
@@ -405,7 +397,6 @@ build_uboot()
 	finish_build
 }
 
-# TODO: build_spl can be replaced by build_uboot with define RK_LOADER_UPDATE_SPL
 build_spl()
 {
 	check_config RK_SPL_DEFCONFIG || return 0

@@ -7,7 +7,6 @@ export RK_UBOOT_DEFCONFIG=rv1126-ab
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Uboot update loader (spl)
-export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel dts

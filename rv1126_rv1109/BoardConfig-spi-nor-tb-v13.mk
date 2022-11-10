@@ -6,8 +6,6 @@ export RK_KERNEL_ARCH=arm
 export RK_IDBLOCK_UPDATE_SPL=true
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126-spi-nor-tb
-# Loader update spl from Uboot
-export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig

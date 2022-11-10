@@ -1,6 +1,4 @@
 #!/bin/bash
-export RK_LOADER_UPDATE_SPL=true
-
 # ramboot config
 export RK_CFG_BUILDROOT=rockchip_rk3588_ramboot
 export RK_RAMBOOT=true

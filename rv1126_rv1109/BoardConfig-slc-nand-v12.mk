@@ -6,8 +6,6 @@ export RK_KERNEL_ARCH=arm
 export RK_UBOOT_DEFCONFIG=rv1126
 # Uboot defconfig fragment, config rk-nand.config if sdcard upgrade
 export RK_UBOOT_DEFCONFIG_FRAGMENT=rk-nand.config
-# Loader update spl from Uboot
-export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
