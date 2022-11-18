@@ -1440,10 +1440,7 @@ create_keys()
 	test -d u-boot/keys && echo "ERROR: u-boot/keys has existed" && return -1
 
 	mkdir u-boot/keys -p
-	cd u-boot/keys
-	$TOP_DIR/rkbin/tools/rk_sign_tool kk --bits 2048
-	cd -
-
+	./rkbin/tools/rk_sign_tool kk --bits 2048 --out u-boot/keys
 	ln -s private_key.pem u-boot/keys/dev.key
 	ln -s public_key.pem u-boot/keys/dev.pubkey
 	openssl req -batch -new -x509 -key u-boot/keys/dev.key -out u-boot/keys/dev.crt
