@@ -717,7 +717,7 @@ build_wifibt()
 	else
 		echo "building rkwifibt-app"
 		make -C $RKWIFIBT_APP CC=$BUILDROOT_GCC \
-			SYSROOT=$BUILDROOT_SYSROOT ARCH=$BUILDROOT_ARCH
+			SYSROOT=$BUILDROOT_SYSROOT ARCH=$BUILDROOT_ARCH || true
 	fi
 
 	echo "chmod +x tools"
