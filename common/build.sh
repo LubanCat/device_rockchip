@@ -933,7 +933,7 @@ function build_debian(){
 			# ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 		fi
 
-		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET.sh
+		RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-rootfs.sh
 		./mk-image.sh
 	else
 		echo "[ Already Exists IMG,   Skip Make Debian Scripts ]"
@@ -1318,19 +1318,22 @@ function build_sdcard_package(){
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d)
+ 	TARGET=$(echo $RK_ROOTFS_TARGET | sed -e "s/\b\(.\)/\u\1/g")
 
 	if [ "${RK_ROOTFS_SYSTEM}" != "buildroot" ];then
 		if [ "${RK_ROOTFS_SYSTEM}" != "debian" ];then
-			ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM""$RK_UBUNTU_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE"
+			Version="ubuntu"$RK_UBUNTU_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE
 		else
-			ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$RK_DEBIAN_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE"
+			Version="debian"$RK_DEBIAN_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE
 		fi
 	else
-		ZIP_NAME="$RK_KERNEL_DTS"_"$RK_ROOTFS_SYSTEM"_"$DATE"
+		Version="$RK_ROOTFS_SYSTEM"_"$DATE"
 	fi
 
-	ZIP_NAME="$(echo $ZIP_NAME | tr '[:lower:]' '[:upper:]')"
-	
+	Device_Name=$RK_KERNEL_DTS
+	# Device_Name="$(echo $RK_KERNEL_DTS | tr '[:lower:]' '[:upper:]')"
+
+	ZIP_NAME=$Device_Name"_"$Version
 	STUB_PATH=IMAGE/$ZIP_NAME
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
@@ -1349,8 +1352,8 @@ function build_save(){
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
 	cd $STUB_PATH/IMAGES/
-	mv update.img  ${ZIP_NAME}_Update.img
-	zip -o ../${ZIP_NAME}_Update.zip ${ZIP_NAME}_Update.img
+	mv update.img  ${ZIP_NAME}_update.img
+	zip -o ../${ZIP_NAME}_update.zip ${ZIP_NAME}_update.img
 	cd -
 
 	#Save build command info

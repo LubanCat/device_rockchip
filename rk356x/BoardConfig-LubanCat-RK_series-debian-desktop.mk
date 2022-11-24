@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3568
+export RK_UBOOT_DEFCONFIG=rk3566
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=lubancat2_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3568-lubancat2-io
+export RK_KERNEL_DTS=rk356x-lubancat-rk_series
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -19,11 +19,13 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-fit.txt
+export RK_PARAMETER=parameter-ubuntu-fit.txt
+# 分区表对应的打包文件
+export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3568
+export RK_CFG_BUILDROOT=rockchip_rk3566
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rk356x_recovery
+export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
 export RK_RECOVERY_FIT_ITS=boot4recovery.its
 # ramboot config
@@ -47,22 +49,24 @@ export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
-export RK_OEM_DIR=oem_normal
+export RK_OEM_DIR=
 # OEM build on buildroot
 #export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config
-export RK_USERDATA_DIR=userdata_normal
+export RK_USERDATA_DIR=
 #misc image
-export RK_MISC=wipe_all-misc.img
+export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# 定义默认rootfs为ubuntu
-export RK_ROOTFS_SYSTEM=ubuntu
-# 默认Ubuntu 版本
-export RK_UBUNTU_VERSION=20.04
+# 定义默认rootfs为 debian
+export RK_ROOTFS_SYSTEM=debian
+# Set debian version (debian10: buster)
+export RK_DEBIAN_VERSION=10
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	lite ：控制台版
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=none
+# 使用exboot内核分区
+export RK_EXTBOOT=true

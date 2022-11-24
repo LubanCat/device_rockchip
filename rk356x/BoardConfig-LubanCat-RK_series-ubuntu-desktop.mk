@@ -60,13 +60,13 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# 定义默认rootfs为 debian
-export RK_ROOTFS_SYSTEM=debian
-# Set debian version (debian10: buster)
-export RK_DEBIAN_VERSION=buster
-# 定义默认rootfs是否为桌面版  desktop :桌面版 	base ：控制台版
+# 定义默认rootfs为ubuntu
+export RK_ROOTFS_SYSTEM=ubuntu
+# 默认Ubuntu 版本
+export RK_UBUNTU_VERSION=20.04
+# 定义默认rootfs是否为桌面版  desktop :桌面版 	lite ：控制台版
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=debug
+export RK_ROOTFS_DEBUG=none
 # 使用exboot内核分区
 export RK_EXTBOOT=true

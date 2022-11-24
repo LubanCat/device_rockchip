@@ -1,1 +1,1 @@
-BoardConfig-LubanCat-RK_series-debian.mk
+BoardConfig-LubanCat-RK_series-debian-desktop.mk
