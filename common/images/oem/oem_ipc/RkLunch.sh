@@ -8,10 +8,10 @@ check_linker()
 
 [ -f /etc/profile.d/enable_coredump.sh ] && source /etc/profile.d/enable_coredump.sh
 
-check_linker /userdata   /oem/www/userdata
-check_linker /userdata   /oem/www/userdata
-check_linker /media/usb0 /oem/www/usb0
-check_linker /mnt/sdcard /oem/www/sdcard
+check_linker /userdata   /oem/usr/www/userdata
+check_linker /userdata   /oem/usr/www/userdata
+check_linker /media/usb0 /oem/usr/www/usb0
+check_linker /mnt/sdcard /oem/usr/www/sdcard
 
 if [ ! -f "/oem/sysconfig.db" ]; then
   media-ctl -p -d /dev/media1 | grep 3840x2160
