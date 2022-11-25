@@ -1322,18 +1322,18 @@ function build_save(){
 
 	if [ "${RK_ROOTFS_SYSTEM}" != "buildroot" ];then
 		if [ "${RK_ROOTFS_SYSTEM}" != "debian" ];then
-			Version="ubuntu"$RK_UBUNTU_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE
+			Version="ubuntu"$RK_UBUNTU_VERSION"-"$RK_ROOTFS_TARGET"-"$DATE
 		else
-			Version="debian"$RK_DEBIAN_VERSION"_"$RK_ROOTFS_TARGET"_"$DATE
+			Version="debian"$RK_DEBIAN_VERSION"-"$RK_ROOTFS_TARGET"-"$DATE
 		fi
 	else
-		Version="$RK_ROOTFS_SYSTEM"_"$DATE"
+		Version="$RK_ROOTFS_SYSTEM"-"$DATE"
 	fi
 
 	Device_Name=$RK_KERNEL_DTS
 	# Device_Name="$(echo $RK_KERNEL_DTS | tr '[:lower:]' '[:upper:]')"
 
-	ZIP_NAME=$Device_Name"_"$Version
+	ZIP_NAME=$Device_Name"-"$Version
 	STUB_PATH=IMAGE/$ZIP_NAME
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
@@ -1353,7 +1353,9 @@ function build_save(){
 
 	cd $STUB_PATH/IMAGES/
 	mv update.img  ${ZIP_NAME}_update.img
-	zip -o ../${ZIP_NAME}_update.zip ${ZIP_NAME}_update.img
+	md5sum ${ZIP_NAME}_update.img > md5sum.txt
+	# zip -o ../${ZIP_NAME}_update.zip ${ZIP_NAME}_update.img
+	7z a ../${ZIP_NAME}_update.7z ${ZIP_NAME}_update.img md5sum.txt
 	cd -
 
 	#Save build command info
