@@ -8,10 +8,10 @@ tmp_regulator_microvolt_file=`mktemp`
 tmp_final_target=`mktemp`
 tmp_grep_file=`mktemp`
 
-dtc -I dtb -O dts -o ${dump_kernel_dtb_file} $DTS.dtb 2>/dev/null
+dtc -I dtb -O dts -o ${dump_kernel_dtb_file} $DTS.dtb
 
 if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
-	if ! grep "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file > /dev/null 2>&1 ; then
+	if ! grep -q "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file; then
 		echo "Please add: "
 		echo "        optee: optee {"
 		echo "                compatible = \"linaro,optee-tz\";"
@@ -23,7 +23,7 @@ if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
 	fi
 fi
 
-if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
+if ! grep -Pzoq "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file; then
 	echo "Not Found io-domains in $DTS.dts"
 	rm -f $tmp_grep_file
 	exit 0
