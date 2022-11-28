@@ -223,7 +223,7 @@ main()
 	case "$OPTIONS" in
 		shell)
 			echo -e "\e[35mDoing this is dangerous and for developing only.\e[0m"
-			/bin/bash
+			/bin/bash --init-file "$PARTITION_HELPER"
 			echo -e "\e[35mExit from $BASH_SOURCE shell.\e[0m"
 			exit 0 ;;
 		cleanall)
