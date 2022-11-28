@@ -185,8 +185,10 @@ main()
 	set -a
 	cat $TMP_ENV > "$RK_INITIAL_ENV"
 	if grep "^RK_" "$RK_INITIAL_ENV" > "$RK_CUSTOM_ENV"; then
-		echo "Initial custom environments: "
+		echo -e "\e[31mWARN: Found initial custom environments: \e[0m"
 		cat "$RK_CUSTOM_ENV"
+
+		read -t 10 -p "Press enter to continue."
 	fi
 
 	# Load config environments
