@@ -21,9 +21,16 @@ switch_defconfig()
 	exit 0
 }
 
+rockchip_defconfigs()
+{
+	cd "$CHIP_DIR"
+	ls rockchip_defconfig 2>/dev/null || true
+	ls *_defconfig | grep -v rockchip_defconfig || true
+}
+
 lunch()
 {
-	CONFIG_ARRAY=( $(cd "$CHIP_DIR"; ls *_defconfig | sort) )
+	CONFIG_ARRAY=( $(rockchip_defconfigs) )
 
 	CONFIG_ARRAY_LEN=${#CONFIG_ARRAY[@]}
 	if [ $CONFIG_ARRAY_LEN -eq 0 ]; then
