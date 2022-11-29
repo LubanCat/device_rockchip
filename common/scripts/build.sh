@@ -99,8 +99,10 @@ main()
 	set -eE
 
 	# Save intial envionments
-	TMP_ENV=$(mktemp)
-	env > "$TMP_ENV"
+	INITIAL_ENV=$(mktemp -u)
+	if [ -z "$RK_BUILDING" ]; then
+		env > "$INITIAL_ENV"
+	fi
 
 	export SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
 	export COMMON_DIR="$(realpath "$SCRIPTS_DIR/..")"
@@ -183,19 +185,31 @@ main()
 
 	# Force exporting config environments
 	set -a
-	cat $TMP_ENV > "$RK_INITIAL_ENV"
-	if grep "^RK_" "$RK_INITIAL_ENV" > "$RK_CUSTOM_ENV"; then
-		echo -e "\e[31mWARN: Found initial custom environments: \e[0m"
-		cat "$RK_CUSTOM_ENV"
-
-		read -t 10 -p "Press enter to continue."
-	fi
 
 	# Load config environments
 	source "$RK_CONFIG"
 
-	# Allow custom environments overriding
-	source "$RK_CUSTOM_ENV"
+	# Save initial environment
+	if [ -e "$INITIAL_ENV" ]; then
+		cat "$INITIAL_ENV" > "$RK_INITIAL_ENV"
+		rm -f "$RK_CUSTOM_ENV"
+
+		# Find custom environments
+		for cfg in $(grep "^RK_" "$RK_INITIAL_ENV" || true); do
+			env | grep -q "^$cfg$" || \
+				echo "$cfg" >> "$RK_CUSTOM_ENV"
+		done
+
+		# Allow custom environments overriding
+		if [ -e "$RK_CUSTOM_ENV" ]; then
+			echo -e "\e[31mWARN: Found custom environments: \e[0m"
+			cat "$RK_CUSTOM_ENV"
+
+			read -t 10 -p "Press enter to continue."
+			source "$RK_CUSTOM_ENV"
+		fi
+	fi
+
 	set +a
 
 	# RV1126 uses custom toolchain
