@@ -8,7 +8,7 @@ tmp_regulator_microvolt_file=`mktemp`
 tmp_final_target=`mktemp`
 tmp_grep_file=`mktemp`
 
-dtc -I dtb -O dts -o ${dump_kernel_dtb_file} $DTS.dtb
+dtc -q -I dtb -O dts -o ${dump_kernel_dtb_file} $DTS.dtb
 
 if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
 	if ! grep -q "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file; then
@@ -23,12 +23,12 @@ if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
 	fi
 fi
 
-if ! grep -Pzoq "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file; then
+if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
 	echo "Not Found io-domains in $DTS.dts"
 	rm -f $tmp_grep_file
 	exit 0
 fi
-grep -a supply $tmp_grep_file > $tmp_io_domain_file
+grep -a supply $tmp_grep_file > $tmp_io_domain_file || true
 rm -f $tmp_grep_file
 awk '{print "phandle = " $3}' $tmp_io_domain_file > $tmp_phandle_file
 
