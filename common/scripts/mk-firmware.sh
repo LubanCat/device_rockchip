@@ -12,35 +12,16 @@ fatal() {
 # Parse size limit from parameter.txt, 0 means unlimited or not exists.
 partition_size_kb() {
 	PART_NAME=$1
-	PART_STR=$(grep -oE "[^,^:^\(]*\($PART_NAME[\)_:][^\)]*\)" $PARAMETER)
-	PART_SIZE=$(echo $PART_STR | grep -oE "^[^@^-]*")
+	PART_STR=$(grep -oE "[^,^:^\(]*\($PART_NAME[\)_:][^\)]*\)" "$RK_FIRMWARE_DIR/parameter.txt" || true)
+	PART_SIZE=$(echo "$PART_STR" | grep -oE "^[^@^-]*" || true)
 	echo $(( ${PART_SIZE:-0} / 2 ))
 }
 
 link_image() {
 	SRC="$1"
 	DST="$2"
-	FALLBACK="$3"
-
 	message "Linking $DST from $SRC..."
-
-	if [ ! -f "$SRC" ]; then
-		if [ -f "$FALLBACK" ]; then
-			SRC="$FALLBACK"
-			message "Fallback to $SRC"
-		else
-			message "warning: $SRC not found!"
-			return 1
-		fi
-	fi
-
 	ln -rsf "$SRC" "$RK_FIRMWARE_DIR/$DST"
-
-	message "Done linking $DST"
-}
-
-link_image_optional() {
-	link_image "$@" || true
 }
 
 pack_extra_partitions() {
@@ -75,14 +56,13 @@ build_firmware()
 		exit 1
 	fi
 
-	PARAMETER="$CHIP_DIR/$RK_PARAMETER"
-	MISC_IMG="$RK_IMAGE_DIR/${RK_MISC_IMG:-blank-misc.img}"
 	MKIMAGE="$SCRIPTS_DIR/mk-image.sh"
 
 	mkdir -p "$RK_FIRMWARE_DIR"
 
-	link_image_optional "$PARAMETER" parameter.txt
-	link_image_optional "$MISC_IMG" misc.img
+	link_image "$CHIP_DIR/$RK_PARAMETER" parameter.txt
+	[ -z "$RK_MISC_IMG" ] || \
+		link_image "$RK_IMAGE_DIR/$RK_MISC_IMG" misc.img
 
 	pack_extra_partitions
 

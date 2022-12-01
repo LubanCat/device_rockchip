@@ -19,6 +19,8 @@ err_handler()
 trap 'err_handler' ERR
 set -eE
 
+[ -z "$DEBUG" ] || set -x
+
 parse_args()
 {
 	CMD=$1
