@@ -30,7 +30,7 @@ build_hook()
 
 	/usr/bin/time -f "you take %E to pack recovery image" \
 		"$SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
-		"$DST_DIR/recovery.img" "$CHIP_DIR/$RK_RECOVERY_FIT_ITS"
+		"$DST_DIR/recovery.img" "$RK_RECOVERY_FIT_ITS"
 	ln -rsf "$DST_DIR/recovery.img" "$RK_FIRMWARE_DIR"
 
 	# For security

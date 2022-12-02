@@ -73,15 +73,15 @@ build_hook()
 		exit 0
 	fi
 
-	$KMAKE $RK_KERNEL_DTS_NAME.img
+	$KMAKE "$RK_KERNEL_DTS_NAME.img"
 
-	ITS="$CHIP_DIR/$RK_BOOT_FIT_ITS"
-	if [ -f "$ITS" ]; then
-		"$SCRIPTS_DIR/mk-fitimage.sh" kernel/$RK_BOOT_IMG \
-			"$ITS" $RK_KERNEL_IMG
+	# The FIT image for initrd would be packed in rootfs stage
+	if [ -n "$RK_BOOT_FIT_ITS" ] && [ -z "$RK_ROOTFS_INITRD" ]; then
+		"$SCRIPTS_DIR/mk-fitimage.sh" "kernel/$RK_BOOT_IMG" \
+			"$RK_BOOT_FIT_ITS" "$RK_KERNEL_IMG"
 	fi
 
-	ln -rsf kernel/$RK_BOOT_IMG "$RK_FIRMWARE_DIR/boot.img"
+	ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
 
 	[ -z "$RK_SECURITY" ] || cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
 

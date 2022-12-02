@@ -49,7 +49,7 @@ if [ -n "$RK_ROOTFS_INITRD_COMPRESS" ]; then
 fi
 
 echo "Packing $RAMDISK_IMG to $TARGET_IMG"
-if [ -f "$ITS" ]; then
+if [ -n "$ITS" ]; then
 	if [ -n "$RK_SECURITY" -a -z "$RK_SECURITY_CHECK_METHOD" ]; then
 		build_sha256_boot
 	fi

@@ -131,7 +131,7 @@ build_hook()
 		/usr/bin/time -f "you take %E to pack ramboot image" \
 			"$SCRIPTS_DIR/mk-ramdisk.sh" \
 			"$RK_FIRMWARE_DIR/rootfs.img" \
-			"$ROOTFS_DIR/ramboot.img"
+			"$ROOTFS_DIR/ramboot.img" "$RK_BOOT_FIT_ITS"
 		ln -rsf "$ROOTFS_DIR/ramboot.img" \
 			"$RK_FIRMWARE_DIR/boot.img"
 
