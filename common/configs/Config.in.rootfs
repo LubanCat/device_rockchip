@@ -52,4 +52,12 @@ config RK_ROOTFS_TYPE
 config RK_ROOTFS_INITRD
 	bool "init ramfs/ramdisk for rootfs"
 
+if RK_ROOTFS_INITRD
+
+config RK_ROOTFS_INITRD_COMPRESS
+	bool "compress the init ramfs/ramdisk and kernel"
+	default y if RK_ROOTFS_TYPE = "romfs"
+
+endif
+
 endmenu # Rootfs

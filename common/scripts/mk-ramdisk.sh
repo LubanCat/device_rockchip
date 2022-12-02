@@ -41,8 +41,7 @@ if [ ! -f "$KERNEL_IMG" ]; then
 	"$SCRIPTS_DIR/mk-kernel.sh"
 fi
 
-if echo "$RAMDISK_IMG" | grep -q "\.romfs$"; then
-	# Do compress for uncompressed romfs
+if [ -n "$RK_ROOTFS_INITRD_COMPRESS" ]; then
 	cat "$RAMDISK_IMG" | gzip -n -f -9 > "$RAMDISK_IMG.gz"
 	cat "$KERNEL_IMG" | gzip -n -f -9 > "$KERNEL_IMG.gz"
 	RAMDISK_IMG="$RAMDISK_IMG.gz"
