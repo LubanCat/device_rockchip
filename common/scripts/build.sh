@@ -246,6 +246,8 @@ main()
 	CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 	export KMAKE="make -C kernel/ ARCH=$RK_KERNEL_ARCH -j$(( $CPUS + 1 ))"
 
+	export PYTHON3=/usr/bin/python3
+
 	# Handle special commands
 	case "$OPTIONS" in
 		shell)

@@ -54,7 +54,9 @@ build_save()
 	cp $RK_FIRMWARE_DIR/* $OUT_DIR/IMAGES/
 
 	# Save build info
-	yes | .repo/repo/repo manifest -r -o $OUT_DIR/manifest_${DATE}.xml
+	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
+		-o $OUT_DIR/manifest_${DATE}.xml
+
 	echo "UBOOT:  defconfig: $RK_UBOOT_CFG" >> $OUT_DIR/build_info
 	echo "KERNEL: defconfig: $RK_KERNEL_CFG, dts: $RK_KERNEL_DTS_NAME" >> \
 		$OUT_DIR/build_info

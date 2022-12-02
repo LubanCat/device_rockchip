@@ -174,7 +174,8 @@ add_build_info()
 
 	mkdir -p "$INFO_DIR"
 
-	yes | python3 .repo/repo/repo manifest -r -o "$INFO_DIR/manifest.xml"
+	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
+		-o "$INFO_DIR/manifest.xml"
 
 	cp "$RK_OUTDIR/.config" "$INFO_DIR/rockchip_config"
 
