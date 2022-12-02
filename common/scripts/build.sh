@@ -1,6 +1,15 @@
 #!/bin/bash
 
-[ -z "$DEBUG" ] || set -x
+if [ -z "$BASH_SOURCE" ]; then
+	echo "Not in bash, switching to it..."
+	case "${@:-shell}" in
+		shell) ./build.sh shell ;;
+		*)
+			./build.sh $@
+			bash
+			;;
+	esac
+fi
 
 usage()
 {
@@ -94,6 +103,8 @@ run_build_hooks()
 
 main()
 {
+	[ -z "$DEBUG" ] || set -x
+
 	export LC_ALL=C
 	export LD_LIBRARY_PATH=
 
@@ -272,7 +283,9 @@ main()
 }
 
 if [ "$0" != "$BASH_SOURCE" ]; then
-	"$BASH_SOURCE" shell
-else
+	# Sourced, executing it directly
+	"$BASH_SOURCE" ${@:-shell}
+elif [ "$0" == "$BASH_SOURCE" ]; then
+	# Executed directly
 	main $@
 fi
