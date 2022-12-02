@@ -58,6 +58,44 @@ lunch()
 	switch_defconfig $CONFIG
 }
 
+prepare_config()
+{
+	if [ ! -r "$RK_DEFCONFIG" ]; then
+		echo "WARN: $RK_DEFCONFIG not exists"
+		lunch
+		return 0
+	fi
+
+	DEFCONFIG=$(basename "$(realpath "$RK_DEFCONFIG")")
+	if [ ! "$RK_DEFCONFIG" -ef "$CHIP_DIR/$DEFCONFIG" ]; then
+		echo "WARN: $RK_DEFCONFIG is invalid"
+		lunch
+		return 0
+	fi
+
+	if [ "$RK_CONFIG" -ot "$RK_DEFCONFIG" ]; then
+		echo "WARN: $RK_CONFIG is out-dated"
+		$MAKE $DEFCONFIG
+		return 0
+	fi
+
+	CONFIG_DIR="$(dirname "$RK_CONFIG_IN")"
+	if find "$CONFIG_DIR" -cnewer "$RK_CONFIG" | grep -q ""; then
+		echo "WARN: $CONFIG_DIR is updated"
+		$MAKE $DEFCONFIG
+		return 0
+	fi
+
+	CFG="RK_DEFCONFIG=\"$(realpath "$RK_DEFCONFIG")\""
+	if ! grep -wq "$CFG" "$RK_CONFIG"; then
+		echo "WARN: $RK_CONFIG is invalid"
+		$MAKE $DEFCONFIG
+		return 0
+	fi
+
+	$MAKE olddefconfig
+}
+
 # Hooks
 
 usage_hook()
@@ -83,21 +121,7 @@ init_hook()
 		lunch) lunch ;;
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
-		default) # End of init
-			[ -r "$RK_DEFCONFIG" ] || lunch
-
-			DEFCONFIG=$(basename "$(realpath "$RK_DEFCONFIG")")
-			[ "$(realpath "$RK_DEFCONFIG")" = \
-				"$(realpath "$CHIP_DIR/$DEFCONFIG")" ] || lunch
-
-			if [ "$RK_CONFIG" -ot "$RK_DEFCONFIG" ]; then
-				$MAKE $DEFCONFIG
-			elif [ "$RK_CONFIG" -ot "$RK_CONFIG_IN" ]; then
-				$MAKE $DEFCONFIG
-			else
-				$MAKE olddefconfig
-			fi
-			;;
+		default) prepare_config ;; # End of init
 		*) usage ;;
 	esac
 }
