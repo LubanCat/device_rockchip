@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-MAKE="make -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
+MAKE="make ${DEBUG:+V=1} -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
 
 switch_defconfig()
 {

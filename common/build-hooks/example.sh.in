@@ -129,7 +129,7 @@ post_build_hook()
 	finish_build post-build-$NAME $@
 
 # Test:
-# ./build.sh A
+# ./build.sh A:arg1:arg2
 # Output:
 # ...
 # post-build hook for /XXX/device/rockchip/common/build-hooks/example.sh - A arg1 arg2

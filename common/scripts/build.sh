@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ -z "$DEBUG" ] || set -x
+
 usage()
 {
 	echo "Usage: $(basename $BASH_SOURCE) [OPTIONS]"
