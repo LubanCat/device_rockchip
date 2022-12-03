@@ -105,9 +105,6 @@ main()
 {
 	[ -z "$DEBUG" ] || set -x
 
-	export LC_ALL=C
-	export LD_LIBRARY_PATH=
-
 	trap 'err_handler' ERR
 	set -eE
 
@@ -116,6 +113,8 @@ main()
 	if [ -z "$RK_BUILDING" ]; then
 		env > "$INITIAL_ENV"
 	fi
+
+	export LC_ALL=C
 
 	export SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
 	export COMMON_DIR="$(realpath "$SCRIPTS_DIR/..")"

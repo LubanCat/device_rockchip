@@ -15,6 +15,9 @@ cd "$OUTPUT_DIR"
 
 LOG_FILE="$(pwd)/br.log"
 
+# Buildroot doesn't like it
+unset LD_LIBRARY_PATH
+
 if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR"; then
 	echo "Failed to build $DEFCONFIG:"
 	tail -n 100 "$LOG_FILE"
