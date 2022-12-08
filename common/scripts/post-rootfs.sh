@@ -13,6 +13,7 @@ TARGET_DIR=$(realpath "$1")
 IS_RECOVERY=$(echo "$TARGET_DIR" | grep -qvE "_recovery/target/*$" || echo y)
 shift
 
+LOCALE="$TARGET_DIR/etc/default/locale"
 FSTAB="$TARGET_DIR/etc/fstab"
 OS_RELEASE="$TARGET_DIR/etc/os-release"
 INFO_DIR="$TARGET_DIR/info"
@@ -25,6 +26,21 @@ fixup_root()
 
 	FS_TYPE=$1
 	sed -i "s#\([[:space:]]/[[:space:]]\+\)\w\+#\1${FS_TYPE}#" "$FSTAB"
+}
+
+fixup_locale()
+{
+	[ -n "$RK_ROOTFS_LANG" ] || return 0
+
+	echo "Fixing up LANG to $RK_ROOTFS_LANG"
+
+	if [ -e "$LOCALE" ]; then
+		sed -i "/\<LANG\>/d" "$LOCALE"
+		echo "LANG=$RK_ROOTFS_LANG" >> "$LOCALE"
+	else
+		echo "export LANG=$RK_ROOTFS_LANG" > \
+			"$TARGET_DIR/etc/profile.d/lang.sh"
+	fi
 }
 
 del_part()
@@ -231,6 +247,7 @@ add_dirs_and_links()
 source "$PARTITION_HELPER"
 
 add_build_info $@
+fixup_locale
 fixup_fstab
 fixup_reboot
 add_dirs_and_links

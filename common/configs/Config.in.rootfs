@@ -60,4 +60,8 @@ config RK_ROOTFS_INITRD_COMPRESS
 
 endif
 
+config RK_ROOTFS_LANG
+	string "set default LANG env"
+	default "en_US.utf8"
+
 endmenu # Rootfs
