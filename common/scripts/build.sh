@@ -262,6 +262,8 @@ main()
 		post-rootfs)
 			shift
 			export RK_POST_ROOTFS=1
+			export RK_POST_RECOVERY=$(echo "$1" | \
+				grep -qvE "_recovery/target/*$" || echo 1)
 			run_build_hooks post-rootfs $@
 			finish_build post-rootfs
 			exit 0 ;;

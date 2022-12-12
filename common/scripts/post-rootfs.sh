@@ -10,7 +10,6 @@ if [ -z "$RK_POST_ROOTFS" ]; then
 fi
 
 TARGET_DIR=$(realpath "$1")
-IS_RECOVERY=$(echo "$TARGET_DIR" | grep -qvE "_recovery/target/*$" || echo y)
 shift
 
 LOCALE="$TARGET_DIR/etc/default/locale"
@@ -130,7 +129,7 @@ fixup_fstab()
 	fixup_basic_part debugfs /sys/kernel/debug
 	fixup_basic_part pstore /sys/fs/pstore
 
-	if [ "$IS_RECOVERY" ]; then
+	if [ "$RK_POST_RECOVERY" ]; then
 		fixup_device_part /dev/sda1 /mnt/udisk auto
 		fixup_device_part /dev/mmcblk1p1 /mnt/sdcard auto
 	fi
@@ -252,6 +251,6 @@ fixup_fstab
 fixup_reboot
 add_dirs_and_links
 
-[ "$IS_RECOVERY" ] || prepare_partitions
+[ "$RK_POST_RECOVERY" ] || prepare_partitions
 
 exit 0
