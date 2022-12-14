@@ -55,18 +55,8 @@ build_uboot()
 		done
 	fi
 
-	if [ "$RK_UBOOT_CFG_FRAGMENTS" ]; then
-		if [ -f "configs/${RK_UBOOT_CFG}_defconfig" ]; then
-			CONFIGS="${RK_UBOOT_CFG}_defconfig"
-		else
-			CONFIGS="${RK_UBOOT_CFG}.config"
-		fi
-		CONFIGS="$CONFIGS $RK_UBOOT_CFG_FRAGMENTS"
-	else
-		CONFIGS="$RK_UBOOT_CFG"
-	fi
-
-	./make.sh $CONFIGS $(echo $ARGS) CROSS_COMPILE=$CROSS_COMPILE
+	./make.sh CROSS_COMPILE=$CROSS_COMPILE \
+		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
 
 	cd ..
 

@@ -15,7 +15,7 @@ config RK_UBOOT_CFG
 	default RK_CHIP
 
 config RK_UBOOT_CFG_FRAGMENTS
-	string "u-boot defconfig fragments"
+	string "u-boot defconfig fragments (without .config suffix)"
 
 config RK_UBOOT_OPTS
 	string "u-boot compile options"
