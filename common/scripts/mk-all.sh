@@ -42,8 +42,8 @@ build_all()
 build_save()
 {
 	DATE=$(date  +%Y%m%d.%H%M)
-	OUT_DIR=IMAGE/"$RK_KERNEL_DTS_NAME"_"$DATE"_RELEASE_TEST
-	OUT_DIR="$SDK_DIR/$(echo $OUT_DIR | tr '[:lower:]' '[:upper:]')"
+	OUT_DIR="$SDK_DIR/IMAGE/$(echo ${RK_KERNEL_DTS_NAME}_${DATE} \
+		| tr '[:lower:]' '[:upper:]')"
 	mkdir -p $OUT_DIR
 
 	# Install images
@@ -61,6 +61,12 @@ build_save()
 	echo "KERNEL: defconfig: $RK_KERNEL_CFG, dts: $RK_KERNEL_DTS_NAME" >> \
 		$OUT_DIR/build_info
 	echo "BUILDROOT: $RK_BUILDROOT_CFG" >> $OUT_DIR/build_info
+
+	# Save patches
+	mkdir -p $OUT_DIR/PATCHES
+	.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
+		"\"$SCRIPTS_DIR/save-patches.sh\" \
+		\"$OUT_DIR/PATCHES/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
 
 	finish_build
 }

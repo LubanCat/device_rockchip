@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 DTS=${RK_KERNEL_DTS%\.dts}
-dump_kernel_dtb_file=$DTS.dump.dts
+dump_kernel_dtb_file=`mktemp`
 tmp_phandle_file=`mktemp`
 tmp_io_domain_file=`mktemp`
 tmp_regulator_microvolt_file=`mktemp`
