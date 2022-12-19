@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+BOARD=$(echo $RK_KERNEL_DTS_NAME | tr '[:lower:]' '[:upper:]')
+
 build_all()
 {
 	echo "============================================"
@@ -41,32 +43,32 @@ build_all()
 
 build_save()
 {
-	DATE=$(date  +%Y%m%d.%H%M)
-	OUT_DIR="$SDK_DIR/IMAGE/$(echo ${RK_KERNEL_DTS_NAME}_${DATE} \
-		| tr '[:lower:]' '[:upper:]')"
-	mkdir -p $OUT_DIR
+	OUT_DIR="$RK_OUTDIR/$BOARD/$(date  +%Y%m%d_%H%M%S)"
+	mkdir -p "$OUT_DIR"
 
-	# Install images
-	mkdir -p $OUT_DIR/kernel
-	cp kernel/.config $OUT_DIR/kernel
-	cp kernel/vmlinux $OUT_DIR/kernel
-	mkdir -p $OUT_DIR/IMAGES/
-	cp $RK_FIRMWARE_DIR/* $OUT_DIR/IMAGES/
+	echo "Saving images..."
+	mkdir -p "$OUT_DIR/kernel"
+	cp kernel/.config "$OUT_DIR/kernel"
+	cp kernel/vmlinux "$OUT_DIR/kernel"
 
-	# Save build info
-	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
-		-o $OUT_DIR/manifest_${DATE}.xml
+	mkdir -p "$OUT_DIR/IMAGES/"
+	cp "$RK_FIRMWARE_DIR"/* "$OUT_DIR/IMAGES/"
 
-	echo "UBOOT:  defconfig: $RK_UBOOT_CFG" >> $OUT_DIR/build_info
-	echo "KERNEL: defconfig: $RK_KERNEL_CFG, dts: $RK_KERNEL_DTS_NAME" >> \
-		$OUT_DIR/build_info
-	echo "BUILDROOT: $RK_BUILDROOT_CFG" >> $OUT_DIR/build_info
-
-	# Save patches
-	mkdir -p $OUT_DIR/PATCHES
+	echo "Saving patches..."
+	mkdir -p "$OUT_DIR/PATCHES"
 	.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
 		"\"$SCRIPTS_DIR/save-patches.sh\" \
 		\"$OUT_DIR/PATCHES/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
+
+	echo "Saving build info..."
+	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
+		-o "$OUT_DIR/manifest_${DATE}.xml"
+
+	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG" "$OUT_DIR"/
+	ln -rsf "$RK_CONFIG" "$OUT_DIR/build_info"
+
+	echo "Saving build logs..."
+	cp -r "$RK_LOG_DIR" $OUT_DIR
 
 	finish_build
 }
@@ -92,7 +94,7 @@ usage_hook()
 
 clean_hook()
 {
-	rm -rf IMAGES
+	rm -rf "$RK_OUTDIR"/$BOARD*
 }
 
 BUILD_CMDS="all allsave"

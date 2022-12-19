@@ -4,7 +4,7 @@
 
 # Make sure that we are sourced and called inside of RK build scripts.
 if [ "$BASH_SOURCE" = "$0" -o -z "$RK_BUILDING" ];then
-	echo "$(realpath $0) is not supposed to be executed directly"
+	echo "$(realpath "$0") is not supposed to be executed directly"
 	exit 1
 fi
 
@@ -32,13 +32,18 @@ parse_args()
 try_func()
 {
 	type $1 >/dev/null 2>/dev/null || return 0
-	$@
+
+	echo -e "# $(date +"%F %T") -- $@\n" >> "$LOG_FILE"
+	$@ 2>&1 | tee -a "$LOG_FILE"
 
 	case "$2" in
 		# Unconditional hook
 		default) ;;
 		*) HOOK_HANDLED=1 ;;
 	esac
+
+	# Don't log usage hook
+	[ "$1" != usage_hook ] || rm -f "$LOG_FILE"
 }
 
 try_hook()
@@ -71,6 +76,9 @@ usage()
 }
 
 cd "$SDK_DIR"
+
+LOG_FILE="$RK_LOG_DIR/$(basename "${0%.sh}")-$1.log"
+rm -f "$LOG_FILE"
 
 case "$1" in
 	help | h | -h | --help | \?) usage ;;

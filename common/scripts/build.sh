@@ -131,6 +131,7 @@ main()
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$SDK_DIR/output"
+	export RK_LOG_DIR="$RK_OUTDIR/log"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
 	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
@@ -141,6 +142,7 @@ main()
 	export RK_BUILDING=1
 
 	cd "$SDK_DIR"
+	mkdir -p "$RK_LOG_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR"
 	rm -rf "$SDK_DIR/rockdev"
 	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
