@@ -126,7 +126,7 @@ rk_partition_prepare()
 
 		echo "Merging $src into $OUTDIR"
 		rsync -a "$src/" "$OUTDIR"
-		for f in $(ls "$OUTDIR" | grep "\.fs$"); do
+		for f in $(ls "$OUTDIR" | grep "\.fs$" || true); do
 			echo "Merging $src/$f into $FAKEROOT_SCRIPT"
 			cat "$OUTDIR/$f" >> "$FAKEROOT_SCRIPT"
 			rm -f "$OUTDIR/$f"

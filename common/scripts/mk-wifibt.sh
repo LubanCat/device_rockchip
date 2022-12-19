@@ -240,6 +240,8 @@ build_wifibt()
 		$KMAKE M=$RKWIFIBT/drivers/bluetooth_usb_driver
 	fi
 
+	mkdir -p $ROOTFS_DIR/etc/init.d
+	mkdir -p $ROOTFS_DIR/usr/bin/
 	mkdir -p $ROOTFS_DIR/usr/lib/modules/
 	mkdir -p $ROOTFS_DIR/system/lib/modules/
 	mkdir -p $ROOTFS_DIR/system/etc/firmware/
@@ -419,11 +421,6 @@ build_wifibt()
 usage_hook()
 {
 	echo "wifibt             - build Wifi/BT"
-}
-
-post_rootfs_hook()
-{
-	build_wifibt "$1"
 }
 
 BUILD_CMDS="wifibt"

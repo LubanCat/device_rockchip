@@ -20,7 +20,7 @@ usage()
 
 	# Global options
 	echo "cleanall           - cleanup"
-	echo "post-rootfs        - trigger post-rootfs script"
+	echo "post-rootfs        - trigger post-rootfs hook scripts"
 	echo "shell              - setup a shell for developing"
 	echo "help               - usage"
 	echo ""
@@ -80,10 +80,13 @@ kernel_version()
 set +a
 # End of global functions
 
-run_build_hooks()
+run_hooks()
 {
+	DIR="$1"
+	shift
+
 	unset HOOK_HANDLED
-	for dir in "$CHIP_DIR/build-hooks/" "$RK_HOOK_DIR"; do
+	for dir in "$CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
 		[ -d "$dir" ] || continue
 
 		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
@@ -99,6 +102,19 @@ run_build_hooks()
 			exit $HOOK_RET
 		done
 	done
+}
+
+run_build_hooks()
+{
+	run_hooks "$RK_BUILD_HOOK_DIR" $@
+}
+
+run_post_hooks()
+{
+	LOG_FILE="$RK_LOG_DIR/post-rootfs.log"
+
+	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
+	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
 }
 
 main()
@@ -124,8 +140,10 @@ main()
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
 	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"
 
-	export RK_HOOK_DIR="$COMMON_DIR/build-hooks"
-	export BUILD_HELPER="$RK_HOOK_DIR/build-helper"
+	export RK_BUILD_HOOK_DIR="$COMMON_DIR/build-hooks"
+	export BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
+	export RK_POST_HOOK_DIR="$COMMON_DIR/post-hooks"
+	export POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
 	export HOOK_RET_HANDLED=254
 
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
@@ -263,10 +281,7 @@ main()
 			exit 0 ;;
 		post-rootfs)
 			shift
-			export RK_POST_ROOTFS=1
-			export RK_POST_RECOVERY=$(echo "$1" | \
-				grep -qvE "_recovery/target/*$" || echo 1)
-			run_build_hooks post-rootfs $@
+			run_post_hooks $@
 			finish_build post-rootfs
 			exit 0 ;;
 	esac

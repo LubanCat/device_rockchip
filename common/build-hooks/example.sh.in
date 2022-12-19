@@ -44,18 +44,6 @@ clean_hook()
 # cleanup example
 }
 
-# Post rootfs hook for "./build.sh post-rootfs <rootfs dir> [args]"
-post_rootfs_hook()
-{
-	echo "post-rootfs $NAME: $@"
-
-# Test:
-# ./build.sh post-rootfs /tmp/ A B C
-# Output:
-# ...
-# post-rootfs example: /tmp/ A B C
-}
-
 # Build stages:
 #   init (preparing SDK configs, etc.)
 #   (inherit configs)

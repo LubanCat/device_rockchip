@@ -34,7 +34,7 @@ pack_extra_partitions() {
 			continue
 		fi
 
-		# Check generated dir and script (in post-rootfs stage)
+		# Check generated dir and script (in post-partitions.sh)
 		FAKEROOT_SCRIPT="$(rk_partition_fakeroot_script $idx)"
 		OUTDIR="$(rk_partition_outdir $idx)"
 		if [ ! -r "$FAKEROOT_SCRIPT" -o ! -d "$OUTDIR" ]; then

@@ -161,12 +161,6 @@ build_hook()
 	finish_build build_rootfs $@
 }
 
-post_rootfs_hook()
-{
-	"$SCRIPTS_DIR/post-rootfs.sh" $@
-	finish_build build_post_rootfs $@
-}
-
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook $@

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+[ -z "$DEBUG" ] || set -x
+
+# Make sure that we are sourced and called inside of RK build scripts.
+if [ "$BASH_SOURCE" = "$0" -o -z "$RK_BUILDING" ];then
+	echo "$(realpath "$0") is not supposed to be executed directly"
+	exit 1
+fi
+
+err_handler()
+{
+	ret=$?
+	[ "$ret" -eq 0 ] && return
+
+	echo "ERROR: Running $0 - ${FUNCNAME[1]} failed!"
+	echo "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
+	echo "    $BASH_COMMAND"
+	exit $ret
+}
+trap 'err_handler' ERR
+set -eE
+
+usage()
+{
+	echo "Usage: $0 [OPTIONS]"
+	echo "<rootfs dir>       - target rootfs dir"
+	echo "help               - usage"
+	exit 1
+}
+
+case "$1" in
+	usage | help | h | -h | --help | \?) usage ;;
+esac
+
+[ -d "$1" ] || usage
+
+TARGET_DIR=$(realpath "$1")
+shift
+
+POST_RECOVERY=$(echo "$TARGET_DIR" | grep -qvE "_recovery/target/*$" || echo 1)
+cd "$TARGET_DIR"
