@@ -247,7 +247,7 @@ build_wifibt()
 
 	echo "create link system->vendor"
 	rm -rf $ROOTFS_DIR/vendor
-	ln -rsf system $ROOTFS_DIR/vendor
+	ln -sf system $ROOTFS_DIR/vendor
 
 	echo "copy prebuilt tools/sh to rootfs"
 	cp $RKWIFIBT/bin/$ROOTFS_ARCH/* $ROOTFS_DIR/usr/bin/
