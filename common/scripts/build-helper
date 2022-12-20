@@ -42,6 +42,9 @@ try_func()
 		*) HOOK_HANDLED=1 ;;
 	esac
 
+	# Drop empty log
+	[ $(cat "$LOG_FILE" | wc -l) -gt 2 ] || rm -f "$LOG_FILE"
+
 	# Don't log usage hook
 	[ "$1" != usage_hook ] || rm -f "$LOG_FILE"
 }

@@ -102,11 +102,25 @@ run_hooks()
 			exit $HOOK_RET
 		done
 	done
+
+	[ -z "$HOOK_HANDLED" ] || return $HOOK_RET_HANDLED
 }
 
 run_build_hooks()
 {
-	run_hooks "$RK_BUILD_HOOK_DIR" $@
+	LOG_FILE="$RK_LOG_DIR/$1.log"
+
+	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
+	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	[ ${PIPESTATUS[0]} -ne $HOOK_RET_HANDLED ] || HOOK_HANDLED=1
+
+	# Drop empty log
+	[ $(cat "$LOG_FILE" | wc -l) -gt 2 ] || rm -f "$LOG_FILE"
+
+	# Don't log these hooks
+	case "$1" in
+		usage | option-check) rm -f "$LOG_FILE" ;;
+	esac
 }
 
 run_post_hooks()
@@ -115,6 +129,7 @@ run_post_hooks()
 
 	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
 	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	[ ${PIPESTATUS[0]} -ne $HOOK_RET_HANDLED ] || HOOK_HANDLED=1
 }
 
 main()
@@ -160,7 +175,6 @@ main()
 	export RK_BUILDING=1
 
 	cd "$SDK_DIR"
-	mkdir -p "$RK_LOG_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR"
 	rm -rf "$SDK_DIR/rockdev"
 	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
@@ -179,6 +193,10 @@ main()
 		echo $(run_build_hooks usage | grep -oE "^[^ \*]*") cleanall
 		exit 0
 	fi
+
+	# Drop old logs
+	rm -rf "$RK_LOG_DIR"/*
+	mkdir -p "$RK_LOG_DIR"
 
 	for opt in $OPTIONS; do
 		case "$opt" in
