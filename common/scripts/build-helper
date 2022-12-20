@@ -10,12 +10,18 @@ fi
 
 err_handler()
 {
-	ret=$?
+	ret=${1:-$?}
 	[ "$ret" -eq 0 ] && return
 
-	echo "ERROR: Running $0 - ${FUNCNAME[1]} failed!"
+	echo "ERROR: Running $0 - ${2:-${FUNCNAME[1]}} failed!"
 	echo "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
-	echo "    $BASH_COMMAND"
+	echo "    ${3:-$BASH_COMMAND}"
+	echo "ERROR: call stack:"
+	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
+		SOURCE="${BASH_SOURCE[$i]}"
+		LINE=${BASH_LINENO[$(( $i - 1 ))]}
+		echo "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
+	done
 	exit $ret
 }
 trap 'err_handler' ERR
@@ -35,6 +41,12 @@ try_func()
 
 	echo -e "# $(date +"%F %T") -- $@\n" >> "$LOG_FILE"
 	$@ 2>&1 | tee -a "$LOG_FILE"
+
+	FUNC_RET=${PIPESTATUS[0]}
+	if [ $FUNC_RET -ne 0 ]; then
+		err_handler $FUNC_RET "${FUNCNAME[0]} $*" "$@"
+		exit $FUNC_RET
+	fi
 
 	case "$2" in
 		# Unconditional hook

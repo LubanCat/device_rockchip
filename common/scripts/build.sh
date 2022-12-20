@@ -36,6 +36,12 @@ err_handler()
 	echo "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
 	echo "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
 	echo "    ${3:-$BASH_COMMAND}"
+	echo "ERROR: call stack:"
+	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
+		SOURCE="${BASH_SOURCE[$i]}"
+		LINE=${BASH_LINENO[$(( $i - 1 ))]}
+		echo "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
+	done
 	exit $ret
 }
 
@@ -112,7 +118,11 @@ run_build_hooks()
 
 	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
 	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
-	[ ${PIPESTATUS[0]} -ne $HOOK_RET_HANDLED ] || HOOK_HANDLED=1
+	case "${PIPESTATUS[0]}" in
+		0) ;;
+		$HOOK_RET_HANDLED) HOOK_HANDLED=1 ;;
+		*) exit 1 ;;
+	esac
 
 	# Drop empty log
 	[ $(cat "$LOG_FILE" | wc -l) -gt 2 ] || rm -f "$LOG_FILE"
