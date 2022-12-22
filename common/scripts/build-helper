@@ -39,7 +39,14 @@ try_func()
 {
 	type $1 >/dev/null 2>/dev/null || return 0
 
-	echo -e "# $(date +"%F %T") -- $@\n" >> "$LOG_FILE"
+	# Don't log usage hook
+	if [ "$1" = usage_hook ]; then
+		$@
+		return 0
+	fi
+
+	LOG_FILE="$(start_log ${LOG_FILE_NAME%%_*} $LOG_FILE_NAME)"
+	echo -e "# run func: $@\n" >> "$LOG_FILE"
 	$@ 2>&1 | tee -a "$LOG_FILE"
 
 	FUNC_RET=${PIPESTATUS[0]}
@@ -53,12 +60,6 @@ try_func()
 		default) ;;
 		*) HOOK_HANDLED=1 ;;
 	esac
-
-	# Drop empty log
-	[ $(cat "$LOG_FILE" | wc -l) -gt 2 ] || rm -f "$LOG_FILE"
-
-	# Don't log usage hook
-	[ "$1" != usage_hook ] || rm -f "$LOG_FILE"
 }
 
 try_hook()
@@ -92,8 +93,7 @@ usage()
 
 cd "$SDK_DIR"
 
-LOG_FILE="$RK_LOG_DIR/$(basename "${0%.sh}")-$1.log"
-rm -f "$LOG_FILE"
+LOG_FILE_NAME="$(basename "${0%.sh}")-$1_$(date +"%F_%H-%M-%S")"
 
 case "$1" in
 	help | h | -h | --help | \?) usage ;;

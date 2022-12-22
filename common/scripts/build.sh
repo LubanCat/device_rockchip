@@ -83,6 +83,14 @@ kernel_version()
 	echo $VERSION
 }
 
+start_log()
+{
+	LOG_FILE="$RK_LOG_DIR/${2:-$1_$(date +%F_%H-%M-%S)}.log"
+	ln -rsf "$LOG_FILE" "$RK_LOG_DIR/$1.log"
+	echo "# $(date +"%F %T")" >> "$LOG_FILE"
+	echo "$LOG_FILE"
+}
+
 set +a
 # End of global functions
 
@@ -114,28 +122,28 @@ run_hooks()
 
 run_build_hooks()
 {
-	LOG_FILE="$RK_LOG_DIR/$1.log"
+	# Don't log these hooks
+	case "$1" in
+		usage | option-check)
+			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
+			return 0
+			;;
+	esac
 
-	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
+	LOG_FILE="$(start_log "$1")"
+
+	echo -e "# run hook: $@\n" >> "$LOG_FILE"
 	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
 	case "${PIPESTATUS[0]}" in
 		0) ;;
 		$HOOK_RET_HANDLED) HOOK_HANDLED=1 ;;
 		*) exit 1 ;;
 	esac
-
-	# Drop empty log
-	[ $(cat "$LOG_FILE" | wc -l) -gt 2 ] || rm -f "$LOG_FILE"
-
-	# Don't log these hooks
-	case "$1" in
-		usage | option-check) rm -f "$LOG_FILE" ;;
-	esac
 }
 
 run_post_hooks()
 {
-	LOG_FILE="$RK_LOG_DIR/post-rootfs.log"
+	LOG_FILE="$(start_log post-rootfs)"
 
 	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
 	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
@@ -185,6 +193,7 @@ main()
 	export RK_BUILDING=1
 
 	cd "$SDK_DIR"
+	mkdir -p "$RK_LOG_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR"
 	rm -rf "$SDK_DIR/rockdev"
 	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
@@ -203,10 +212,6 @@ main()
 		echo $(run_build_hooks usage | grep -oE "^[^ \*]*") cleanall
 		exit 0
 	fi
-
-	# Drop old logs
-	rm -rf "$RK_LOG_DIR"/*
-	mkdir -p "$RK_LOG_DIR"
 
 	for opt in $OPTIONS; do
 		case "$opt" in

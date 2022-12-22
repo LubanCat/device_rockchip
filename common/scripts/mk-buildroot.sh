@@ -11,14 +11,12 @@ IMAGE_DIR="$TARGET_OUTPUT_DIR"/images
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$IMAGE_DIR"
 ln -rsf "$IMAGE_DIR" "$OUTPUT_DIR"
-cd "$OUTPUT_DIR"
+cd "${RK_LOG_DIR:-$OUTPUT_DIR}"
 
-LOG_FILE="$(pwd)/br.log"
+LOG_FILE="$(start_log br 2>/dev/null || echo $PWD/br.log)"
 
 # Buildroot doesn't like it
 unset LD_LIBRARY_PATH
-
-ln -rsf "$LOG_FILE" "$RK_LOG_DIR/"
 
 if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR"; then
 	echo "Failed to build $DEFCONFIG:"
@@ -29,4 +27,4 @@ fi
 
 echo "Log saved on $LOG_FILE"
 echo "Generated images:"
-ls rootfs.*
+ls "$OUTPUT_DIR"/rootfs.*
