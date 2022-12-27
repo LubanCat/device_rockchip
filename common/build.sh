@@ -753,7 +753,8 @@ function build_extboot(){
 
     cp ${TOP_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
     cp ${TOP_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
-    cp ${TOP_DIR}/kernel/logo.bmp $EXTBOOT_DIR/
+    cp ${TOP_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/
+    cp ${TOP_DIR}/kernel/logo_boot.bmp $EXTBOOT_DIR/logo.bmp
 
     cp ${TOP_DIR}/linux-headers-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
     cp ${TOP_DIR}/linux-image-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
@@ -926,14 +927,22 @@ function build_debian(){
 
 	cd debian
 
+	if [[ "$RK_DEBIAN_VERSION" == "stretch" || "$RK_DEBIAN_VERSION" == "9" ]]; then
+		RELEASE='stretch'
+	elif [[ "$RK_DEBIAN_VERSION" == "buster" || "$RK_DEBIAN_VERSION" == "10" ]]; then
+		RELEASE='buster'
+	else
+		echo -e "\033[36m please input the os type,stretch or buster...... \033[0m"
+	fi
+
 	if [ ! -e linaro-rootfs.img ]; then
 		echo "[ No linaro-rootfs.img, Run Make Debian Scripts ]"
-		if [ ! -e linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
-			RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH ./mk-base-debian.sh
-			# ln -rsf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
+		if [ ! -e linaro-$RELEASE-alip-*.tar.gz ]; then
+			echo "[ build linaro-$RELEASE-alip-*.tar.gz ]"
+			RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH ./mk-base-debian.sh
 		fi
 
-		RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-rootfs.sh
+		RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG SOC=$RK_UBOOT_DEFCONFIG ARCH=$ARCH ./mk-rootfs.sh
 		./mk-image.sh
 	else
 		echo "[ Already Exists IMG,   Skip Make Debian Scripts ]"
