@@ -124,7 +124,7 @@ run_build_hooks()
 {
 	# Don't log these hooks
 	case "$1" in
-		usage | option-check)
+		init | usage | option-check)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
 			return 0
 			;;
