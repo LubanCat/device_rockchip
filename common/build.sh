@@ -901,7 +901,7 @@ function build_ubuntu(){
 			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 		fi
 
-		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH SOC=$RK_UBOOT_DEFCONFIG ./mk-$RK_ROOTFS_TARGET-rootfs.sh
 
 		./mk-image.sh
 	else
