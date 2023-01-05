@@ -17,16 +17,16 @@ clean_hook()
 	make -C kernel distclean
 }
 
-PRE_BUILD_CMDS="$KERNELS default"
+INIT_CMDS="$KERNELS"
+init_hook()
+{
+	sed -i "s/^\(RK_KERNEL_VERSION=\).*/\1\"${1#kernel-}\"/" \
+		"$RK_CONFIG"
+}
+
+PRE_BUILD_CMDS="default"
 pre_build_hook()
 {
-	if echo "$1" | grep -q "kernel-"; then
-		RK_KERNEL_VERSION=${1#kernel-}
-		return 0
-	fi
-
-	# End of pre-build
-
 	# Fallback to current kernel
 	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version)}
 
@@ -55,7 +55,7 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	echo "============Start building kernel ${1#kernel}============"
+	echo "============Start building kernel ${1#kernel-}============"
 	echo "TARGET_KERNEL_VERSION =$RK_KERNEL_VERSION"
 	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_CFG"
@@ -93,7 +93,7 @@ build_hook()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-*) pre_build_hook $@ ;&
+	kernel-*) init_hook $@ ;&
 	kernel | modules)
 		pre_build_hook
 		build_hook ${@:-kernel}
