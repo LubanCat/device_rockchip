@@ -4,7 +4,7 @@ menu "Firmware"
 
 config RK_PACKAGE_FILE
 	string "package-file"
-	default "rk3588-package-file-ab" if RK_CHIP_FAMILY = "rk356x" && \
+	default "rk3568-package-file-ab" if RK_CHIP_FAMILY = "rk3566_rk3568" && \
 		RK_AB_UPDATE
 	default "rk3588-package-file-ab" if RK_CHIP_FAMILY = "rk3588" && \
 		RK_AB_UPDATE
