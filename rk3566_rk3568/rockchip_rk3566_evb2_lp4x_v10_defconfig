@@ -1,4 +1,5 @@
 RK_BUILDROOT_CFG="rockchip_rk3566"
+RK_RECOVERY_CFG="rockchip_rk3566_recovery"
 RK_YOCTO_CFG="rockchip-rk3566-evb"
 RK_KERNEL_DTS_NAME="rk3566-evb2-lp4x-v10-linux"
 RK_USE_FIT_IMG=y
