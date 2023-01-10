@@ -43,32 +43,40 @@ build_all()
 
 build_save()
 {
-	OUT_DIR="$RK_OUTDIR/$BOARD/$(date  +%Y%m%d_%H%M%S)"
-	mkdir -p "$OUT_DIR"
+	SAVE_DIR="$RK_OUTDIR/$BOARD"
+	case "$(grep "^ID=" "$RK_FIRMWARE_DIR/os-release" 2>/dev/null)" in
+		ID=buildroot) SAVE_DIR="$SAVE_DIR/BUILDROOT" ;;
+		ID=debian) SAVE_DIR="$SAVE_DIR/DEBIAN" ;;
+		ID=poky) SAVE_DIR="$SAVE_DIR/YOCTO" ;;
+	esac
+	SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
+	mkdir -p "$SAVE_DIR"
+
+	echo "Saving into $SAVE_DIR..."
 
 	echo "Saving images..."
-	mkdir -p "$OUT_DIR/kernel"
-	cp kernel/.config "$OUT_DIR/kernel"
-	cp kernel/vmlinux "$OUT_DIR/kernel"
+	mkdir -p "$SAVE_DIR/kernel"
+	cp kernel/.config "$SAVE_DIR/kernel"
+	cp kernel/vmlinux "$SAVE_DIR/kernel"
 
-	mkdir -p "$OUT_DIR/IMAGES/"
-	cp "$RK_FIRMWARE_DIR"/* "$OUT_DIR/IMAGES/"
+	mkdir -p "$SAVE_DIR/IMAGES/"
+	cp "$RK_FIRMWARE_DIR"/* "$SAVE_DIR/IMAGES/"
 
 	echo "Saving patches..."
-	mkdir -p "$OUT_DIR/PATCHES"
+	mkdir -p "$SAVE_DIR/PATCHES"
 	.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
 		"\"$SCRIPTS_DIR/save-patches.sh\" \
-		\"$OUT_DIR/PATCHES/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
+		\"$SAVE_DIR/PATCHES/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
 
 	echo "Saving build info..."
 	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
-		-o "$OUT_DIR/manifest_${DATE}.xml"
+		-o "$SAVE_DIR/manifest.xml"
 
-	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG" "$OUT_DIR"/
-	ln -rsf "$RK_CONFIG" "$OUT_DIR/build_info"
+	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG" "$SAVE_DIR/"
+	ln -rsf "$RK_CONFIG" "$SAVE_DIR/build_info"
 
 	echo "Saving build logs..."
-	cp -r "$RK_LOG_DIR" $OUT_DIR
+	cp -r "$RK_LOG_DIR" "$SAVE_DIR/"
 
 	finish_build
 }
