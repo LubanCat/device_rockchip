@@ -43,13 +43,14 @@ build_all()
 
 build_save()
 {
-	SAVE_DIR="$RK_OUTDIR/$BOARD"
+	shift
+	SAVE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
 	case "$(grep "^ID=" "$RK_FIRMWARE_DIR/os-release" 2>/dev/null)" in
 		ID=buildroot) SAVE_DIR="$SAVE_DIR/BUILDROOT" ;;
 		ID=debian) SAVE_DIR="$SAVE_DIR/DEBIAN" ;;
 		ID=poky) SAVE_DIR="$SAVE_DIR/YOCTO" ;;
 	esac
-	SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
+	[ -n "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
 	mkdir -p "$SAVE_DIR"
 
 	echo "Saving into $SAVE_DIR..."
@@ -86,7 +87,7 @@ build_allsave()
 	build_all
 	"$SCRIPTS_DIR/mk-firmware.sh"
 	"$SCRIPTS_DIR/mk-updateimg.sh"
-	build_save
+	build_save $@
 
 	finish_build
 }
@@ -110,7 +111,7 @@ build_hook()
 {
 	case "$1" in
 		all) build_all ;;
-		allsave) build_allsave ;;
+		allsave) build_allsave $@ ;;
 	esac
 }
 
@@ -124,7 +125,7 @@ source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helpe
 
 case "${1:-allsave}" in
 	all) build_all ;;
-	allsave) build_allsave ;;
-	save) build_save ;;
+	allsave) build_allsave $@ ;;
+	save) build_save $@ ;;
 	*) usage ;;
 esac
