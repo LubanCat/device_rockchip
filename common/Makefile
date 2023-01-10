@@ -120,9 +120,15 @@ RK_CHIP_FAMILY := $(notdir $(realpath $(CHIP_DIR)))
 RK_CHIP := $(shell echo ${DEFCONFIG_NAME} | \
 	cut -d'_' -f2 | grep -E "^(px|rk|rv)")
 
+ifeq ($(RK_CHIP_FAMILY),rk3566_rk3568)
+RK_BUILDROOT_CFG := rockchip_$(RK_CHIP)
+RK_RECOVERY_CFG := rockchip_$(RK_CHIP)_recovery
+RK_PCBA_CFG := rockchip_$(RK_CHIP)_pcba
+else
 RK_BUILDROOT_CFG := rockchip_$(RK_CHIP_FAMILY)
 RK_RECOVERY_CFG := rockchip_$(RK_CHIP_FAMILY)_recovery
 RK_PCBA_CFG := rockchip_$(RK_CHIP_FAMILY)_pcba
+endif
 
 COMMON_CONFIG_ENV = \
 	RK_DEFCONFIG='$(call qstrip,$(RK_DEFCONFIG))' \
