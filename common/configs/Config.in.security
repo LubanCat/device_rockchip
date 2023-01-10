@@ -13,7 +13,7 @@ if RK_SECURITY
 
 config RK_SECURITY_CHECK_METHOD
 	string "security check method (DM-E|DM-V)"
-	default "DM-E" if RK_CHIP = "rk3566_rk3568"
+	default "DM-E" if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default "DM-V"
 
 config RK_SECURITY_OTP_DEBUG
