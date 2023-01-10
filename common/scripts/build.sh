@@ -85,6 +85,11 @@ kernel_version()
 
 start_log()
 {
+	{ # Drop old logs
+		cd "$RK_LOG_DIR"
+		rm -f $(ls -t | sed '1,20d')
+	}
+
 	LOG_FILE="$RK_LOG_DIR/${2:-$1_$(date +%F_%H-%M-%S)}.log"
 	ln -rsf "$LOG_FILE" "$RK_LOG_DIR/$1.log"
 	echo "# $(date +"%F %T")" >> "$LOG_FILE"
