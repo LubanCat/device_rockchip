@@ -2,6 +2,29 @@
 
 KERNELS=$(ls | grep kernel- || true)
 
+do_build()
+{
+	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+
+	if [ "$1" = modules ]; then
+		run_command $KMAKE modules
+		return 0
+	fi
+
+	run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
+
+	# The FIT image for initrd would be packed in rootfs stage
+	if [ -n "$RK_BOOT_FIT_ITS" ] && [ -z "$RK_ROOTFS_INITRD" ]; then
+		run_command "$SCRIPTS_DIR/mk-fitimage.sh" \
+			"kernel/$RK_BOOT_IMG" "$RK_BOOT_FIT_ITS" \
+			"$RK_KERNEL_IMG"
+	fi
+}
+
+# Hooks
+
 usage_hook()
 {
 	for k in $KERNELS; do
@@ -55,7 +78,7 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	echo "============Start building kernel ${1#kernel-}============"
+	echo "============Start building $1============"
 	echo "TARGET_KERNEL_VERSION =$RK_KERNEL_VERSION"
 	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_CFG"
@@ -63,23 +86,14 @@ build_hook()
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS_NAME"
 	echo "=========================================="
 
-	$KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
-
 	if [ "$1" = modules ]; then
-		$KMAKE modules
-
+		do_build $@
 		shift
 		finish_build build_modules
 		exit 0
 	fi
 
-	$KMAKE "$RK_KERNEL_DTS_NAME.img"
-
-	# The FIT image for initrd would be packed in rootfs stage
-	if [ -n "$RK_BOOT_FIT_ITS" ] && [ -z "$RK_ROOTFS_INITRD" ]; then
-		"$SCRIPTS_DIR/mk-fitimage.sh" "kernel/$RK_BOOT_IMG" \
-			"$RK_BOOT_FIT_ITS" "$RK_KERNEL_IMG"
-	fi
+	do_build $@
 
 	ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
 
@@ -88,6 +102,13 @@ build_hook()
 	"$SCRIPTS_DIR/check-power-domain.sh"
 
 	finish_build build_kernel
+}
+
+build_hook_dry()
+{
+	echo -e "\e[35mCommands of building $1:\e[0m"
+	echo "export CROSS_COMPILE=$CROSS_COMPILE"
+	do_build $@
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"

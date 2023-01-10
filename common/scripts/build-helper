@@ -27,6 +27,15 @@ err_handler()
 trap 'err_handler' ERR
 set -eE
 
+run_command()
+{
+	if [ "$DRY_RUN" ]; then
+		echo $@
+	else
+		$@
+	fi
+}
+
 parse_args()
 {
 	CMD=$1
@@ -46,6 +55,15 @@ try_func()
 			return 0
 			;;
 	esac
+
+	if [ "$DRY_RUN" ]; then
+		FUNC=$1_dry
+		type $FUNC >/dev/null 2>/dev/null || return 0
+
+		shift
+		$FUNC $@
+		return 0
+	fi
 
 	LOG_FILE="$(start_log ${LOG_FILE_NAME%%_*} $LOG_FILE_NAME)"
 	echo -e "# run func: $@\n" >> "$LOG_FILE"
@@ -140,3 +158,8 @@ case "$1" in
 		exit 0
 		;;
 esac
+
+if [ "$DRY_RUN" ]; then
+	echo "Environment 'DRY_RUN' ignored!"
+	unset DRY_RUN
+fi

@@ -1,5 +1,19 @@
 #!/bin/bash -e
 
+UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
+
+do_build_uefi()
+{
+	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
+		echo "UEFI not supported!"
+		return 0
+	fi
+
+	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
+	run_command cd uefi
+	run_command ./make.sh $RK_UBOOT_CFG
+}
+
 build_uefi()
 {
 	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
@@ -7,33 +21,22 @@ build_uefi()
 		return 1
 	fi
 
-	UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
-
 	echo "============Start building uefi============"
 	echo "Copy kernel dtb $RK_KERNEL_DTB to $UEFI_DIR/$RK_CHIP.dtb"
 	echo "========================================="
-	if [ ! -f $RK_KERNEL_DTB ]; then
+	if [ ! -f "$RK_KERNEL_DTB" ]; then
 		echo "$RK_KERNEL_DTB not exists!"
 		return 1
 	fi
 
-	cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
-	cd uefi
-	./make.sh $RK_UBOOT_CFG
+	do_build_uefi $@
 
 	finish_build
 }
 
-build_uboot()
+do_build_uboot()
 {
 	check_config RK_UBOOT_CFG || return 0
-
-	echo "============Start building uboot============"
-	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_CFG"
-	echo "========================================="
-
-	cd u-boot
-	rm -f *.bin *.img
 
 	ARGS="$RK_UBOOT_OPTS \
 		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI} \
@@ -55,10 +58,23 @@ build_uboot()
 		done
 	fi
 
-	./make.sh CROSS_COMPILE=$CROSS_COMPILE \
+	run_command cd u-boot
+	run_command ./make.sh CROSS_COMPILE=$CROSS_COMPILE \
 		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
+	run_command cd ..
+}
 
-	cd ..
+build_uboot()
+{
+	check_config RK_UBOOT_CFG || return 0
+
+	echo "============Start building uboot============"
+	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_CFG"
+	echo "========================================="
+
+	rm -f u-boot/*.bin u-boot/*.img
+
+	do_build_uboot $@
 
 	if [ "$RK_SECURITY" ];then
 		ln -rsf u-boot/boot.img "$RK_FIRMWARE_DIR"
@@ -77,6 +93,16 @@ build_uboot()
 	finish_build
 }
 
+do_build_spl()
+{
+	check_config RK_UBOOT_SPL_CFG || return 0
+
+	run_command cd u-boot
+	run_command ./make.sh $RK_UBOOT_SPL_CFG
+	run_command ./make.sh --spl
+	run_command cd ..
+}
+
 build_spl()
 {
 	check_config RK_UBOOT_SPL_CFG || return 0
@@ -85,14 +111,12 @@ build_spl()
 	echo "TARGET_SPL_CONFIG=$RK_UBOOT_SPL_CFG"
 	echo "========================================="
 
-	cd u-boot
-	rm -f *spl.bin
-	./make.sh $RK_UBOOT_SPL_CFG
-	./make.sh --spl
-	cd ..
+	rm -f u-boot/*spl.bin
+
+	do_build_spl $@
 
 	SPL="$(echo u-boot/*_loader_spl.bin | head -1)"
-	ln -rsf "$SPL" "$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
+	ln -rsf "$SPL" "$RK_FIRMWARE_DIR/MiniLoaderAll.bin"
 
 	finish_build
 }
@@ -119,7 +143,7 @@ build_hook()
 	shift
 
 	if [ "$TARGET" = loader ]; then
-		if [ $RK_UBOOT_SPL_CFG ]; then
+		if [ "$RK_UBOOT_SPL_CFG" ]; then
 			TARGET=spl
 		else
 			TARGET=uboot
@@ -127,11 +151,18 @@ build_hook()
 	fi
 
 	case "$TARGET" in
-		uboot) build_uboot $@ ;;
-		spl) build_spl $@ ;;
-		uefi) build_uefi $@ ;;
+		uboot | spl | uefi)
+			FUNC=${DRY_RUN:+do_}build_$TARGET
+			$FUNC $@
+			;;
 		*) usage ;;
 	esac
+}
+
+build_hook_dry()
+{
+	echo -e "\e[35mCommands of building $1:\e[0m"
+	build_hook $@
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
