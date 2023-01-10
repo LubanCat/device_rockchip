@@ -145,9 +145,13 @@ run_post_hooks()
 {
 	LOG_FILE="$(start_log post-rootfs)"
 
-	echo -e "# $(date +"%F %T") -- $@\n" > "$LOG_FILE"
+	echo -e "# run hook: $@\n" >> "$LOG_FILE"
 	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
-	[ ${PIPESTATUS[0]} -ne $HOOK_RET_HANDLED ] || HOOK_HANDLED=1
+	case "${PIPESTATUS[0]}" in
+		0) ;;
+		$HOOK_RET_HANDLED) HOOK_HANDLED=1 ;;
+		*) exit 1 ;;
+	esac
 }
 
 main()
