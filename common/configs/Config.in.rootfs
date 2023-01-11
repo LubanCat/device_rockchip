@@ -23,7 +23,8 @@ config RK_YOCTO_CFG
 config RK_DEBIAN_VERSION
 	string "debian rootfs version"
 	default "bullseye" if RK_CHIP_FAMILY = "rk3399" || \
-		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588"
+		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
+		RK_CHIP_FAMILY = "rk3562"
 	default "buster" if RK_CHIP_FAMILY = "px30" || \
 		RK_CHIP = "rk3126c" || RK_CHIP_FAMILY = "rk3288" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
