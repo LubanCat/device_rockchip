@@ -207,6 +207,8 @@ main()
 	rm -rf "$SDK_DIR/rockdev"
 	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
 
+	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
+
 	OPTIONS="${@:-allsave}"
 
 	# HACK: Compat with old build commands
