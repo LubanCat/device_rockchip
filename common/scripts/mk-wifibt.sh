@@ -289,7 +289,7 @@ build_wifibt()
 	fi
 
 	if [[ "$WIFI_CHIP" = "ALL_AP" ]];then
-		echo "copy ap6xxx/realtek firmware/nvram to rootfs"
+		echo "copy ap6xxx firmware/nvram to rootfs"
 		cp $RKWIFIBT/drivers/bcmdhd/*.ko $ROOTFS_DIR/system/lib/modules/
 		cp $RKWIFIBT/firmware/broadcom/*/wifi/* \
 			$ROOTFS_DIR/system/etc/firmware/ || true
@@ -303,6 +303,8 @@ build_wifibt()
 			$ROOTFS_DIR/usr/bin/bt_pcba_test
 
 		#reatek
+		echo "copy realtek firmware/nvram to rootfs"
+		cp $RKWIFIBT/drivers/rtl*/*.ko $ROOTFS_DIR/system/lib/modules/
 		cp -rf $RKWIFIBT/firmware/realtek/*/* $ROOTFS_DIR/lib/firmware/
 		cp -rf $RKWIFIBT/firmware/realtek/*/* \
 			$ROOTFS_DIR/lib/firmware/rtlbt/
@@ -313,6 +315,7 @@ build_wifibt()
 				$ROOTFS_DIR/usr/lib/modules/
 		fi
 
+		echo "copy S36load_wifi_modules to rootfs"
 		rm -rf $ROOTFS_DIR/etc/init.d/S36load_wifi_modules
 		cp $RKWIFIBT/S36load_all_wifi_modules $ROOTFS_DIR/etc/init.d/
 		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
