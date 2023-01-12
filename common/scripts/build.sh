@@ -87,7 +87,7 @@ start_log()
 {
 	{ # Drop old logs
 		cd "$RK_LOG_DIR"
-		rm -f $(ls -t | sed '1,20d')
+		rm -f $(ls -t | sed '1,40d')
 	}
 
 	LOG_FILE="$RK_LOG_DIR/${2:-$1_$(date +%F_%H-%M-%S)}.log"
