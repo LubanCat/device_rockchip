@@ -17,6 +17,10 @@ switch_defconfig()
 	rm -f "$RK_DEFCONFIG"
 	ln -rsf "$CONFIG" "$RK_DEFCONFIG"
 
+	CONFIG="$(realpath "$CONFIG")"
+	rm -rf "$CHIP_DIR"
+	ln -rsf "$(dirname "$CONFIG")" "$CHIP_DIR"
+
 	$MAKE $(basename "$CONFIG")
 	exit 0
 }
