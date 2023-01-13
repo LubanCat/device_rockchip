@@ -3,7 +3,7 @@
 CMD=${0##*/}
 
 # busybox doesn't provide shutdown command
-[ "$CMD" == shutdown ] && CMD=poweroff
+[ "$CMD" != shutdown ] || CMD=poweroff
 
 unset ARGS HELP
 while [ -n "$1" ];do
