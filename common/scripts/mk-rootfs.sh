@@ -27,9 +27,9 @@ build_yocto()
 	echo "====================================="
 
 	cd yocto
-	ln -rsf $RK_YOCTO_CFG build/conf/local.conf
+	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
 
-	source oe-init-build-env
+	source oe-init-build-env build
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -r conf/include/rksdk.conf \
 		-r conf/include/kernel-$RK_KERNEL_VERSION.conf
@@ -104,7 +104,7 @@ build_hook()
 	ROOTFS_IMG=rootfs.${RK_ROOTFS_TYPE}
 	ROOTFS_DIR="$RK_OUTDIR/rootfs"
 
-	echo "==========Start building rootfs($ROOTFS) to $ROOTFS_DIR=========="
+	echo "==========Start building rootfs($ROOTFS)=========="
 
 	rm -rf "$ROOTFS_DIR"
 	mkdir -p "$ROOTFS_DIR"
