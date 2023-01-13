@@ -78,6 +78,13 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
+	if [ "$2" = cmds ]; then
+		echo -e "\e[35mCommands of building $1:\e[0m"
+		echo "export CROSS_COMPILE=$CROSS_COMPILE"
+		DRY_RUN=1 do_build $1
+		return 0
+	fi
+
 	echo "============Start building $1============"
 	echo "TARGET_KERNEL_VERSION =$RK_KERNEL_VERSION"
 	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
@@ -106,9 +113,7 @@ build_hook()
 
 build_hook_dry()
 {
-	echo -e "\e[35mCommands of building $1:\e[0m"
-	echo "export CROSS_COMPILE=$CROSS_COMPILE"
-	do_build $@
+	build_hook "$1" cmds
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"

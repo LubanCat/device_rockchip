@@ -139,6 +139,12 @@ clean_hook()
 BUILD_CMDS="loader uboot spl uefi"
 build_hook()
 {
+	if [ "$2" = cmds ]; then
+		echo -e "\e[35mCommands of building $1:\e[0m"
+		DRY_RUN=1 build_hook $1
+		return 0
+	fi
+
 	TARGET="$1"
 	shift
 
@@ -161,8 +167,7 @@ build_hook()
 
 build_hook_dry()
 {
-	echo -e "\e[35mCommands of building $1:\e[0m"
-	build_hook $@
+	build_hook "$1" cmds
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
