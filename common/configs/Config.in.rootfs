@@ -2,10 +2,6 @@
 
 menu "Rootfs"
 
-config RK_BUILDROOT_CFG_FROM_ENV
-	string
-	option env="RK_BUILDROOT_CFG"
-
 config RK_BUILDROOT_CFG
 	string "buildroot rootfs defconfig"
 	default "rockchip_px30_64" if RK_CHIP_FAMILY = "px30"
@@ -15,7 +11,8 @@ config RK_BUILDROOT_CFG
 		RK_ROOTFS_INITRD
 	default "rockchip_rk3588_ramboot" if RK_CHIP_FAMILY = "rk3588" && \
 		RK_ROOTFS_INITRD
-	default RK_BUILDROOT_CFG_FROM_ENV if RK_BUILDROOT_CFG_FROM_ENV != ""
+	default "rockchip_$RK_CHIP" if RK_CHIP_FAMILY = "rk3566_rk3568"
+	default "rockchip_$RK_CHIP_FAMILY"
 
 config RK_YOCTO_CFG
 	string "yocto rootfs local config"

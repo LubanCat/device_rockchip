@@ -120,23 +120,10 @@ RK_CHIP_FAMILY := $(notdir $(realpath $(CHIP_DIR)))
 RK_CHIP := $(shell echo ${DEFCONFIG_NAME} | \
 	cut -d'_' -f2 | grep -E "^(px|rk|rv)")
 
-ifeq ($(RK_CHIP_FAMILY),rk3566_rk3568)
-RK_BUILDROOT_CFG := rockchip_$(RK_CHIP)
-RK_RECOVERY_CFG := rockchip_$(RK_CHIP)_recovery
-RK_PCBA_CFG := rockchip_$(RK_CHIP)_pcba
-else
-RK_BUILDROOT_CFG := rockchip_$(RK_CHIP_FAMILY)
-RK_RECOVERY_CFG := rockchip_$(RK_CHIP_FAMILY)_recovery
-RK_PCBA_CFG := rockchip_$(RK_CHIP_FAMILY)_pcba
-endif
-
 COMMON_CONFIG_ENV = \
 	RK_DEFCONFIG='$(call qstrip,$(RK_DEFCONFIG))' \
 	RK_CHIP_FAMILY='$(call qstrip,$(RK_CHIP_FAMILY))' \
 	RK_CHIP='$(call qstrip,$(RK_CHIP))' \
-	RK_BUILDROOT_CFG='$(call qstrip,$(RK_BUILDROOT_CFG))' \
-	RK_RECOVERY_CFG='$(call qstrip,$(RK_RECOVERY_CFG))' \
-	RK_PCBA_CFG='$(call qstrip,$(RK_PCBA_CFG))' \
 	KCONFIG_AUTOCONFIG=$(BUILD_DIR)/auto.conf \
 	KCONFIG_AUTOHEADER=$(BUILD_DIR)/autoconf.h \
 	KCONFIG_TRISTATE=$(BUILD_DIR)/tristate.config \

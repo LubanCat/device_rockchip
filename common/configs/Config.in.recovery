@@ -2,13 +2,10 @@
 
 menu "Recovery (buildroot)"
 
-config RK_RECOVERY_CFG_FROM_ENV
-	string
-	option env="RK_RECOVERY_CFG"
-
 config RK_RECOVERY_CFG
 	string "buildroot recovery defconfig"
-	default RK_RECOVERY_CFG_FROM_ENV if RK_RECOVERY_CFG_FROM_ENV != ""
+	default "rockchip_${RK_CHIP}_recovery" if RK_CHIP_FAMILY = "rk3566_rk3568"
+	default "rockchip_${RK_CHIP_FAMILY}_recovery"
 
 if RK_USE_FIT_IMG
 
