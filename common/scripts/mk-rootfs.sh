@@ -13,6 +13,7 @@ build_buildroot()
 	/usr/bin/time -f "you take %E to build buildroot" \
 		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$ROOTFS_DIR"
 
+	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_buildroot $@
 }
 
@@ -36,6 +37,7 @@ build_yocto()
 
 	ln -rsf "$PWD/build/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
 
+	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_yocto $@
 }
 
