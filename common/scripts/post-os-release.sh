@@ -21,4 +21,4 @@ mkdir -p "$(dirname "$OS_RELEASE")"
 fixup_os_release BUILD_INFO "$(whoami)@$(hostname) $(date)${@:+ - $@}"
 fixup_os_release KERNEL "$RK_KERNEL_VERSION - ${RK_KERNEL_CFG:-unkown}"
 
-[ -n "$POST_RECOVERY" ] || cp -f "$OS_RELEASE" "$RK_FIRMWARE_DIR"
+[ -n "$POST_RECOVERY" ] || cp -f "$OS_RELEASE" "$RK_OUTDIR"

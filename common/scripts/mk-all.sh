@@ -45,7 +45,7 @@ build_save()
 {
 	shift
 	SAVE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
-	case "$(grep "^ID=" "$RK_FIRMWARE_DIR/os-release" 2>/dev/null)" in
+	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
 		ID=buildroot) SAVE_DIR="$SAVE_DIR/BUILDROOT" ;;
 		ID=debian) SAVE_DIR="$SAVE_DIR/DEBIAN" ;;
 		ID=poky) SAVE_DIR="$SAVE_DIR/YOCTO" ;;
