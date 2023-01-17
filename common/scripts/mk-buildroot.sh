@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 DEFCONFIG=$1
-OUTPUT_DIR="$2"
+OUTPUT_DIR="${2:-${SDK_DIR:-$PWD}/output/buildroot}"
 BUILDROOT_DIR="${SDK_DIR:-$PWD}/buildroot"
 
 source "$BUILDROOT_DIR/build/envsetup.sh" $DEFCONFIG
