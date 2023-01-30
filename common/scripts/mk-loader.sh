@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
+MAKE_CMD="./make.sh CROSS_COMPILE=$CROSS_COMPILE"
 
 do_build_uefi()
 {
@@ -11,7 +12,7 @@ do_build_uefi()
 
 	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
 	run_command cd uefi
-	run_command ./make.sh $RK_UBOOT_CFG
+	run_command $MAKE_CMD $RK_UBOOT_CFG
 }
 
 build_uefi()
@@ -59,7 +60,7 @@ do_build_uboot()
 	fi
 
 	run_command cd u-boot
-	run_command ./make.sh CROSS_COMPILE=$CROSS_COMPILE \
+	run_command $MAKE_CMD \
 		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
 	run_command cd ..
 }
@@ -98,8 +99,8 @@ do_build_spl()
 	check_config RK_UBOOT_SPL_CFG || return 0
 
 	run_command cd u-boot
-	run_command ./make.sh $RK_UBOOT_SPL_CFG
-	run_command ./make.sh --spl
+	run_command $MAKE_CMD $RK_UBOOT_SPL_CFG
+	run_command $MAKE_CMD --spl
 	run_command cd ..
 }
 
