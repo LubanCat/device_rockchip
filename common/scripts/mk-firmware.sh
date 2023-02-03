@@ -14,7 +14,7 @@ partition_size_kb() {
 	PART_NAME=$1
 	PART_STR=$(cat "$RK_FIRMWARE_DIR/parameter.txt" | grep -v "^#" | \
 		grep -oE "[^,^:^\(]*\($PART_NAME[\)_:][^\)]*\)" || true)
-	PART_SIZE=$(echo "$PART_STR" | grep -oE "^[^@^-]*" || true)
+	PART_SIZE=$(echo "$PART_STR" | grep -oE "^[^@^-]*" | uniq || true)
 	echo $(( ${PART_SIZE:-0} / 2 ))
 }
 
