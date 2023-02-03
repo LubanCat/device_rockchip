@@ -1,3 +1,4 @@
+RK_UBOOT_OPTS="--spl-new"
 RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v10"
 RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y

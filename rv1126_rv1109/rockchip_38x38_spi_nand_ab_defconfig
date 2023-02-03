@@ -1,6 +1,7 @@
 RK_BUILDROOT_CFG="rockchip_rv1126_rv1109_spi_nand"
 RK_ROOTFS_TYPE="ubi"
 RK_KERNEL_DTS_NAME="rv1109-38-v10-spi-nand"
+RK_UBOOT_OPTS="--spl-new"
 RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y
 RK_UBOOT_CFG_FRAGMENTS="rv1126-ab rk-sfc"

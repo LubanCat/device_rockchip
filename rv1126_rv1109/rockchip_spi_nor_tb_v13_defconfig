@@ -8,6 +8,6 @@ RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y
 RK_RECOVERY_FIT_ITS="boot-tb.its"
 RK_UBOOT_CFG="rv1126-spi-nor-tb"
-RK_UBOOT_OPTS="--idblock --spl"
+RK_UBOOT_OPTS="--idblock --spl-new"
 RK_WIFIBT_CHIP="AP6256"
 RK_PARAMETER="parameter-spi-nor-tb-32M.txt"

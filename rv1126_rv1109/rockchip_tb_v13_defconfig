@@ -2,6 +2,7 @@ RK_BUILDROOT_CFG="rockchip_rv1126_evb_tb"
 RK_ROOTFS_TYPE="romfs"
 RK_ROOTFS_INITRD=y
 RK_UBOOT_CFG="rv1126-emmc-tb"
+RK_UBOOT_OPTS="--spl-new"
 RK_KERNEL_VERSION="4.19"
 RK_KERNEL_CFG_FRAGMENTS="rv1126-tb.config"
 RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v13-tb-emmc"
