@@ -20,7 +20,7 @@ build_updateimg()
 	ln -rsf "$RK_PACK_TOOL_DIR/$PKG_FILE" "$OUT_DIR/package-file"
 	ln -rsf "$RK_PACK_TOOL_DIR/afptool" "$OUT_DIR"
 	ln -rsf "$RK_PACK_TOOL_DIR/rkImageMaker" "$OUT_DIR"
-	ln -rsf "$RK_PACK_TOOL_DIR/mkupdate.sh" "$OUT_DIR"
+	ln -rsf "$RK_PACK_TOOL_DIR/$RK_MKUPDATE_SH" "$OUT_DIR/mkupdate.sh"
 
 	cd "$OUT_DIR"
 	./mkupdate.sh
