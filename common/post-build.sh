@@ -141,17 +141,6 @@ function add_dirs_and_links()
     ln -sf userdata data
 }
 
-function add_dirs_and_links()
-{
-	echo "Adding dirs and links..."
-
-	cd ${TARGET_DIR}
-	mkdir -p mnt/sdcard mnt/usb0
-	ln -sf media/usb0 udisk
-	ln -sf mnt/sdcard sdcard
-	ln -sf userdata data
-}
-
 echo "Executing $(basename $0)..."
 
 add_build_info $@
