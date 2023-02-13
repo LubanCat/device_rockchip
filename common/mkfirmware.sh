@@ -91,7 +91,7 @@ assert_size() {
 
     IMG_SIZE=$(stat -c "%s" "$IMG")
 
-    if [ $PART_SIZE -lt $(( "$IMG_SIZE" / 1024 )) ]; then
+    if [ $PART_SIZE -lt $(( $IMG_SIZE / 1024 )) ]; then
         fatal "error: $IMG's size exceed parameter.txt's limit!"
     fi
 }

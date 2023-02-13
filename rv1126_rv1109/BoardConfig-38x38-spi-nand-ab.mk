@@ -46,13 +46,13 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ubi
+export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
 #OEM config
-export RK_OEM_DIR=oem_ipc
+export RK_OEM_DIR=
 # OEM build on buildroot
-export RK_OEM_BUILDIN_BUILDROOT=YES
+export RK_OEM_BUILDIN_BUILDROOT=
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
 #

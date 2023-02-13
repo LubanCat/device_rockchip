@@ -11,7 +11,9 @@ export RK_UBOOT_SIZE_CONFIG=1024\ 2
 # Trust size
 export RK_TRUST_SIZE_CONFIG=1024\ 2
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rk312x_linux_defconfig
+export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
+# Kernel defconfig fragment
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rk3128_linux.config
 # Kernel dts
 export RK_KERNEL_DTS=rk3128-evb-ddr3-v10-linux
 # boot image type
@@ -19,7 +21,7 @@ export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter-buildroot-rk3128.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk312x
 # Recovery config
