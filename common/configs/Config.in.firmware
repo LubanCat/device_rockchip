@@ -2,11 +2,6 @@
 
 menu "Firmware"
 
-config RK_MKUPDATE_SH
-	string "mkupdate.sh"
-	default "rk3588-mkupdate.sh" if RK_CHIP_FAMILY = "rk3566_rk3568"
-	default "${RK_CHIP_FAMILY}-mkupdate.sh"
-
 config RK_PACKAGE_FILE
 	string "package-file"
 	default "rk3588-package-file-ab" if RK_CHIP_FAMILY = "rk3566_rk3568" && \

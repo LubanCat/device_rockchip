@@ -18,14 +18,18 @@ build_updateimg()
 
 	ln -rsf "$RK_FIRMWARE_DIR" "$OUT_DIR/Image"
 	ln -rsf "$RK_PACK_TOOL_DIR/$PKG_FILE" "$OUT_DIR/package-file"
-	ln -rsf "$RK_PACK_TOOL_DIR/afptool" "$OUT_DIR"
-	ln -rsf "$RK_PACK_TOOL_DIR/rkImageMaker" "$OUT_DIR"
-	ln -rsf "$RK_PACK_TOOL_DIR/$RK_MKUPDATE_SH" "$OUT_DIR/mkupdate.sh"
+
+	LOADER="$RK_FIRMWARE_DIR/MiniLoaderAll.bin"
+	TAG=RK$(hexdump -s 21 -n 4 -e '4 "%c"' $LOADER | rev)
+
+	echo "Packing $TARGET for $TAG..."
 
 	cd "$OUT_DIR"
-	./mkupdate.sh
+	"$RK_PACK_TOOL_DIR/afptool" -pack ./ update.raw.img
+	"$RK_PACK_TOOL_DIR/rkImageMaker" -$TAG $LOADER update.raw.img \
+		update.img -os_type:androidos
 
-	mv update.img "$TARGET"
+	ln -rsf "$OUT_DIR/update.img" "$TARGET"
 
 	finish_build build_updateimg $@
 }
