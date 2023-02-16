@@ -2,20 +2,13 @@
 
 menu "Others configurations"
 
-config RK_UBI
-	bool "ubi image default params"
-
-if RK_UBI
-
 config RK_UBI_PAGE_SIZE
-	int "default ubi image page size (KB)"
+	int "ubi image page size (KB)"
 	default "2048"
 
 config RK_UBI_BLOCK_SIZE
-	int "default ubi image block size (KB)"
+	int "ubi image block size (KB)"
 	default "128"
-
-endif
 
 config RK_WIFIBT_CHIP
 	string "wifi/BT chip"

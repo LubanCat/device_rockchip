@@ -41,14 +41,6 @@ esac
 
 echo $SIZE_KB | grep -vq [^0-9] || usage "Invalid size: $SIZE_KB"
 
-if echo "$FS_TYPE" | grep -qE "^(ubi|ubifs)$"; then
-    UBI_VOL_NAME=${LABEL:-ubi}
-    # default page size 2KB
-    DEFAULT_UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
-    # default block size 128KB
-    DEFAULT_UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
-fi
-
 TEMP=$(mktemp -u)
 
 [ -d "$SRC_DIR" ] || usage "No such src dir: $SRC_DIR"
@@ -127,17 +119,7 @@ mkimage()
             fi
             ;;
         ubi|ubifs)
-            UBI_PAGE_SIZE=2048
-            UBI_BLOCK_SIZE=0x20000
-            mk_ubi_image || return 1
-
-            UBI_PAGE_SIZE=2048
-            UBI_BLOCK_SIZE=0x40000
-            mk_ubi_image || return 1
-
-            UBI_PAGE_SIZE=4096
-            UBI_BLOCK_SIZE=0x40000
-            mk_ubi_image || return 1
+            mk_ubi_image
             ;;
     esac
 }
@@ -165,16 +147,19 @@ mkimage_auto_sized()
 
 mk_ubi_image()
 {
-    TARGET_DIR="`dirname $TARGET`"
+    TARGET_DIR="${RK_OUTDIR:-$(dirname "$TARGET")}"
+    UBI_VOL_NAME=${LABEL:-ubi}
 
-    PARAMS="$(( $UBI_PAGE_SIZE / 1024 ))KB_$(( $UBI_BLOCK_SIZE / 1024 ))KB_$(( $SIZE_KB / 1024 ))MB"
+    # default page size 2KB
+    UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
+    # default block size 128KB
+    UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
 
     UBIFS_LEBSIZE=$(( $UBI_BLOCK_SIZE - 2 * $UBI_PAGE_SIZE ))
     UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
 
-    OUTPUT_IMAGE="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}.ubi"
-    UBIFS_IMAGE="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}.ubifs"
-    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}_ubinize.cfg"
+    UBIFS_IMAGE="$TARGET_DIR/$UBI_VOL_NAME.ubifs"
+    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
 
     UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
@@ -186,17 +171,12 @@ mk_ubi_image()
     echo "vol_id=0" >> $UBINIZE_CFG
     echo "vol_type=dynamic" >> $UBINIZE_CFG
     echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
+    echo "vol_size=${SIZE_KB}KiB" >> $UBINIZE_CFG
     echo "vol_alignment=1" >> $UBINIZE_CFG
     echo "vol_flags=autoresize" >> $UBINIZE_CFG
     echo "image=$UBIFS_IMAGE" >> $UBINIZE_CFG
-    ubinize -o $OUTPUT_IMAGE -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
+    ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
         -v $UBINIZE_CFG
-
-    # Pick a default ubi image
-    if [ $(( $DEFAULT_UBI_PAGE_SIZE )) -eq $(( $UBI_PAGE_SIZE )) \
-        -a $(( $DEFAULT_UBI_BLOCK_SIZE )) -eq $(( $UBI_BLOCK_SIZE )) ]; then
-        ln -rsf $OUTPUT_IMAGE $TARGET
-    fi
 }
 
 rm -rf $TARGET
