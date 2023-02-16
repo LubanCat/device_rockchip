@@ -41,8 +41,8 @@ esac
 
 echo $SIZE_KB | grep -vq [^0-9] || usage "Invalid size: $SIZE_KB"
 
-if [ "$FS_TYPE" = "ubi" ]; then
-    UBI_VOL_NAME=${LABEL:-test}
+if echo "$FS_TYPE" | grep -qE "^(ubi|ubifs)$"; then
+    UBI_VOL_NAME=${LABEL:-ubi}
     # default page size 2KB
     DEFAULT_UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
     # default block size 128KB
@@ -218,7 +218,7 @@ case $FS_TYPE in
             mkimage && echo "Generated $TARGET"
         fi
         ;;
-    ubi)
+    ubi|ubifs)
         [ $SIZE_KB -eq 0 ] && fatal "$FS_TYPE: auto size not supported."
 
         UBI_PAGE_SIZE=2048

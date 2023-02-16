@@ -47,7 +47,8 @@ config RK_EXTRA_PARTITION_1_BUILTIN
 config RK_EXTRA_PARTITION_1_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_1_BUILTIN
-	default y if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
+	default y if RK_EXTRA_PARTITION_1_FSTYPE = "ubi" || \
+		RK_EXTRA_PARTITION_1_FSTYPE = "ubifs"
 
 config RK_EXTRA_PARTITION_1_FEATURES
 	string
@@ -102,7 +103,8 @@ config RK_EXTRA_PARTITION_2_BUILTIN
 config RK_EXTRA_PARTITION_2_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_2_BUILTIN
-	default y if RK_EXTRA_PARTITION_2_FSTYPE = "ubi"
+	default y if RK_EXTRA_PARTITION_2_FSTYPE = "ubi" || \
+		RK_EXTRA_PARTITION_2_FSTYPE = "ubifs"
 
 config RK_EXTRA_PARTITION_2_FEATURES
 	string
@@ -154,7 +156,8 @@ config RK_EXTRA_PARTITION_3_BUILTIN
 config RK_EXTRA_PARTITION_3_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_3_BUILTIN
-	default y if RK_EXTRA_PARTITION_3_FSTYPE = "ubi"
+	default y if RK_EXTRA_PARTITION_3_FSTYPE = "ubi" || \
+		RK_EXTRA_PARTITION_3_FSTYPE = "ubifs"
 
 config RK_EXTRA_PARTITION_3_FEATURES
 	string
@@ -206,7 +209,8 @@ config RK_EXTRA_PARTITION_4_BUILTIN
 config RK_EXTRA_PARTITION_4_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_4_BUILTIN
-	default y if RK_EXTRA_PARTITION_4_FSTYPE = "ubi"
+	default y if RK_EXTRA_PARTITION_4_FSTYPE = "ubi" || \
+		RK_EXTRA_PARTITION_4_FSTYPE = "ubifs"
 
 config RK_EXTRA_PARTITION_4_FEATURES
 	string
@@ -258,7 +262,8 @@ config RK_EXTRA_PARTITION_5_BUILTIN
 config RK_EXTRA_PARTITION_5_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_5_BUILTIN
-	default y if RK_EXTRA_PARTITION_5_FSTYPE = "ubi"
+	default y if RK_EXTRA_PARTITION_5_FSTYPE = "ubi" || \
+		RK_EXTRA_PARTITION_5_FSTYPE = "ubifs"
 
 config RK_EXTRA_PARTITION_5_FEATURES
 	string
