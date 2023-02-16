@@ -2,17 +2,17 @@
 
 menu "Others configurations"
 
-config RK_UBIFS
-	bool "ubi filesystem params"
+config RK_UBI
+	bool "ubi image default params"
 
-if RK_UBIFS
+if RK_UBI
 
-config RK_UBIFS_PAGE_SIZE
-	int "ubifs page size (KB)"
+config RK_UBI_PAGE_SIZE
+	int "default ubi image page size (KB)"
 	default "2048"
 
-config RK_UBIFS_BLOCK_SIZE
-	int "ubifs block size (KB)"
+config RK_UBI_BLOCK_SIZE
+	int "default ubi image block size (KB)"
 	default "128"
 
 endif
