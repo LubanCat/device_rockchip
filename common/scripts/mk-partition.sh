@@ -64,7 +64,7 @@ EOF
 	cat <<EOF
 
 config RK_EXTRA_PARTITION_${i}_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_${i}_BUILTIN

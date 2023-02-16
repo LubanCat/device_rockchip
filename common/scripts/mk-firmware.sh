@@ -34,14 +34,31 @@ pack_extra_partitions() {
 			continue
 		fi
 
-		# Check generated dir and script (in post-partitions.sh)
+		PART_NAME="$(rk_partition_name $idx)"
+		FS_TYPE="$(rk_partition_fstype $idx)"
+		SIZE="$(rk_partition_size $idx)"
 		FAKEROOT_SCRIPT="$(rk_partition_fakeroot_script $idx)"
 		OUTDIR="$(rk_partition_outdir $idx)"
+		DST="$(rk_partition_img $idx)"
+
+		# Check generated dir and script (in post-partitions.sh)
 		if [ ! -r "$FAKEROOT_SCRIPT" -o ! -d "$OUTDIR" ]; then
 			fatal "Rootfs not ready?"
 		fi
 
-		DST="$(rk_partition_img $idx)"
+		if [ "$SIZE" = max ]; then
+			SIZE="$(partition_size_kb "$PART_NAME")K"
+			if [ "$SIZE" = 0K ]; then
+				fatal "Unable to detect max size of $PART_NAME"
+			fi
+
+			echo "Using maxium size: $SIZE"
+		fi
+
+		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
+		echo "\"$SCRIPTS_DIR/mk-image.sh\" \
+			\"$OUTDIR\" \"$DST\" \"$FS_TYPE\" \
+			\"$SIZE\" \"$PART_NAME\"" >> "$FAKEROOT_SCRIPT"
 
 		message "Packing $DST from $FAKEROOT_SCRIPT"
 		cd "$OUTDIR"
@@ -56,8 +73,6 @@ build_firmware()
 		echo "fakeroot not found! (sudo apt-get install fakeroot)"
 		exit 1
 	fi
-
-	MKIMAGE="$SCRIPTS_DIR/mk-image.sh"
 
 	mkdir -p "$RK_FIRMWARE_DIR"
 
@@ -79,15 +94,14 @@ build_firmware()
 		FILE_SIZE=$(ls -lLh $f | xargs | cut -d' ' -f 5)
 		echo ": $FILE_SIZE"
 
-
 		echo "$NAME" | grep -q ".img$" || continue
 
 		# Assert the image's size smaller than parameter.txt's limit
-		PART_SIZE="$(partition_size_kb "${NAME%.img}")"
-		[ ! "$PART_SIZE" -eq 0 ] || continue
+		PART_SIZE_KB="$(partition_size_kb "${NAME%.img}")"
+		[ ! "$PART_SIZE_KB" -eq 0 ] || continue
 
 		FILE_SIZE_KB="$(( $(stat -Lc "%s" "$f") / 1024 ))"
-		if [ "$PART_SIZE" -lt "$FILE_SIZE_KB" ]; then
+		if [ "$PART_SIZE_KB" -lt "$FILE_SIZE_KB" ]; then
 			fatal "error: $NAME's size exceed parameter's limit!"
 		fi
 	done

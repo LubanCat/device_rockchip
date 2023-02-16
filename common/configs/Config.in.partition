@@ -38,7 +38,7 @@ config RK_EXTRA_PARTITION_1_SRC
 	default "${RK_EXTRA_PARTITION_1_DEV}_normal"
 
 config RK_EXTRA_PARTITION_1_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_1_BUILTIN
@@ -94,7 +94,7 @@ config RK_EXTRA_PARTITION_2_SRC
 	default "${RK_EXTRA_PARTITION_2_DEV}_normal"
 
 config RK_EXTRA_PARTITION_2_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_2_BUILTIN
@@ -147,7 +147,7 @@ config RK_EXTRA_PARTITION_3_SRC
 	string "source dirs"
 
 config RK_EXTRA_PARTITION_3_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_3_BUILTIN
@@ -200,7 +200,7 @@ config RK_EXTRA_PARTITION_4_SRC
 	string "source dirs"
 
 config RK_EXTRA_PARTITION_4_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_4_BUILTIN
@@ -253,7 +253,7 @@ config RK_EXTRA_PARTITION_5_SRC
 	string "source dirs"
 
 config RK_EXTRA_PARTITION_5_SIZE
-	string "image size"
+	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
 
 config RK_EXTRA_PARTITION_5_BUILTIN

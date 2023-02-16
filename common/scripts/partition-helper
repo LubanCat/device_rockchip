@@ -93,9 +93,6 @@ rk_partition_img()
 rk_partition_prepare()
 {
 	PART_NAME="$(rk_partition_name $1)"
-	FS_TYPE="$(rk_partition_fstype $1)"
-	SIZE="$(rk_partition_size $1)"
-	DST="$(rk_partition_img $1)"
 	OUTDIR="$(rk_partition_outdir $1)"
 	FAKEROOT_SCRIPT="$(rk_partition_fakeroot_script $1)"
 	SRCS="$(rk_partition_src $1)"
@@ -132,7 +129,4 @@ rk_partition_prepare()
 			rm -f "$OUTDIR/$f"
 		done
 	done
-
-	echo "\"$SCRIPTS_DIR/mk-image.sh\" \"$OUTDIR\" \"$DST\" \"$FS_TYPE\" \
-		\"$SIZE\" \"$PART_NAME\"" >> "$FAKEROOT_SCRIPT"
 }
