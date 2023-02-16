@@ -126,6 +126,19 @@ mkimage()
                 copy_to_image
             fi
             ;;
+        ubi|ubifs)
+            UBI_PAGE_SIZE=2048
+            UBI_BLOCK_SIZE=0x20000
+            mk_ubi_image || return 1
+
+            UBI_PAGE_SIZE=2048
+            UBI_BLOCK_SIZE=0x40000
+            mk_ubi_image || return 1
+
+            UBI_PAGE_SIZE=4096
+            UBI_BLOCK_SIZE=0x40000
+            mk_ubi_image || return 1
+            ;;
     esac
 }
 
@@ -154,84 +167,46 @@ mk_ubi_image()
 {
     TARGET_DIR="`dirname $TARGET`"
 
-    if [ $(( $UBI_BLOCK_SIZE )) -eq $(( 0x20000 )) ]; then
-        ubi_block_size_str="128KB"
-    elif [ $(( $UBI_BLOCK_SIZE )) -eq $(( 0x40000 )) ]; then
-        ubi_block_size_str="256KB"
-    else
-        echo "Error: Please add ubi block size [$UBI_BLOCK_SIZE] to $PWD/$0"
-        exit 1
-    fi
+    PARAMS="$(( $UBI_PAGE_SIZE / 1024 ))KB_$(( $UBI_BLOCK_SIZE / 1024 ))KB_$(( $SIZE_KB / 1024 ))MB"
 
-    if [ $(( $UBI_PAGE_SIZE )) -eq 2048 ]; then
-        ubi_page_size_str="2KB"
-    elif [ $(( $UBI_PAGE_SIZE )) -eq 4096 ]; then
-        ubi_page_size_str="4KB"
-    else
-        echo "Error: Please add ubi block size [$UBI_PAGE_SIZE] to $PWD/$0"
-        exit 1
-    fi
+    UBIFS_LEBSIZE=$(( $UBI_BLOCK_SIZE - 2 * $UBI_PAGE_SIZE ))
+    UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
 
-    if [ -z "$UBI_VOL_NAME" ]; then
-        echo "Error: Please config ubifs partition volume name"
-        exit 1
-    fi
+    OUTPUT_IMAGE="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}.ubi"
+    UBIFS_IMAGE="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}.ubifs"
+    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}_${PARAMS}_ubinize.cfg"
 
-    ubifs_lebsize=$(( $UBI_BLOCK_SIZE - 2 * $UBI_PAGE_SIZE ))
-    ubifs_miniosize=$UBI_PAGE_SIZE
+    UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
-    partition_size_str="$(( $SIZE_KB / 1024 ))MB"
-    output_image=${TARGET_DIR}/${UBI_VOL_NAME}_${ubi_page_size_str}_${ubi_block_size_str}_${partition_size_str}.ubi
-    temp_ubifs_image=$TARGET_DIR/${UBI_VOL_NAME}_${ubi_page_size_str}_${ubi_block_size_str}_${partition_size_str}.ubifs
-    temp_ubinize_file=$TARGET_DIR/${UBI_VOL_NAME}_${ubi_page_size_str}_${ubi_block_size_str}_${partition_size_str}_ubinize.cfg
+    mkfs.ubifs -x lzo -e $UBIFS_LEBSIZE -m $UBIFS_MINIOSIZE \
+        -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $UBIFS_IMAGE || return 1
 
-    ubifs_maxlebcnt=$(( $SIZE_KB * 1024 / $ubifs_lebsize ))
-
-    echo "ubifs_lebsize=$UBI_BLOCK_SIZE"
-    echo "ubifs_miniosize=$UBI_PAGE_SIZE"
-    echo "ubifs_maxlebcnt=$ubifs_maxlebcnt"
-    mkfs.ubifs -x lzo -e $ubifs_lebsize -m $ubifs_miniosize -c $ubifs_maxlebcnt -d $SRC_DIR -F -v -o $temp_ubifs_image
-
-    echo "[ubifs]" > $temp_ubinize_file
-    echo "mode=ubi" >> $temp_ubinize_file
-    echo "vol_id=0" >> $temp_ubinize_file
-    echo "vol_type=dynamic" >> $temp_ubinize_file
-    echo "vol_name=$UBI_VOL_NAME" >> $temp_ubinize_file
-    echo "vol_alignment=1" >> $temp_ubinize_file
-    echo "vol_flags=autoresize" >> $temp_ubinize_file
-    echo "image=$temp_ubifs_image" >> $temp_ubinize_file
-    ubinize -o $output_image -m $ubifs_miniosize -p $UBI_BLOCK_SIZE -v $temp_ubinize_file
+    echo "[ubifs]" > $UBINIZE_CFG
+    echo "mode=ubi" >> $UBINIZE_CFG
+    echo "vol_id=0" >> $UBINIZE_CFG
+    echo "vol_type=dynamic" >> $UBINIZE_CFG
+    echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
+    echo "vol_alignment=1" >> $UBINIZE_CFG
+    echo "vol_flags=autoresize" >> $UBINIZE_CFG
+    echo "image=$UBIFS_IMAGE" >> $UBINIZE_CFG
+    ubinize -o $OUTPUT_IMAGE -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
+        -v $UBINIZE_CFG
 
     # Pick a default ubi image
     if [ $(( $DEFAULT_UBI_PAGE_SIZE )) -eq $(( $UBI_PAGE_SIZE )) \
         -a $(( $DEFAULT_UBI_BLOCK_SIZE )) -eq $(( $UBI_BLOCK_SIZE )) ]; then
-        ln -rfs $output_image $TARGET
+        ln -rsf $OUTPUT_IMAGE $TARGET
     fi
 }
 
 rm -rf $TARGET
 case $FS_TYPE in
-    ext[234]|msdos|fat|vfat|ntfs)
+    ext[234]|msdos|fat|vfat|ntfs|ubi|ubifs)
         if [ $SIZE_KB -eq 0 ]; then
             mkimage_auto_sized
         else
             mkimage && echo "Generated $TARGET"
         fi
-        ;;
-    ubi|ubifs)
-        [ $SIZE_KB -eq 0 ] && fatal "$FS_TYPE: auto size not supported."
-
-        UBI_PAGE_SIZE=2048
-        UBI_BLOCK_SIZE=0x20000
-        mk_ubi_image
-
-        UBI_PAGE_SIZE=2048
-        UBI_BLOCK_SIZE=0x40000
-        mk_ubi_image
-
-        UBI_PAGE_SIZE=4096
-        UBI_BLOCK_SIZE=0x40000
-        mk_ubi_image
         ;;
     squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
