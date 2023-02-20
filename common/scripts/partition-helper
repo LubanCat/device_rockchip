@@ -56,8 +56,7 @@ rk_partition_options()
 
 rk_partition_src()
 {
-	rk_partition_arg ${1:-1} 5 "$(rk_partition_dev $1)_empty" | \
-		tr ',' ' '
+	rk_partition_arg ${1:-1} 5 | tr ',' ' '
 }
 
 rk_partition_size()
@@ -102,6 +101,12 @@ rk_partition_prepare()
 	echo "Preparing partiton $PART_NAME"
 
 	rm -rf "$OUTDIR" "$FAKEROOT_SCRIPT"
+
+	if [ -z "$SRCS" ]; then
+		echo "Ignoring $PART_NAME for no sources"
+		return 0
+	fi
+
 	mkdir -p "$OUTDIR"
 
 	if rk_partition_fixed $idx; then

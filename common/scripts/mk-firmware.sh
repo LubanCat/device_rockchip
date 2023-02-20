@@ -41,6 +41,11 @@ pack_extra_partitions() {
 		OUTDIR="$(rk_partition_outdir $idx)"
 		DST="$(rk_partition_img $idx)"
 
+		if [ -z "$(rk_partition_src $idx)" ]; then
+			echo "Ignoring $PART_NAME for no sources"
+			continue
+		fi
+
 		# Check generated dir and script (in post-partitions.sh)
 		if [ ! -r "$FAKEROOT_SCRIPT" -o ! -d "$OUTDIR" ]; then
 			fatal "Rootfs not ready?"
