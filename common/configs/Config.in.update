@@ -4,7 +4,6 @@ menu "Update (OTA and A/B)"
 
 config RK_OTA_PACKAGE_FILE
 	string "package-file for OTA"
-	default "${RK_CHIP_FAMILY}-package-file-ota"
 
 config RK_AB_UPDATE
 	bool "A/B update"

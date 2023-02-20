@@ -12,7 +12,6 @@ RK_USE_FIT_IMG=y
 RK_BOOT_FIT_ITS="boot-tb.its"
 RK_RECOVERY_CFG=""
 RK_RECOVERY_FIT_ITS=""
-RK_PACKAGE_FILE="rv1126-package-file-emmc-tb"
 RK_PARAMETER="parameter-tb.txt"
 RK_MISC_IMG=""
 RK_EXTRA_PARTITION_1_SRC=""
