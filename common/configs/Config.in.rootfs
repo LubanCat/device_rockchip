@@ -13,9 +13,15 @@ config RK_BUILDROOT_CFG
 		RK_ROOTFS_INITRD
 	default "rockchip_$RK_CHIP" if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default "rockchip_$RK_CHIP_FAMILY"
+	help
+	  Name of buildroot defconfig for rootfs.
+	  Set "" for no buildroot rootfs.
 
 config RK_YOCTO_CFG
 	string "yocto rootfs local config"
+	help
+	  Name of yocto local config for rootfs.
+	  Set "" for no yocto rootfs.
 
 config RK_DEBIAN_VERSION
 	string "debian rootfs version"
@@ -26,6 +32,9 @@ config RK_DEBIAN_VERSION
 		RK_CHIP = "rk3126c" || RK_CHIP_FAMILY = "rk3288" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
 		RK_CHIP_FAMILY = "rk3399pro"
+	help
+	  Version of debian rootfs.
+	  Set "" for no debian rootfs.
 
 if RK_DEBIAN_VERSION != ""
 
@@ -41,6 +50,8 @@ config RK_ROOTFS_SYSTEM
 	default "buildroot" if RK_BUILDROOT_CFG != ""
 	default "debian" if RK_DEBIAN_VERSION != ""
 	default "yocto" if RK_YOCTO_CFG != ""
+	help
+	  Default rootfs system.
 
 config RK_ROOTFS_TYPE
 	string "rootfs filesystem type"
@@ -61,5 +72,7 @@ endif
 config RK_ROOTFS_LANG
 	string "set default LANG env"
 	default "en_US.utf8"
+	help
+	  Set "" to use default setting.
 
 endmenu # Rootfs

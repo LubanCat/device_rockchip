@@ -6,6 +6,9 @@ config RK_RECOVERY_CFG
 	string "buildroot recovery defconfig"
 	default "rockchip_${RK_CHIP}_recovery" if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default "rockchip_${RK_CHIP_FAMILY}_recovery"
+	help
+	  Name of buildroot defconfig for recovery.
+	  Set "" for no recovery.
 
 if RK_USE_FIT_IMG
 

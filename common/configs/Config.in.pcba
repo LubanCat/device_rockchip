@@ -9,5 +9,8 @@ config RK_PCBA_CFG
 	default "rockchip_px30_pcba" if RK_CHIP_FAMILY = "rk3358"
 	default "rockchip_${RK_CHIP}_pcba" if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default "rockchip_${RK_CHIP_FAMILY}_pcba"
+	help
+	  Name of buildroot defconfig for PCBA.
+	  Set "" for no PCBA.
 
 endmenu # PCBA
