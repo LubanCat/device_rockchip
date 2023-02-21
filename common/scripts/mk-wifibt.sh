@@ -5,9 +5,11 @@ DEFAULT_ROOTFS_DIR=buildroot/output/$RK_BUILDROOT_CFG/target
 # Usage: build_wifibt <rootfs dir> [wifi chip] [bt tty dev]
 build_wifibt()
 {
+	check_config RK_WIFIBT_CHIP || return 0
+
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
-	WIFI_CHIP=${2:-${RK_WIFIBT_CHIP:-ALL_AP}}
-	BT_TTY_DEV=${3:-${RK_WIFIBT_TTY:-ttyS0}}
+	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
+	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
 
 	if [ "$RK_POST_RECOVERY" ]; then
 		echo "No Wifi/BT for recovery image"
