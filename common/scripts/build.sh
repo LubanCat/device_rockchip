@@ -85,11 +85,6 @@ kernel_version()
 
 start_log()
 {
-	{ # Drop old logs
-		cd "$RK_LOG_DIR"
-		rm -f $(ls -t | sed '1,40d')
-	}
-
 	LOG_FILE="$RK_LOG_DIR/${2:-$1_$(date +%F_%H-%M-%S)}.log"
 	ln -rsf "$LOG_FILE" "$RK_LOG_DIR/$1.log"
 	echo "# $(date +"%F %T")" >> "$LOG_FILE"
@@ -191,7 +186,9 @@ main()
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$SDK_DIR/output"
-	export RK_LOG_DIR="$RK_OUTDIR/log"
+	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
+	export RK_LOG_SESSION="${RK_LOG_SESSION:-$(date +%F_%H-%M-%S)}"
+	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_LOG_SESSION"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
 	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
@@ -201,12 +198,19 @@ main()
 
 	export RK_BUILDING=1
 
-	cd "$SDK_DIR"
 	mkdir -p "$RK_LOG_DIR"
+	rm -rf "$RK_LOG_BASE_DIR/latest"
+	ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+
+	# Drop old logs
+	cd "$RK_LOG_BASE_DIR"
+	rm -rf $(ls -t | sed '1,6d')
+
 	mkdir -p "$RK_FIRMWARE_DIR"
 	rm -rf "$SDK_DIR/rockdev"
 	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
 
+	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
 
 	OPTIONS="${@:-allsave}"
