@@ -27,7 +27,7 @@ mkdir -p $LIB_OUT_DIR
 # Require buildroot host tools to do image packing.
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh"
-    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+    source $TOP_DIR/buildroot/build/envsetup.sh $RK_BUILDROOT_CFG
 fi
 
 if [ -d $RKNN_SDK_DIR ]; then

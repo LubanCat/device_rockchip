@@ -1,4 +1,3 @@
-RK_BUILDROOT_CFG="rockchip_rk3562"
 RK_YOCTO_CFG="rockchip-rk3562-evb"
 RK_KERNEL_DTS_NAME="rk3562-evb2-ddr4-v10-linux"
 RK_UBOOT_OPTS="--spl-new"

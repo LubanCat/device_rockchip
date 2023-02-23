@@ -2,20 +2,26 @@
 
 menu "Rootfs"
 
-config RK_BUILDROOT_CFG
-	string "buildroot rootfs defconfig"
-	default "rockchip_px30_64" if RK_CHIP_FAMILY = "px30"
-	default "rockchip_rk3326_64" if RK_CHIP_FAMILY = "rk3326"
-	default "rockchip_rk3358_64" if RK_CHIP_FAMILY = "rk3358"
-	default "rockchip_rk3566_rk3568_ramboot" if RK_CHIP_FAMILY = "rk3566_rk3568" && \
+config RK_BUILDROOT_BASE_CFG
+	string "buildroot rootfs base cfg (rockchip_<cfg>_defconfig)"
+	default "px30_64" if RK_CHIP_FAMILY = "px30"
+	default "rk3326_64" if RK_CHIP_FAMILY = "rk3326"
+	default "rk3358_64" if RK_CHIP_FAMILY = "rk3358"
+	default "rk3566_rk3568_ramboot" if RK_CHIP_FAMILY = "rk3566_rk3568" && \
 		RK_ROOTFS_INITRD
-	default "rockchip_rk3588_ramboot" if RK_CHIP_FAMILY = "rk3588" && \
+	default "rk3588_ramboot" if RK_CHIP_FAMILY = "rk3588" && \
 		RK_ROOTFS_INITRD
-	default "rockchip_$RK_CHIP" if RK_CHIP_FAMILY = "rk3566_rk3568"
-	default "rockchip_$RK_CHIP_FAMILY"
+	default RK_CHIP if RK_CHIP = "rk3126c" || \
+		RK_CHIP_FAMILY = "rk3566_rk3568"
+	default RK_CHIP_FAMILY
 	help
-	  Name of buildroot defconfig for rootfs.
+	  Base name of buildroot defconfig for rootfs.
 	  Set "" for no buildroot rootfs.
+
+config RK_BUILDROOT_CFG
+	string
+	default "" if RK_BUILDROOT_BASE_CFG = ""
+	default "rockchip_${RK_BUILDROOT_BASE_CFG}"
 
 config RK_YOCTO_CFG
 	string "yocto rootfs local config"

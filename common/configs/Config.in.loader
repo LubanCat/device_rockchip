@@ -8,10 +8,10 @@ config RK_UBOOT_CFG
 	default "rk3126" if RK_CHIP = "rk3126c"
 	default "rk3128x" if RK_CHIP_FAMILY = "rk3128h"
 	default "evb-rk3229" if RK_CHIP_FAMILY = "rk3229"
-	default "rk3308" if RK_CHIP_FAMILY = "rk3308"
 	default "evb-px30" if RK_CHIP_FAMILY = "rk3358"
-	default "rk3588" if RK_CHIP_FAMILY = "rk3588"
 	default "rv1126" if RK_CHIP_FAMILY = "rv1126_rv1109"
+	default RK_CHIP_FAMILY if RK_CHIP_FAMILY = "rk3308" || \
+		RK_CHIP_FAMILY = "rk3588"
 	default RK_CHIP
 
 config RK_UBOOT_CFG_FRAGMENTS

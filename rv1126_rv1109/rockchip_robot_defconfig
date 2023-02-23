@@ -1,8 +1,8 @@
-RK_BUILDROOT_CFG="rockchip_rv1126_robot"
+RK_BUILDROOT_BASE_CFG="rv1126_robot"
 RK_KERNEL_CFG="rv1126_robot_defconfig"
 RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v13-robot"
 RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y
-RK_RECOVERY_CFG="rockchip_rv1126_robot_recovery"
+RK_RECOVERY_BASE_CFG="rv1126_robot"
 RK_PARAMETER="parameter-buildroot-fit.txt"
-RK_EXTRA_PARTITION_1_SRC="oem_empty"
+RK_EXTRA_PARTITION_1_SRC="empty"

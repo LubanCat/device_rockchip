@@ -5,4 +5,4 @@ RK_USE_FIT_IMG=y
 RK_UBOOT_CFG="rv1126-ab"
 RK_AB_UPDATE=y
 RK_PARAMETER="parameter-ab-fit.txt"
-RK_EXTRA_PARTITION_1_SRC="oem_ipc"
+RK_EXTRA_PARTITION_1_SRC="ipc"

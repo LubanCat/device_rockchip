@@ -15,7 +15,6 @@ config RK_EXTRA_PARTITION_NUM
 	default $RK_PARTITION_NUM
 EOF
 
-unset RK_PARTITIONS
 for i in $(seq 1 $RK_PARTITION_MAX_NUM); do
 	cat <<EOF
 
@@ -23,13 +22,19 @@ config RK_EXTRA_PARTITION_$i
 	bool "extra partition $i"
 	depends on RK_EXTRA_PARTITION_NUM > $(( $i - 1 ))
 	default y
+EOF
+done
+
+unset RK_PARTITIONS
+for i in $(seq 1 $RK_PARTITION_MAX_NUM); do
+	cat <<EOF
 
 if RK_EXTRA_PARTITION_$i
 
 menu "Extra partition $i"
 
 config RK_EXTRA_PARTITION_${i}_DEV
-	string "device"
+	string "device identifier"
 EOF
 	case $i in
 		1) echo -e "\tdefault \"oem\"" ;;
@@ -37,10 +42,30 @@ EOF
 	esac
 
 	cat <<EOF
+	help
+	  Device identifier, like oem or /dev/mmcblk0p7 or PARTLABEL=oem.
+
+config RK_EXTRA_PARTITION_${i}_NAME
+	string "partition name"
+	default "<dev>"
+	help
+	  Partition name, set "<dev>" to detect from device identifier.
+
+config RK_EXTRA_PARTITION_${i}_NAME_STR
+	string
+	default "\${RK_EXTRA_PARTITION_${i}_DEV##*[/=]}" \\
+		if RK_EXTRA_PARTITION_${i}_NAME = "<dev>"
+	default RK_EXTRA_PARTITION_${i}_NAME
 
 config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 	string "mountpoint"
-	default "/\$RK_EXTRA_PARTITION_${i}_DEV"
+	default "/<name>"
+
+config RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR
+	string
+	default "/\$RK_EXTRA_PARTITION_${i}_NAME_STR" \\
+		if RK_EXTRA_PARTITION_${i}_MOUNTPOINT = "/<name>"
+	default RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_${i}_FSTYPE
 	string "filesystem type"
@@ -51,13 +76,15 @@ config RK_EXTRA_PARTITION_${i}_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_${i}_SRC
-	string "source dirs"
+	string "source dirs' suffix"
 EOF
 
 	if [ $i -lt 3 ]; then
 		cat << EOF
-	default "\${RK_EXTRA_PARTITION_${i}_DEV}_empty" if RK_CHIP_FAMILY = "rk3308"
-	default "\${RK_EXTRA_PARTITION_${i}_DEV}_normal"
+	default "empty" if RK_CHIP_FAMILY = "rk3308"
+	default "normal"
+	help
+	  Suffix of source dirs under <RK_IMAGE_DIR>/.
 EOF
 	fi
 
@@ -66,9 +93,15 @@ EOF
 config RK_EXTRA_PARTITION_${i}_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
 	default "auto"
+	help
+	  Size of image.
+	  Set "auto" to auto detect.
+	  Set "max" to use maxium partition size in parameter file.
 
 config RK_EXTRA_PARTITION_${i}_BUILTIN
 	bool "merged into rootfs"
+	help
+	  Virtual parition that merged into rootfs.
 
 config RK_EXTRA_PARTITION_${i}_FIXED
 	bool "skip resizing"
@@ -80,22 +113,22 @@ config RK_EXTRA_PARTITION_${i}_FEATURES
 	string
 	default "\${RK_EXTRA_PARTITION_${i}_FIXED:+fixed,}\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin}"
 
-config RK_EXTRA_PARTITION_${i}_CFG
+config RK_EXTRA_PARTITION_${i}_STR
 	string
 	depends on RK_EXTRA_PARTITION_${i}_DEV != ""
-	default "\$RK_EXTRA_PARTITION_${i}_DEV:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
+	default "\$RK_EXTRA_PARTITION_${i}_DEV:\$RK_EXTRA_PARTITION_${i}_NAME_STR:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
 
 endmenu # Extra partition $i
 
 endif # RK_EXTRA_PARTITION_${i}
 EOF
 
-	RK_PARTITIONS="${RK_PARTITIONS:+${RK_PARTITIONS}@}\$RK_EXTRA_PARTITION_${i}_CFG"
+	RK_PARTITIONS="${RK_PARTITIONS:+${RK_PARTITIONS}@}\$RK_EXTRA_PARTITION_${i}_STR"
 done
 
 cat << EOF
 
-config RK_EXTRA_PARTITIONS
+config RK_EXTRA_PARTITION_STR
 	string
 	default "$RK_PARTITIONS"
 

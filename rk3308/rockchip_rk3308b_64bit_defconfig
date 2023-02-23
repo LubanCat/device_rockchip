@@ -1,5 +1,5 @@
 RK_CHIP="rk3308"
-RK_BUILDROOT_CFG="rockchip_rk3308_b_release"
+RK_BUILDROOT_BASE_CFG="rk3308_b_release"
 RK_ROOTFS_TYPE="squashfs"
 RK_KERNEL_DTS_NAME="rk3308b-evb-amic-v10"
 RK_BOOT_IMG="zboot.img"

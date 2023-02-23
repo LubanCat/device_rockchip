@@ -2,15 +2,19 @@
 
 menu "PCBA test (buildroot)"
 
-config RK_PCBA_CFG
-	string "buildroot PCBA defconfig"
-	default "rockchip_rk3126c_pcba" if RK_CHIP = "rk3126c"
-	default "rockchip_rk3128_pcba" if RK_CHIP = "rk3128"
-	default "rockchip_px30_pcba" if RK_CHIP_FAMILY = "rk3358"
-	default "rockchip_${RK_CHIP}_pcba" if RK_CHIP_FAMILY = "rk3566_rk3568"
-	default "rockchip_${RK_CHIP_FAMILY}_pcba"
+config RK_PCBA_BASE_CFG
+	string "buildroot PCBA base cfg (rockchip_<cfg>_pcba_defconfig)"
+	default "px30" if RK_CHIP_FAMILY = "rk3358"
+	default RK_CHIP if RK_CHIP = "rk3126c" || RK_CHIP = "rk3128" || \
+		RK_CHIP_FAMILY = "rk3566_rk3568"
+	default RK_CHIP_FAMILY
 	help
-	  Name of buildroot defconfig for PCBA.
+	  Base name of buildroot defconfig for PCBA.
 	  Set "" for no PCBA.
+
+config RK_PCBA_CFG
+	string
+	default "" if RK_PCBA_BASE_CFG = ""
+	default "rockchip_${RK_PCBA_BASE_CFG}_pcba"
 
 endmenu # PCBA

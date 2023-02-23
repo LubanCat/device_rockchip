@@ -1,4 +1,4 @@
-RK_BUILDROOT_CFG="rockchip_rk3308_release"
+RK_BUILDROOT_BASE_CFG="rk3308_release"
 RK_ROOTFS_TYPE="squashfs"
 RK_KERNEL_DTS_NAME="rk3308-evb-dmic-pdm-v11"
 RK_BOOT_IMG="zboot.img"
