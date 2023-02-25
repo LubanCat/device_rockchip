@@ -736,6 +736,12 @@ function build_extboot(){
 
     cp ${TOP_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
 
+	mkdir -p $EXTBOOT_DIR/extlinux
+	echo -e "label kernel-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tkernel /Image-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tdevicetreedir /" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tappend  root=/dev/mmcblk0p3 earlyprintk console=ttyFIQ0 console=tty1 consoleblank=0 loglevel=7 rootwait rw rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 switolb=1 coherent_pool=1m" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+
     if [ "$RK_ARCH" == "arm64" ];then
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/*.dtbo $EXTBOOT_DTB/overlay
@@ -764,7 +770,7 @@ function build_extboot(){
     # rm $EXTBOOT_DIR/lib/modules/$KERNEL_VERSION/source
 
     rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
-    fakeroot mkfs.ext4 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
+    fakeroot mkfs.ext2 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
 	# fakeroot mkfs.fat -F 16 -n "boot" $EXTBOOT_IMG
 
 	# mkdir -p $EXTBOOT_DIR.tmp
@@ -901,7 +907,7 @@ function build_ubuntu(){
 			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 		fi
 
-		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH SOC=$RK_UBOOT_DEFCONFIG ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH SOC=$RK_SOC ./mk-$RK_ROOTFS_TARGET-rootfs.sh
 
 		./mk-image.sh
 	else
@@ -942,7 +948,7 @@ function build_debian(){
 			RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH ./mk-base-debian.sh
 		fi
 
-		RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG SOC=$RK_UBOOT_DEFCONFIG ARCH=$ARCH ./mk-rootfs.sh
+		RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG SOC=$RK_SOC ARCH=$ARCH ./mk-rootfs.sh
 		./mk-image.sh
 	else
 		echo "[ Already Exists IMG,   Skip Make Debian Scripts ]"
