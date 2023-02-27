@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3588s-lubancat4
+export RK_KERNEL_DTS=rk3588s-lubancat-4
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
