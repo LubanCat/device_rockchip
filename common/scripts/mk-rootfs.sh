@@ -30,10 +30,19 @@ build_yocto()
 	cd yocto
 	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
 
+	{
+		echo "PREFERRED_VERSION_linux-rockchip := \"$RK_KERNEL_VERSION%\""
+		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION-custom%\""
+		case "$RK_CHIP_FAMILY" in
+			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
+				echo "MALI_VERSION := \"g13p0\"" ;;
+		esac
+	} > build/rksdk-override.conf
+
 	source oe-init-build-env build
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -r conf/include/rksdk.conf \
-		-r conf/include/kernel-$RK_KERNEL_VERSION.conf
+		-r rksdk-override.conf
 
 	ln -rsf "$PWD/build/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
 
