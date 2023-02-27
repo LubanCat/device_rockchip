@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=lubancat2_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3568-lubancat2-n
+export RK_KERNEL_DTS=rk3568-lubancat-2n
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
@@ -53,7 +53,7 @@ export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
-export RK_MISC=parameter-buildroot-fit.txt
+export RK_MISC=wipe_all-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
