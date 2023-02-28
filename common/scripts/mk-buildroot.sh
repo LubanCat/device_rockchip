@@ -13,7 +13,9 @@ mkdir -p "$IMAGE_DIR"
 ln -rsf "$IMAGE_DIR" "$OUTPUT_DIR"
 cd "${RK_LOG_DIR:-$OUTPUT_DIR}"
 
-LOG_FILE="$(start_log br 2>/dev/null || echo $PWD/br.log)"
+LOG_PREFIX="br-$(basename "$TARGET_OUTPUT_DIR")"
+LOG_FILE="$(start_log "$LOG_PREFIX" 2>/dev/null || echo $PWD/$LOG_PREFIX.log)"
+ln -rsf "$LOG_FILE" br.log
 
 # Buildroot doesn't like it
 unset LD_LIBRARY_PATH
