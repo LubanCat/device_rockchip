@@ -68,6 +68,7 @@ build_save()
 	.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
 		"\"$SCRIPTS_DIR/save-patches.sh\" \
 		\"$SAVE_DIR/PATCHES/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
+	install -D -m 0755 "$COMMON_DIR/data/apply-all.sh" "$SAVE_DIR/PATCHES/"
 
 	echo "Saving build info..."
 	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
@@ -77,7 +78,7 @@ build_save()
 	ln -rsf "$RK_CONFIG" "$SAVE_DIR/build_info"
 
 	echo "Saving build logs..."
-	cp -r "$RK_LOG_DIR" "$SAVE_DIR/"
+	cp -r "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
 
 	finish_build
 }
