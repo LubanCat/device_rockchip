@@ -8,9 +8,33 @@ PATCH_DIR="${1:-$PWD}"
 PROJECT="${2:-${PWD#$SDK_DIR/}}"
 BASE_COMMIT=$(git log --pretty="%H" -1 "${3:-HEAD}" --)
 
+echo "[$PROJECT] Base commit: $(git log --oneline $BASE_COMMIT -1)"
+
 # Clean
 rm -rf "$PATCH_DIR"
+mkdir -p "$PATCH_DIR"
 
+# Saving header of apply script
+cat << EOF > "$PATCH_DIR/apply-patches.sh"
+#!/bin/bash -e
+
+[ -z "\$DEBUG" ] || set -x
+
+PATCH_DIR="\$(dirname "\$(realpath "\$0")")"
+
+cd "\$PATCH_DIR/$(realpath "$PWD" --relative-to="$PATCH_DIR")"
+
+echo "[$PROJECT] Applying patches from \$PATCH_DIR"
+
+git add .
+if git diff HEAD -- | grep -q ""; then
+	git stash >/dev/null || git reset --hard
+fi
+
+EOF
+chmod a+x "$PATCH_DIR/apply-patches.sh"
+
+# Check files
 git reset &>/dev/null
 if git status -s | grep -q ""; then
 	if [ "$RK_SAVE_COMMITTED" ]; then
@@ -31,12 +55,13 @@ fi
 if ! git diff $BASE_COMMIT ${RK_SAVE_COMMITTED:+HEAD --} | grep -q ""; then
 	git reset &>/dev/null
 	echo "[$PROJECT] No patch to save"
+
+	# Perform a clean checkout
+	echo "git checkout $BASE_COMMIT" >> "$PATCH_DIR/apply-patches.sh"
 	exit 0
 fi
 
-mkdir -p "$PATCH_DIR"
 echo "[$PROJECT] Saving patches into $PATCH_DIR"
-echo "[$PROJECT] Base commit: $(git log --oneline $BASE_COMMIT -1)"
 echo "[$PROJECT] Patches:"
 
 # Saving commits
@@ -56,23 +81,8 @@ if [ -z "$RK_SAVE_COMMITTED" ] && git status -s | grep -q ""; then
 fi
 git reset &>/dev/null
 
-# Saving apply script
-cat << EOF > "$PATCH_DIR/apply-patches.sh"
-#!/bin/bash -e
-
-[ -z "\$DEBUG" ] || set -x
-
-PATCH_DIR="\$(dirname "\$(realpath "\$0")")"
-
-cd "\$PATCH_DIR/$(realpath "$PWD" --relative-to="$PATCH_DIR")"
-
-echo "[$PROJECT] Applying patches from \$PATCH_DIR"
-
-git add .
-if git diff HEAD -- | grep -q ""; then
-	git stash >/dev/null || git reset --hard
-fi
-
+# Update apply script
+cat << EOF >> "$PATCH_DIR/apply-patches.sh"
 if [ -n "$MERGE_BASE" ]; then
 	echo "Base commit: $(git log --oneline $MERGE_BASE -1)"
 	git checkout $MERGE_BASE
@@ -93,4 +103,3 @@ if [ -e "\$PATCH_DIR/local.diff" ]; then
 	git apply "\$PATCH_DIR/local.diff"
 fi
 EOF
-chmod a+x "$PATCH_DIR/apply-patches.sh"
