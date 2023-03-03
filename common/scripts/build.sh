@@ -172,7 +172,8 @@ main()
 	export SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
 	export COMMON_DIR="$(realpath "$SCRIPTS_DIR/..")"
 	export SDK_DIR="$(realpath "$COMMON_DIR/../../..")"
-	export CHIP_DIR="$SDK_DIR/device/rockchip/.chip"
+	export DEVICE_DIR="$SDK_DIR/device/rockchip"
+	export CHIP_DIR="$DEVICE_DIR/.chip"
 
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
 	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"

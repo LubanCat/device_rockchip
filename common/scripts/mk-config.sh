@@ -1,6 +1,25 @@
 #!/bin/bash -e
 
 MAKE="make ${DEBUG:+V=1} -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
+CHIPS_DIR="$DEVICE_DIR/.chips"
+
+lunch_chip()
+{
+	CHIP_ARRAY=( $(ls "$CHIPS_DIR") )
+	CHIP_ARRAY_LEN=${#CHIP_ARRAY[@]}
+	echo "Pick a chip:"
+	echo ""
+
+	echo ${CHIP_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
+
+	local INDEX
+	read -p "Which would you like? [1]: " INDEX
+	INDEX=$((${INDEX:-1} - 1))
+	CHIP="${CHIP_ARRAY[$INDEX]}"
+
+	rm -rf "$CHIP_DIR"
+	ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
+}
 
 switch_defconfig()
 {
@@ -64,6 +83,13 @@ lunch()
 
 prepare_config()
 {
+	[ -e "$CHIP_DIR" ] || lunch_chip
+
+	cd "$DEVICE_DIR"
+	rm -f $(ls "$CHIPS_DIR")
+	ln -rsf "$(readlink "$CHIP_DIR")" .
+	cd -
+
 	if [ ! -r "$RK_DEFCONFIG" ]; then
 		echo "WARN: $RK_DEFCONFIG not exists"
 		lunch
@@ -118,11 +144,12 @@ clean_hook()
 	RK_BUILDING=1 $MAKE distclean
 }
 
-INIT_CMDS="lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
+INIT_CMDS="chip lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
 init_hook()
 {
 	case "${1:-default}" in
 		lunch) lunch ;;
+		chip) lunch_chip ;;
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
 		default) prepare_config ;; # End of init
