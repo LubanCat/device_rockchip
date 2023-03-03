@@ -55,6 +55,9 @@ build_save()
 
 	echo "Saving into $SAVE_DIR..."
 
+	echo "Saving linux-headers..."
+	"$SCRIPTS_DIR/mk-kernel.sh" linux-headers "$SAVE_DIR/linux-headers"
+
 	echo "Saving images..."
 	mkdir -p "$SAVE_DIR/kernel"
 	cp kernel/.config "$SAVE_DIR/kernel"

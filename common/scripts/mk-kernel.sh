@@ -33,6 +33,7 @@ usage_hook()
 
 	echo "kernel             - build kernel"
 	echo "modules            - build kernel modules"
+	echo "linux-headers      - build linux-headers"
 }
 
 clean_hook()
@@ -116,6 +117,33 @@ build_hook_dry()
 	build_hook "$1" cmds
 }
 
+POST_BUILD_CMDS="linux-headers"
+post_build_hook()
+{
+	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+
+	OUTPUT_DIR="${2:-"$RK_OUTDIR/linux-headers"}"
+
+	echo "Saving linux-headers to $OUTPUT_DIR"
+
+	rm -rf "$OUTPUT_DIR"
+	mkdir -p "$OUTPUT_DIR"
+
+	cd kernel
+	{
+		# Based on kernel/scripts/package/builddeb
+		find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
+		find include scripts -type f -o -type l
+		find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
+		find $(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
+		find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
+	} > "$OUTPUT_DIR/.linux-headers-files"
+	tar -c -f - -C . -T "$OUTPUT_DIR/.linux-headers-files" | \
+		tar -xf - -C "$OUTPUT_DIR"
+	cp .config "$OUTPUT_DIR"
+	cd -
+}
+
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
@@ -124,5 +152,6 @@ case "${1:-kernel}" in
 		pre_build_hook
 		build_hook ${@:-kernel}
 		;;
+	linux-headers) post_build_hook $@ ;;
 	*) usage ;;
 esac
