@@ -215,14 +215,6 @@ main()
 
 	OPTIONS="${@:-allsave}"
 
-	# HACK: Compat with old build commands
-	# TODO: Remove it!
-	[ -e "$CHIP_DIR" ] || ln -sf .target_product "$CHIP_DIR"
-	if echo "$1" | grep -q "^BoardConfig"; then
-		OPTIONS=$(echo $1 | sed -e 's/-/_/g' \
-			-e 's/BoardConfig/rockchip/' -e 's/\.mk/_defconfig/')
-	fi
-
 	if [ "$OPTIONS" = targets ]; then
 		echo $(run_build_hooks usage | grep -oE "^[^ \*]*") cleanall
 		exit 0
