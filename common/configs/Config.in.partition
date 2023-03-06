@@ -66,7 +66,7 @@ config RK_EXTRA_PARTITION_1_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_1_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_1_OPTIONS
 	string "mount options"
@@ -145,7 +145,7 @@ config RK_EXTRA_PARTITION_2_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_2_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_2_OPTIONS
 	string "mount options"
@@ -223,7 +223,7 @@ config RK_EXTRA_PARTITION_3_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_3_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_3_OPTIONS
 	string "mount options"
@@ -297,7 +297,7 @@ config RK_EXTRA_PARTITION_4_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_4_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_4_OPTIONS
 	string "mount options"
@@ -371,7 +371,7 @@ config RK_EXTRA_PARTITION_5_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_5_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_5_OPTIONS
 	string "mount options"

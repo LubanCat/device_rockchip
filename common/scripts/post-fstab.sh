@@ -68,7 +68,7 @@ fixup_device_part()
 	echo $DEV | grep -qE "^/|=" || DEV="PARTLABEL=$DEV"
 
 	MOUNTPOINT="${2:-/${DEV##*[/=]}}"
-	FS_TYPE="${3:-ext2}"
+	FS_TYPE="${3:-ext4}"
 	MOUNT_OPTS="${4:-defaults}"
 
 	fixup_part "$DEV" "$MOUNTPOINT" "$FS_TYPE" "$MOUNT_OPTS" 2

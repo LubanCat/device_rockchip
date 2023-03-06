@@ -45,7 +45,7 @@ rk_partition_mountpoint()
 
 rk_partition_fstype()
 {
-	rk_partition_arg ${1:-1} 4 ext2
+	rk_partition_arg ${1:-1} 4 ext4
 }
 
 rk_partition_options()

@@ -69,7 +69,7 @@ config RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR
 
 config RK_EXTRA_PARTITION_${i}_FSTYPE
 	string "filesystem type"
-	default "ext2"
+	default "ext4"
 
 config RK_EXTRA_PARTITION_${i}_OPTIONS
 	string "mount options"
