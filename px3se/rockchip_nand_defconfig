@@ -1,6 +1,5 @@
 RK_ROOTFS_TYPE="squashfs"
 RK_KERNEL_DTS_NAME="px3se-evb"
-RK_BOOT_IMG="zboot.img"
 RK_PARAMETER="parameter-nand.txt"
 RK_EXTRA_PARTITION_1_SRC="empty"
 RK_EXTRA_PARTITION_2_SRC="empty"

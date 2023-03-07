@@ -6,13 +6,24 @@ config RK_KERNEL_VERSION
 	string "kernel version, e.g. 5.10"
 
 config RK_KERNEL_ARCH
-	string "kernel arch"
-	default "arm" if \
-		RK_CHIP_FAMILY = "rk3036" || RK_CHIP_FAMILY = "px3se" || \
-		RK_CHIP_FAMILY = "rk312x" || RK_CHIP_FAMILY = "rk3128h" || \
-		RK_CHIP_FAMILY = "rk3229" || RK_CHIP_FAMILY = "rk3288" || \
-		RK_CHIP_FAMILY = "rv1126_rv1109"
-	default "arm64"
+	string
+	default "arm" if RK_KERNEL_ARM32
+	default "arm64" if RK_KERNEL_ARM64
+
+choice
+	prompt "kernel arch"
+
+config RK_KERNEL_ARM64
+	bool "arm64"
+	depends on RK_CHIP_FAMILY != "px3se" && RK_CHIP_FAMILY != "rk3036" && \
+		RK_CHIP_FAMILY != "rk3128h" && RK_CHIP_FAMILY != "rk312x" && \
+		RK_CHIP_FAMILY != "rk3229" && RK_CHIP_FAMILY != "rk3288" && \
+		RK_CHIP_FAMILY != "rv1126_rv1109"
+
+config RK_KERNEL_ARM32
+	bool "arm"
+
+endchoice
 
 config RK_KERNEL_CFG
 	string "kernel defconfig"
@@ -50,9 +61,8 @@ config RK_KERNEL_DTB
 
 config RK_KERNEL_IMG_NAME
 	string "kernel image name"
-	default "zImage" if RK_KERNEL_ARCH = "arm" && RK_BOOT_IMG = "zboot.img"
-	default "Image.lz4" if RK_KERNEL_ARCH = "arm64" && \
-		RK_BOOT_IMG = "zboot.img"
+	default "zImage" if RK_KERNEL_ARM32 && RK_USE_ZBOOT
+	default "Image.lz4" if RK_KERNEL_ARM64 && RK_USE_ZBOOT
 	default "Image"
 
 config RK_KERNEL_IMG

@@ -21,5 +21,6 @@ config RK_MISC_IMG
 	default "wipe_all-misc.img"
 	help
 	  Name of misc image under <RK_IMAGE_DIR>/.
+	  Set "" for no misc.
 
 endmenu # Firmware

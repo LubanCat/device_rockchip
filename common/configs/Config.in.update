@@ -11,11 +11,8 @@ config RK_OTA_PACKAGE_FILE
 config RK_AB_UPDATE
 	bool "A/B update"
 
-if RK_AB_UPDATE
-
 config RK_AB_UPDATE_SDCARD
 	bool "SDcard update image for A/B update"
-
-endif
+	depends on RK_AB_UPDATE
 
 endmenu # Update

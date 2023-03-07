@@ -4,7 +4,6 @@ RK_ROOTFS_INITRD=y
 RK_KERNEL_CFG_FRAGMENTS="rv1126-tb.config rv1126-trailcamera.config"
 RK_KERNEL_DTS_NAME="rv1126-trailcamera"
 RK_KERNEL_IMG_NAME="Image"
-RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y
 RK_RECOVERY_FIT_ITS="boot-tb.its"
 RK_UBOOT_CFG="rv1126-bat-spi-nor-tb"

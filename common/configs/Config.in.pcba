@@ -14,7 +14,7 @@ config RK_PCBA_BASE_CFG
 
 config RK_PCBA_CFG
 	string
-	default "" if RK_PCBA_BASE_CFG = ""
+	depends on RK_PCBA_BASE_CFG != ""
 	default "rockchip_${RK_PCBA_BASE_CFG}_pcba"
 
 endmenu # PCBA

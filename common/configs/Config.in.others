@@ -19,6 +19,7 @@ config RK_WIFIBT_CHIP
 
 config RK_WIFIBT_TTY
 	string "BT serial port"
+	depends on RK_WIFIBT_CHIP != ""
 	default "ttyS0"
 
 choice

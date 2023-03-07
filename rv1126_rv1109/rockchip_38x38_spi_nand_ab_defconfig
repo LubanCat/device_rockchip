@@ -4,7 +4,6 @@ RK_UBOOT_CFG_FRAGMENTS="rv1126-ab rk-sfc"
 RK_UBOOT_OPTS="--spl-new"
 RK_KERNEL_VERSION="4.19"
 RK_KERNEL_DTS_NAME="rv1109-38-v10-spi-nand"
-RK_BOOT_IMG="zboot.img"
 RK_USE_FIT_IMG=y
 RK_AB_UPDATE=y
 RK_PARAMETER="parameter-fit-nand-256M-ab.txt"

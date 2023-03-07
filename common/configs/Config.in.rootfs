@@ -20,7 +20,7 @@ config RK_BUILDROOT_BASE_CFG
 
 config RK_BUILDROOT_CFG
 	string
-	default "" if RK_BUILDROOT_BASE_CFG = ""
+	depends on RK_BUILDROOT_BASE_CFG != ""
 	default "rockchip_${RK_BUILDROOT_BASE_CFG}"
 
 config RK_YOCTO_CFG
@@ -32,8 +32,20 @@ config RK_YOCTO_CFG
 if RK_YOCTO_CFG != ""
 
 config RK_YOCTO_DISPLAY_PLATFORM
-	string "yocto rootfs display platform (wayland/x11)"
-	default "wayland"
+	string
+	default "wayland" if RK_YOCTO_DISPLAY_PLATFORM_WAYLAND
+	default "x11" if RK_YOCTO_DISPLAY_PLATFORM_X11
+
+choice
+	prompt "yocto rootfs display platform"
+
+config RK_YOCTO_DISPLAY_PLATFORM_WAYLAND
+	bool "wayland (weston)"
+
+config RK_YOCTO_DISPLAY_PLATFORM_X11
+	bool "x11"
+
+endchoice
 
 endif
 
@@ -53,19 +65,48 @@ config RK_DEBIAN_VERSION
 if RK_DEBIAN_VERSION != ""
 
 config RK_DEBIAN_ARCH
-	string "debian rootfs arch"
-	default "armhf" if RK_KERNEL_ARCH = "arm"
-	default "arm64"
+	string
+	default "armhf" if RK_DEBIAN_ARMHF
+	default "arm64" if RK_DEBIAN_ARM64
+
+choice
+	prompt "debian rootfs arch"
+
+config RK_DEBIAN_ARM64
+	bool "arm64"
+	depends on RK_KERNEL_ARM64
+
+config RK_DEBIAN_ARMHF
+	bool "armhf"
+
+endchoice
 
 endif
 
 config RK_ROOTFS_SYSTEM
-	string "rootfs system"
-	default "buildroot" if RK_BUILDROOT_CFG != ""
-	default "debian" if RK_DEBIAN_VERSION != ""
-	default "yocto" if RK_YOCTO_CFG != ""
+	string
+	default "buildroot" if RK_ROOTFS_SYSTEM_BUILDROOT
+	default "debian" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "yocto" if RK_ROOTFS_SYSTEM_YOCTO
+
+choice
+	prompt "rootfs system"
 	help
 	  Default rootfs system.
+
+config RK_ROOTFS_SYSTEM_BUILDROOT
+	bool "buildroot"
+	depends on RK_BUILDROOT_BASE_CFG != ""
+
+config RK_ROOTFS_SYSTEM_DEBIAN
+	bool "debian"
+	depends on RK_DEBIAN_VERSION != ""
+
+config RK_ROOTFS_SYSTEM_YOCTO
+	bool "yocto"
+	depends on RK_YOCTO_CFG != ""
+
+endchoice
 
 config RK_ROOTFS_TYPE
 	string "rootfs filesystem type"

@@ -1,3 +1,2 @@
 RK_YOCTO_CFG="rockchip-rk3288-evb"
 RK_KERNEL_DTS_NAME="rk3288-evb-rk808-linux"
-RK_BOOT_IMG="zboot.img"
