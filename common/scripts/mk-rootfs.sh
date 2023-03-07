@@ -37,6 +37,7 @@ build_yocto()
 			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
 		esac
+		echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
 	} > build/rksdk-override.conf
 
 	source oe-init-build-env build

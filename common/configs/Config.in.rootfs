@@ -29,6 +29,14 @@ config RK_YOCTO_CFG
 	  Name of yocto local config for rootfs.
 	  Set "" for no yocto rootfs.
 
+if RK_YOCTO_CFG != ""
+
+config RK_YOCTO_DISPLAY_PLATFORM
+	string "yocto rootfs display platform (wayland/x11)"
+	default "wayland"
+
+endif
+
 config RK_DEBIAN_VERSION
 	string "debian rootfs version"
 	default "bullseye" if RK_CHIP_FAMILY = "rk3399" || \
