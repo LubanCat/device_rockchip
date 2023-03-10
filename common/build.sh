@@ -901,18 +901,16 @@ function build_ubuntu(){
 	cd ubuntu
 
 
-	if [ ! -e ubuntu-rootfs.img ]; then
-		echo "[ No ubuntu-rootfs.img, Run Make Ubuntu Scripts ]"
-		if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH.tar.gz ]; then
+	if [ ! -e ubuntu-$RK_ROOTFS_TARGET-rootfs.img ]; then
+		echo "[ No ubuntu-$RK_ROOTFS_TARGET-rootfs.img, Run Make Ubuntu Scripts ]"
+		if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH-*.tar.gz ]; then
 			ARCH=arm64  ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
 		fi
 
 		VERSION=$RK_ROOTFS_DEBUG ARCH=$ARCH SOC=$RK_SOC ./mk-$RK_ROOTFS_TARGET-rootfs.sh
-
-		./mk-image.sh
 	else
-		echo "[ Already Exists IMG,   Skip Make Ubuntu Scripts ]"
-		echo "[ Delate ubuntu-rootfs.img To Rebuild Ubuntu IMG ]"
+		echo "[    Already Exists IMG,  Skip Make Ubuntu Scripts    ]"
+		echo "[ Delate Ubuntu-$RK_ROOTFS_TARGET-rootfs.img To Rebuild Ubuntu IMG ]"
 	fi
 
 	finish_build
@@ -941,18 +939,17 @@ function build_debian(){
 		echo -e "\033[36m please input the os type,stretch or buster...... \033[0m"
 	fi
 
-	if [ ! -e linaro-rootfs.img ]; then
-		echo "[ No linaro-rootfs.img, Run Make Debian Scripts ]"
-		if [ ! -e linaro-$RELEASE-alip-*.tar.gz ]; then
-			echo "[ build linaro-$RELEASE-alip-*.tar.gz ]"
+	if [ ! -e linaro-$RK_ROOTFS_TARGET-rootfs.img ]; then
+		echo "[ No linaro-$RK_ROOTFS_TARGET-rootfs.img, Run Make Debian Scripts ]"
+		if [ ! -e linaro-$RELEASE-$RK_ROOTFS_TARGET-alip-*.tar.gz ]; then
+			echo "[ build linaro-$RELEASE-$RK_ROOTFS_TARGET-alip-*.tar.gz ]"
 			RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH ./mk-base-debian.sh
 		fi
 
 		RELEASE=$RELEASE TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG SOC=$RK_SOC ARCH=$ARCH ./mk-rootfs.sh
-		./mk-image.sh
 	else
-		echo "[ Already Exists IMG,   Skip Make Debian Scripts ]"
-		echo "[ Delate linaro-rootfs.img To Rebuild Debian IMG ]"
+		echo "[    Already Exists IMG,  Skip Make Debian Scripts    ]"
+		echo "[ Delate linaro-$RK_ROOTFS_TARGET-rootfs.img To Rebuild Debian IMG ]"
 	fi
 
 
@@ -976,12 +973,12 @@ function build_rootfs(){
 			;;
 		ubuntu)
 			build_ubuntu
-			ln -rsf ubuntu/ubuntu-rootfs.img \
+			ln -rsf ubuntu/ubuntu-$RK_ROOTFS_TARGET-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		debian)
 			build_debian
-			ln -rsf debian/linaro-rootfs.img \
+			ln -rsf debian/linaro-$RK_ROOTFS_TARGET-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		*)
