@@ -935,6 +935,8 @@ function build_debian(){
 		RELEASE='stretch'
 	elif [[ "$RK_DEBIAN_VERSION" == "buster" || "$RK_DEBIAN_VERSION" == "10" ]]; then
 		RELEASE='buster'
+	elif [[ "$RK_DEBIAN_VERSION" == "bullseye" || "$RK_DEBIAN_VERSION" == "11" ]]; then
+		RELEASE='bullseye'
 	else
 		echo -e "\033[36m please input the os type,stretch or buster...... \033[0m"
 	fi
