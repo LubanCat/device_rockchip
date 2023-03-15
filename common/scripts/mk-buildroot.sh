@@ -5,15 +5,16 @@ OUTPUT_DIR="${2:-${SDK_DIR:-$PWD}/output/buildroot}"
 BUILDROOT_DIR="${SDK_DIR:-$PWD}/buildroot"
 
 source "$BUILDROOT_DIR/build/envsetup.sh" $DEFCONFIG
+BUILDROOT_OUTPUT_DIR="$(realpath -e "$BUILDROOT_DIR/output/.board")"
 
 # Use buildroot images dir as image output dir
-IMAGE_DIR="$TARGET_OUTPUT_DIR"/images
+IMAGE_DIR="$BUILDROOT_OUTPUT_DIR/images"
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$IMAGE_DIR"
 ln -rsf "$IMAGE_DIR" "$OUTPUT_DIR"
 cd "${RK_LOG_DIR:-$OUTPUT_DIR}"
 
-LOG_PREFIX="br-$(basename "$TARGET_OUTPUT_DIR")"
+LOG_PREFIX="br-$(basename "$BUILDROOT_OUTPUT_DIR")"
 LOG_FILE="$(start_log "$LOG_PREFIX" 2>/dev/null || echo $PWD/$LOG_PREFIX.log)"
 ln -rsf "$LOG_FILE" br.log
 

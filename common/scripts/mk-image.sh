@@ -81,7 +81,7 @@ copy_to_image()
 
 check_host_tool()
 {
-    which $1|grep -q "^$TARGET_OUTPUT_DIR"
+    which $1|grep -wq buildroot
 }
 
 mkimage()
