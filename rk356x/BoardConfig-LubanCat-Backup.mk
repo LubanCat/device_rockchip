@@ -60,6 +60,9 @@ export RK_DISTRO_MODULE=
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # # 定义默认rootfs为 buildroot
 # export RK_ROOTFS_SYSTEM=buildroot
+
+# SOC
+export RK_SOC=rk356x
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
 # Set debian version (debian10: buster)

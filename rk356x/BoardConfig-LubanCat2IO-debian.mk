@@ -58,6 +58,9 @@ export RK_MISC=wipe_all-misc.img
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
+
+# SOC
+export RK_SOC=rk356x
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
 # 设置 debian 版本 (debian10: buster)
