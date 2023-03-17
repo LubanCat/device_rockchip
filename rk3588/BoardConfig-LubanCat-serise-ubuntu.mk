@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# SOC
-export RK_SOC=rk3588
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
@@ -60,8 +58,8 @@ export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 export RK_ROOTFS_SYSTEM=ubuntu
 # 默认Ubuntu 版本
 export RK_UBUNTU_VERSION=20.04
-# 定义默认rootfs是否为桌面版  desktop :桌面版(可替换为 xfce gnome)  lite ：控制台版
-export RK_ROOTFS_TARGET=desktop
+# 定义默认rootfs是否为桌面版  xfce桌面 gnome桌面  lite:控制台版
+export RK_ROOTFS_TARGET=gnome
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=none
 # 使用exboot内核分区
