@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# SOC
-export RK_SOC=rk3588
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
@@ -56,12 +54,15 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
+
+# SOC
+export RK_SOC=rk3588
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
 # debian version (debian10: buster, debian11: bullseye)
-export RK_DEBIAN_VERSION=bullseye
-# 定义默认rootfs是否为桌面版  desktop :桌面版 	lite ：控制台版
-export RK_ROOTFS_TARGET=desktop
+export RK_DEBIAN_VERSION=11
+# 定义默认rootfs是否为桌面版  desktop :桌面版(可替换为 xfce lxde gnome)  lite ：控制台版
+export RK_ROOTFS_TARGET=gnome
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=debug
 # 使用exboot内核分区

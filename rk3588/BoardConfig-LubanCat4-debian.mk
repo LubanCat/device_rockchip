@@ -20,6 +20,8 @@ export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter.txt
+# Define package-file
+export RK_PACKAGE_FILE=rk3588-package-file
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3588
 # Recovery config
@@ -55,13 +57,14 @@ export RK_MISC=wipe_all-misc.img
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# Define package-file
-export RK_PACKAGE_FILE=rk3588-package-file
+
+# SOC
+export RK_SOC=rk3588
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
 # debian version (debian10: buster, debian11: bullseye)
-export RK_DEBIAN_VERSION=bullseye
+export RK_DEBIAN_VERSION=11
 # 定义默认rootfs是否为桌面版  desktop :桌面版 	lite ：控制台版
-export RK_ROOTFS_TARGET=desktop
+export RK_ROOTFS_TARGET=gnome
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=debug
