@@ -79,10 +79,10 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	if [ "$2" = cmds ]; then
+	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
 		echo "export CROSS_COMPILE=$CROSS_COMPILE"
-		DRY_RUN=1 do_build $1
+		do_build $1
 		return 0
 	fi
 
@@ -114,7 +114,7 @@ build_hook()
 
 build_hook_dry()
 {
-	build_hook "$1" cmds
+	DRY_RUN=1 build_hook $@
 }
 
 POST_BUILD_CMDS="linux-headers"
@@ -123,25 +123,44 @@ post_build_hook()
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
 	OUTPUT_DIR="${2:-"$RK_OUTDIR/linux-headers"}"
+	OUTPUT_DIR="$(realpath "$OUTPUT_DIR")"
+	HEADER_FILES_SCRIPT="$OUTPUT_DIR/.header-files.sh"
 
-	echo "Saving linux-headers to $OUTPUT_DIR"
+	if [ "$DRY_RUN" ]; then
+		echo -e "\e[35mCommands of building $1:\e[0m"
+	else
+		echo "Saving linux-headers to $OUTPUT_DIR"
+	fi
 
 	rm -rf "$OUTPUT_DIR"
 	mkdir -p "$OUTPUT_DIR"
 
-	cd kernel
-	{
-		# Based on kernel/scripts/package/builddeb
-		find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
-		find include scripts -type f -o -type l
-		find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
-		find $(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
-		find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
-	} > "$OUTPUT_DIR/.linux-headers-files"
-	tar -c -f - -C . -T "$OUTPUT_DIR/.linux-headers-files" | \
-		tar -xf - -C "$OUTPUT_DIR"
-	cp .config "$OUTPUT_DIR"
-	cd -
+	run_command cd kernel
+
+	cat << EOF > "$HEADER_FILES_SCRIPT"
+{
+	# Based on kernel/scripts/package/builddeb
+	find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
+	find include scripts -type f -o -type l
+	find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
+	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
+	find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
+	echo .config
+} | rsync -a --files-from=- . "$OUTPUT_DIR"
+EOF
+
+	if [ "$DRY_RUN" ]; then
+		cat "$HEADER_FILES_SCRIPT"
+	else
+		. "$HEADER_FILES_SCRIPT"
+	fi
+
+	run_command cd -
+}
+
+post_build_hook_dry()
+{
+	DRY_RUN=1 post_build_hook $@
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"

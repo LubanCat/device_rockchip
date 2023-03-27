@@ -94,9 +94,18 @@ try_hook()
 
 	unset HOOK_HANDLED
 
+	IS_DRY_RUN=$(echo $OPTS | xargs -d ':' -n 1 | grep "^cmds$" || true)
+	OPTS=$(echo $OPTS | xargs -d ':' -n 1 | grep -v "^cmds$" | paste -sd':')
+
 	for cmd in $CMDS; do
 		ARGS=$(parse_args $cmd $OPTS)
-		[ -z "$ARGS" ] || try_func $FUNC $ARGS
+		[ "$ARGS" ] || continue
+
+		if [ "$IS_DRY_RUN" ]; then
+			DRY_RUN=1 try_func $FUNC $ARGS
+		else
+			try_func $FUNC $ARGS
+		fi
 	done
 
 	[ -z "$HOOK_HANDLED" ] || exit $HOOK_RET_HANDLED
