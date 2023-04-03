@@ -81,7 +81,7 @@ build_debian()
 
 usage_hook()
 {
-	echo "rootfs             - build rootfs (default is buildroot)"
+	echo "rootfs             - build default rootfs"
 	echo "buildroot          - build buildroot rootfs"
 	echo "yocto              - build yocto rootfs"
 	echo "debian             - build debian rootfs"
