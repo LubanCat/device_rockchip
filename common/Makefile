@@ -56,7 +56,7 @@ CONFIG_CONFIG_IN = Config.in
 CONFIG = $(SDK_DIR)/buildroot/support/kconfig
 OUTDIR := $(SDK_DIR)/output
 BUILD_DIR := $(OUTDIR)/kconf
-SCRIPT_TARGETS := $(filter-out %config,$(shell $(SDK_DIR)/build.sh targets))
+SCRIPT_TARGETS := $(filter-out %config,$(shell $(SDK_DIR)/build.sh core-usage | grep -oE "^[^ \*]*"))
 
 RK_CONFIG = $(OUTDIR)/.config
 
@@ -159,9 +159,10 @@ help:
 	@echo '  syncconfig             - Same as oldconfig, but quietly, additionally update deps'
 	@echo '  olddefconfig           - Same as syncconfig but sets new symbols to their default value'
 	@echo '  savedefconfig          - Save current config to RK_DEFCONFIG (minimal config)'
+	@echo '  clean                  - Cleanup'
 	@echo
-	@echo 'from ${SDK_DIR}/build.sh:'
-	@$(SDK_DIR)/build.sh targets
+	@echo 'from build.sh:'
+	@$(SDK_DIR)/build.sh core-usage | grep -vE "^ |^[^ ]*config"
 
 define script_target
 $(1):

@@ -217,8 +217,8 @@ main()
 
 	OPTIONS="${@:-allsave}"
 
-	if [ "$OPTIONS" = targets ]; then
-		echo $(run_build_hooks usage | grep -oE "^[^ \*]*") cleanall
+	if [ "$OPTIONS" = "core-usage" ]; then
+		run_build_hooks usage
 		exit 0
 	fi
 
