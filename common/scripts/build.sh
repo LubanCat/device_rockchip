@@ -173,6 +173,7 @@ main()
 	export COMMON_DIR="$(realpath "$SCRIPTS_DIR/..")"
 	export SDK_DIR="$(realpath "$COMMON_DIR/../../..")"
 	export DEVICE_DIR="$SDK_DIR/device/rockchip"
+	export CHIPS_DIR="$DEVICE_DIR/.chips"
 	export CHIP_DIR="$DEVICE_DIR/.chip"
 
 	export RK_IMAGE_DIR="$COMMON_DIR/images"

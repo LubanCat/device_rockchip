@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 MAKE="make ${DEBUG:+V=1} -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
-CHIPS_DIR="$DEVICE_DIR/.chips"
 
 lunch_chip()
 {
@@ -130,6 +129,7 @@ prepare_config()
 
 usage_hook()
 {
+	echo "chip               - choose chip"
 	echo "lunch              - choose defconfig"
 	echo "*_defconfig        - switch to specified defconfig"
 	echo "    Available defconfigs:"
@@ -148,8 +148,8 @@ INIT_CMDS="chip lunch .*_defconfig olddefconfig savedefconfig menuconfig default
 init_hook()
 {
 	case "${1:-default}" in
-		lunch) lunch ;;
 		chip) lunch_chip ;;
+		lunch) lunch ;;
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
 		default) prepare_config ;; # End of init
