@@ -45,8 +45,9 @@ build_yocto()
 		bitbake core-image-minimal -r conf/include/rksdk.conf \
 		-r rksdk-override.conf
 
-	ln -rsf "$PWD/build/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
+	ln -rsf "$PWD/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
 
+	touch "$RK_LOG_DIR/post-rootfs.log"
 	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_yocto $@
 }

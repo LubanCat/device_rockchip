@@ -198,9 +198,11 @@ main()
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG="$RK_OUTDIR/defconfig"
 
-	mkdir -p "$RK_LOG_DIR"
-	rm -rf "$RK_LOG_BASE_DIR/latest"
-	ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+	if [ ! -d "$RK_LOG_DIR" ]; then
+		mkdir -p "$RK_LOG_DIR"
+		rm -rf "$RK_LOG_BASE_DIR/latest"
+		ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+	fi
 
 	# Drop old logs
 	cd "$RK_LOG_BASE_DIR"

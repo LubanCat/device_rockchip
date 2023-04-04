@@ -245,9 +245,9 @@ build_wifibt()
 	mkdir -p $ROOTFS_DIR/etc/init.d
 	mkdir -p $ROOTFS_DIR/usr/bin/
 	mkdir -p $ROOTFS_DIR/usr/lib/modules/
+	mkdir -p $ROOTFS_DIR/lib/firmware/rtlbt/
 	mkdir -p $ROOTFS_DIR/system/lib/modules/
 	mkdir -p $ROOTFS_DIR/system/etc/firmware/
-	mkdir -p $ROOTFS_DIR/lib/firmware/rtlbt/
 
 	echo "create link system->vendor"
 	rm -rf $ROOTFS_DIR/vendor
