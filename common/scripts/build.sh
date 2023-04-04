@@ -163,7 +163,7 @@ main()
 
 	# Save intial envionments
 	INITIAL_ENV=$(mktemp -u)
-	if [ -z "$RK_BUILDING" ]; then
+	if [ -z "$RK_SESSION" ]; then
 		env > "$INITIAL_ENV"
 	fi
 
@@ -189,16 +189,14 @@ main()
 
 	export RK_OUTDIR="$SDK_DIR/output"
 	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
-	export RK_LOG_SESSION="${RK_LOG_SESSION:-$(date +%F_%H-%M-%S)}"
-	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_LOG_SESSION"
+	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
+	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_SESSION"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
 	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
 	export RK_FINAL_ENV="$RK_OUTDIR/final.env"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG="$RK_OUTDIR/defconfig"
-
-	export RK_BUILDING=1
 
 	mkdir -p "$RK_LOG_DIR"
 	rm -rf "$RK_LOG_BASE_DIR/latest"

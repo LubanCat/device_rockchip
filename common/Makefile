@@ -174,7 +174,7 @@ $(eval $(foreach t,$(SCRIPT_TARGETS),$(call script_target,$(t))$(sep)))
 
 .PHONY: clean
 clean:
-ifeq ($(RK_BUILDING),)
+ifeq ($(RK_SESSION),)
 	$(Q)$(SDK_DIR)/build.sh cleanall
 endif
 

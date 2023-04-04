@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Make sure that we are sourced and called inside of RK build scripts.
-if [ "$BASH_SOURCE" = "$0" -o -z "$RK_BUILDING" ];then
+if [ "$BASH_SOURCE" = "$0" -o -z "$RK_SESSION" ];then
 	echo "$(realpath $0) is not supposed to be executed directly"
 	exit 1
 fi

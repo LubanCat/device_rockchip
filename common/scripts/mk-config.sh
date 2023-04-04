@@ -141,7 +141,7 @@ usage_hook()
 
 clean_hook()
 {
-	RK_BUILDING=1 $MAKE distclean
+	$MAKE distclean
 }
 
 INIT_CMDS="chip lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
