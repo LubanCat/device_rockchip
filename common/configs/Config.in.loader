@@ -19,7 +19,7 @@ config RK_UBOOT_CFG_FRAGMENTS
 
 config RK_UBOOT_OPTS
 	string "u-boot compile options"
-	default "--sz-uboot 1024 2 --sz-trust 1024 2" if RK_CHIP = "rk312x"
+	default "--sz-uboot 1024 2 --sz-trust 1024 2" if RK_CHIP_FAMILY = "rk312x"
 
 config RK_UBOOT_TRUST_INI
 	string "u-boot trust ini config"
