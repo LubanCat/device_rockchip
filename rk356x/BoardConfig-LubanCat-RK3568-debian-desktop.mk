@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3566
+export RK_UBOOT_DEFCONFIG=rk3568
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
@@ -23,7 +23,7 @@ export RK_PARAMETER=parameter-ubuntu-fit.txt
 # 分区表对应的打包文件
 export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3566
+export RK_CFG_BUILDROOT=rockchip_rk3568
 # Recovery config
 export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
@@ -67,7 +67,7 @@ export RK_SOC=rk356x
 export RK_ROOTFS_SYSTEM=debian
 # Set debian version (debian10: buster)
 export RK_DEBIAN_VERSION=10
-# 定义默认rootfs是否为桌面版  desktop :桌面版 	lite ：控制台版
+# 定义默认rootfs是否为桌面版  xfce :桌面版 	lite ：控制台版
 export RK_ROOTFS_TARGET=desktop
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=none
