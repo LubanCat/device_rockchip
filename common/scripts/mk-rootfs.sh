@@ -27,6 +27,8 @@ build_yocto()
 	echo "TARGET_CONFIG=$RK_YOCTO_CFG"
 	echo "====================================="
 
+	"$SCRIPTS_DIR/check-buildroot.sh"
+
 	cd yocto
 	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
 

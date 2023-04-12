@@ -1,8 +1,13 @@
 #!/bin/bash -e
 
+SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+SDK_DIR="${SDK_DIR:-$SCRIPTS_DIR/../../../..}"
+
 DEFCONFIG=$1
-OUTPUT_DIR="${2:-${SDK_DIR:-$PWD}/output/buildroot}"
-BUILDROOT_DIR="${SDK_DIR:-$PWD}/buildroot"
+OUTPUT_DIR="${2:-$SDK_DIR/output/buildroot}"
+BUILDROOT_DIR="$SDK_DIR/buildroot"
+
+"$SCRIPTS_DIR/check-buildroot.sh"
 
 source "$BUILDROOT_DIR/build/envsetup.sh" $DEFCONFIG
 BUILDROOT_OUTPUT_DIR="$(realpath -e "$BUILDROOT_DIR/output/.board")"
