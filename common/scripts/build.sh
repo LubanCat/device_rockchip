@@ -69,7 +69,7 @@ check_config()
 	return 1
 }
 
-kernel_version()
+kernel_version_real()
 {
 	[ -d kernel ] || return 0
 
@@ -81,6 +81,21 @@ kernel_version()
 		VERSION=${VERSION:+${VERSION}.}$v
 	done
 	echo $VERSION
+}
+
+kernel_version()
+{
+	[ -d kernel ] || return 0
+
+	KERNEL_DIR="$(basename "$(realpath kernel)")"
+	case "$KERNEL_DIR" in
+		kernel-*)
+			echo ${KERNEL_DIR#kernel-}
+			return 0
+			;;
+	esac
+
+	kernel_version_real
 }
 
 start_log()
@@ -333,6 +348,7 @@ main()
 
 	# Allow changing kernel version with kernel-* options
 	export RK_KERNEL_VERSION=$(kernel_version)
+	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 
 	# Save final environments
 	export > "$RK_FINAL_ENV"

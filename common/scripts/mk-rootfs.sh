@@ -19,7 +19,7 @@ build_buildroot()
 
 build_yocto()
 {
-	check_config RK_YOCTO_CFG RK_KERNEL_VERSION || return 0
+	check_config RK_YOCTO_CFG RK_KERNEL_VERSION_REAL || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
 
@@ -33,8 +33,8 @@ build_yocto()
 	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
 
 	{
-		echo "PREFERRED_VERSION_linux-rockchip := \"$RK_KERNEL_VERSION%\""
-		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION-custom%\""
+		echo "PREFERRED_VERSION_linux-rockchip := \"$RK_KERNEL_VERSION_REAL%\""
+		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_REAL-custom%\""
 		case "$RK_CHIP_FAMILY" in
 			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
