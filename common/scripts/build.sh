@@ -211,7 +211,7 @@ main()
 	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
 	export RK_FINAL_ENV="$RK_OUTDIR/final.env"
 	export RK_CONFIG="$RK_OUTDIR/.config"
-	export RK_DEFCONFIG="$RK_OUTDIR/defconfig"
+	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 
 	if [ ! -d "$RK_LOG_DIR" ]; then
 		mkdir -p "$RK_LOG_DIR"

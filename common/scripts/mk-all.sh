@@ -77,7 +77,7 @@ build_save()
 	yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
 		-o "$SAVE_DIR/manifest.xml"
 
-	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG" "$SAVE_DIR/"
+	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"
 	ln -rsf "$RK_CONFIG" "$SAVE_DIR/build_info"
 
 	echo "Saving build logs..."
