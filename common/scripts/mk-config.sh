@@ -2,7 +2,65 @@
 
 MAKE="make ${DEBUG:+V=1} -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
 
-lunch_chip()
+switch_defconfig()
+{
+	DEFCONFIG="$1"
+
+	[ -f "$DEFCONFIG" ] || DEFCONFIG="$CHIP_DIR/$DEFCONFIG"
+
+	if [ ! -f "$DEFCONFIG" ]; then
+		echo "No such defconfig: $1"
+		exit 1
+	fi
+
+	echo "Switching to defconfig: $DEFCONFIG"
+	rm -f "$RK_DEFCONFIG"
+	ln -rsf "$DEFCONFIG" "$RK_DEFCONFIG"
+
+	DEFCONFIG="$(realpath "$DEFCONFIG")"
+	rm -rf "$CHIP_DIR"
+	ln -rsf "$(dirname "$DEFCONFIG")" "$CHIP_DIR"
+
+	$MAKE $(basename "$DEFCONFIG")
+	exit 0
+}
+
+rockchip_defconfigs()
+{
+	cd "$CHIP_DIR"
+	ls rockchip_defconfig 2>/dev/null || true
+	ls *_defconfig | grep -v rockchip_defconfig || true
+}
+
+choose_defconfig()
+{
+	DEFCONFIG_ARRAY=( $(rockchip_defconfigs) )
+
+	DEFCONFIG_ARRAY_LEN=${#DEFCONFIG_ARRAY[@]}
+	if [ $DEFCONFIG_ARRAY_LEN -eq 0 ]; then
+		echo "No available defconfig"
+		return 1
+	fi
+
+	if [ $DEFCONFIG_ARRAY_LEN -eq 1 ]; then
+		switch_defconfig ${DEFCONFIG_ARRAY[0]}
+		return 0
+	fi
+
+	echo "Pick a defconfig:"
+	echo ""
+
+	echo ${DEFCONFIG_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
+
+	local INDEX
+	read -p "Which would you like? [1]: " INDEX
+	INDEX=$((${INDEX:-1} - 1))
+	DEFCONFIG="${DEFCONFIG_ARRAY[$INDEX]}"
+
+	switch_defconfig $DEFCONFIG
+}
+
+choose_chip()
 {
 	CHIP_ARRAY=( $(ls "$CHIPS_DIR") )
 	CHIP_ARRAY_LEN=${#CHIP_ARRAY[@]}
@@ -18,71 +76,13 @@ lunch_chip()
 
 	rm -rf "$CHIP_DIR"
 	ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
-}
 
-switch_defconfig()
-{
-	CONFIG="$1"
-
-	[ -f "$CONFIG" ] || CONFIG="$CHIP_DIR/$CONFIG"
-
-	if [ ! -f "$CONFIG" ]; then
-		echo "No such defconfig: $1"
-		exit 1
-	fi
-
-	echo "Switching to defconfig: $CONFIG"
-	rm -f "$RK_DEFCONFIG"
-	ln -rsf "$CONFIG" "$RK_DEFCONFIG"
-
-	CONFIG="$(realpath "$CONFIG")"
-	rm -rf "$CHIP_DIR"
-	ln -rsf "$(dirname "$CONFIG")" "$CHIP_DIR"
-
-	$MAKE $(basename "$CONFIG")
-	exit 0
-}
-
-rockchip_defconfigs()
-{
-	cd "$CHIP_DIR"
-	ls rockchip_defconfig 2>/dev/null || true
-	ls *_defconfig | grep -v rockchip_defconfig || true
-}
-
-lunch()
-{
-	CONFIG_ARRAY=( $(rockchip_defconfigs) )
-
-	CONFIG_ARRAY_LEN=${#CONFIG_ARRAY[@]}
-	if [ $CONFIG_ARRAY_LEN -eq 0 ]; then
-		echo "No available defconfig"
-		return 1
-	fi
-
-	if [ $CONFIG_ARRAY_LEN -eq 1 ]; then
-		switch_defconfig ${CONFIG_ARRAY[0]}
-		return 0
-	fi
-
-	echo
-	echo "You're building on Linux"
-	echo "Lunch menu...pick a combo:"
-	echo ""
-
-	echo ${CONFIG_ARRAY[@]} | xargs -n 1 | sed "=" | sed "N;s/\n/. /"
-
-	local INDEX
-	read -p "Which would you like? [1]: " INDEX
-	INDEX=$((${INDEX:-1} - 1))
-	CONFIG="${CONFIG_ARRAY[$INDEX]}"
-
-	switch_defconfig $CONFIG
+	choose_defconfig
 }
 
 prepare_config()
 {
-	[ -e "$CHIP_DIR" ] || lunch_chip
+	[ -e "$CHIP_DIR" ] || choose_chip
 
 	cd "$DEVICE_DIR"
 	rm -f $(ls "$CHIPS_DIR")
@@ -91,14 +91,14 @@ prepare_config()
 
 	if [ ! -r "$RK_DEFCONFIG" ]; then
 		echo "WARN: $RK_DEFCONFIG not exists"
-		lunch
+		choose_defconfig
 		return 0
 	fi
 
 	DEFCONFIG=$(basename "$(realpath "$RK_DEFCONFIG")")
 	if [ ! "$RK_DEFCONFIG" -ef "$CHIP_DIR/$DEFCONFIG" ]; then
 		echo "WARN: $RK_DEFCONFIG is invalid"
-		lunch
+		choose_defconfig
 		return 0
 	fi
 
@@ -130,13 +130,13 @@ prepare_config()
 usage_hook()
 {
 	echo "chip               - choose chip"
-	echo "lunch              - choose defconfig"
-	echo "*_defconfig        - switch to specified defconfig"
+	echo "defconfig          - choose defconfig"
+	echo " *_defconfig       - switch to specified defconfig"
 	echo "    Available defconfigs:"
 	echo "$(ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/")"
-	echo "olddefconfig       - resolve any unresolved symbols in .config"
-	echo "savedefconfig      - save current config to defconfig"
-	echo "menuconfig         - interactive curses-based configurator"
+	echo " olddefconfig      - resolve any unresolved symbols in .config"
+	echo " savedefconfig     - save current config to defconfig"
+	echo " menuconfig        - interactive curses-based configurator"
 }
 
 clean_hook()
@@ -144,12 +144,12 @@ clean_hook()
 	$MAKE distclean
 }
 
-INIT_CMDS="chip lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
+INIT_CMDS="chip defconfig lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
 init_hook()
 {
 	case "${1:-default}" in
-		chip) lunch_chip ;;
-		lunch) lunch ;;
+		chip) choose_chip ;;
+		lunch|defconfig) choose_defconfig ;;
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
 		default) prepare_config ;; # End of init

@@ -56,7 +56,7 @@ CONFIG_CONFIG_IN = Config.in
 CONFIG = $(SDK_DIR)/buildroot/support/kconfig
 OUTDIR := $(SDK_DIR)/output
 BUILD_DIR := $(OUTDIR)/kconf
-SCRIPT_TARGETS := $(filter-out %config,$(shell $(SDK_DIR)/build.sh core-usage | grep -oE "^[^ \*]*"))
+SCRIPT_TARGETS := $(shell $(SDK_DIR)/build.sh core-usage | grep "^[a-z]" | cut -d' ' -f1)
 
 RK_CONFIG = $(OUTDIR)/.config
 
@@ -162,7 +162,7 @@ help:
 	@echo '  clean                  - Cleanup'
 	@echo
 	@echo 'from build.sh:'
-	@$(SDK_DIR)/build.sh core-usage | grep -vE "^ |^[^ ]*config"
+	@$(SDK_DIR)/build.sh core-usage | grep "^[a-z]"
 
 define script_target
 $(1):
