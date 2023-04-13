@@ -63,6 +63,8 @@ export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 
 # SOC
 export RK_SOC=rk356x
+# build.sh save 打包时名称
+export RK_PKG_NAME=lubancat-${RK_UBOOT_DEFCONFIG}
 # 定义默认rootfs为ubuntu
 export RK_ROOTFS_SYSTEM=ubuntu
 # 默认Ubuntu 版本
@@ -70,6 +72,6 @@ export RK_UBUNTU_VERSION=20.04
 # 定义默认rootfs是否为桌面版  xfce :桌面版 	lite ：控制台版
 export RK_ROOTFS_TARGET=xfce
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
-export RK_ROOTFS_DEBUG=none
+export RK_ROOTFS_DEBUG=debug
 # 使用exboot内核分区
 export RK_EXTBOOT=true

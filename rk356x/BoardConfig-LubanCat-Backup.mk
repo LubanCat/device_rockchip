@@ -63,6 +63,8 @@ export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 
 # SOC
 export RK_SOC=rk356x
+# build.sh save 打包时名称
+export RK_PKG_NAME=lubancat-rk356x-backup
 # 定义默认rootfs为 debian
 export RK_ROOTFS_SYSTEM=debian
 # Set debian version (debian10: buster)
