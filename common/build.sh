@@ -904,10 +904,10 @@ function build_ubuntu(){
 	if [ ! -e ubuntu-$RK_ROOTFS_TARGET-rootfs.img ]; then
 		echo "[ No ubuntu-$RK_ROOTFS_TARGET-rootfs.img, Run Make Ubuntu Scripts ]"
 		if [ ! -e ubuntu-base-$RK_ROOTFS_TARGET-$ARCH-*.tar.gz ]; then
-			ARCH=arm64 TARGET=$RK_ROOTFS_TARGET ./mk-base-$RK_ROOTFS_TARGET-ubuntu.sh
+			ARCH=arm64 TARGET=$RK_ROOTFS_TARGET ./mk-base-ubuntu.sh
 		fi
 
-		VERSION=$RK_ROOTFS_DEBUG TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH SOC=$RK_SOC ./mk-$RK_ROOTFS_TARGET-rootfs.sh
+		VERSION=$RK_ROOTFS_DEBUG TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH SOC=$RK_SOC ./mk-ubuntu-rootfs.sh
 	else
 		echo "[    Already Exists IMG,  Skip Make Ubuntu Scripts    ]"
 		echo "[ Delate Ubuntu-$RK_ROOTFS_TARGET-rootfs.img To Rebuild Ubuntu IMG ]"
@@ -1344,7 +1344,7 @@ function build_save(){
 		Version="$RK_ROOTFS_SYSTEM"-"$DATE"
 	fi
 
-	Device_Name=$RK_KERNEL_DTS
+	Device_Name=$RK_PKG_NAME
 	# Device_Name="$(echo $RK_KERNEL_DTS | tr '[:lower:]' '[:upper:]')"
 
 	ZIP_NAME=$Device_Name"-"$Version
