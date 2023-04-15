@@ -271,6 +271,7 @@ main()
 
 	# Init stage (preparing SDK configs, etc.)
 	run_build_hooks init $OPTIONS
+	rm -f "$RK_OUTDIR/.tmpconfig*"
 
 	# Force exporting config environments
 	set -a

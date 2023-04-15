@@ -4,8 +4,7 @@ echo "Executing $(basename "$BASH_SOURCE")..."
 
 SCRIPT_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
 
-# HACK: For yocto
-export PSEUDO_IGNORE_PATHS="$PSEUDO_IGNORE_PATHS,$SCRIPT_DIR/../../../../output/"
+# HACK: Allow host tools, e.g. python2 in yocto building
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 
 # Trigger build.sh's post-rootfs hooks
