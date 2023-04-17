@@ -130,4 +130,8 @@ config RK_ROOTFS_LANG
 	help
 	  Set "" to use default setting.
 
+config RK_ROOTFS_OVERLAY_DIRS
+	string "rootfs overlay dirs"
+	default "device/rockchip/common/overlay"
+
 endmenu # Rootfs
