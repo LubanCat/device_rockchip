@@ -124,6 +124,10 @@ config RK_ROOTFS_INITRD_COMPRESS
 
 endif
 
+config RK_ROOTFS_HOSTNAME
+	string "system hostname"
+	default RK_CHIP
+
 config RK_ROOTFS_LANG
 	string "set default LANG env"
 	default "en_US.utf8"
