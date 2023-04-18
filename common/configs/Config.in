@@ -37,6 +37,7 @@ config RK_CHIP
 	  Rockchip SoC.
 
 source "Config.in.rootfs"
+source "Config.in.usb"
 source "Config.in.loader"
 source "Config.in.kernel"
 source "Config.in.boot"
