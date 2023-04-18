@@ -39,9 +39,7 @@ install_service()
 
 cd "$SDK_DIR"
 
-mkdir -p "$TARGET_DIR/etc" "$TARGET_DIR/lib" \
-	"$TARGET_DIR/usr/bin" "$TARGET_DIR/usr/lib"
-
+mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/disk-helper "$TARGET_DIR/usr/bin/"
 
 [ -z "$RK_RESIZEALL" ] || install_service resize
