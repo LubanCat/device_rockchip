@@ -2,6 +2,14 @@
 
 menu "Others configurations"
 
+config RK_RESIZEALL
+	bool "resize all partitions"
+	default y if RK_ROOTFS_SYSTEM != "buildroot"
+
+config RK_MOUNTALL
+	bool "mount all partitions"
+	depends on !RK_RESIZEALL
+
 config RK_UDEV_RULES
 	bool "Rockchip udev rules"
 	default y if RK_ROOTFS_SYSTEM != "buildroot"
