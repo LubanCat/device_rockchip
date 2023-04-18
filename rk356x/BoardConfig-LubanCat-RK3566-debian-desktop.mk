@@ -70,7 +70,7 @@ export RK_ROOTFS_SYSTEM=debian
 # Set debian version (debian10: buster)
 export RK_DEBIAN_VERSION=10
 # 定义默认rootfs是否为桌面版  xfce :桌面版 	lite ：控制台版
-export RK_ROOTFS_TARGET=desktop
+export RK_ROOTFS_TARGET=xfce
 # 定义默认rootfs是否添加DEBUG工具  debug :添加 	none :不添加
 export RK_ROOTFS_DEBUG=none
 # 使用exboot内核分区
