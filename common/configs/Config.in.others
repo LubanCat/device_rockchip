@@ -2,6 +2,10 @@
 
 menu "Others configurations"
 
+config RK_UDEV_RULES
+	bool "Rockchip udev rules"
+	default y if RK_ROOTFS_SYSTEM != "buildroot"
+
 config RK_UBI_PAGE_SIZE
 	hex "ubi image page size (B)"
 	default "0x800"
