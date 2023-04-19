@@ -2,6 +2,31 @@
 
 KERNELS=$(ls | grep kernel- || true)
 
+update_kernel()
+{
+	# Fallback to current kernel
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version)}
+
+	# Fallback to 5.10 kernel
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
+
+	sed -i "s/^\(RK_KERNEL_VERSION=\).*/\1\"$RK_KERNEL_VERSION\"/" \
+		"$RK_CONFIG"
+
+	[ "$(kernel_version)" != "$RK_KERNEL_VERSION" ] || return 0
+
+	# Update kernel
+	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
+	echo "switching to $KERNEL_DIR"
+	if [ ! -d "$KERNEL_DIR" ]; then
+		echo "$KERNEL_DIR not exist!"
+		exit 1
+	fi
+
+	rm -rf kernel
+	ln -rsf $KERNEL_DIR kernel
+}
+
 do_build()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
@@ -41,37 +66,21 @@ clean_hook()
 	make -C kernel distclean
 }
 
-INIT_CMDS="$KERNELS"
+INIT_CMDS="default $KERNELS"
 init_hook()
 {
-	sed -i "s/^\(RK_KERNEL_VERSION=\).*/\1\"${1#kernel-}\"/" \
-		"$RK_CONFIG"
+	if echo "$1" | grep -q "^kernel-"; then
+		export RK_KERNEL_VERSION=${1#kernel-}
+	fi
+
+	update_kernel
 }
 
 PRE_BUILD_CMDS="default"
 pre_build_hook()
 {
-	# Fallback to current kernel
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version)}
-
-	# Fallback to 5.10 kernel
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
-
-	sed -i "s/^\(RK_KERNEL_VERSION=\).*/\1\"$RK_KERNEL_VERSION\"/" \
-		"$RK_CONFIG"
-
-	[ "$(kernel_version)" != "$RK_KERNEL_VERSION" ] || return 0
-
-	# Update kernel
-	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
-	echo "switching to $KERNEL_DIR"
-	if [ ! -d "$KERNEL_DIR" ]; then
-		echo "$KERNEL_DIR not exist!"
-		exit 1
-	fi
-
-	rm -rf kernel
-	ln -rsf $KERNEL_DIR kernel
+	# Make sure that the kernel dir is updated before building
+	update_kernel
 }
 
 BUILD_CMDS="$KERNELS kernel modules"
