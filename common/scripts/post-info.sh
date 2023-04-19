@@ -6,6 +6,7 @@ INFO_DIR="$TARGET_DIR/info"
 
 echo "Adding info dir..."
 
+rm -rf "$INFO_DIR"
 mkdir -p "$INFO_DIR"
 
 cd "$SDK_DIR"
@@ -13,7 +14,8 @@ cd "$SDK_DIR"
 yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
 	-o "$INFO_DIR/manifest.xml" &>/dev/null || true
 
-cp "$RK_CONFIG" "$INFO_DIR/rockchip_config"
+cat "$RK_CONFIG" | sed "s/\(PASSWORD=\)\".*\"/\1\"********\"/" > \
+	"$INFO_DIR/rockchip_config"
 
 cp kernel/.config "$INFO_DIR/config-$RK_KERNEL_VERSION"
 cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION"
