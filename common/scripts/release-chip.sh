@@ -30,6 +30,8 @@ echo "Releasing chip: $CHIP"
 
 cd "$DEVICE_DIR"
 
+ORIG_COMMIT=$(git log --oneline -1 | cut -d' ' -f1)
+
 COMMIT_MSG=$(mktemp)
 cat << EOF > $COMMIT_MSG
 Release $CHIP - $(date +%Y-%m-%d)
@@ -39,18 +41,20 @@ $(git log -1 --format="%h %s")
 EOF
 
 git add -f .
-git stash
+git stash &>/dev/null
 
-git branch -D $CHIP &>/dev/null || true
-git checkout --orphan $CHIP
-git reset
-
+# Drop other chips
 rm -f "$CHIP_DIR"
 ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
 ln -rsf "$CHIPS_DIR/$CHIP" .
 
+# Create new branch
+git branch -D $CHIP &>/dev/null || true
+git checkout --orphan $CHIP &>/dev/null
+git reset &>/dev/null
 git add -f .gitignore common "$CHIPS_DIR/$CHIP" "$CHIP_DIR" "$CHIP"
-git commit -s -F $COMMIT_MSG
+git commit -s -F $COMMIT_MSG &>/dev/null
 
+# Recover
 git add -f .
-git stash
+git checkout $ORIG_COMMIT &>/dev/null
