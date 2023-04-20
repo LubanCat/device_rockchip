@@ -10,7 +10,7 @@ BUILDROOT_DIR="$SDK_DIR/buildroot"
 "$SCRIPTS_DIR/check-buildroot.sh"
 
 source "$BUILDROOT_DIR/build/envsetup.sh" $DEFCONFIG
-BUILDROOT_OUTPUT_DIR="$(realpath -e "$BUILDROOT_DIR/output/.board")"
+BUILDROOT_OUTPUT_DIR="$(realpath -e "$BUILDROOT_DIR/output/latest")"
 
 # Use buildroot images dir as image output dir
 IMAGE_DIR="$BUILDROOT_OUTPUT_DIR/images"
