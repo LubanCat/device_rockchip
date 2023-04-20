@@ -26,11 +26,22 @@ if [ -z "$CHIP" -o ! -e "$CHIPS_DIR/$CHIP" ]; then
 	[ "$CHIP" ] || exit 1
 fi
 
-[ -d "$SDK_DIR/docs/Socs" ] || exit 0
+DOC_DIR="$2"
+if [ -z "$DOC_DIR" ]; then
+	for d in $(find "$SDK_DIR/docs" -name Socs); do
+		"$0" "$CHIP" "$d"
+	done
+	exit 0
+fi
 
-echo "Releasing docs for $CHIP"
+SOC_DIR=$(echo $CHIP | tr '[:lower:]' '[:upper:]')
+[ -d "$DOC_DIR/$SOC_DIR" ] || exit 0
 
-cd "$SDK_DIR/docs/Socs"
+echo "Releasing docs for $CHIP in $DOC_DIR"
+
+cd "$DOC_DIR"
+
+ORIG_COMMIT=$(git log --oneline -1 | cut -d' ' -f1)
 
 COMMIT_MSG=$(mktemp)
 cat << EOF > $COMMIT_MSG
@@ -41,14 +52,20 @@ $(git log -1 --format="%h %s")
 EOF
 
 git add -f .
-git stash
+git stash &>/dev/null
 
+# Drop other docs
+DOCS="$(ls)"
+mv "$SOC_DIR"/* .
+rm -rf $DOCS
+
+# Create new branch
 git branch -D $CHIP &>/dev/null || true
-git checkout --orphan $CHIP
-git reset
-
-SOC_DIR=$(echo $CHIP | tr '[:lower:]' '[:upper:]')
-
-ls | grep -v "$SOC_DIR" | xargs rm -rf || true
+git checkout --orphan $CHIP &>/dev/null
+git reset &>/dev/null
 git add .
-git commit -s -F $COMMIT_MSG
+git commit -s -F $COMMIT_MSG &>/dev/null
+
+# Recover
+git checkout $ORIG_COMMIT &>/dev/null
+cd "$SDK_DIR"
