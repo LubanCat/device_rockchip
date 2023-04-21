@@ -126,7 +126,12 @@ endif
 
 config RK_ROOTFS_HOSTNAME
 	string "system hostname"
-	default RK_CHIP
+	default "" if RK_ROOTFS_SYSTEM = "debian"
+	default "<default>"
+	help
+	  Hostname for rootfs.
+	  Set "" to use original hostname.
+	  Set "<default>" for "<chip>-<OS>".
 
 config RK_ROOTFS_LANG
 	string "set default LANG env"
@@ -136,6 +141,6 @@ config RK_ROOTFS_LANG
 
 config RK_ROOTFS_OVERLAY_DIRS
 	string "rootfs overlay dirs"
-	default "device/rockchip/common/overlay"
+	default ""
 
 endmenu # Rootfs

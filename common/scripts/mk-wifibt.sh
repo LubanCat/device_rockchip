@@ -11,11 +11,6 @@ build_wifibt()
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
 	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
 
-	if [ "$POST_RECOVERY" ]; then
-		echo "No Wifi/BT for recovery image"
-		return 0
-	fi
-
 	if find "$ROOTFS_DIR/lib" -name "ld-linux-armhf.so.*" &>/dev/null; then
 		ROOTFS_ARCH=arm
 	else

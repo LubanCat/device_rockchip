@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
+POST_OS_DISALLOWED="recovery pcba"
+
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-[ -z "$POST_RECOVERY" ] || exit 0
 [ -n "$RK_RESIZEALL" -o -n "$RK_MOUNTALL" ] || exit 0
 
 install_service()

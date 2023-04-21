@@ -1,12 +1,12 @@
 #!/bin/bash -e
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+POST_OS_DISALLOWED="recovery pcba"
 
-[ -z "$POST_RECOVERY" ] || exit 0
+source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 source "$PARTITION_HELPER"
 
-echo "Preparing partitions..."
+echo "Preparing extra partitions..."
 
 for idx in $(seq 1 "$(rk_partition_num)"); do
 	MOUNTPOINT="$(rk_partition_mountpoint $idx)"

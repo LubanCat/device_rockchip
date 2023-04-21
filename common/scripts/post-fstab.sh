@@ -78,6 +78,9 @@ source "$PARTITION_HELPER"
 
 echo "Fixing up /etc/fstab..."
 
+mkdir -p "$TARGET_DIR/etc"
+touch "$FSTAB"
+
 case "$RK_ROOTFS_TYPE" in
 	ext[234])
 		fixup_root "$RK_ROOTFS_TYPE"
@@ -96,7 +99,7 @@ fixup_basic_part configfs /sys/kernel/config
 fixup_basic_part debugfs /sys/kernel/debug
 fixup_basic_part pstore /sys/fs/pstore
 
-if [ "$POST_RECOVERY" ]; then
+if [ "$POST_OS" = recovery ]; then
 	fixup_device_part /dev/sda1 /mnt/udisk auto
 	fixup_device_part /dev/mmcblk1p1 /mnt/sdcard auto
 fi
