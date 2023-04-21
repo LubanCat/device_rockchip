@@ -35,7 +35,10 @@ if [ -z "$DOC_DIR" ]; then
 fi
 
 SOC_DIR=$(echo $CHIP | tr '[:lower:]' '[:upper:]')
-[ -d "$DOC_DIR/$SOC_DIR" ] || exit 0
+if [ ! -d "$DOC_DIR/$SOC_DIR" ]; then
+	echo "There's no doc for $CHIP in $DOC_DIR"
+	exit 0
+fi
 
 echo "Releasing docs for $CHIP in $DOC_DIR"
 
