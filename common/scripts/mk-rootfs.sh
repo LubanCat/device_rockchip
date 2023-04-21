@@ -64,6 +64,8 @@ build_debian()
 
 	echo "=========Start building debian ($ARCH) rootfs========="
 
+	"$SCRIPTS_DIR/check-debian.sh"
+
 	cd debian
 	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
 		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH \
