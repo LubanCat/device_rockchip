@@ -221,7 +221,7 @@ main()
 
 	# Drop old logs
 	cd "$RK_LOG_BASE_DIR"
-	rm -rf $(ls -t | sed '1,6d')
+	rm -rf $(ls -t | sed '1,10d')
 
 	mkdir -p "$RK_FIRMWARE_DIR"
 	rm -rf "$SDK_DIR/rockdev"
@@ -281,6 +281,7 @@ main()
 
 	# Load config environments
 	source "$RK_CONFIG"
+	cp "$RK_CONFIG" "$RK_LOG_DIR"
 
 	# Save initial environment
 	if [ -e "$INITIAL_ENV" ]; then
@@ -300,6 +301,7 @@ main()
 
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
+			cp "$RK_CUSTOM_ENV" "$RK_LOG_DIR"
 		fi
 	fi
 
@@ -358,6 +360,7 @@ main()
 
 	# Save final environments
 	export > "$RK_FINAL_ENV"
+	cp "$RK_FINAL_ENV" "$RK_LOG_DIR"
 
 	# Build stage (building, etc.)
 	run_build_hooks build $OPTIONS
