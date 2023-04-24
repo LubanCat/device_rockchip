@@ -1,7 +1,0 @@
-Prebuilt from Rockchip buildroot 2021 SDK:
-0a9bc9e901 qt5multimedia: Compat with gstreamer 1.22.0
-
-Using rockchip_rk3288_defconfig with addition configs:
-BR2_PACKAGE_ANDROID_TOOLS=y
-BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
-BR2_PACKAGE_ANDROID_TOOLS_ADBD=y

@@ -1,0 +1,33 @@
+Rockchip 32-bit prebuilt tools (static linked)
+
+Prebuilt from Rockchip buildroot 2018 SDK:
+8b51ff21609 strace: Support static
+
+Using rockchip_rk3288_defconfig with addition configs:
+BR2_PACKAGE_ANDROID_TOOLS=y
+BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
+
+BR2_PACKAGE_BUSYBOX=y
+BR2_PACKAGE_BUSYBOX_STATIC=y
+
+BR2_PACKAGE_GDB=y
+BR2_PACKAGE_GDB_STATIC=y
+BR2_PACKAGE_GDB_DEBUGGER=y
+
+BR2_PACKAGE_LIBDRM=y
+BR2_PACKAGE_LIBDRM_STATIC=y
+
+BR2_PACKAGE_LINUX_TOOLS_PERF=y
+BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC=y
+
+BR2_PACKAGE_RKTOOLKIT=y
+BR2_PACKAGE_RKTOOLKIT_STATIC=y
+
+BR2_PACKAGE_STRACE=y
+BR2_PACKAGE_STRACE_STATIC=y
+
+NOTE:
+For building perf:
+1/ Build dynamic version firstly
+2/ Enable BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC
+3/ Run: make linux-tools-reconfigure

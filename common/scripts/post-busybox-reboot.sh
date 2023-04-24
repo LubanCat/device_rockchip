@@ -8,7 +8,7 @@ REBOOT_WRAPPER=busybox-reboot
 
 echo "Fixing up busybox reboot commands..."
 
-install -D -m 0755 "$COMMON_DIR/data/$REBOOT_WRAPPER" \
+install -D -m 0755 "$COMMON_DIR/data/misc/$REBOOT_WRAPPER" \
 	sbin/$REBOOT_WRAPPER
 
 for cmd in halt reboot poweroff shutdown; do
