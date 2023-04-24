@@ -33,6 +33,10 @@ do_build()
 
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
+	if [ ! "$DRY_RUN" ]; then
+		"$SCRIPTS_DIR/check-kernel.sh"
+	fi
+
 	if [ "$1" = modules ]; then
 		run_command $KMAKE modules
 		return 0
