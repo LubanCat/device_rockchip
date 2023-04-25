@@ -2,6 +2,9 @@
 
 menu "Others configurations"
 
+config RK_PREBUILT_TOOLS
+	bool "prebuilt tools"
+
 config RK_RESIZEALL
 	bool "resize all partitions"
 	default y if RK_ROOTFS_SYSTEM != "buildroot"
