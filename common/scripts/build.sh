@@ -299,6 +299,7 @@ main()
 			echo -e "\e[31mWARN: Found custom environments: \e[0m"
 			cat "$RK_CUSTOM_ENV"
 
+			echo -e "\e[31mAssuming that is expected, please clear them if otherwise.\e[0m"
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
 			cp "$RK_CUSTOM_ENV" "$RK_LOG_DIR"
