@@ -36,11 +36,9 @@ build_wifibt()
 	fi
 	echo "kernel config: $WIFI_USB $WIFI_SDIO $WIFI_RFKILL"
 
-	TARGET_CC=${CROSS_COMPILE}gcc
 	RKWIFIBT=$SDK_DIR/external/rkwifibt
 
 	echo "========build wifibt info======="
-	echo CROSS_COMPILE=$CROSS_COMPILE
 	echo WIFI_CHIP=$WIFI_CHIP
 	echo BT_TTY_DEV=$BT_TTY_DEV
 

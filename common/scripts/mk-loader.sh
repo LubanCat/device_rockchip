@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
-MAKE_CMD="./make.sh CROSS_COMPILE=$CROSS_COMPILE"
+MAKE_CMD="./make.sh CROSS_COMPILE=$RK_TOOLCHAIN"
 
 do_build_uefi()
 {

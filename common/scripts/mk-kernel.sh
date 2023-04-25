@@ -94,7 +94,6 @@ build_hook()
 
 	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
-		echo "export CROSS_COMPILE=$CROSS_COMPILE"
 		do_build $1
 		return 0
 	fi

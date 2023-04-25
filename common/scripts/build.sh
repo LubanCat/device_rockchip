@@ -350,11 +350,13 @@ main()
 		exit 1
 	fi
 
-	export CROSS_COMPILE="${GCC%gcc}"
-	echo "Using prebuilt GCC toolchain: $CROSS_COMPILE"
+	export RK_TOOLCHAIN="${GCC%gcc}"
+	echo "Prebuilt toolchain (for kernel & loader):"
+	echo "$RK_TOOLCHAIN"
 
 	CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
-	export KMAKE="make -C kernel/ ARCH=$RK_KERNEL_ARCH -j$(( $CPUS + 1 ))"
+	export KMAKE="make -C kernel/ -j$(( $CPUS + 1 )) \
+		CROSS_COMPILE=$RK_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
 
 	export PYTHON3=/usr/bin/python3
 
