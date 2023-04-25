@@ -56,7 +56,7 @@ build_updateimg()
 	fi
 
 	# Prepare package-file
-	if [ "$PKG_FILE" ]; then
+	if [ "${PKG_FILE%<default>}" ]; then
 		PKG_FILE="$CHIP_DIR/$PKG_FILE"
 		if [ ! -r "$PKG_FILE" ]; then
 			echo "$PKG_FILE not exists!"

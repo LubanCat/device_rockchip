@@ -4,9 +4,10 @@ menu "Firmware"
 
 config RK_PACKAGE_FILE
 	string "package-file"
+	default "<default>"
 	help
 	  Name of custom package-file under <CHIP_DIR>/.
-	  Set "" to use default version.
+	  Set "<default>" to use default version.
 
 config RK_PARAMETER
 	string "parameter"
