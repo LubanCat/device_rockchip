@@ -80,13 +80,6 @@ init_hook()
 	update_kernel
 }
 
-PRE_BUILD_CMDS="default"
-pre_build_hook()
-{
-	# Make sure that the kernel dir is updated before building
-	update_kernel
-}
-
 BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {

@@ -361,6 +361,8 @@ main()
 
 	export PYTHON3=/usr/bin/python3
 
+	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
+
 	# Handle special commands
 	case "$OPTIONS" in
 		shell)
@@ -384,10 +386,6 @@ main()
 
 	# Pre-build stage (configs checking and applying, etc.)
 	run_build_hooks pre-build $OPTIONS
-
-	# Allow changing kernel version with kernel-* options
-	export RK_KERNEL_VERSION=$(kernel_version)
-	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 
 	# Save final environments
 	export > "$RK_FINAL_ENV"
