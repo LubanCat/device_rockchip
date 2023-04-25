@@ -106,6 +106,33 @@ start_log()
 	echo "$LOG_FILE"
 }
 
+# For developing shell only
+
+rroot()
+{
+	cd "$SDK_DIR"
+}
+
+rout()
+{
+	cd "$RK_OUTDIR"
+}
+
+rcommon()
+{
+	cd "$COMMON_DIR"
+}
+
+rscript()
+{
+	cd "$SCRIPTS_DIR"
+}
+
+rchip()
+{
+	cd "$(realpath "$CHIP_DIR")"
+}
+
 set +a
 # End of global functions
 
