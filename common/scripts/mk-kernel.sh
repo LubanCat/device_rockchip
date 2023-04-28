@@ -171,9 +171,8 @@ post_build_hook_dry()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-*) init_hook $@ ;&
-	kernel | modules)
-		pre_build_hook
+	kernel-* | kernel | modules)
+		init_hook $@
 		build_hook ${@:-kernel}
 		;;
 	linux-headers) post_build_hook $@ ;;
