@@ -746,15 +746,20 @@ function build_extboot(){
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/overlay/*.dtbo $EXTBOOT_DTB/overlay
 		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
+		cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/rockchip/uEnv/boot.cmd $EXTBOOT_DIR/
     else
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/*.dtb $EXTBOOT_DTB
     	cp ${TOP_DIR}/kernel/arch/${RK_ARCH}/boot/dts/overlay/*.dtbo $EXTBOOT_DTB/overlay
     fi
     cp -f $EXTBOOT_DTB/${RK_KERNEL_DTS}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
-    if [[ -e ${TOP_DIR}/kernel/ramdisk.img ]]; then
-        cp ${TOP_DIR}/kernel/ramdisk.img $EXTBOOT_DIR/initrd-$KERNEL_VERSION
-        echo -e "\tinitrd /initrd-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+    if [[ -e ${TOP_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION ]]; then
+        cp ${TOP_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION $EXTBOOT_DIR/initrd-$KERNEL_VERSION
+        # echo -e "\tinitrd /initrd-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+    fi
+
+    if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
+        mkimage -T script -C none -d $EXTBOOT_DIR/boot.cmd $EXTBOOT_DIR/boot.scr
     fi
 
     cp ${TOP_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
