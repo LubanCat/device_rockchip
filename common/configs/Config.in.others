@@ -5,6 +5,10 @@ menu "Others configurations"
 config RK_PREBUILT_TOOLS
 	bool "prebuilt tools"
 
+config RK_EXTRA_FONTS
+	bool "extra fonts"
+	default y if RK_ROOTFS_SYSTEM != "debian"
+
 config RK_RESIZEALL
 	bool "resize all partitions"
 	default y if RK_ROOTFS_SYSTEM != "buildroot"
@@ -38,17 +42,17 @@ config RK_WIFIBT_TTY
 	default "ttyS0"
 
 choice
-	prompt "Patches saving"
+	prompt "patches saving"
 	default RK_SAVE_TRACKED
 
 config RK_SAVE_COMMITTED
-	bool "Save committed changes only"
+	bool "save committed changes only"
 
 config RK_SAVE_TRACKED
-	bool "Save changes of tracked files"
+	bool "save changes of tracked files"
 
 config RK_SAVE_ALL
-	bool "Save all changes"
+	bool "save all changes"
 
 endchoice
 

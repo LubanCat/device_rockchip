@@ -5,7 +5,7 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 cd "$SDK_DIR"
 
 for overlay in "$COMMON_DIR/overlays/overlay-$POST_OS" \
-	$RK_ROOTFS_OVERLAY_DIRS; do
+	"$COMMON_DIR/overlays/overlay-fonts" $RK_ROOTFS_OVERLAY_DIRS; do
 	[ -d "$overlay" ] || continue
 
 	if [ -x "$overlay/install.sh" ]; then
