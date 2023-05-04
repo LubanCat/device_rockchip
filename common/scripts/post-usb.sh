@@ -23,17 +23,15 @@ install_adbd()
 	fi
 
 	if [ -n "$RK_USB_ADBD_PASSWORD" ]; then
-		install -m 0755 "$RK_DATA_DIR/misc/adbd_auth.sh" \
-			"$TARGET_DIR/usr/bin/adbd_auth.sh"
+		install -m 0755 "$RK_DATA_DIR/misc/adbd-auth" \
+			"$TARGET_DIR/usr/bin/adbd-auth"
 		sed -i "s/AUTH_PASSWORD/$(echo $RK_USB_ADBD_PASSWORD | md5sum)/g" \
-			"$TARGET_DIR/usr/bin/adbd_auth.sh"
+			"$TARGET_DIR/usr/bin/adbd-auth"
 	fi
 
 	if [ -r "$RK_USB_ADBD_RSA_KEY" ]; then
 		install -m 0644 "$RK_USB_ADBD_RSA_KEY" \
 			"$TARGET_DIR/etc/adbkey.pub"
-		echo "export ADBD_RSA_AUTH_ENABLE=1" >> \
-			"$TARGET_DIR/etc/profile.d/adbd.sh"
 		echo "export ADBD_RSA_KEY_FILE=/etc/adbkey.pub" >> \
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 	fi

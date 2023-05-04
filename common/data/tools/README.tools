@@ -1,7 +1,7 @@
 Rockchip 32-bit prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2018 SDK:
-4e2f5a2c9ae gdb: Bump to buildroot upstream
+7d1975e03a5 android-tools: Refactor a bit
 
 Using rockchip_rk3288_defconfig with addition configs:
 BR2_PACKAGE_ANDROID_TOOLS=y
