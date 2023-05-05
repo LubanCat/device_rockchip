@@ -91,12 +91,8 @@ build_hook()
 		return 0
 	fi
 
-	echo "============Start building $1============"
-	echo "TARGET_KERNEL_VERSION =$RK_KERNEL_VERSION"
-	echo "TARGET_KERNEL_ARCH   =$RK_KERNEL_ARCH"
-	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_CFG"
-	echo "TARGET_KERNEL_CONFIG_FRAGMENTS =$RK_KERNEL_CFG_FRAGMENTS"
-	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS_NAME"
+	echo "=========================================="
+	echo "          Start building $1"
 	echo "=========================================="
 
 	if [ "$1" = modules ]; then
@@ -154,13 +150,13 @@ post_build_hook()
 } | rsync -a --files-from=- . "$OUTPUT_DIR"
 EOF
 
-	if [ "$DRY_RUN" ]; then
-		cat "$HEADER_FILES_SCRIPT"
-	else
+	cat "$HEADER_FILES_SCRIPT"
+
+	if [ -z "$DRY_RUN" ]; then
 		. "$HEADER_FILES_SCRIPT"
 	fi
 
-	run_command cd -
+	run_command cd "$SDK_DIR"
 }
 
 post_build_hook_dry()

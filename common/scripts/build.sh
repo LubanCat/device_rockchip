@@ -245,6 +245,8 @@ main()
 		mkdir -p "$RK_LOG_DIR"
 		rm -rf "$RK_LOG_BASE_DIR/latest"
 		ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
+		echo
 	fi
 
 	# Drop old logs
@@ -384,12 +386,21 @@ main()
 			exit 0 ;;
 	esac
 
+	# Save final environments
+	env > "$RK_FINAL_ENV"
+	cp "$RK_FINAL_ENV" "$RK_LOG_DIR"
+
+	# Log configs
+	echo
+	echo "=========================================="
+	echo "          Finial configs"
+	echo "=========================================="
+	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
+		grep -vE "^RK_CONFIG|BASE_CFG=|_LINK=|DIR=|_NAME=|_ENV=" | sort
+	echo
+
 	# Pre-build stage (configs checking and applying, etc.)
 	run_build_hooks pre-build $OPTIONS
-
-	# Save final environments
-	export > "$RK_FINAL_ENV"
-	cp "$RK_FINAL_ENV" "$RK_LOG_DIR"
 
 	# Build stage (building, etc.)
 	run_build_hooks build $OPTIONS

@@ -61,8 +61,8 @@ config RK_KERNEL_DTB
 
 config RK_KERNEL_IMG_NAME
 	string "kernel image name"
-	default "zImage" if RK_KERNEL_ARM32 && RK_USE_ZBOOT
-	default "Image.lz4" if RK_KERNEL_ARM64 && RK_USE_ZBOOT
+	default "zImage" if RK_KERNEL_ARM32 && RK_BOOT_COMPRESSED
+	default "Image.lz4" if RK_KERNEL_ARM64 && RK_BOOT_COMPRESSED
 	default "Image"
 
 config RK_KERNEL_IMG

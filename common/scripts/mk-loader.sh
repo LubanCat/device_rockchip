@@ -22,9 +22,6 @@ build_uefi()
 		return 1
 	fi
 
-	echo "============Start building uefi============"
-	echo "Copy kernel dtb $RK_KERNEL_DTB to $UEFI_DIR/$RK_CHIP.dtb"
-	echo "========================================="
 	if [ ! -f "$RK_KERNEL_DTB" ]; then
 		echo "$RK_KERNEL_DTB not exists!"
 		return 1
@@ -69,10 +66,6 @@ build_uboot()
 {
 	check_config RK_UBOOT_CFG || return 0
 
-	echo "============Start building uboot============"
-	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_CFG"
-	echo "========================================="
-
 	rm -f u-boot/*.bin u-boot/*.img
 
 	do_build_uboot $@
@@ -107,10 +100,6 @@ do_build_spl()
 build_spl()
 {
 	check_config RK_UBOOT_SPL_CFG || return 0
-
-	echo "============Start building spl============"
-	echo "TARGET_SPL_CONFIG=$RK_UBOOT_SPL_CFG"
-	echo "========================================="
 
 	rm -f u-boot/*spl.bin
 
@@ -157,6 +146,10 @@ build_hook()
 
 	case "$TARGET" in
 		uboot | spl | uefi)
+			echo "=========================================="
+			echo "          Start building $TARGET"
+			echo "=========================================="
+
 			FUNC=${DRY_RUN:+do_}build_$TARGET
 			$FUNC $@
 			;;

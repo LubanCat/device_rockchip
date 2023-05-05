@@ -124,7 +124,7 @@ build_security_keys()
 	mkdir -p u-boot/keys
 	cd u-boot/keys
 	"$SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048
-	cd -
+	cd "$SDK_DIR"
 
 	ln -rsf private_key.pem u-boot/keys/dev.key
 	ln -rsf public_key.pem u-boot/keys/dev.pubkey

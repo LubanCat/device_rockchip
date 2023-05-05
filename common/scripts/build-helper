@@ -30,8 +30,9 @@ set -eE
 run_command()
 {
 	if [ "$DRY_RUN" ]; then
-		echo $@
+		echo "$@"
 	else
+		echo "+ $@"
 		$@
 	fi
 }

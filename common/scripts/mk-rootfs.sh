@@ -6,10 +6,6 @@ build_buildroot()
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
 
-	echo "==========Start building buildroot rootfs =========="
-	echo "TARGET_BUILDROOT_CONFIG=$RK_BUILDROOT_CFG"
-	echo "========================================="
-
 	/usr/bin/time -f "you take %E to build buildroot" \
 		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$ROOTFS_DIR"
 
@@ -22,10 +18,6 @@ build_yocto()
 	check_config RK_YOCTO_CFG RK_KERNEL_VERSION_REAL || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
-
-	echo "=========Start building yocto rootfs========="
-	echo "TARGET_CONFIG=$RK_YOCTO_CFG"
-	echo "====================================="
 
 	"$SCRIPTS_DIR/check-buildroot.sh"
 
@@ -59,10 +51,7 @@ build_debian()
 	check_config RK_DEBIAN_VERSION || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/debian}"
-
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
-
-	echo "=========Start building debian ($ARCH) rootfs========="
 
 	"$SCRIPTS_DIR/check-debian.sh"
 
@@ -121,7 +110,9 @@ build_hook()
 	ROOTFS_IMG=rootfs.${RK_ROOTFS_TYPE}
 	ROOTFS_DIR="$RK_OUTDIR/rootfs"
 
-	echo "==========Start building rootfs($ROOTFS)=========="
+	echo "=========================================="
+	echo "          Start building rootfs($ROOTFS)"
+	echo "=========================================="
 
 	rm -rf "$ROOTFS_DIR"
 	mkdir -p "$ROOTFS_DIR"

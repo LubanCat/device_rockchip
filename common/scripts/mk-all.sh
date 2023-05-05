@@ -4,19 +4,9 @@ BOARD=$(echo $RK_KERNEL_DTS_NAME | tr '[:lower:]' '[:upper:]')
 
 build_all()
 {
-	echo "============================================"
-	echo "TARGET_KERNEL_ARCH=$RK_KERNEL_ARCH"
-	echo "TARGET_CHIP_FAMILY=$RK_CHIP_FAMILY"
-	echo "TARGET_CHIP=$RK_CHIP"
-	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_CFG"
-	echo "TARGET_SPL_CONFIG=$RK_UBOOT_SPL_CFG"
-	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_CFG"
-	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS_NAME"
-	echo "TARGET_BUILDROOT_CONFIG=$RK_BUILDROOT_CFG"
-	echo "TARGET_RECOVERY_CONFIG=$RK_RECOVERY_CFG"
-	echo "TARGET_PCBA_CONFIG=$RK_PCBA_CFG"
-	echo "TARGET_RAMBOOT=$RK_ROOTFS_INITRD"
-	echo "============================================"
+	echo "=========================================="
+	echo "          Start building all images"
+	echo "=========================================="
 
 	rm -rf $RK_FIRMWARE_DIR
 	mkdir -p $RK_FIRMWARE_DIR
@@ -38,11 +28,18 @@ build_all()
 		"$SCRIPTS_DIR/mk-loader.sh" loader
 	fi
 
+	"$SCRIPTS_DIR/mk-firmware.sh"
+	"$SCRIPTS_DIR/mk-updateimg.sh"
+
 	finish_build
 }
 
 build_save()
 {
+	echo "=========================================="
+	echo "          Start saving images and build info"
+	echo "=========================================="
+
 	shift
 	SAVE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
 	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
@@ -55,16 +52,19 @@ build_save()
 
 	echo "Saving into $SAVE_DIR..."
 
-	echo "Saving linux-headers..."
-	"$SCRIPTS_DIR/mk-kernel.sh" linux-headers "$SAVE_DIR/linux-headers"
+	if [ "$RK_KERNEL_CFG" ]; then
+		echo "Saving linux-headers..."
+		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers \
+			"$SAVE_DIR/linux-headers"
+
+		echo "Saving kernel files..."
+		mkdir -p "$SAVE_DIR/kernel"
+		cp kernel/.config kernel/System.map kernel/vmlinux \
+			$RK_KERNEL_DTB "$SAVE_DIR/kernel"
+	fi
 
 	echo "Saving images..."
-	mkdir -p "$SAVE_DIR/kernel"
-	cp kernel/.config "$SAVE_DIR/kernel"
-	cp kernel/vmlinux "$SAVE_DIR/kernel"
-
-	mkdir -p "$SAVE_DIR/IMAGES/"
-	cp "$RK_FIRMWARE_DIR"/* "$SAVE_DIR/IMAGES/"
+	rsync -av --chmod=u=rwX,go=rX  "$RK_FIRMWARE_DIR" "$SAVE_DIR/IMAGES/"
 
 	echo "Saving build info..."
 	if yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
@@ -92,8 +92,6 @@ build_save()
 build_allsave()
 {
 	build_all
-	"$SCRIPTS_DIR/mk-firmware.sh"
-	"$SCRIPTS_DIR/mk-updateimg.sh"
 	build_save $@
 
 	finish_build
@@ -103,9 +101,9 @@ build_allsave()
 
 usage_hook()
 {
-	echo "all                - build all basic image"
+	echo "all                - build all images"
 	echo "save               - save images and build info"
-	echo "allsave            - build all & firmware & updateimg & save"
+	echo "allsave            - build all images and save images and build info"
 }
 
 clean_hook()

@@ -17,9 +17,9 @@ build_hook()
 {
 	check_config RK_PCBA_CFG || return 0
 
-	echo "==========Start building pcba(buildroot)=========="
-	echo "TARGET_PCBA_CONFIG=$RK_PCBA_CFG"
-	echo "========================================"
+	echo "=========================================="
+	echo "          Start building pcba(buildroot)"
+	echo "=========================================="
 
 	DST_DIR="$RK_OUTDIR/pcba"
 

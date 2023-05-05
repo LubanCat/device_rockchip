@@ -109,7 +109,7 @@ prepare_config()
 	cd "$DEVICE_DIR"
 	rm -f $(ls "$CHIPS_DIR")
 	ln -rsf "$(readlink "$CHIP_DIR")" .
-	cd -
+	cd "$SDK_DIR"
 
 	if [ ! -r "$RK_DEFCONFIG_LINK" ]; then
 		echo "WARN: $RK_DEFCONFIG_LINK not exists"

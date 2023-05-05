@@ -41,6 +41,10 @@ build_updateimg()
 	OUT_DIR="$RK_OUTDIR/$TYPE"
 	IMAGE_DIR="$OUT_DIR/Image"
 
+	echo "=========================================="
+	echo "          Start packing $2 update image"
+	echo "=========================================="
+
 	rm -rf "$TARGET" "$OUT_DIR"
 	mkdir -p "$IMAGE_DIR"
 	cd "$IMAGE_DIR"

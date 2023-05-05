@@ -38,7 +38,10 @@ build_wifibt()
 
 	RKWIFIBT=$SDK_DIR/external/rkwifibt
 
-	echo "========build wifibt info======="
+	echo "=========================================="
+	echo "          Start building wifi/BT"
+	echo "=========================================="
+
 	echo WIFI_CHIP=$WIFI_CHIP
 	echo BT_TTY_DEV=$BT_TTY_DEV
 

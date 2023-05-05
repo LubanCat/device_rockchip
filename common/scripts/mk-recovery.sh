@@ -19,9 +19,10 @@ build_hook()
 
 	check_config RK_RECOVERY_CFG || return 0
 
-	echo "==========Start building recovery(buildroot)=========="
-	echo "TARGET_RECOVERY_CONFIG=$RK_RECOVERY_CFG"
-	echo "========================================"
+	echo "=========================================="
+	echo "          Start building recovery(buildroot)"
+	echo "=========================================="
+
 
 	DST_DIR="$RK_OUTDIR/recovery"
 

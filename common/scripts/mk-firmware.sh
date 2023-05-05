@@ -120,7 +120,7 @@ build_firmware()
 
 usage_hook()
 {
-	echo "firmware           - generate and check firmwares"
+	echo "firmware           - pack and check firmwares"
 }
 
 clean_hook()
@@ -132,6 +132,10 @@ clean_hook()
 POST_BUILD_CMDS="firmware"
 post_build_hook()
 {
+	echo "=========================================="
+	echo "          Start packing firmwares"
+	echo "=========================================="
+
 	build_firmware
 }
 
