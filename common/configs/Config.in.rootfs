@@ -1,5 +1,10 @@
 #
 
+comment "Rootfs system depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
+
+if RK_KERNEL_CFG != ""
+
 menu "Rootfs"
 
 config RK_BUILDROOT_BASE_CFG
@@ -90,7 +95,7 @@ config RK_ROOTFS_SYSTEM
 	default "yocto" if RK_ROOTFS_SYSTEM_YOCTO
 
 choice
-	prompt "rootfs system"
+	prompt "default rootfs system"
 	help
 	  Default rootfs system.
 
@@ -124,23 +129,8 @@ config RK_ROOTFS_INITRD_COMPRESS
 
 endif
 
-config RK_ROOTFS_HOSTNAME
-	string "system hostname"
-	default "" if RK_ROOTFS_SYSTEM = "debian"
-	default "<default>"
-	help
-	  Hostname for rootfs.
-	  Set "" to use original hostname.
-	  Set "<default>" for "<chip>-<OS>".
-
-config RK_ROOTFS_LANG
-	string "set default LANG env"
-	default "en_US.utf8"
-	help
-	  Set "" to use default setting.
-
-config RK_ROOTFS_OVERLAY_DIRS
-	string "rootfs overlay dirs"
-	default ""
+source "Config.in.post-rootfs"
 
 endmenu # Rootfs
+
+endif

@@ -1,5 +1,50 @@
 #
 
+menu "Post rootfs installs"
+
+config RK_ROOTFS_HOSTNAME
+	string "system hostname"
+	default "" if RK_ROOTFS_SYSTEM = "debian"
+	default "<default>"
+	help
+	  Hostname for rootfs.
+	  Set "" to use original hostname.
+	  Set "<default>" for "<chip>-<OS>".
+
+config RK_ROOTFS_LANG
+	string "set default LANG env"
+	default "en_US.utf8"
+	help
+	  Set "" to use default setting.
+
+config RK_ROOTFS_OVERLAY_DIRS
+	string "rootfs overlay dirs"
+	default ""
+
+config RK_PREBUILT_TOOLS
+	bool "prebuilt tools"
+
+config RK_EXTRA_FONTS
+	bool "extra fonts"
+	default y if RK_ROOTFS_SYSTEM != "debian"
+
+config RK_RESIZEALL
+	bool "resize all partitions"
+	default y if RK_ROOTFS_SYSTEM != "buildroot"
+
+config RK_MOUNTALL
+	bool "mount all partitions"
+	depends on !RK_RESIZEALL
+
+config RK_UDEV_RULES
+	bool "Rockchip udev rules"
+	default y if RK_ROOTFS_SYSTEM != "buildroot"
+
+comment "USB gadget depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
+
+if RK_KERNEL_CFG != ""
+
 menu "USB gadget"
 
 config RK_USB
@@ -121,3 +166,26 @@ config RK_USB_HOOKS
 endif
 
 endmenu # USB
+
+endif
+
+comment "wifi/BT depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
+
+if RK_KERNEL_CFG != ""
+
+config RK_WIFIBT_CHIP
+	string "wifi/BT chip"
+	default "ALL_AP"
+	help
+	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
+	  Set "" for no WIFI/BT.
+
+config RK_WIFIBT_TTY
+	string "BT serial port"
+	depends on RK_WIFIBT_CHIP != ""
+	default "ttyS0"
+
+endif
+
+endmenu # Post-rootfs

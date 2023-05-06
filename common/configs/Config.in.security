@@ -1,13 +1,14 @@
 #
 
+comment "Security features depend on init ramfs/ramdisk rootfs"
+	depends on !RK_ROOTFS_INITRD
+
+if RK_ROOTFS_INITRD
+
 menu "Security"
 
 config RK_SECURITY
 	bool "security features"
-	depends on RK_ROOTFS_INITRD
-
-comment "Security features depend on init ramfs/ramdisk rootfs"
-	depends on !RK_ROOTFS_INITRD
 
 if RK_SECURITY
 
@@ -35,3 +36,5 @@ config RK_SECURITY_OTP_DEBUG
 endif
 
 endmenu # Security
+
+endif

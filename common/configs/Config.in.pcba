@@ -1,5 +1,10 @@
 #
 
+comment "PCBA depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
+
+if RK_KERNEL_CFG != ""
+
 menu "PCBA test (buildroot)"
 
 config RK_PCBA_BASE_CFG
@@ -12,9 +17,14 @@ config RK_PCBA_BASE_CFG
 	  Base name of buildroot defconfig for PCBA.
 	  Set "" for no PCBA.
 
+if RK_PCBA_BASE_CFG != ""
+
 config RK_PCBA_CFG
 	string
-	depends on RK_PCBA_BASE_CFG != ""
 	default "rockchip_${RK_PCBA_BASE_CFG}_pcba"
 
+endif
+
 endmenu # PCBA
+
+endif

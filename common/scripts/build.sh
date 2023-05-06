@@ -347,7 +347,7 @@ main()
 
 	TOOLCHAIN_ARCH=${RK_KERNEL_ARCH/arm64/aarch64}
 	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-	GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | tail -n 1)"
+	GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | head -n 1)"
 	if [ ! -x "$GCC" ]; then
 		echo "No prebuilt GCC toolchain!"
 		exit 1
@@ -357,13 +357,14 @@ main()
 	echo "Prebuilt toolchain (for kernel & loader):"
 	echo "$RK_TOOLCHAIN"
 
-	CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
-	export KMAKE="make -C kernel/ -j$(( $CPUS + 1 )) \
-		CROSS_COMPILE=$RK_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
-
 	export PYTHON3=/usr/bin/python3
 
-	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
+	if [ "$RK_KERNEL_CFG" ]; then
+		CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
+		export KMAKE="make -C kernel/ -j$(( $CPUS + 1 )) \
+			CROSS_COMPILE=$RK_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
+		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
+	fi
 
 	# Handle special commands
 	case "$OPTIONS" in

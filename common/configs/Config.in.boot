@@ -1,5 +1,7 @@
 #
 
+if RK_KERNEL_CFG != ""
+
 menu "Boot"
 
 config RK_BOOT_IMG
@@ -30,3 +32,5 @@ config RK_BOOT_FIT_ITS
 endif
 
 endmenu # Boot
+
+endif

@@ -1,5 +1,10 @@
 #
 
+comment "Recovery depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
+
+if RK_KERNEL_CFG != ""
+
 menu "Recovery (buildroot)"
 
 config RK_RECOVERY_BASE_CFG
@@ -27,3 +32,5 @@ endif
 endif
 
 endmenu # Recovery
+
+endif

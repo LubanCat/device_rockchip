@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-BOARD=$(echo $RK_KERNEL_DTS_NAME | tr '[:lower:]' '[:upper:]')
+BOARD=$(echo ${RK_KERNEL_DTS_NAME:-$(echo "$RK_DEFCONFIG" | \
+	sed -n "s/.*\($RK_CHIP.*\)_defconfig/\1/p")} | \
+	tr '[:lower:]' '[:upper:]')
 
 build_all()
 {

@@ -2,6 +2,18 @@
 
 menu "Kernel"
 
+config RK_KERNEL_CFG
+	string "kernel defconfig"
+	default "px30_linux_defconfig" if RK_CHIP = "px30" || \
+		RK_CHIP = "rk3326" || RK_CHIP_FAMILY = "rk3358"
+	default "rv1126_defconfig" if RK_CHIP_FAMILY = "rv1126_rv1109"
+	default "rk1806_linux_defconfig" if RK_CHIP = "rk1806"
+	default "rk1808_linux_defconfig" if RK_CHIP = "rk1808"
+	default "rk3308_linux_defconfig" if RK_CHIP_FAMILY = "rk3308"
+	default "rockchip_linux_defconfig"
+
+if RK_KERNEL_CFG != ""
+
 config RK_KERNEL_VERSION
 	string "kernel version, e.g. 5.10"
 
@@ -24,16 +36,6 @@ config RK_KERNEL_ARM32
 	bool "arm"
 
 endchoice
-
-config RK_KERNEL_CFG
-	string "kernel defconfig"
-	default "px30_linux_defconfig" if RK_CHIP = "px30" || \
-		RK_CHIP = "rk3326" || RK_CHIP_FAMILY = "rk3358"
-	default "rv1126_defconfig" if RK_CHIP_FAMILY = "rv1126_rv1109"
-	default "rk1806_linux_defconfig" if RK_CHIP = "rk1806"
-	default "rk1808_linux_defconfig" if RK_CHIP = "rk1808"
-	default "rk3308_linux_defconfig" if RK_CHIP_FAMILY = "rk3308"
-	default "rockchip_linux_defconfig"
 
 config RK_KERNEL_CFG_FRAGMENTS
 	string "kernel defconfig fragments"
@@ -68,5 +70,7 @@ config RK_KERNEL_IMG_NAME
 config RK_KERNEL_IMG
 	string
 	default "kernel/arch/$RK_KERNEL_ARCH/boot/$RK_KERNEL_IMG_NAME"
+
+endif
 
 endmenu # Kernel

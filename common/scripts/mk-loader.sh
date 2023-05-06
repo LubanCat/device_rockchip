@@ -5,18 +5,8 @@ MAKE_CMD="./make.sh CROSS_COMPILE=$RK_TOOLCHAIN"
 
 do_build_uefi()
 {
-	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
-		echo "UEFI not supported!"
-		return 0
-	fi
+	check_config RK_KERNEL_DTB || return 1
 
-	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
-	run_command cd uefi
-	run_command $MAKE_CMD $RK_UBOOT_CFG
-}
-
-build_uefi()
-{
 	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
 		echo "UEFI not supported!"
 		return 1
@@ -27,8 +17,14 @@ build_uefi()
 		return 1
 	fi
 
-	do_build_uefi $@
+	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
+	run_command cd uefi
+	run_command $MAKE_CMD $RK_UBOOT_CFG
+}
 
+build_uefi()
+{
+	do_build_uefi $@
 	finish_build
 }
 
