@@ -80,7 +80,12 @@ clean_hook()
 BUILD_CMDS="loader uboot uefi"
 build_hook()
 {
-	export RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
+	if [ "$RK_RTOS" ]; then
+		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_RTOS_ARCH" arm none)"
+	else
+		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
+	fi
+
 	echo "Toolchain for loader (u-boot):"
 	echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
 	echo

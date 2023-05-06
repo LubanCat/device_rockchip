@@ -63,7 +63,7 @@ rk_partition_parse()
 	PARAMETER="${1:-$CHIP_DIR/$RK_PARAMETER}"
 
 	if [ ! -r "$PARAMETER" ]; then
-		echo -e "\e[36m$PARAMETER not exists!\e[0m"
+		echo -e "\e[36m$PARAMETER not exists!\e[0m" >&2
 		exit 1
 	fi
 

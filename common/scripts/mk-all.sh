@@ -13,6 +13,14 @@ build_all()
 	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
+	if [ "$RK_RTOS" ]; then
+		"$SCRIPTS_DIR/mk-loader.sh"
+		"$SCRIPTS_DIR/mk-rtos.sh"
+		"$SCRIPTS_DIR/mk-firmware.sh"
+		finish_build
+		return 0
+	fi
+
 	if [ "$RK_SECURITY" ]; then
 		"$SCRIPTS_DIR/mk-security.sh" security_check
 	fi

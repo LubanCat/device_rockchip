@@ -2,6 +2,15 @@
 
 menu "Firmware"
 
+config RK_PARAMETER
+	string "parameter"
+	default "parameter-ab.txt" if RK_AB_UPDATE
+	default "parameter.txt"
+	help
+	  Name of parameter file under <CHIP_DIR>/.
+
+if !RK_RTOS
+
 choice
 	prompt "package-file"
 
@@ -27,13 +36,6 @@ config RK_PACKAGE_FILE
 
 endif
 
-config RK_PARAMETER
-	string "parameter"
-	default "parameter-ab.txt" if RK_AB_UPDATE
-	default "parameter.txt"
-	help
-	  Name of parameter file under <CHIP_DIR>/.
-
 comment "Misc image depends on recovery"
 	depends on RK_RECOVERY_CFG = ""
 
@@ -48,6 +50,8 @@ config RK_MISC_IMG
 	  Set "" for no misc.
 
 endif
+
+endif # !RK_RTOS
 
 if RK_KERNEL_CFG != ""
 

@@ -46,6 +46,7 @@ config RK_CHIP_ARM32
 
 source "Config.in.rootfs"
 source "Config.in.loader"
+source "Config.in.rtos"
 source "Config.in.kernel"
 source "Config.in.boot"
 source "Config.in.recovery"

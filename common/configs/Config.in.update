@@ -1,5 +1,10 @@
 #
 
+comment "RTOS doesn't use update image"
+	depends on RK_RTOS
+
+if !RK_RTOS
+
 menu "Update (OTA and A/B)"
 
 config RK_UPDATE
@@ -42,3 +47,5 @@ config RK_AB_UPDATE_SDCARD
 endif
 
 endmenu # Update
+
+endif
