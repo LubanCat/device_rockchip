@@ -2,7 +2,7 @@
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-[ -n "$RK_PREBUILT_TOOLS" ] || exit 0
+[ -n "$RK_ROOTFS_PREBUILT_TOOLS" ] || exit 0
 
 echo "Installing prebuilt tools..."
 

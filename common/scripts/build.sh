@@ -397,7 +397,8 @@ main()
 	echo "          Finial configs"
 	echo "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
-		grep -vE "^RK_CONFIG|BASE_CFG=|_LINK=|DIR=|_NAME=|_ENV=" | sort
+		grep -vE "=\"\"$|_DEFAULT=y" | \
+		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | sort
 	echo
 
 	# Pre-build stage (configs checking and applying, etc.)

@@ -2,7 +2,7 @@
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-[ -n "$RK_UDEV_RULES" ] || exit 0
+[ -n "$RK_ROOTFS_UDEV_RULES" ] || exit 0
 
 cd "$SDK_DIR"
 

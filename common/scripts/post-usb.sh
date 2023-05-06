@@ -70,7 +70,12 @@ usb_funcs()
 	} | xargs
 }
 
-[ -n "$RK_USB" ] || exit 0
+[ -z "$RK_USB_DISABLED" ] || exit 0
+
+if [ "$RK_USB_DEFAULT" -a "$POST_OS" = buildroot ]; then
+	echo -e "\e[33mKeep original USB gadget for buildroot by default\e[0m"
+	exit 0
+fi
 
 cd "$SDK_DIR"
 

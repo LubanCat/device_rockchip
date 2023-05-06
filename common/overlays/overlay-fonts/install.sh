@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-[ "$RK_EXTRA_FONTS" ] || exit 0
-
 TARGET_DIR="$1"
 [ "$TARGET_DIR" ] || exit 1
 

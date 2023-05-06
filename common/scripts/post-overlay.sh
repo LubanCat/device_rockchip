@@ -26,6 +26,16 @@ case "$POST_OS" in
 	recovery | pcba) exit 0 ;;
 esac
 
-for overlay in "$COMMON_DIR/overlays/overlay-fonts" $RK_ROOTFS_OVERLAY_DIRS; do
+for overlay in $RK_ROOTFS_OVERLAY_DIRS; do
 	install_overlay "$overlay"
 done
+
+# Handle extra fonts
+[ -z "$RK_EXTRA_FONTS_DISABLED" ] || exit 0
+
+if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" = debian ]; then
+	echo -e "\e[33mNo extra fonts for debian by default\e[0m"
+	exit 0
+fi
+
+install_overlay "$COMMON_DIR/overlays/overlay-fonts"

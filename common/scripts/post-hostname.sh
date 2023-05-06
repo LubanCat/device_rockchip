@@ -2,13 +2,14 @@
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-[ -n "$RK_ROOTFS_HOSTNAME" ] || exit 0
+[ -z "$RK_ROOTFS_KEEP_HOSTNAME" ] || exit 0
 
-if [ "$RK_ROOTFS_HOSTNAME" = "<default>" ]; then
-	HOSTNAME="$RK_CHIP-$POST_OS"
-else
-	HOSTNAME="$RK_ROOTFS_HOSTNAME"
+if [ -z "$RK_ROOTFS_CUSTOM_HOSTNAME" -a "$POST_OS" = debian ]; then
+	echo -e "\e[33mKeep original hostname for debian by default\e[0m"
+	exit 0
 fi
+
+HOSTNAME="${RK_ROOTFS_CUSTOM_HOSTNAME:-"$RK_CHIP-$POST_OS"}"
 
 echo "Setting hostname: $HOSTNAME"
 

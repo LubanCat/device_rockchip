@@ -2,56 +2,98 @@
 
 menu "Post rootfs installs"
 
-config RK_ROOTFS_HOSTNAME
-	string "system hostname"
-	default "" if RK_ROOTFS_SYSTEM = "debian"
-	default "<default>"
+config RK_ROOTFS_KEEP_HOSTNAME
+	bool "keep original hostname"
+
+if !RK_ROOTFS_KEEP_HOSTNAME
+
+config RK_ROOTFS_CUSTOM_HOSTNAME
+	string "custom hostname"
 	help
-	  Hostname for rootfs.
-	  Set "" to use original hostname.
-	  Set "<default>" for "<chip>-<OS>".
+	  Set "" to use "<chip>-<OS>" for non-debian OS.
 
-config RK_ROOTFS_LANG
-	string "set default LANG env"
-	default "en_US.utf8"
+endif
+
+config RK_ROOTFS_KEEP_LOCALE
+	bool "keep original locale"
+	default y
+
+if !RK_ROOTFS_KEEP_LOCALE
+
+config RK_ROOTFS_CUSTOM_LOCALE
+	string "custom locale"
 	help
-	  Set "" to use default setting.
+	  Set "" to use "en_US.UTF-8" for non-debian OS.
 
-config RK_ROOTFS_OVERLAY_DIRS
-	string "rootfs overlay dirs"
-	default ""
+endif
 
-config RK_PREBUILT_TOOLS
-	bool "prebuilt tools"
+choice
+	prompt "extra fonts"
+	default RK_EXTRA_FONTS_DEFAULT
 
-config RK_EXTRA_FONTS
-	bool "extra fonts"
-	default y if RK_ROOTFS_SYSTEM != "debian"
+config RK_EXTRA_FONTS_ENABLED
+	bool "install"
 
-config RK_RESIZEALL
-	bool "resize all partitions"
-	default y if RK_ROOTFS_SYSTEM != "buildroot"
+config RK_EXTRA_FONTS_DISABLED
+	bool "not install"
 
-config RK_MOUNTALL
+config RK_EXTRA_FONTS_DEFAULT
+	bool "auto"
+	help
+	  Install extra fonts for non-debian OS.
+
+endchoice
+
+choice
+	prompt "disk helpers"
+	default RK_DISK_HELPERS_DEFAULT
+
+config RK_DISK_HELPERS_MOUNTALL
 	bool "mount all partitions"
-	depends on !RK_RESIZEALL
 
-config RK_UDEV_RULES
+config RK_DISK_HELPERS_RESIZEALL
+	bool "resize all partitions"
+
+config RK_DISK_HELPERS_DISABLED
+	bool "not install"
+
+config RK_DISK_HELPERS_DEFAULT
+	bool "auto"
+	help
+	  Install mount-all for buildroot OS.
+	  Install resize-all for non-buildroot OS.
+
+endchoice
+
+config RK_ROOTFS_UDEV_RULES
 	bool "Rockchip udev rules"
-	default y if RK_ROOTFS_SYSTEM != "buildroot"
+	default y
 
 comment "USB gadget depends on linux kernel"
 	depends on RK_KERNEL_CFG = ""
 
 if RK_KERNEL_CFG != ""
 
+choice
+	prompt "USB gadget"
+	default RK_USB_DEFAULT
+
+config RK_USB_ENABLED
+	bool "install"
+
+config RK_USB_DISABLED
+	bool "not install"
+
+config RK_USB_DEFAULT
+	bool "auto"
+	help
+	  Install USB gadget on non-buildroot OS.
+
+endchoice
+
+if RK_USB_ENABLED || (RK_USB_DEFAULT && RK_ROOTFS_SYSTEM != "buildroot")
+
 menu "USB gadget"
-
-config RK_USB
-	bool "USB gadget"
-	default y if RK_ROOTFS_SYSTEM != "buildroot"
-
-if RK_USB
 
 config RK_USB_ADBD
 	bool "adbd"
@@ -163,9 +205,9 @@ config RK_USB_HOOKS
 	string "hook scripts"
 	default ""
 
-endif
-
 endmenu # USB
+
+endif
 
 endif
 
@@ -187,5 +229,11 @@ config RK_WIFIBT_TTY
 	default "ttyS0"
 
 endif
+
+config RK_ROOTFS_PREBUILT_TOOLS
+	bool "prebuilt tools"
+
+config RK_ROOTFS_OVERLAY_DIRS
+	string "rootfs overlay dirs"
 
 endmenu # Post-rootfs
