@@ -141,4 +141,4 @@ post_build_hook()
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
-build_firmware $@
+post_build_hook $@

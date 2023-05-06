@@ -22,9 +22,11 @@ build_all()
 
 	"$SCRIPTS_DIR/mk-security.sh" security_check
 
-	"$SCRIPTS_DIR/mk-kernel.sh"
-	"$SCRIPTS_DIR/mk-rootfs.sh"
-	"$SCRIPTS_DIR/mk-recovery.sh"
+	if [ "$RK_KERNEL_CFG" ]; then
+		"$SCRIPTS_DIR/mk-kernel.sh"
+		"$SCRIPTS_DIR/mk-rootfs.sh"
+		"$SCRIPTS_DIR/mk-recovery.sh"
+	fi
 
 	if [ "$RK_SECURITY" ];then
 		"$SCRIPTS_DIR/mk-loader.sh" loader
@@ -93,6 +95,10 @@ build_save()
 
 build_allsave()
 {
+	echo "=========================================="
+	echo "          Start building allsave"
+	echo "=========================================="
+
 	build_all
 	build_save $@
 

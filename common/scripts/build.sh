@@ -50,7 +50,7 @@ set -a
 
 finish_build()
 {
-	echo -e "\e[35mRunning ${@:-${FUNCNAME[1]}} succeeded.\e[0m"
+	echo -e "\e[35mRunning $(basename "$(realpath "${BASH_SOURCE[1]}")") - ${@:-${FUNCNAME[1]}} succeeded.\e[0m"
 	cd "$SDK_DIR"
 }
 
@@ -65,7 +65,7 @@ check_config()
 
 	[ -z "$missing" ] && return 0
 
-	echo "Skipping ${FUNCNAME[1]} for missing configs: $missing."
+	echo "Skipping $(basename "$(realpath "${BASH_SOURCE[1]}")") - ${FUNCNAME[1]} for missing configs: $missing."
 	return 1
 }
 
