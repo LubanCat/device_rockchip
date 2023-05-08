@@ -45,14 +45,17 @@ build_save()
 	echo "=========================================="
 
 	shift
-	SAVE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
+	SAVE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
 	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
-		ID=buildroot) SAVE_DIR="$SAVE_DIR/BUILDROOT" ;;
-		ID=debian) SAVE_DIR="$SAVE_DIR/DEBIAN" ;;
-		ID=poky) SAVE_DIR="$SAVE_DIR/YOCTO" ;;
+		ID=buildroot) SAVE_DIR="$SAVE_BASE_DIR/BUILDROOT" ;;
+		ID=debian) SAVE_DIR="$SAVE_BASE_DIR/DEBIAN" ;;
+		ID=poky) SAVE_DIR="$SAVE_BASE_DIR/YOCTO" ;;
+		*) SAVE_DIR="$SAVE_BASE_DIR" ;;
 	esac
-	[ -n "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
+	[ "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
 	mkdir -p "$SAVE_DIR"
+	rm -rf "$SAVE_BASE_DIR/latest"
+	ln -rsf "$SAVE_DIR" "$SAVE_BASE_DIR/latest"
 
 	echo "Saving into $SAVE_DIR..."
 
@@ -68,7 +71,8 @@ build_save()
 	fi
 
 	echo "Saving images..."
-	rsync -av --chmod=u=rwX,go=rX  "$RK_FIRMWARE_DIR" "$SAVE_DIR/IMAGES/"
+	mkdir -p "$SAVE_DIR/IMAGES"
+	cp "$RK_FIRMWARE_DIR"/* "$SAVE_DIR/IMAGES/"
 
 	echo "Saving build info..."
 	if yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
@@ -85,10 +89,10 @@ build_save()
 	fi
 
 	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"
-	ln -rsf "$RK_CONFIG" "$SAVE_DIR/build_info"
+	cp "$RK_CONFIG" "$SAVE_DIR/build_info"
 
 	echo "Saving build logs..."
-	cp -r "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
+	cp -rp "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
 
 	finish_build
 }
