@@ -31,4 +31,11 @@ config RK_MISC_IMG
 
 endif
 
+if RK_KERNEL_CFG != ""
+
+config RK_USE_FIT_IMG
+	bool "use FIT (Flattened Image Tree) image"
+
+endif
+
 endmenu # Firmware

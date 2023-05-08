@@ -18,10 +18,7 @@ config RK_BOOT_COMPRESSED
 		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "rk3308" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3358"
 
-config RK_BOOT_FIT_IMG
-	bool "use FIT (Flattened Image Tree) image"
-
-if RK_BOOT_FIT_IMG
+if RK_USE_FIT_IMG
 
 config RK_BOOT_FIT_ITS
 	string "its script for FIT boot image"
