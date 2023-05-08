@@ -2,34 +2,61 @@
 
 menu "Post rootfs installs"
 
-config RK_ROOTFS_KEEP_HOSTNAME
-	bool "keep original hostname"
+choice
+	prompt "hostname"
 
-if !RK_ROOTFS_KEEP_HOSTNAME
-
-config RK_ROOTFS_CUSTOM_HOSTNAME
-	string "custom hostname"
+config RK_ROOTFS_HOSTNAME_DEFAULT
+	bool "auto"
 	help
-	  Set "" to use "<chip>-<OS>" for non-debian OS.
+	  Use "<chip>-<OS>" for non-debian OS.
+
+config RK_ROOTFS_HOSTNAME_ORIGINAL
+	bool "original"
+
+config RK_ROOTFS_HOSTNAME_CUSTOM
+	bool "custom"
+
+endchoice # hostname
+
+if RK_ROOTFS_HOSTNAME_CUSTOM
+
+config RK_ROOTFS_HOSTNAME
+	string "custom hostname"
+	default RK_CHIP
 
 endif
 
-config RK_ROOTFS_KEEP_LOCALE
-	bool "keep original locale"
-	default y
+choice
+	prompt "locale"
 
-if !RK_ROOTFS_KEEP_LOCALE
-
-config RK_ROOTFS_CUSTOM_LOCALE
-	string "custom locale"
+config RK_ROOTFS_LOCALE_DEFAULT
+	bool "auto"
 	help
-	  Set "" to use "en_US.UTF-8" for non-debian OS.
+	  Use "en_US.UTF-8" for non-debian OS.
+
+config RK_ROOTFS_LOCALE_ORIGINAL
+	bool "original"
+
+config RK_ROOTFS_LOCALE_CUSTOM
+	bool "custom"
+
+endchoice # locale
+
+if RK_ROOTFS_LOCALE_CUSTOM
+
+config RK_ROOTFS_LOCALE
+	string "custom locale"
+	default "en_US.UTF-8"
 
 endif
 
 choice
 	prompt "extra fonts"
-	default RK_EXTRA_FONTS_DEFAULT
+
+config RK_EXTRA_FONTS_DEFAULT
+	bool "auto"
+	help
+	  Install extra fonts for non-debian OS.
 
 config RK_EXTRA_FONTS_ENABLED
 	bool "install"
@@ -37,16 +64,16 @@ config RK_EXTRA_FONTS_ENABLED
 config RK_EXTRA_FONTS_DISABLED
 	bool "not install"
 
-config RK_EXTRA_FONTS_DEFAULT
-	bool "auto"
-	help
-	  Install extra fonts for non-debian OS.
-
-endchoice
+endchoice # extra fonts
 
 choice
 	prompt "disk helpers"
-	default RK_DISK_HELPERS_DEFAULT
+
+config RK_DISK_HELPERS_DEFAULT
+	bool "auto"
+	help
+	  Install mount-all for buildroot OS.
+	  Install resize-all for non-buildroot OS.
 
 config RK_DISK_HELPERS_MOUNTALL
 	bool "mount all partitions"
@@ -57,13 +84,7 @@ config RK_DISK_HELPERS_RESIZEALL
 config RK_DISK_HELPERS_DISABLED
 	bool "not install"
 
-config RK_DISK_HELPERS_DEFAULT
-	bool "auto"
-	help
-	  Install mount-all for buildroot OS.
-	  Install resize-all for non-buildroot OS.
-
-endchoice
+endchoice # disk helpers
 
 config RK_ROOTFS_UDEV_RULES
 	bool "Rockchip udev rules"
@@ -76,7 +97,11 @@ if RK_KERNEL_CFG != ""
 
 choice
 	prompt "USB gadget"
-	default RK_USB_DEFAULT
+
+config RK_USB_DEFAULT
+	bool "auto"
+	help
+	  Install USB gadget on non-buildroot OS.
 
 config RK_USB_ENABLED
 	bool "install"
@@ -84,12 +109,7 @@ config RK_USB_ENABLED
 config RK_USB_DISABLED
 	bool "not install"
 
-config RK_USB_DEFAULT
-	bool "auto"
-	help
-	  Install USB gadget on non-buildroot OS.
-
-endchoice
+endchoice # USB gadget
 
 if RK_USB_ENABLED || (RK_USB_DEFAULT && RK_ROOTFS_SYSTEM != "buildroot")
 
@@ -205,7 +225,7 @@ config RK_USB_HOOKS
 	string "hook scripts"
 	default ""
 
-endmenu # USB
+endmenu # USB gadget
 
 endif
 

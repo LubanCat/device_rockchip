@@ -2,12 +2,30 @@
 
 menu "Firmware"
 
+choice
+	prompt "package-file"
+
+config RK_PACKAGE_FILE_DEFAULT
+	bool "auto"
+	help
+	  Auto-generated.
+
+config RK_PACKAGE_FILE_CUSTOM
+	bool "custom"
+	help
+	  Use custom package-file under <CHIP_DIR>/.
+
+endchoice # package-file
+
+if RK_PACKAGE_FILE_CUSTOM
+
 config RK_PACKAGE_FILE
-	string "package-file"
-	default "<default>"
+	string "custom package-file"
+	default "package-file"
 	help
 	  Name of custom package-file under <CHIP_DIR>/.
-	  Set "<default>" to use default version.
+
+endif
 
 config RK_PARAMETER
 	string "parameter"

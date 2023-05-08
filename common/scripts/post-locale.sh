@@ -4,14 +4,14 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 LOCALE="$TARGET_DIR/etc/default/locale"
 
-[ -z "$RK_ROOTFS_KEEP_LOCALE" ] || exit 0
+[ -z "$RK_ROOTFS_LOCALE_ORIGINAL" ] || exit 0
 
-if [ -z "$RK_ROOTFS_CUSTOM_LOCALE" -a "$POST_OS" = debian ]; then
+if [ "$RK_ROOTFS_LOCALE_DEFAULT" -a "$POST_OS" = debian ]; then
 	echo -e "\e[33mKeep original locale for debian by default\e[0m"
 	exit 0
 fi
 
-CUSTOM_LANG="${RK_ROOTFS_CUSTOM_LOCALE:-en_US.UTF-8}"
+CUSTOM_LANG="${RK_ROOTFS_LOCALE:-en_US.UTF-8}"
 
 echo "Setting LANG environment to $CUSTOM_LANG..."
 
