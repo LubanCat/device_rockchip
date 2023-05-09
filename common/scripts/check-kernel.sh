@@ -15,3 +15,14 @@ if [ -r "kernel/.config" ]; then
 		exit 1
 	fi
 fi
+
+if ! kernel/scripts/mkbootimg &>/dev/null; then
+	echo -e "\e[35mYour python3 is too old: $(python3 --version)\e[0m"
+	echo "Please update it:"
+	echo "wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz"
+	echo "tar xf Python-3.8.0.tgz"
+	echo "cd Python-3.8.0"
+	echo "./configure --enable-optimizations"
+	echo "make install -j8"
+	exit 1
+fi
