@@ -21,7 +21,5 @@ echo -e "\e[35mhttps://www.cve.org/CVERecord?id=CVE-2022-39253\e[0m"
 echo "Please downgrade it:"
 echo "git clone https://github.com/git/git.git --depth 1 -b v2.38.0"
 echo "cd git"
-echo "make git git-upload-pack -j8"
-echo "install -m 0755 git /usr/local/bin/"
-echo "install -m 0755 git-upload-pack /usr/local/bin/"
+echo "make prefix=/usr/local/ install -j8"
 exit 1
