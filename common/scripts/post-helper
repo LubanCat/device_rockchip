@@ -46,15 +46,31 @@ shift
 
 case "$TARGET_DIR/" in
 	*/debian/binary/*) POST_OS=debian ;;
-	*/yocto/build/*) POST_OS=yocto ;;
+	*/yocto/*/core-image-minimal/*) POST_OS=yocto ;;
 	*/buildroot/output/*_recovery/target/*) POST_OS=recovery ;;
 	*/buildroot/output/*_pcba/target/*) POST_OS=pcba ;;
 	*/buildroot/output/*/target/*) POST_OS=buildroot ;;
 	*) POST_OS=unknown ;;
 esac
-
 echo "$POST_OS_DISALLOWED" | grep -wvq $POST_OS || exit 0
 
-echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS)..."
+unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
+if [ -e "$TARGET_DIR/etc/init.d/rcS" ]; then
+	if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
+		POST_INIT_SYSV=1
+		POST_INIT=sysv
+	fi
+	if grep -wq BusyBox "$TARGET_DIR/etc/inittab"; then
+		POST_INIT_BUSYBOX=1
+		POST_INIT=${POST_INIT:+$POST_INIT busybox}
+	fi
+fi
+if [ -d "$TARGET_DIR/etc/systemd/system/" ]; then
+	mkdir -p "$TARGET_DIR/lib/systemd/system/"
+	POST_INIT_SYSTEMD=1
+	POST_INIT=${POST_INIT:+$POST_INIT systemd}
+fi
+
+echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS | $POST_INIT)..."
 
 cd "$TARGET_DIR"

@@ -101,7 +101,7 @@ install -m 0755 external/rkscript/usbdevice "$TARGET_DIR/usr/bin/"
 
 echo "Installing USB services..."
 
-if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
+if [ "$POST_INIT_SYSTEMD" ]; then
 	install -m 0755 external/rkscript/usbdevice.service \
 		"$TARGET_DIR/lib/systemd/system/"
 	mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
@@ -109,7 +109,7 @@ if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
 		"$TARGET_DIR/etc/systemd/system/sysinit.target.wants/"
 fi
 
-if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
+if [ "$POST_INIT_SYSV" ]; then
 	install -m 0755 external/rkscript/S50usbdevice \
 		"$TARGET_DIR/etc/init.d/usbdevice.sh"
 	for level in 5 4 3 2; do
@@ -124,7 +124,7 @@ if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
 	done
 fi
 
-if [ -f "$TARGET_DIR/etc/init.d/rcS" ]; then
+if [ "$POST_INIT_BUSYBOX" ]; then
 	install -m 0755 external/rkscript/S50usbdevice "$TARGET_DIR/etc/init.d/"
 fi
 

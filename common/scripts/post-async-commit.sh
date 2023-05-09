@@ -15,7 +15,7 @@ cd "$SDK_DIR"
 mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/async-commit "$TARGET_DIR/usr/bin/"
 
-if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
+if [ "$POST_INIT_SYSTEMD" ]; then
 	install -m 0755 external/rkscript/async-commit.service \
 		"$TARGET_DIR/lib/systemd/system/"
 	mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
@@ -23,14 +23,14 @@ if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
 		"$TARGET_DIR/etc/systemd/system/sysinit.target.wants/"
 fi
 
-if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
+if [ "$POST_INIT_SYSV" ]; then
 	install -m 0755 external/rkscript/S10async-commit.sh \
 		"$TARGET_DIR/etc/init.d/async-commit.sh"
 	ln -sf ../init.d/${TYPE}all.sh \
 		"$TARGET_DIR/etc/rcS.d/S10async-commit.sh"
 fi
 
-if [ -f "$TARGET_DIR/etc/init.d/rcS" ]; then
+if [ "$POST_INIT_BUSYBOX" ]; then
 	install -m 0755 external/rkscript/S10async-commit.sh \
 		"$TARGET_DIR/etc/init.d/"
 fi

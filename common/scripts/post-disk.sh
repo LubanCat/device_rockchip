@@ -28,14 +28,14 @@ echo "Installing $DISK_HELPER_TYPE service..."
 install -m 0755 external/rkscript/$DISK_HELPER_TYPE-helper \
 	"$TARGET_DIR/usr/bin/"
 
-if [ -f "$TARGET_DIR/etc/init.d/rcS" ]; then
+if [ "$POST_INIT_BUSYBOX" ]; then
 	install -m 0755 external/rkscript/S21${DISK_HELPER_TYPE}all.sh \
 		"$TARGET_DIR/etc/init.d/"
 fi
 
 [ "$DISK_HELPER_TYPE" = resize ] || exit 0
 
-if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
+if [ "$POST_INIT_SYSTEMD" ]; then
 	install -m 0755 external/rkscript/$DISK_HELPER_TYPE-all.service \
 		"$TARGET_DIR/lib/systemd/system/"
 	mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
@@ -43,7 +43,7 @@ if [ -d "$TARGET_DIR/lib/systemd/system/" ]; then
 		"$TARGET_DIR/etc/systemd/system/sysinit.target.wants/"
 fi
 
-if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
+if [ "$POST_INIT_SYSV" ]; then
 	install -m 0755 external/rkscript/S21${DISK_HELPER_TYPE}all.sh \
 		"$TARGET_DIR/etc/init.d/${DISK_HELPER_TYPE}all.sh"
 	ln -sf ../init.d/${DISK_HELPER_TYPE}all.sh \
