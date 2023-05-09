@@ -19,7 +19,7 @@ build_yocto()
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
 
-	"$SCRIPTS_DIR/check-buildroot.sh"
+	"$SCRIPTS_DIR/check-yocto.sh"
 
 	cd yocto
 	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
