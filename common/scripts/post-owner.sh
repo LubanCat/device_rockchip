@@ -22,4 +22,3 @@ if [ -d home ]; then
 		chown -h -R $ID:$ID home/$u                          
 	done                                                         
 fi                                                                   
-                                                                     

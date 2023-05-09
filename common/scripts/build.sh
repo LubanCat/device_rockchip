@@ -394,7 +394,7 @@ main()
 	# Log configs
 	echo
 	echo "=========================================="
-	echo "          Finial configs"
+	echo "          Final configs"
 	echo "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
 		grep -vE "=\"\"$|_DEFAULT=y" | \

@@ -49,4 +49,3 @@ if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
 	ln -sf ../init.d/${DISK_HELPER_TYPE}all.sh \
 		"$TARGET_DIR/etc/rcS.d/S04${DISK_HELPER_TYPE}all.sh"
 fi
-
