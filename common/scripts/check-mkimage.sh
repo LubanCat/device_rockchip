@@ -10,6 +10,5 @@ echo "Please update it:"
 echo "git clone https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git --depth 1 -b v1.47.0"
 echo "cd e2fsprogs"
 echo "./configure"
-echo "make"
-echo "install -m 0755 misc/mke2fs /usr/local/bin/mke2fs"
+echo "sudo make install -j8"
 exit 1

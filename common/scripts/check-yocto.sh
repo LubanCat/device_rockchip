@@ -1,25 +1,24 @@
 #!/bin/bash -e
 
+SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+
 if ! ping google.com -c 1 -W 1 &>/dev/null; then
 	echo -e "\e[35mYour network is not able to access google.com\e[0m"
 	echo -e "\e[35mPlease setup a VPN to bypass the GFW.\e[0m"
 	exit 1
 fi
 
-TEMP=$(mktemp -d)
-{
-	mkdir -p $TEMP/sensitive &&
-		echo "secret" >$TEMP/sensitive/file &&
-		git init $TEMP/malicious &&
-		rm -fr $TEMP/malicious/.git/objects &&
-		ln -s "$TEMP/sensitive" $TEMP/malicious/.git/objects &&
-		git clone --local $TEMP/malicious $TEMP/clone && exit 0
-} &>/dev/null
+if ! which zstd >/dev/null 2>&1; then
+	echo -e "\e[35mYour zstd is missing\e[0m"
+	echo "Please install it:"
+	echo "sudo apt-get install zstd"
+	exit 1
+fi
 
-echo -e "\e[35mYour git is too new for local clone: \e[0m"
-echo -e "\e[35mhttps://www.cve.org/CVERecord?id=CVE-2022-39253\e[0m"
-echo "Please downgrade it:"
-echo "git clone https://github.com/git/git.git --depth 1 -b v2.38.0"
-echo "cd git"
-echo "make prefix=/usr/local/ install -j8"
-exit 1
+PYTHON3_MIN_VER=$(python3 --version | cut -d'.' -f2)
+if [ "${PYTHON3_MIN_VER:-0}" -lt 6 ]; then
+	echo -e "\e[35mYour python3 is too old for yocto: $(python3 --version)\e[0m"
+	echo "Please update it:"
+	"$SCRIPTS_DIR/python3-install.sh"
+	exit 1
+fi

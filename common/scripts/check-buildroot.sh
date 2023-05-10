@@ -24,6 +24,5 @@ echo "cd make"
 echo "git am $BUILDROOT_DIR/package/make/*.patch"
 echo "autoreconf -f -i"
 echo "./configure"
-echo "make make -j8"
-echo "install -m 0755 make /usr/local/bin/make"
+echo "sudo make install -j8"
 exit 1

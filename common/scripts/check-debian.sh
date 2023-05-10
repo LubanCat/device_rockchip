@@ -7,6 +7,6 @@ if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	echo "git clone https://salsa.debian.org/live-team/live-build.git --depth 1 -b debian/1%20230131"
 	echo "cd live-build"
 	echo "rm -rf manpages/po/"
-	echo "sudo make install"
+	echo "sudo make install -j8"
 	exit 1
 fi
