@@ -40,3 +40,8 @@ For building perf:
 1/ Build dynamic version firstly
 2/ Enable BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC
 3/ Run: make linux-tools-reconfigure
+
+For building kmsgrab:
+1/ ./build.sh shell
+2/ source ./buildroot/output/$RK_BUILDROOT_CFG/host/environment-setup
+3/ $CC $RK_DATA_DIR/misc/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o $RK_DATA_DIR/tools/kmsgrab
