@@ -58,7 +58,7 @@ static void destroy_dumb(int fd, int handle) {
 }
 
 static int dump_fb(int fd, int fb_id) {
-	drmModeFB2Ptr fb = drmModeGetFB2(fd, fb_id);
+	drmModeFBPtr fb = drmModeGetFB(fd, fb_id);
 	size_t size;
 	void *ptr;
 	int dmafd;
@@ -68,23 +68,23 @@ static int dump_fb(int fd, int fb_id) {
 		return -1;
 	}
 
-	size = fb->pitches[0] * fb->height;
+	size = fb->pitch * fb->height;
 
-	dmafd = get_fb_dmafd(fd, fb->handles[0]);
+	dmafd = get_fb_dmafd(fd, fb->handle);
 
 	fprintf(stderr, "fb handle=%d size=%dx%d(%d)\n",
-		fb->handles[0], fb->width, fb->height, fb->pitches[0]);
+		fb->handle, fb->width, fb->height, fb->pitch);
 
-	ptr = map_fb(fd, fb->handles[0], size);
+	ptr = map_fb(fd, fb->handle, size);
 	if (ptr) {
 		fprintf(stderr, "first pixel: %x\n", *((int *)ptr));
 		write(1, ptr, size);
 		munmap(ptr, size);
-		destroy_dumb(fd, fb->handles[0]);
+		destroy_dumb(fd, fb->handle);
 	}
 
 	close(dmafd);
-	drmModeFreeFB2(fb);
+	drmModeFreeFB(fb);
 	return 0;
 }
 
