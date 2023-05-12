@@ -6,10 +6,16 @@ gen_package_file()
 {
 	TYPE="${1:-update}"
 
+	if [ ! -r parameter.txt ]; then
+		echo -e "\e[31mparameter.txt is missing\e[0m" >&2
+		exit 1
+	fi
+
 	echo -e "# NAME\tPATH"
 	echo -e "package-file\tpackage-file"
 	echo -e "parameter\tparameter.txt"
-	echo -e "bootloader\tMiniLoaderAll.bin"
+
+	[ ! -r MiniLoaderAll.bin ] || echo -e "bootloader\tMiniLoaderAll.bin"
 
 	PARTITIONS="$(grep "^CMDLINE:" parameter.txt | \
 		grep -oE "\([^:^\)]*" | tr -d '(')"
@@ -73,6 +79,11 @@ build_updateimg()
 	fi
 
 	echo "Packing $TARGET for $TYPE..."
+
+	if [ ! -r MiniLoaderAll.bin ]; then
+		echo -e "\e[31mMiniLoaderAll.bin is missing\e[0m"
+		exit 1
+	fi
 
 	TAG=RK$(hexdump -s 21 -n 4 -e '4 "%c"' MiniLoaderAll.bin | rev)
 	"$RK_PACK_TOOL_DIR/afptool" -pack ./ update.raw.img
