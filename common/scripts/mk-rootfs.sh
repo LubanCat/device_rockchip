@@ -75,6 +75,7 @@ build_debian()
 
 usage_hook()
 {
+	echo "buildroot-config   - modify buildroot defconfig"
 	echo "rootfs             - build default rootfs"
 	echo "buildroot          - build buildroot rootfs"
 	echo "yocto              - build yocto rootfs"
@@ -94,6 +95,24 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/yocto"
 	rm -rf "$RK_OUTDIR/debian"
 	rm -rf "$RK_OUTDIR/rootfs"
+}
+
+INIT_CMDS="buildroot-config"
+init_hook()
+{
+	source "$RK_CONFIG"
+	BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
+
+	[ "$BUILDROOT_BOARD" ] || return 0
+
+	TEMP_DIR=$(mktemp -d)
+	"$SDK_DIR/buildroot/build/parse_defconfig.sh" "$BUILDROOT_BOARD" \
+		"$TEMP_DIR/.config"
+	make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" menuconfig
+	"$SDK_DIR/buildroot/build/update_defconfig.sh" "$BUILDROOT_BOARD" \
+		"$TEMP_DIR"
+
+	finish_build build_buildroot_config $@
 }
 
 BUILD_CMDS="rootfs buildroot debian yocto"
@@ -171,4 +190,7 @@ build_hook()
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
-build_hook $@
+case "${1:-rootfs}" in
+	buildroot-config) init_hook $@ ;;
+	*) build_hook $@ ;;
+esac
