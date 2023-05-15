@@ -2,11 +2,29 @@
 
 menu "Update (OTA and A/B)"
 
+choice
+	prompt "package-file for OTA"
+
+config RK_OTA_PACKAGE_FILE_DEFAULT
+	bool "auto"
+	help
+	  Auto-generated.
+
+config RK_OTA_PACKAGE_FILE_CUSTOM
+	bool "custom"
+	help
+	  Use custom OTA package-file under <CHIP_DIR>/.
+
+endchoice # OTA package-file
+
+if RK_OTA_PACKAGE_FILE_CUSTOM
+
 config RK_OTA_PACKAGE_FILE
-	string "package-file for OTA"
+	string "custom package-file for OTA"
 	help
 	  Name of custom package-file for OTA under <CHIP_DIR>/.
-	  Set "" to use default version.
+
+endif
 
 config RK_AB_UPDATE
 	bool "A/B update"
