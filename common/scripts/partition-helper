@@ -6,12 +6,12 @@ if [ "$BASH_SOURCE" = "$0" -o -z "$RK_SESSION" ];then
 	exit 1
 fi
 
-rk_partition_num()
+rk_extra_part_num()
 {
 	echo ${RK_EXTRA_PARTITION_NUM:-0}
 }
 
-rk_partition_cfg()
+rk_extra_part_cfg()
 {
 	[ "$RK_EXTRA_PARTITION_STR" ] || return 0
 
@@ -21,82 +21,82 @@ rk_partition_cfg()
 	echo "${RK_EXTRA_PARTITION_ARRAY[$PART_IDX]}"
 }
 
-rk_partition_arg()
+rk_extra_part_arg()
 {
-	PART="$(rk_partition_cfg ${1:-1})"
+	PART="$(rk_extra_part_cfg ${1:-1})"
 	ARG="$(echo "$PART" | cut -d':' -f${2:-1})"
 	echo "${ARG:-$3}"
 }
 
-rk_partition_dev()
+rk_extra_part_dev()
 {
-	rk_partition_arg ${1:-1} 1
+	rk_extra_part_arg ${1:-1} 1
 }
 
-rk_partition_name()
+rk_extra_part_name()
 {
-	rk_partition_arg ${1:-1} 2
+	rk_extra_part_arg ${1:-1} 2
 }
 
-rk_partition_mountpoint()
+rk_extra_part_mountpoint()
 {
-	rk_partition_arg ${1:-1} 3 "/$(rk_partition_name $1)"
+	rk_extra_part_arg ${1:-1} 3 "/$(rk_extra_part_name $1)"
 }
 
-rk_partition_fstype()
+rk_extra_part_fstype()
 {
-	rk_partition_arg ${1:-1} 4 ext4
+	rk_extra_part_arg ${1:-1} 4 ext4
 }
 
-rk_partition_options()
+rk_extra_part_options()
 {
-	rk_partition_arg ${1:-1} 5 defaults
+	rk_extra_part_arg ${1:-1} 5 defaults
 }
 
-rk_partition_src()
+rk_extra_part_src()
 {
-	PART_NAME="$(rk_partition_name $1)"
-	for s in $(rk_partition_arg ${1:-1} 6 | tr ',' ' '); do
+	PART_NAME="$(rk_extra_part_name $1)"
+	for s in $(rk_extra_part_arg ${1:-1} 6 | tr ',' ' '); do
 		echo "${PART_NAME}_${s}"
 	done
 }
 
-rk_partition_size()
+rk_extra_part_size()
 {
-	rk_partition_arg ${1:-1} 7 auto
+	rk_extra_part_arg ${1:-1} 7 auto
 }
 
-rk_partition_fixed()
+rk_extra_part_fixed()
 {
-	rk_partition_arg ${1:-1} 8 | grep -wq fixed
+	rk_extra_part_arg ${1:-1} 8 | grep -wq fixed
 }
 
-rk_partition_builtin()
+rk_extra_part_builtin()
 {
-	rk_partition_arg ${1:-1} 8 | grep -wq builtin
+	rk_extra_part_arg ${1:-1} 8 | grep -wq builtin
 }
 
-rk_partition_outdir()
+rk_extra_part_outdir()
 {
-	echo "$RK_OUTDIR/$(rk_partition_name $1)"
+	echo "$RK_OUTDIR/$(rk_extra_part_name $1)"
 }
 
-rk_partition_fakeroot_script()
+rk_extra_part_fakeroot_script()
 {
-	echo "$(rk_partition_outdir $1).fs"
+	echo "$(rk_extra_part_outdir $1).fs"
 }
 
-rk_partition_img()
+rk_extra_part_img()
 {
-	echo "$RK_FIRMWARE_DIR/$(rk_partition_name $1).img"
+	echo "$RK_FIRMWARE_DIR/$(rk_extra_part_name $1).img"
 }
 
-rk_partition_prepare()
+rk_extra_part_prepare()
 {
-	PART_NAME="$(rk_partition_name $1)"
-	OUTDIR="$(rk_partition_outdir $1)"
-	FAKEROOT_SCRIPT="$(rk_partition_fakeroot_script $1)"
-	SRCS="$(rk_partition_src $1)"
+	PART_NAME="$(rk_extra_part_name $1)"
+	OUTDIR="$(rk_extra_part_outdir $1)"
+	FAKEROOT_SCRIPT="$(rk_extra_part_fakeroot_script $1)"
+	SRCS="$(rk_extra_part_src $1)"
 	shift
 	EXTRA_SRCS="$@"
 
@@ -111,8 +111,8 @@ rk_partition_prepare()
 
 	mkdir -p "$OUTDIR"
 
-	if rk_partition_fixed $idx; then
-		if ! rk_partition_builtin $idx; then
+	if rk_extra_part_fixed $idx; then
+		if ! rk_extra_part_builtin $idx; then
 			# Skip boot-time resizing by adding a tag file
 			touch "$OUTDIR/.fixed"
 		fi

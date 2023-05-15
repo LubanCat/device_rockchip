@@ -8,12 +8,12 @@ source "$PARTITION_HELPER"
 
 echo "Preparing extra partitions..."
 
-for idx in $(seq 1 "$(rk_partition_num)"); do
-	MOUNTPOINT="$(rk_partition_mountpoint $idx)"
-	OUTDIR="$(rk_partition_outdir $idx)"
+for idx in $(seq 1 "$(rk_extra_part_num)"); do
+	MOUNTPOINT="$(rk_extra_part_mountpoint $idx)"
+	OUTDIR="$(rk_extra_part_outdir $idx)"
 
-	rk_partition_prepare $idx "$TARGET_DIR/$MOUNTPOINT"
-	rk_partition_builtin $idx || continue
+	rk_extra_part_prepare $idx "$TARGET_DIR/$MOUNTPOINT"
+	rk_extra_part_builtin $idx || continue
 
 	echo "Merging $OUTDIR into $TARGET_DIR/$MOUNTPOINT (built-in)"
 	rsync -a "$OUTDIR/" "$TARGET_DIR/$MOUNTPOINT"

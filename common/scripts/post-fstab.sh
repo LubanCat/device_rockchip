@@ -104,17 +104,17 @@ if [ "$POST_OS" = recovery ]; then
 	fixup_device_part /dev/mmcblk1p1 /mnt/sdcard auto
 fi
 
-for idx in $(seq 1 "$(rk_partition_num)"); do
-	DEV="$(rk_partition_dev $idx)"
-	MOUNTPOINT="$(rk_partition_mountpoint $idx)"
-	FS_TYPE="$(rk_partition_fstype $idx)"
+for idx in $(seq 1 "$(rk_extra_part_num)"); do
+	DEV="$(rk_extra_part_dev $idx)"
+	MOUNTPOINT="$(rk_extra_part_mountpoint $idx)"
+	FS_TYPE="$(rk_extra_part_fstype $idx)"
 
 	# No fstab entry for built-in partitions
-	if rk_partition_builtin $idx; then
+	if rk_extra_part_builtin $idx; then
 		del_part "$DEV" "$MOUNTPOINT" "$FS_TYPE"
 		continue
 	fi
 
 	fixup_device_part "$DEV" "$MOUNTPOINT" "$FS_TYPE" \
-		"$(rk_partition_options $idx)"
+		"$(rk_extra_part_options $idx)"
 done

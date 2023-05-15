@@ -28,20 +28,20 @@ link_image() {
 pack_extra_partitions() {
 	source "$PARTITION_HELPER"
 
-	for idx in $(seq 1 "$(rk_partition_num)"); do
+	for idx in $(seq 1 "$(rk_extra_part_num)"); do
 		# Skip built-in partitions
-		if rk_partition_builtin $idx; then
+		if rk_extra_part_builtin $idx; then
 			continue
 		fi
 
-		PART_NAME="$(rk_partition_name $idx)"
-		FS_TYPE="$(rk_partition_fstype $idx)"
-		SIZE="$(rk_partition_size $idx)"
-		FAKEROOT_SCRIPT="$(rk_partition_fakeroot_script $idx)"
-		OUTDIR="$(rk_partition_outdir $idx)"
-		DST="$(rk_partition_img $idx)"
+		PART_NAME="$(rk_extra_part_name $idx)"
+		FS_TYPE="$(rk_extra_part_fstype $idx)"
+		SIZE="$(rk_extra_part_size $idx)"
+		FAKEROOT_SCRIPT="$(rk_extra_part_fakeroot_script $idx)"
+		OUTDIR="$(rk_extra_part_outdir $idx)"
+		DST="$(rk_extra_part_img $idx)"
 
-		if [ -z "$(rk_partition_src $idx)" ]; then
+		if [ -z "$(rk_extra_part_src $idx)" ]; then
 			echo "Ignoring $PART_NAME for no sources"
 			continue
 		fi
