@@ -57,12 +57,12 @@ do_build()
 usage_hook()
 {
 	for k in $KERNELS; do
-		echo "${k/-4\.4/-4.4 }        - build kernel ${k#kernel-}"
+		echo -e "$k[:cmds]               \tbuild kernel ${k#kernel-}"
 	done
 
-	echo "kernel             - build kernel"
-	echo "modules            - build kernel modules"
-	echo "linux-headers      - build linux-headers"
+	echo -e "kernel[:cmds]                    \tbuild kernel"
+	echo -e "modules[:cmds]                   \tbuild kernel modules"
+	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
 }
 
 clean_hook()

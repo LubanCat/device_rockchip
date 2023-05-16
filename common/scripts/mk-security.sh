@@ -146,12 +146,12 @@ security_is_enabled()
 
 usage_hook()
 {
-	echo "security_check     - check contidions for security features"
-	echo "createkeys         - build secureboot root keys"
-	echo "security_uboot     - build uboot with security paramter"
-	echo "security_boot      - build boot with security paramter"
-	echo "security_recovery  - build recovery with security paramter"
-	echo "security_rootfs    - build rootfs and some relevant images with security paramter (just for dm-v)"
+	echo -e "security_check                    \tcheck contidions for security features"
+	echo -e "createkeys                        \tbuild secureboot root keys"
+	echo -e "security_uboot                    \tbuild uboot with security"
+	echo -e "security_boot                     \tbuild boot with security"
+	echo -e "security_recovery                 \tbuild recovery with security"
+	echo -e "security_rootfs                   \tbuild rootfs and others with security(dm-v)"
 }
 
 PRE_BUILD_CMDS="security_check"

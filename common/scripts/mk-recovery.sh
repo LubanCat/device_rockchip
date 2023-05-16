@@ -2,7 +2,7 @@
 
 usage_hook()
 {
-	echo "recovery           - build recovery"
+	echo -e "recovery                          \tbuild recovery"
 }
 
 clean_hook()

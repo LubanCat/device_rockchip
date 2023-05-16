@@ -113,9 +113,9 @@ build_allsave()
 
 usage_hook()
 {
-	echo "all                - build all images"
-	echo "save               - save images and build info"
-	echo "allsave            - build all images and save images and build info"
+	echo -e "all                               \tbuild all images"
+	echo -e "save                              \tsave images and build info"
+	echo -e "allsave                           \tbuild all images and save them"
 }
 
 clean_hook()

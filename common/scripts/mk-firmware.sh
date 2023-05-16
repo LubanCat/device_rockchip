@@ -120,7 +120,7 @@ build_firmware()
 
 usage_hook()
 {
-	echo "firmware           - pack and check firmwares"
+	echo -e "firmware                          \tpack and check firmwares"
 }
 
 clean_hook()

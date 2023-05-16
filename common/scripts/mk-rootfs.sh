@@ -75,11 +75,11 @@ build_debian()
 
 usage_hook()
 {
-	echo "buildroot-config   - modify buildroot defconfig"
-	echo "rootfs             - build default rootfs"
-	echo "buildroot          - build buildroot rootfs"
-	echo "yocto              - build yocto rootfs"
-	echo "debian             - build debian rootfs"
+	echo -e "buildroot-config[:<config>]       \tmodify buildroot defconfig"
+	echo -e "rootfs[:<rootfs type>]            \tbuild default rootfs"
+	echo -e "buildroot                         \tbuild buildroot rootfs"
+	echo -e "yocto                             \tbuild yocto rootfs"
+	echo -e "debian                            \tbuild debian rootfs"
 }
 
 clean_hook()

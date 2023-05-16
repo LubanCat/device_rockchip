@@ -19,10 +19,10 @@ usage()
 	run_build_hooks usage
 
 	# Global options
-	echo "cleanall           - cleanup"
-	echo "post-rootfs        - trigger post-rootfs hook scripts"
-	echo "shell              - setup a shell for developing"
-	echo "help               - usage"
+	echo -e "cleanall                          \tcleanup"
+	echo -e "post-rootfs:<rootfs dir>          \ttrigger post-rootfs hook scripts"
+	echo -e "shell                             \tsetup a shell for developing"
+	echo -e "help                              \tusage"
 	echo ""
 	echo "Default option is 'allsave'."
 	exit 0

@@ -151,14 +151,14 @@ prepare_config()
 
 usage_hook()
 {
-	echo "chip               - choose chip"
-	echo "defconfig          - choose defconfig"
-	echo " *_defconfig       - switch to specified defconfig"
+	echo -e "chip[:<chip>[:<config>]]          \tchoose chip"
+	echo -e "defconfig[:<config>]              \tchoose defconfig"
+	echo -e " *_defconfig                      \tswitch to specified defconfig"
 	echo "    Available defconfigs:"
 	echo "$(ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/")"
-	echo " olddefconfig      - resolve any unresolved symbols in .config"
-	echo " savedefconfig     - save current config to defconfig"
-	echo " menuconfig        - interactive curses-based configurator"
+	echo -e " olddefconfig                     \tresolve any unresolved symbols in .config"
+	echo -e " savedefconfig                    \tsave current config to defconfig"
+	echo -e " menuconfig                       \tinteractive curses-based configurator"
 }
 
 clean_hook()

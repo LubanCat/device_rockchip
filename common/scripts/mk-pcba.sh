@@ -2,7 +2,7 @@
 
 usage_hook()
 {
-	echo "pcba               - build PCBA"
+	echo -e "pcba                              \tbuild PCBA"
 }
 
 clean_hook()

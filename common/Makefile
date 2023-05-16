@@ -56,7 +56,7 @@ CONFIG_CONFIG_IN = Config.in
 CONFIG = $(SDK_DIR)/buildroot/support/kconfig
 OUTDIR := $(SDK_DIR)/output
 BUILD_DIR := $(OUTDIR)/kconf
-SCRIPT_TARGETS := $(shell $(SDK_DIR)/build.sh core-usage | grep "^[a-z]" | cut -d' ' -f1)
+SCRIPT_TARGETS := $(shell $(SDK_DIR)/build.sh core-usage | grep -o "^[a-z0-9_.-]*")
 
 RK_CONFIG = $(OUTDIR)/.config
 

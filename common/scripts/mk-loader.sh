@@ -111,10 +111,10 @@ build_spl()
 
 usage_hook()
 {
-	echo "loader             - build loader (uboot|spl)"
-	echo "uboot              - build u-boot"
-	echo "spl                - build spl"
-	echo "uefi               - build uefi"
+	echo -e "loader[:cmds]                    \tbuild loader (uboot|spl)"
+	echo -e "uboot[:cmds]                     \tbuild u-boot"
+	echo -e "spl[:cmds]                       \tbuild spl"
+	echo -e "uefi[:cmds]                      \tbuild uefi"
 }
 
 clean_hook()

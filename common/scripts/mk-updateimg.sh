@@ -138,9 +138,9 @@ build_ab_updateimg()
 
 usage_hook()
 {
-	echo "updateimg          - build update image"
-	echo "otapackage         - build OTA update image"
-	echo "sdpackage          - build SDcard update image"
+	echo -e "updateimg                         \tbuild update image"
+	echo -e "otapackage                        \tbuild OTA update image"
+	echo -e "sdpackage                         \tbuild SDcard update image"
 }
 
 clean_hook()

@@ -421,7 +421,7 @@ build_wifibt()
 
 usage_hook()
 {
-	echo "wifibt             - build Wifi/BT"
+	echo -e "wifibt[:<dst dir>[:<chip>[:<tty>]]] \tbuild Wifi/BT"
 }
 
 BUILD_CMDS="wifibt"
