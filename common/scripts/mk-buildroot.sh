@@ -9,7 +9,7 @@ BUILDROOT_DIR="$SDK_DIR/buildroot"
 
 "$SCRIPTS_DIR/check-buildroot.sh"
 
-export BUILDROOT_OUTPUT_DIR="$BUILDROOT_DIR/output/$BUILDROOT_BOARD"
+BUILDROOT_OUTPUT_DIR="$BUILDROOT_DIR/output/$BUILDROOT_BOARD"
 BUILDROOT_CONFIG="$BUILDROOT_OUTPUT_DIR/.config"
 BUILDROOT_CONFIG_ORIG="$BUILDROOT_OUTPUT_DIR/.config.orig"
 
@@ -18,7 +18,7 @@ if [ -r "$BUILDROOT_CONFIG" ] && [ ! -r "$BUILDROOT_CONFIG_ORIG" ]; then
 	cp "$BUILDROOT_CONFIG" "$BUILDROOT_CONFIG_ORIG"
 fi
 
-make -C "$BUILDROOT_DIR" ${BUILDROOT_BOARD}_defconfig
+make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" ${BUILDROOT_BOARD}_defconfig
 
 # Warn about config changes
 if [ -r "$BUILDROOT_CONFIG_ORIG" ]; then
@@ -46,7 +46,7 @@ ln -rsf "$LOG_FILE" br.log
 # Buildroot doesn't like it
 unset LD_LIBRARY_PATH
 
-if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR"; then
+if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR"; then
 	echo "Failed to build $BUILDROOT_BOARD:"
 	tail -n 100 "$LOG_FILE"
 	echo -e "\e[35m"
