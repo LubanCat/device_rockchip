@@ -126,25 +126,25 @@ prepare_config()
 
 	if [ "$RK_CONFIG" -ot "$RK_DEFCONFIG_LINK" ]; then
 		echo "WARN: $RK_CONFIG is out-dated"
-		$MAKE $DEFCONFIG
+		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi
 
 	CONFIG_DIR="$(dirname "$RK_CONFIG_IN")"
 	if find "$CONFIG_DIR" -cnewer "$RK_CONFIG" | grep -q ""; then
 		echo "WARN: $CONFIG_DIR is updated"
-		$MAKE $DEFCONFIG
+		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi
 
 	CFG="RK_DEFCONFIG=\"$(realpath "$RK_DEFCONFIG_LINK")\""
 	if ! grep -wq "$CFG" "$RK_CONFIG"; then
 		echo "WARN: $RK_CONFIG is invalid"
-		$MAKE $DEFCONFIG
+		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi
 
-	$MAKE olddefconfig
+	$MAKE olddefconfig &>/dev/null
 }
 
 # Hooks

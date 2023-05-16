@@ -175,6 +175,7 @@ run_build_hooks()
 	LOG_FILE="$(start_log "$1")"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
+	unset HOOK_HANDLED
 	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
 	case "${PIPESTATUS[0]}" in
 		0) ;;
@@ -188,6 +189,7 @@ run_post_hooks()
 	LOG_FILE="$(start_log post-rootfs)"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
+	unset HOOK_HANDLED
 	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
 	case "${PIPESTATUS[0]}" in
 		0) ;;
@@ -270,6 +272,7 @@ main()
 		exit 0
 	fi
 
+	# Options checking
 	for opt in $OPTIONS; do
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
@@ -292,7 +295,7 @@ main()
 				;;
 			*)
 				# Make sure that all options are handled
-				run_build_hooks option-check $opt
+				run_build_hooks option-check all $opt
 				[ -z "$HOOK_HANDLED" ] || continue
 
 				echo "ERROR: Unhandled option: $opt"
@@ -305,6 +308,16 @@ main()
 	# Init stage (preparing SDK configs, etc.)
 	run_build_hooks init $OPTIONS
 	rm -f "$RK_OUTDIR/.tmpconfig*"
+
+	case "$OPTIONS" in
+		shell | cleanall | post-rootfs) ;;
+		*)
+			# No need to go further
+			run_build_hooks option-check \
+				"pre-build+build+post-build" "$OPTIONS"
+			[ "$HOOK_HANDLED" ] || return 0
+			;;
+	esac
 
 	# Force exporting config environments
 	set -a
@@ -404,8 +417,16 @@ main()
 	# Pre-build stage (configs checking and applying, etc.)
 	run_build_hooks pre-build $OPTIONS
 
+	# No need to go further
+	run_build_hooks option-check "build+post-build" "$OPTIONS"
+	[ "$HOOK_HANDLED" ] || return 0
+
 	# Build stage (building, etc.)
 	run_build_hooks build $OPTIONS
+
+	# No need to go further
+	run_build_hooks option-check post-build "$OPTIONS"
+	[ "$HOOK_HANDLED" ] || return 0
 
 	# Post-build stage (firmware packing, etc.)
 	run_build_hooks post-build $OPTIONS

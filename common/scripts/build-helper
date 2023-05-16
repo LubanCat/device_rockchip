@@ -112,6 +112,20 @@ try_hook()
 	[ -z "$HOOK_HANDLED" ] || exit $HOOK_RET_HANDLED
 }
 
+option_check()
+{
+	CMDS="$1"
+	shift
+
+	for opt in $@; do
+		for cmd in $CMDS; do
+			[ "$cmd" != default ] || continue
+			echo "${opt%%:*}" | grep -wq "$cmd" || continue
+			exit $HOOK_RET_HANDLED
+		done
+	done
+}
+
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
@@ -132,14 +146,18 @@ case "$1" in
 		exit 0
 		;;
 	option-check)
+		STAGES="${2//+/ }"
 		shift
-		CMDS="$INIT_CMDS $PRE_BUILD_CMDS $BUILD_CMDS $POST_BUILD_CMDS"
-		for opt in $@; do
-			for cmd in $CMDS; do
-				[ "$cmd" != default ] || continue
-				echo "${opt%%:*}" | grep -wq "$cmd" || continue
-				exit $HOOK_RET_HANDLED
-			done
+		shift
+		for s in $STAGES; do
+			case "$s" in
+				init) option_check "$INIT_CMDS" $@ ;;
+				pre-build) option_check "$PRE_BUILD_CMDS" $@ ;;
+				build) option_check "$BUILD_CMDS" $@ ;;
+				post-build) option_check "$POST_BUILD_CMDS" $@ ;;
+				all) option_check "$INIT_CMDS $PRE_BUILD_CMDS
+					$BUILD_CMDS $POST_BUILD_CMDS" $@ ;;
+			esac
 		done
 		exit 0
 		;;
