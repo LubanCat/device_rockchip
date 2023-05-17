@@ -62,15 +62,15 @@ if [ -e "$TARGET_DIR/etc/init.d/rcS" ]; then
 	fi
 	if grep -wq BusyBox "$TARGET_DIR/etc/inittab"; then
 		POST_INIT_BUSYBOX=1
-		POST_INIT=${POST_INIT:+$POST_INIT busybox}
+		POST_INIT="${POST_INIT:+$POST_INIT }busybox"
 	fi
 fi
 if [ -d "$TARGET_DIR/etc/systemd/system/" ]; then
 	mkdir -p "$TARGET_DIR/lib/systemd/system/"
 	POST_INIT_SYSTEMD=1
-	POST_INIT=${POST_INIT:+$POST_INIT systemd}
+	POST_INIT="${POST_INIT:+$POST_INIT }systemd"
 fi
 
-echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS | $POST_INIT)..."
+echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS init=${POST_INIT:-none})..."
 
 cd "$TARGET_DIR"

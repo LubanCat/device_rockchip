@@ -37,14 +37,6 @@ run_command()
 	fi
 }
 
-parse_args()
-{
-	CMD=$1
-	shift
-
-	echo $@ | xargs -n 1 | grep -E "^$CMD(:|$)" | xargs -d ':'
-}
-
 try_func()
 {
 	type $1 >/dev/null 2>/dev/null || return 0
@@ -58,11 +50,11 @@ try_func()
 	esac
 
 	if [ "$DRY_RUN" ]; then
-		FUNC=$1_dry
-		type $FUNC >/dev/null 2>/dev/null || return 0
+		DRY_FUNC=$1_dry
+		type $DRY_FUNC >/dev/null 2>/dev/null || return 0
 
 		shift
-		$FUNC $@
+		$DRY_FUNC $@
 		return 0
 	fi
 
@@ -75,12 +67,6 @@ try_func()
 		err_handler $FUNC_RET "${FUNCNAME[0]} $*" "$@"
 		exit $FUNC_RET
 	fi
-
-	case "$2" in
-		# Unconditional hook
-		default) ;;
-		*) HOOK_HANDLED=1 ;;
-	esac
 }
 
 try_hook()
@@ -89,39 +75,25 @@ try_hook()
 	shift
 	CMDS="$1"
 	shift
-	OPTS="default $@"
+
+	if echo "$CMDS" | grep -qE "^default( |$)"; then
+		OPTS="default $@"
+	else
+		OPTS="$@ default"
+	fi
 
 	type $FUNC >/dev/null 2>/dev/null || return 0
 
-	unset HOOK_HANDLED
-
-	IS_DRY_RUN=$(echo $OPTS | xargs -d ':' -n 1 | grep "^cmds$" || true)
-	OPTS=$(echo $OPTS | xargs -d ':' -n 1 | grep -v "^cmds$" | paste -sd':')
-
-	for cmd in $CMDS; do
-		ARGS=$(parse_args $cmd $OPTS)
-		[ "$ARGS" ] || continue
-
-		if [ "$IS_DRY_RUN" ]; then
-			DRY_RUN=1 try_func $FUNC $ARGS
-		else
-			try_func $FUNC $ARGS
-		fi
-	done
-
-	[ -z "$HOOK_HANDLED" ] || exit $HOOK_RET_HANDLED
-}
-
-option_check()
-{
-	CMDS="$1"
-	shift
-
-	for opt in $@; do
+	for opt in $OPTS; do
+		IS_DRY_RUN=$(echo $opt | grep -E ":cmds(:|$)" || true)
 		for cmd in $CMDS; do
-			[ "$cmd" != default ] || continue
-			echo "${opt%%:*}" | grep -wq "$cmd" || continue
-			exit $HOOK_RET_HANDLED
+			# NOTE: There might be patterns in commands
+			ARGS="$(echo $opt | grep -E "^$cmd(:|$)" | \
+				xargs -d ':' || true)"
+			[ "$ARGS" ] || continue
+
+			DRY_RUN=${DRY_RUN:-${IS_DRY_RUN:+1}} \
+				try_func $FUNC $ARGS
 		done
 	done
 }
@@ -129,9 +101,9 @@ option_check()
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
-	try_func usage_hook
-	echo "clean              - cleanup"
-	echo "help               - usage"
+	try_func usage_hook | sed 's/\([\[<]\):/ \1/g'
+	echo -e "clean                            \tcleanup"
+	echo -e "help                             \tusage"
 	exit 1
 }
 
@@ -145,20 +117,21 @@ case "$1" in
 		try_func usage_hook
 		exit 0
 		;;
-	option-check)
-		STAGES="${2//+/ }"
+	support-cmds)
 		shift
-		shift
-		for s in $STAGES; do
-			case "$s" in
-				init) option_check "$INIT_CMDS" $@ ;;
-				pre-build) option_check "$PRE_BUILD_CMDS" $@ ;;
-				build) option_check "$BUILD_CMDS" $@ ;;
-				post-build) option_check "$POST_BUILD_CMDS" $@ ;;
-				all) option_check "$INIT_CMDS $PRE_BUILD_CMDS
-					$BUILD_CMDS $POST_BUILD_CMDS" $@ ;;
-			esac
-		done
+		{
+			ALL_CMDS="$INIT_CMDS $PRE_BUILD_CMDS $BUILD_CMDS \
+				$POST_BUILD_CMDS"
+			for stage in ${@:-all}; do
+				case $stage in
+					init) echo "$INIT_CMDS" ;;
+					pre-build) echo "$PRE_BUILD_CMDS" ;;
+					build) echo "$BUILD_CMDS" ;;
+					post-build) echo "$POST_BUILD_CMDS" ;;
+					all) echo "$ALL_CMDS" ;;
+				esac
+			done
+		} | xargs -n 1 | grep -vw default | xargs || true
 		exit 0
 		;;
 	clean)
@@ -190,4 +163,8 @@ esac
 if [ "$DRY_RUN" ]; then
 	echo "Environment 'DRY_RUN' ignored!"
 	unset DRY_RUN
+fi
+
+if [ "$2" = cmds ]; then
+	export DRY_RUN=1
 fi

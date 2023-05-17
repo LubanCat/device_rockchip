@@ -20,7 +20,7 @@ usage()
 
 	# Global options
 	echo -e "cleanall                          \tcleanup"
-	echo -e "post-rootfs:<rootfs dir>          \ttrigger post-rootfs hook scripts"
+	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
 	echo -e "shell                             \tsetup a shell for developing"
 	echo -e "help                              \tusage"
 	echo ""
@@ -141,32 +141,23 @@ run_hooks()
 	DIR="$1"
 	shift
 
-	unset HOOK_HANDLED
 	for dir in "$CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
 		[ -d "$dir" ] || continue
 
 		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
 			"$hook" $@ && continue
 			HOOK_RET=$?
-
-			if [ $HOOK_RET -eq $HOOK_RET_HANDLED ]; then
-				HOOK_HANDLED=1
-				continue
-			fi
-
 			err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$hook $*"
 			exit $HOOK_RET
 		done
 	done
-
-	[ -z "$HOOK_HANDLED" ] || return $HOOK_RET_HANDLED
 }
 
 run_build_hooks()
 {
 	# Don't log these hooks
 	case "$1" in
-		init | usage | option-check)
+		init | usage | support-cmds)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
 			return 0
 			;;
@@ -175,13 +166,12 @@ run_build_hooks()
 	LOG_FILE="$(start_log "$1")"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	unset HOOK_HANDLED
 	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
-	case "${PIPESTATUS[0]}" in
-		0) ;;
-		$HOOK_RET_HANDLED) HOOK_HANDLED=1 ;;
-		*) exit 1 ;;
-	esac
+	HOOK_RET=${PIPESTATUS[0]}
+	if [ $HOOK_RET -ne 0 ]; then
+		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
+		exit $HOOK_RET
+	fi
 }
 
 run_post_hooks()
@@ -189,13 +179,28 @@ run_post_hooks()
 	LOG_FILE="$(start_log post-rootfs)"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	unset HOOK_HANDLED
 	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
-	case "${PIPESTATUS[0]}" in
-		0) ;;
-		$HOOK_RET_HANDLED) HOOK_HANDLED=1 ;;
-		*) exit 1 ;;
-	esac
+	HOOK_RET=${PIPESTATUS[0]}
+	if [ $HOOK_RET -ne 0 ]; then
+		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
+		exit $HOOK_RET
+	fi
+}
+
+option_check()
+{
+	CMDS="$1"
+	shift
+
+	for opt in $@; do
+		for cmd in $CMDS; do
+			# NOTE: There might be patterns in commands
+			echo "${opt%%:*}" | grep -wq "$cmd" || continue
+			return 0
+		done
+	done
+
+	return 1
 }
 
 main()
@@ -228,7 +233,6 @@ main()
 	export BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
 	export RK_POST_HOOK_DIR="$COMMON_DIR/post-hooks"
 	export POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
-	export HOOK_RET_HANDLED=254
 
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
@@ -267,12 +271,14 @@ main()
 
 	OPTIONS="${@:-allsave}"
 
+	# For Makefile parsing script targets
 	if [ "$OPTIONS" = "core-usage" ]; then
 		run_build_hooks usage
 		exit 0
 	fi
 
 	# Options checking
+	CMDS="$(run_build_hooks support-cmds all | xargs)"
 	for opt in $OPTIONS; do
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
@@ -295,8 +301,9 @@ main()
 				;;
 			*)
 				# Make sure that all options are handled
-				run_build_hooks option-check all $opt
-				[ -z "$HOOK_HANDLED" ] || continue
+				if option_check "$CMDS" $opt; then
+					continue
+				fi
 
 				echo "ERROR: Unhandled option: $opt"
 				;;
@@ -309,15 +316,10 @@ main()
 	run_build_hooks init $OPTIONS
 	rm -f "$RK_OUTDIR/.tmpconfig*"
 
-	case "$OPTIONS" in
-		shell | cleanall | post-rootfs) ;;
-		*)
-			# No need to go further
-			run_build_hooks option-check \
-				"pre-build+build+post-build" "$OPTIONS"
-			[ "$HOOK_HANDLED" ] || return 0
-			;;
-	esac
+	# No need to go further
+	CMDS="$(run_build_hooks support-cmds pre-build build \
+		post-build | xargs) shell cleanall post-rootfs"
+	option_check "$CMDS" $OPTIONS || return 0
 
 	# Force exporting config environments
 	set -a
@@ -418,15 +420,15 @@ main()
 	run_build_hooks pre-build $OPTIONS
 
 	# No need to go further
-	run_build_hooks option-check "build+post-build" "$OPTIONS"
-	[ "$HOOK_HANDLED" ] || return 0
+	CMDS="$(run_build_hooks support-cmds build post-build | xargs)"
+	option_check "$CMDS" $OPTIONS || return 0
 
 	# Build stage (building, etc.)
 	run_build_hooks build $OPTIONS
 
 	# No need to go further
-	run_build_hooks option-check post-build "$OPTIONS"
-	[ "$HOOK_HANDLED" ] || return 0
+	CMDS="$(run_build_hooks support-cmds post-build | xargs)"
+	option_check "$CMDS" $OPTIONS || return 0
 
 	# Post-build stage (firmware packing, etc.)
 	run_build_hooks post-build $OPTIONS

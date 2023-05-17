@@ -70,7 +70,7 @@ clean_hook()
 	make -C kernel distclean
 }
 
-INIT_CMDS="default $KERNELS"
+INIT_CMDS="$KERNELS default"
 init_hook()
 {
 	if echo "$1" | grep -q "^kernel-"; then
@@ -84,6 +84,15 @@ BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+
+	if echo "$1" | grep -q "^kernel-"; then
+		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
+			echo -ne "\e[35m"
+			echo "Kernel version overrided: " \
+				"$RK_KERNEL_VERSION -> ${1#kernel-}"
+			echo -ne "\e[0m"
+		fi
+	fi
 
 	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
