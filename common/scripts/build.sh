@@ -351,6 +351,9 @@ main()
 		fi
 	fi
 
+	source "$PARTITION_HELPER"
+	rk_partition_init
+
 	set +a
 
 	# RV1126 uses custom toolchain
@@ -387,7 +390,7 @@ main()
 			echo -e "\e[35mDoing this is dangerous and for developing only.\e[0m"
 			# No error handling in develop shell.
 			set +e; trap ERR
-			/bin/bash --init-file "$PARTITION_HELPER"
+			/bin/bash
 			echo -e "\e[35mExit from $BASH_SOURCE shell.\e[0m"
 			exit 0 ;;
 		cleanall)

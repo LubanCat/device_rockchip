@@ -74,8 +74,6 @@ fixup_device_part()
 	fixup_part "$DEV" "$MOUNTPOINT" "$FS_TYPE" "$MOUNT_OPTS" 2
 }
 
-source "$PARTITION_HELPER"
-
 echo "Fixing up /etc/fstab..."
 
 mkdir -p "$TARGET_DIR/etc"

@@ -9,13 +9,10 @@ fatal() {
 	exit 1
 }
 
-# Parse size limit from parameter.txt, 0 means unlimited or not exists.
+# Get partition size limit, 0 means unlimited or not exists.
 partition_size_kb() {
-	PART_NAME=$1
-	PART_STR=$(cat "$RK_FIRMWARE_DIR/parameter.txt" | grep -v "^#" | \
-		grep -oE "[^,^:^\(]*\($PART_NAME[\)_:][^\)]*\)" || true)
-	PART_SIZE=$(echo "$PART_STR" | grep -oE "^[^@^-]*" | uniq || true)
-	echo $(( ${PART_SIZE:-0} / 2 ))
+	PART_SIZE="$(rk_partition_size "$1")"
+	echo $(( ${PART_SIZE:-0} / 2))
 }
 
 link_image() {
@@ -26,8 +23,6 @@ link_image() {
 }
 
 pack_extra_partitions() {
-	source "$PARTITION_HELPER"
-
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do
 		# Skip built-in partitions
 		if rk_extra_part_builtin $idx; then
@@ -101,7 +96,7 @@ build_firmware()
 
 		echo "$NAME" | grep -q ".img$" || continue
 
-		# Assert the image's size smaller than parameter.txt's limit
+		# Assert the image's size smaller then the limit
 		PART_SIZE_KB="$(partition_size_kb "${NAME%.img}")"
 		[ ! "$PART_SIZE_KB" -eq 0 ] || continue
 

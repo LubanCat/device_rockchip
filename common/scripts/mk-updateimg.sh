@@ -17,9 +17,7 @@ gen_package_file()
 
 	[ ! -r MiniLoaderAll.bin ] || echo -e "bootloader\tMiniLoaderAll.bin"
 
-	PARTITIONS="$(grep "^CMDLINE:" parameter.txt | \
-		grep -oE "\([^:^\)]*" | tr -d '(')"
-	for part in $PARTITIONS; do
+	for part in $(rk_partition_parse_names parameter.txt); do
 		if echo $part | grep -q "_b$"; then
 			# Not packing *_b partition for ota|sdcard
 			case $TYPE in
@@ -74,8 +72,9 @@ build_updateimg()
 		fi
 		ln -rsf "$PKG_FILE" package-file
 	else
-		echo "Generating package-file for $TYPE"
+		echo "Generating package-file for $TYPE :"
 		gen_package_file $TYPE > package-file
+		cat package-file
 	fi
 
 	echo "Packing $TARGET for $TYPE..."

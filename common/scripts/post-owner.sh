@@ -14,11 +14,11 @@ if [ "$ID" -ne 0 ]; then
 	find . -user $ID -exec chown -h -R 0:0 {} \;
 fi
 
-if [ -d home ]; then                                                 
-	for u in $(ls home/); do                                     
-		ID=$(grep "^$u:" etc/passwd | cut -d':' -f3 || true) 
-		[ "$ID" ] || continue                                
-		echo "Fixing up /home/$u for uid=$ID($u)..."         
-		chown -h -R $ID:$ID home/$u                          
-	done                                                         
-fi                                                                   
+if [ -d home ]; then
+	for u in $(ls home/); do
+		ID=$(grep "^$u:" etc/passwd | cut -d':' -f3 || true)
+		[ "$ID" ] || continue
+		echo "Fixing up /home/$u for uid=$ID($u)..."
+		chown -h -R $ID:$ID home/$u
+	done
+fi
