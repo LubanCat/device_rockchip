@@ -43,7 +43,7 @@ try_func()
 
 	# Don't log these hooks
 	case "${1%_hook}" in
-		init | usage)
+		init)
 			$@
 			return 0
 			;;
@@ -98,10 +98,15 @@ try_hook()
 	done
 }
 
+core_usage()
+{
+	usage_hook | sed -e 's/\[:/ \[/g' -e 's/:/ /g'
+}
+
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
-	try_func usage_hook | sed 's/\([\[<]\):/ \1/g'
+	core_usage
 	echo -e "clean                            \tcleanup"
 	echo -e "help                             \tusage"
 	exit 1
@@ -114,7 +119,7 @@ LOG_FILE_NAME="$(basename "${0%.sh}")-$1_$(date +"%F_%H-%M-%S")"
 case "$1" in
 	help | h | -h | --help | \?) usage ;;
 	usage)
-		try_func usage_hook
+		usage_hook
 		exit 0
 		;;
 	support-cmds)

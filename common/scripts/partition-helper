@@ -153,10 +153,10 @@ rk_partition_to_cmdline()
 rk_partition_save()
 {
 	PARAMETER="${1:-$CHIP_DIR/$RK_PARAMETER}"
-	[ -r "$PARAMETER" ] || return 0
+	[ -r "$PARAMETER" ] || return 1
 
 	PARTS=$(rk_partition_to_cmdline)
-	[ "$PARTS" ] || return 0
+	[ "$PARTS" ] || return 1
 
 	sed -i "/^CMDLINE:/s/0x.*/$PARTS/" "$PARAMETER"
 
@@ -173,7 +173,7 @@ rk_partition_edit()
 
 rk_partition_del()
 {
-	[ "$#" -gt 0 ] || return 0
+	[ "$#" -gt 0 ] || return 1
 
 	if echo $1 | grep -qE "^[0-9]*$"; then
 		# Part idx
@@ -189,7 +189,7 @@ rk_partition_del()
 
 rk_partition_rename()
 {
-	[ "$#" -gt 1 ] || return 0
+	[ "$#" -gt 1 ] || return 1
 
 	if echo $1 | grep -qE "^[0-9]*$"; then
 		# Part idx
@@ -205,8 +205,8 @@ rk_partition_rename()
 
 rk_partition_move()
 {
-	[ "$#" -gt 1 ] || return 0
-	echo $2 | grep -qE "^[0-9]*$" || return 0
+	[ "$#" -gt 1 ] || return 1
+	echo $2 | grep -qE "^[0-9]*$" || return 1
 
 	if echo $1 | grep -qE "^[0-9]*$"; then
 		# Part idx
@@ -216,7 +216,7 @@ rk_partition_move()
 		# Part name
 		PART=$(sed -n "/^$1 /p" $PART_TABLE)
 	fi
-	[ "$PART" ] || return 0
+	[ "$PART" ] || return 1
 
 	sed -i "/^$PART$/d" $PART_TABLE
 	sed -i "$2 a$PART" $PART_TABLE
@@ -226,7 +226,7 @@ rk_partition_move()
 
 rk_partition_resize()
 {
-	[ "$#" -gt 1 ] || return 0
+	[ "$#" -gt 1 ] || return 1
 
 	case "$2" in
 		0x*) SIZE=$2 ;;
@@ -247,13 +247,13 @@ rk_partition_resize()
 
 rk_partition_insert()
 {
-	[ "$#" -gt 1 ] || return 0
+	[ "$#" -gt 1 ] || return 1
 
 	IDX=$1
-	[ "$IDX" -ge 1 ] || return 0
+	[ "$IDX" -ge 1 ] || return 1
 
 	NUM=$(rk_partition_num)
-	[ "$IDX" -le "$(( $NUM + 1 ))" ] || return 0
+	[ "$IDX" -le "$(( $NUM + 1 ))" ] || return 1
 
 	case "${3:-grow}" in
 		0x*) SIZE=$3 ;;
@@ -262,12 +262,12 @@ rk_partition_insert()
 
 	# Only latest part can be unlimited
 	if [ "$SIZE" = "-" ] && [ "$IDX" -lt "$(( $NUM + 1 ))" ]; then
-		return 0
+		return 1
 	fi
 
 	# The latest part is unlimited
 	if [ "$IDX" -eq "$(( $NUM + 1 ))" ] && grep -q "\-$" $PART_TABLE; then
-		return 0
+		return 1
 	fi
 
 	sed -i "/^$2 /d" $PART_TABLE
@@ -279,7 +279,7 @@ rk_partition_insert()
 # Usage: <offset> <name> <size> <name> <size>...
 rk_partition_create()
 {
-	[ "$#" -gt 1 ] || return 0
+	[ "$#" -gt 1 ] || return 1
 
 	{
 		echo "$HDR_PART $(echo $(( $1 )) | awk '{printf "0x%08x",$1}')"
