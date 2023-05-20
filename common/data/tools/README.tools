@@ -1,14 +1,18 @@
 Rockchip 32-bit prebuilt tools (static linked)
 
-Prebuilt from Rockchip buildroot 2018 SDK:
-7d1975e03a5 android-tools: Refactor a bit
+Prebuilt from Rockchip buildroot 2021 SDK:
+665861eaae libunwind: Disable zlib in static build
 
-Using rockchip_rk3288_defconfig with addition configs:
+Using rockchip_rk3036_defconfig (A7) with addition configs:
 BR2_PACKAGE_ANDROID_TOOLS=y
 BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
 
 BR2_PACKAGE_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_STATIC=y
+
+BR2_PACKAGE_LIBUNWIND=y
+BR2_PACKAGE_LIBUNWIND_STATIC=y
+BR2_PACKAGE_ELFUTILS=y
 
 BR2_PACKAGE_GDB=y
 BR2_PACKAGE_GDB_STATIC=y
@@ -16,6 +20,12 @@ BR2_PACKAGE_GDB_DEBUGGER=y
 
 BR2_PACKAGE_LIBDRM=y
 BR2_PACKAGE_LIBDRM_STATIC=y
+
+BR2_PACKAGE_XZ=y
+BR2_PACKAGE_XZ_STATIC=y
+
+BR2_PACKAGE_ZLIB=y
+BR2_PACKAGE_BZIP2=y
 
 BR2_PACKAGE_LINUX_TOOLS_PERF=y
 BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC=y
