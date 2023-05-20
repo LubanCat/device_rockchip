@@ -111,7 +111,7 @@ config RK_USB_DISABLED
 
 endchoice # USB gadget
 
-if RK_USB_ENABLED || (RK_USB_DEFAULT && RK_ROOTFS_SYSTEM != "buildroot")
+if !RK_USB_DISABLED
 
 menu "USB gadget"
 
