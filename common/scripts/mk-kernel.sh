@@ -29,27 +29,48 @@ update_kernel()
 
 do_build()
 {
+	if [ "$DRY_RUN" ]; then
+		echo -e "\e[35mCommands of building $1:\e[0m"
+	else
+		echo "=========================================="
+		echo "          Start building $1"
+		echo "=========================================="
+	fi
+
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+	KCONF_MAKE="make -C kernel/ ARCH=$RK_KERNEL_ARCH"
+
+	run_command $KCONF_MAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	if [ ! "$DRY_RUN" ]; then
 		"$SCRIPTS_DIR/check-kernel.sh"
 	fi
 
-	if [ "$1" = modules ]; then
-		run_command $KMAKE modules
-		return 0
-	fi
+	case "$1" in
+		kernel-config)
+			KERNEL_CONFIG_DIR="kernel/arch/$RK_KERNEL_ARCH/configs"
+			run_command $KCONF_MAKE menuconfig
+			run_command $KCONF_MAKE savedefconfig
+			run_command mv kernel/defconfig \
+				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
+			;;
+		kernel-*)
+			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
-	run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
-
-	# The FIT image for initrd would be packed in rootfs stage
-	if [ -n "$RK_BOOT_FIT_ITS" ] && [ -z "$RK_ROOTFS_INITRD" ]; then
-		run_command "$SCRIPTS_DIR/mk-fitimage.sh" \
-			"kernel/$RK_BOOT_IMG" "$RK_BOOT_FIT_ITS" \
-			"$RK_KERNEL_IMG"
-	fi
+			# The FIT image for initrd would be packed in rootfs stage
+			if [ -n "$RK_BOOT_FIT_ITS" ]; then
+				if [ -z "$RK_ROOTFS_INITRD" ]; then
+					run_command \
+						"$SCRIPTS_DIR/mk-fitimage.sh" \
+						"kernel/$RK_BOOT_IMG" \
+						"$RK_BOOT_FIT_ITS" \
+						"$RK_KERNEL_IMG"
+				fi
+			fi
+			;;
+		modules) run_command $KMAKE modules ;;
+	esac
 }
 
 # Hooks
@@ -63,6 +84,7 @@ usage_hook()
 	echo -e "kernel[:cmds]                    \tbuild kernel"
 	echo -e "modules[:cmds]                   \tbuild kernel modules"
 	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
+	echo -e "kernel-config[:cmds]             \tmodify kernel defconfig"
 }
 
 clean_hook()
@@ -70,14 +92,16 @@ clean_hook()
 	make -C kernel distclean
 }
 
-INIT_CMDS="$KERNELS default"
+INIT_CMDS="default $KERNELS kernel-config"
 init_hook()
 {
-	if echo "$1" | grep -q "^kernel-"; then
-		export RK_KERNEL_VERSION=${1#kernel-}
-	fi
+	source "$RK_CONFIG"
 
-	update_kernel
+	case "$1" in
+		kernel-config) do_build $@ ;;
+		kernel-*) export RK_KERNEL_VERSION=${1#kernel-} ;&
+		*) update_kernel ;;
+	esac
 }
 
 BUILD_CMDS="$KERNELS kernel modules"
@@ -85,7 +109,7 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	if echo "$1" | grep -q "^kernel-"; then
+	if echo $1 | grep -q "^kernel-"; then
 		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
 			echo -ne "\e[35m"
 			echo "Kernel version overrided: " \
@@ -94,32 +118,19 @@ build_hook()
 		fi
 	fi
 
-	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building $1:\e[0m"
-		do_build $1
-		return 0
-	fi
-
-	echo "=========================================="
-	echo "          Start building $1"
-	echo "=========================================="
-
-	if [ "$1" = modules ]; then
-		do_build $@
-		shift
-		finish_build build_modules
-		exit 0
-	fi
-
 	do_build $@
 
-	ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
+	[ ! "$DRY_RUN" ] || return 0
 
-	[ -z "$RK_SECURITY" ] || cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
+	if echo $1 | grep -q "^kernel"; then
+		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
 
-	"$SCRIPTS_DIR/check-power-domain.sh"
+		[ -z "$RK_SECURITY" ] || cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
 
-	finish_build build_kernel
+		"$SCRIPTS_DIR/check-power-domain.sh"
+	fi
+
+	finish_build build_$1
 }
 
 build_hook_dry()

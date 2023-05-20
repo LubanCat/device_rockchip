@@ -136,7 +136,7 @@ case "$1" in
 					all) echo "$ALL_CMDS" ;;
 				esac
 			done
-		} | xargs -n 1 | grep -vw default | xargs || true
+		} | xargs -n 1 | grep -v "^default$" | xargs || true
 		exit 0
 		;;
 	clean)

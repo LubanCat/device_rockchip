@@ -78,7 +78,7 @@ rk_partition_parse()
 # Parse parameter to "<name>" arrays
 rk_partition_parse_names()
 {
-	rk_partition_parse "$1" | grep -wv "^$HDR_PART" | cut -d' ' -f1 | xargs
+	rk_partition_parse "$1" | grep -v "^$HDR_PART " | cut -d' ' -f1 | xargs
 }
 
 # Cache parsed partition table
@@ -89,7 +89,7 @@ rk_partition_init()
 
 rk_partition_size()
 {
-	grep -w "^$1" $PART_TABLE | cut -d' ' -f2 | tr -d '\-' || true
+	grep "^$1 " $PART_TABLE | cut -d' ' -f2 | tr -d '\-' || true
 }
 
 rk_partition_num()

@@ -195,7 +195,7 @@ option_check()
 	for opt in $@; do
 		for cmd in $CMDS; do
 			# NOTE: There might be patterns in commands
-			echo "${opt%%:*}" | grep -wq "$cmd" || continue
+			echo "${opt%%:*}" | grep -q "^$cmd$" || continue
 			return 0
 		done
 	done
