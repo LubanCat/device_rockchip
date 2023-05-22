@@ -33,8 +33,8 @@ done
 # Handle extra fonts
 [ -z "$RK_EXTRA_FONTS_DISABLED" ] || exit 0
 
-if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" = debian ]; then
-	echo -e "\e[33mNo extra fonts for debian by default\e[0m"
+if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" != yocto ]; then
+	echo -e "\e[33mNo extra fonts for $POST_OS by default\e[0m"
 	exit 0
 fi
 

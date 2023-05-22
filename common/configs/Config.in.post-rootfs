@@ -56,7 +56,7 @@ choice
 config RK_EXTRA_FONTS_DEFAULT
 	bool "auto"
 	help
-	  Install extra fonts for non-debian OS.
+	  Install extra fonts for yocto OS.
 
 config RK_EXTRA_FONTS_ENABLED
 	bool "install"
