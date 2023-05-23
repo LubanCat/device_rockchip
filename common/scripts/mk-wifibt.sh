@@ -78,37 +78,37 @@ build_wifibt()
 
 	if [[ "$WIFI_CHIP" =~ "ALL_CY" ]];then
 		echo "building CYW4354"
-		ln -sf ../chips/CYW4354_Makefile \
+		ln -sf chips/CYW4354_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW4373"
-		ln -sf ../chips/CYW4373_Makefile \
+		ln -sf chips/CYW4373_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW43438"
-		ln -sf ../chips/CYW43438_Makefile \
+		ln -sf chips/CYW43438_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW43455"
-		ln -sf ../chips/CYW43455_Makefile \
+		ln -sf chips/CYW43455_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 		echo "building CYW5557X"
-		ln -sf ../chips/CYW5557X_Makefile \
+		ln -sf chips/CYW5557X_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 		if [ -n "$WIFI_PCIE" ]; then
 			echo "building CYW5557X_PCIE"
-			ln -sf ../chips/CYW5557X_PCIE_Makefile \
+			ln -sf chips/CYW5557X_PCIE_Makefile \
 				$RKWIFIBT/drivers/infineon/Makefile
 			$KMAKE M=$RKWIFIBT/drivers/infineon
 			echo "building CYW54591_PCIE"
-			ln -sf ../chips/CYW54591_PCIE_Makefile \
+			ln -sf chips/CYW54591_PCIE_Makefile \
 				$RKWIFIBT/drivers/infineon/Makefile
 			$KMAKE M=$RKWIFIBT/drivers/infineon
 		fi
 		echo "building CYW54591"
-		ln -sf ../chips/CYW54591_Makefile \
+		ln -sf chips/CYW54591_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 
@@ -148,56 +148,56 @@ build_wifibt()
 
 	if [[ "$WIFI_CHIP" = "CYW4354" ]];then
 		echo "building CYW4354"
-		ln -sf ../chips/CYW4354_Makefile \
+		ln -sf chips/CYW4354_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW4373" ]];then
 		echo "building CYW4373"
-		ln -sf ../chips/CYW4373_Makefile \
+		ln -sf chips/CYW4373_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43438" ]];then
 		echo "building CYW43438"
-		ln -sf ../chips/CYW43438_Makefile \
+		ln -sf chips/CYW43438_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW43455" ]];then
 		echo "building CYW43455"
-		ln -sf ../chips/CYW43455_Makefile \
+		ln -sf chips/CYW43455_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X" ]];then
 		echo "building CYW5557X"
-		ln -sf ../chips/CYW5557X_Makefile \
+		ln -sf chips/CYW5557X_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW5557X_PCIE" ]];then
 		echo "building CYW5557X_PCIE"
-		ln -sf ../chips/CYW5557X_PCIE_Makefile \
+		ln -sf chips/CYW5557X_PCIE_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591" ]];then
 		echo "building CYW54591"
-		ln -sf ../chips/CYW54591_Makefile \
+		ln -sf chips/CYW54591_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
 
 	if [[ "$WIFI_CHIP" = "CYW54591_PCIE" ]];then
 		echo "building CYW54591_PCIE"
-		ln -sf ../chips/CYW54591_PCIE_Makefile \
+		ln -sf chips/CYW54591_PCIE_Makefile \
 			$RKWIFIBT/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT/drivers/infineon
 	fi
