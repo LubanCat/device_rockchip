@@ -50,7 +50,7 @@ clean_hook()
 # Build stages:
 #   init (preparing SDK configs, etc.)
 #   (inherit configs)
-#   pre-build (configs checking and applying, etc.)
+#   pre-build (submodule configuring, etc.)
 #   build (building, etc.)
 #   post-build (firmware packing, etc.)
 #

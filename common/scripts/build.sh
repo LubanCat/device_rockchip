@@ -157,7 +157,7 @@ run_build_hooks()
 {
 	# Don't log these hooks
 	case "$1" in
-		init | usage | support-cmds)
+		init | pre-build | usage | support-cmds)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
 			return 0
 			;;
@@ -419,7 +419,7 @@ main()
 		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | sort
 	echo
 
-	# Pre-build stage (configs checking and applying, etc.)
+	# Pre-build stage (submodule configuring, etc.)
 	run_build_hooks pre-build $OPTIONS
 
 	# No need to go further

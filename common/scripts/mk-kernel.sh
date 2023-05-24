@@ -45,11 +45,10 @@ do_build()
 
 	case "$1" in
 		kernel-config)
-			KCONF_MAKE="make -C kernel/ ARCH=$RK_KERNEL_ARCH"
 			KERNEL_CONFIG_DIR="kernel/arch/$RK_KERNEL_ARCH/configs"
-			run_command $KCONF_MAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
-			run_command $KCONF_MAKE menuconfig
-			run_command $KCONF_MAKE savedefconfig
+			run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+			run_command $KMAKE menuconfig
+			run_command $KMAKE savedefconfig
 			run_command mv kernel/defconfig \
 				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
 			;;
@@ -94,16 +93,27 @@ clean_hook()
 	make -C kernel distclean
 }
 
-INIT_CMDS="default $KERNELS kernel-config"
+INIT_CMDS="default $KERNELS"
 init_hook()
 {
-	source "$RK_CONFIG"
-
 	case "$1" in
-		kernel-config) do_build $@ ;;
 		kernel-*) export RK_KERNEL_VERSION=${1#kernel-} ;&
 		*) update_kernel ;;
 	esac
+}
+
+PRE_BUILD_CMDS="kernel-config"
+pre_build_hook()
+{
+	check_config RK_KERNEL_CFG || return 0
+	do_build $@
+
+	finish_build $@
+}
+
+pre_build_hook_dry()
+{
+	DRY_RUN=1 pre_build_hook $@
 }
 
 BUILD_CMDS="$KERNELS kernel modules"
@@ -189,7 +199,8 @@ post_build_hook_dry()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-* | kernel | modules)
+	kernel-config) pre_build_hook $@ ;;
+	kernel* | modules)
 		init_hook $@
 		build_hook ${@:-kernel}
 		;;

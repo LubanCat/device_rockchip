@@ -43,7 +43,7 @@ try_func()
 
 	# Don't log these hooks
 	case "${1%_hook}" in
-		init)
+		init | pre_build)
 			$@
 			return 0
 			;;

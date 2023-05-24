@@ -97,10 +97,9 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/rootfs"
 }
 
-INIT_CMDS="buildroot-config"
-init_hook()
+PRE_BUILD_CMDS="buildroot-config"
+pre_build_hook()
 {
-	source "$RK_CONFIG"
 	BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
 
 	[ "$BUILDROOT_BOARD" ] || return 0
@@ -112,7 +111,7 @@ init_hook()
 	"$SDK_DIR/buildroot/build/update_defconfig.sh" "$BUILDROOT_BOARD" \
 		"$TEMP_DIR"
 
-	finish_build build_buildroot_config $@
+	finish_build $@
 }
 
 BUILD_CMDS="rootfs buildroot debian yocto"
@@ -191,6 +190,6 @@ build_hook()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-rootfs}" in
-	buildroot-config) init_hook $@ ;;
+	buildroot-config) pre_build_hook $@ ;;
 	*) build_hook $@ ;;
 esac
