@@ -154,11 +154,12 @@ usage_hook()
 	echo -e "chip[:<chip>[:<config>]]          \tchoose chip"
 	echo -e "defconfig[:<config>]              \tchoose defconfig"
 	echo -e " *_defconfig                      \tswitch to specified defconfig"
-	echo "    Available defconfigs:"
+	echo "    available defconfigs:"
 	echo "$(ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/")"
 	echo -e " olddefconfig                     \tresolve any unresolved symbols in .config"
 	echo -e " savedefconfig                    \tsave current config to defconfig"
 	echo -e " menuconfig                       \tinteractive curses-based configurator"
+	echo -e "config                       \tmodify SDK defconfig"
 }
 
 clean_hook()
@@ -166,7 +167,7 @@ clean_hook()
 	$MAKE distclean
 }
 
-INIT_CMDS="chip defconfig lunch .*_defconfig olddefconfig savedefconfig menuconfig default"
+INIT_CMDS="chip defconfig lunch .*_defconfig olddefconfig savedefconfig menuconfig config default"
 init_hook()
 {
 	case "${1:-default}" in
@@ -174,6 +175,10 @@ init_hook()
 		lunch|defconfig) shift; choose_defconfig $@ ;;
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
+		config)
+			$MAKE menuconfig
+			$MAKE savedefconfig
+			;;
 		default) prepare_config ;; # End of init
 		*) usage ;;
 	esac
