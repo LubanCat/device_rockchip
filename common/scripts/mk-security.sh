@@ -154,22 +154,14 @@ usage_hook()
 	echo -e "security_rootfs                   \tbuild rootfs and others with security(dm-v)"
 }
 
-PRE_BUILD_CMDS="security_check"
-pre_build_hook()
-{
-	security_is_enabled || return 0
-
-	shift
-	security_check $@
-}
-
-BUILD_CMDS="security_keys security_uboot security_boot security_recovery \
+BUILD_CMDS="security_check security_keys security_uboot security_boot security_recovery \
 	security_rootfs"
 build_hook()
 {
 	security_is_enabled || return 0
 
 	case "$1" in
+		security_check) security_check ;;
 		security_keys) build_security_keys ;;
 		security_uboot)
 			"$SCRIPTS_DIR"/mk-loader.sh uboot
@@ -193,7 +185,4 @@ build_hook()
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
-case "$1" in
-	security_check) pre_build_hook $@ ;;
-	*) build_hook $@
-esac
+build_hook $@
