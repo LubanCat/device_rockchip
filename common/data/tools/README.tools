@@ -1,7 +1,7 @@
 Rockchip 32-bit prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-665861eaae libunwind: Disable zlib in static build
+6308c9d876 rkwifibt: Support static
 
 Using rockchip_rk3036_defconfig (A7) with addition configs:
 BR2_PACKAGE_ANDROID_TOOLS=y
@@ -41,6 +41,9 @@ BR2_PACKAGE_PROCRANK_LINUX_STATIC=y
 
 BR2_PACKAGE_RKTOOLKIT=y
 BR2_PACKAGE_RKTOOLKIT_STATIC=y
+
+BR2_PACKAGE_RKWIFIBT=y
+BR2_PACKAGE_RKWIFIBT_STATIC=y
 
 BR2_PACKAGE_STRACE=y
 BR2_PACKAGE_STRACE_STATIC=y
