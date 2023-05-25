@@ -5,7 +5,7 @@ DEFAULT_ROOTFS_DIR=buildroot/output/$RK_BUILDROOT_CFG/target
 # Usage: build_wifibt <rootfs dir> [wifi chip] [bt tty dev]
 build_wifibt()
 {
-	check_config RK_WIFIBT_CHIP || return 0
+	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
 
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
@@ -16,6 +16,9 @@ build_wifibt()
 	else
 		ROOTFS_ARCH=arm64
 	fi
+
+	# Debian would call us in root (sudo) environment
+	KMAKE="${SUDO_USER:+sudo -u $SUDO_USER} $KMAKE"
 
 	# Check kernel config
 	WIFI_USB=`grep "CONFIG_USB=y" kernel/.config` || true
@@ -44,6 +47,29 @@ build_wifibt()
 
 	echo WIFI_CHIP=$WIFI_CHIP
 	echo BT_TTY_DEV=$BT_TTY_DEV
+
+	ID=$(stat --format %u "$RKWIFIBT")
+	if [ "$ID" -ne 0 ]; then
+		if [ "$(id -u)" -eq 0 ]; then
+			# Fixing up rkwifibt permissions
+			find "$RKWIFIBT" -user 0 -exec chown -h -R $ID:$ID {} \;
+		else
+			echo -e "\e[36m"
+			if find "$RKWIFIBT" -user 0 | grep ""; then
+				echo -e "\e[31m"
+				echo "$RKWIFIBT is dirty for non-root building!"
+				echo "Please clear it:"
+				echo "cd $RKWIFIBT"
+				echo "git add -f ."
+				echo "sudo git reset --hard"
+				echo -e "\e[0m"
+				exit 1
+			fi
+			echo -e "\e[0m"
+		fi
+	fi
+
+	$KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	if [[ "$WIFI_CHIP" =~ "ALL_AP" ]];then
 		echo "building bcmdhd sdio"

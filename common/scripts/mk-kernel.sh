@@ -43,17 +43,17 @@ do_build()
 		"$SCRIPTS_DIR/check-kernel.sh"
 	fi
 
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+
 	case "$1" in
 		kernel-config)
 			KERNEL_CONFIG_DIR="kernel/arch/$RK_KERNEL_ARCH/configs"
-			run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 			run_command $KMAKE menuconfig
 			run_command $KMAKE savedefconfig
 			run_command mv kernel/defconfig \
 				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
 			;;
 		kernel*)
-			run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
 			# The FIT image for initrd would be packed in rootfs stage
@@ -67,10 +67,7 @@ do_build()
 				fi
 			fi
 			;;
-		modules)
-			run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
-			run_command $KMAKE modules
-			;;
+		modules) run_command $KMAKE modules ;;
 	esac
 }
 
