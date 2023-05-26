@@ -1,9 +1,9 @@
-Rockchip 32-bit prebuilt tools (static linked)
+Rockchip prebuilt tools (static linked, mostly 32bit)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
 6308c9d876 rkwifibt: Support static
 
-Using rockchip_rk3036_defconfig (A7) with addition configs:
+Using rockchip_{rk3036,rk3399}_defconfig with addition configs:
 BR2_PACKAGE_ANDROID_TOOLS=y
 BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
 
