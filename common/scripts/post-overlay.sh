@@ -31,11 +31,15 @@ for overlay in $RK_ROOTFS_OVERLAY_DIRS; do
 done
 
 # Handle extra fonts
-[ -z "$RK_EXTRA_FONTS_DISABLED" ] || exit 0
-
-if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" != yocto ]; then
-	echo -e "\e[33mNo extra fonts for $POST_OS by default\e[0m"
-	exit 0
+if [ -z "$RK_EXTRA_FONTS_DISABLED" ]; then
+	if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" != yocto ]; then
+		echo -e "\e[33mNo extra fonts for $POST_OS by default\e[0m"
+	else
+		install_overlay "$COMMON_DIR/overlays/overlay-fonts"
+	fi
 fi
 
-install_overlay "$COMMON_DIR/overlays/overlay-fonts"
+# Handle prebuilt tools
+if [ "$RK_ROOTFS_PREBUILT_TOOLS" ]; then
+	install_overlay "$COMMON_DIR/overlays/overlay-tools"
+fi
