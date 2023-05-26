@@ -11,7 +11,7 @@ build_wifibt()
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
 	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
 
-	if find "$ROOTFS_DIR/lib" -name "ld-linux-armhf.so.*" &>/dev/null; then
+	if ls "$ROOTFS_DIR/lib/" | grep -wq ld-linux-armhf.so; then
 		ROOTFS_ARCH=arm
 	else
 		ROOTFS_ARCH=arm64
