@@ -60,12 +60,13 @@ build_save()
 	echo "Saving into $SAVE_DIR..."
 
 	if [ "$RK_KERNEL_CFG" ]; then
+		mkdir -p "$SAVE_DIR/kernel"
+
 		echo "Saving linux-headers..."
 		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers \
-			"$SAVE_DIR/linux-headers"
+			"$SAVE_DIR/kernel"
 
 		echo "Saving kernel files..."
-		mkdir -p "$SAVE_DIR/kernel"
 		cp kernel/.config kernel/System.map kernel/vmlinux \
 			$RK_KERNEL_DTB "$SAVE_DIR/kernel"
 	fi

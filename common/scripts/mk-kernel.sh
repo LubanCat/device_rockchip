@@ -152,18 +152,14 @@ post_build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	OUTPUT_DIR="${2:-"$RK_OUTDIR/linux-headers"}"
-	OUTPUT_DIR="$(realpath "$OUTPUT_DIR")"
-	HEADER_FILES_SCRIPT="$OUTPUT_DIR/.header-files.sh"
+	OUTPUT_DIR="${2:-"$RK_OUTDIR"}"
+	HEADER_FILES_SCRIPT=$(mktemp)
 
 	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
 	else
 		echo "Saving linux-headers to $OUTPUT_DIR"
 	fi
-
-	rm -rf "$OUTPUT_DIR"
-	mkdir -p "$OUTPUT_DIR"
 
 	run_command cd kernel
 
@@ -176,7 +172,8 @@ post_build_hook()
 	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
 	find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
 	echo .config
-} | rsync -a --files-from=- . "$OUTPUT_DIR"
+} | tar --no-recursion --ignore-failed-read -T - \
+	-cf "$OUTPUT_DIR/linux-headers.tar"
 EOF
 
 	cat "$HEADER_FILES_SCRIPT"
