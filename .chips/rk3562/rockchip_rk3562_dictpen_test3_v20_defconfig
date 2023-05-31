@@ -1,4 +1,4 @@
-RK_BUILDROOT_BASE_CFG="rk3562_dictpen_defconfig"
+RK_BUILDROOT_BASE_CFG="rk3562_dictpen"
 RK_UBOOT_SPL_INI="RK3562MINIALL_ULTRA.ini"
 RK_KERNEL_VERSION="5.10"
 RK_KERNEL_CFG="rk3562_linux_dictpen_defconfig"
