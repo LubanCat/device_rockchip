@@ -44,13 +44,15 @@ esac
 TARGET_DIR=$(realpath "$1")
 shift
 
+POST_OS=unknown
+case "$(grep "^ID=" "$TARGET_DIR/etc/os-release" 2>/dev/null)" in
+	ID=buildroot) POST_OS=buildroot ;;
+	ID=debian) POST_OS=debian ;;
+	ID=poky) POST_OS=yocto ;;
+esac
 case "$TARGET_DIR/" in
-	*/debian/binary/*) POST_OS=debian ;;
-	*/yocto/*/core-image-minimal/*) POST_OS=yocto ;;
-	*/buildroot/output/*_recovery/target/*) POST_OS=recovery ;;
-	*/buildroot/output/*_pcba/target/*) POST_OS=pcba ;;
-	*/buildroot/output/*/target/*) POST_OS=buildroot ;;
-	*) POST_OS=unknown ;;
+	*/output/*_recovery/target/*) POST_OS=recovery ;;
+	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
 echo "$POST_OS_DISALLOWED" | grep -wvq $POST_OS || exit 0
 
