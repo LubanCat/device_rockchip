@@ -11,7 +11,7 @@ ID=$(stat --format %u "$SDK_DIR")
 if [ "$ID" -ne 0 ]; then
 	NAME=$(grep -E "^[^:]*:x:$ID:" /etc/passwd | cut -d':' -f1)
 	echo "Fixing up uid=$ID($NAME) to 0(root)..."
-	find . -user $ID -exec chown -h -R 0:0 {} \;
+	find . -user $ID -exec chown -h 0:0 {} \;
 fi
 
 if [ -d home ]; then
@@ -26,5 +26,5 @@ fi
 ID=$(stat --format %u "$RK_OUTDIR")
 if [ "$(id -u)" -eq 0 -a "$ID" -ne 0 ]; then
 	echo "Fixing up owner for $RK_OUTDIR..."
-	find "$RK_OUTDIR" -user 0 -exec chown -h -R $ID:$ID {} \;
+	find "$RK_OUTDIR" -user 0 -exec chown -h $ID:$ID {} \;
 fi
