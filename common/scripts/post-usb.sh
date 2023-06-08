@@ -110,7 +110,7 @@ if [ "$POST_INIT_SYSTEMD" ]; then
 fi
 
 if [ "$POST_INIT_SYSV" ]; then
-	install -m 0755 external/rkscript/S50usbdevice \
+	install -m 0755 external/rkscript/S*usbdevice \
 		"$TARGET_DIR/etc/init.d/usbdevice.sh"
 	for level in 5 4 3 2; do
 		mkdir -p "$TARGET_DIR/etc/rc${level}.d"
@@ -125,7 +125,7 @@ if [ "$POST_INIT_SYSV" ]; then
 fi
 
 if [ "$POST_INIT_BUSYBOX" ]; then
-	install -m 0755 external/rkscript/S50usbdevice "$TARGET_DIR/etc/init.d/"
+	install -m 0755 external/rkscript/S*usbdevice "$TARGET_DIR/etc/init.d/"
 fi
 
 mkdir -p "$TARGET_DIR/etc/usbdevice.d"
