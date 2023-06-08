@@ -356,24 +356,34 @@ main()
 
 	set +a
 
-	# RV1126 uses custom toolchain
-	if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-		TOOLCHAIN_OS=rockchip
-	else
-		TOOLCHAIN_OS=none
-	fi
+	MACHINE=$(uname -m)
+	if [ "$MACHINE" = x86_64 ]; then
+		# RV1126 uses custom toolchain
+		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
+			TOOLCHAIN_OS=rockchip
+		else
+			TOOLCHAIN_OS=none
+		fi
 
-	TOOLCHAIN_ARCH=${RK_KERNEL_ARCH/arm64/aarch64}
-	TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-	GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | head -n 1)"
-	if [ ! -x "$GCC" ]; then
-		echo "No prebuilt GCC toolchain!"
-		exit 1
+		TOOLCHAIN_ARCH=${RK_KERNEL_ARCH/arm64/aarch64}
+		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
+		GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | \
+			head -n 1)"
+		if [ ! -x "$GCC" ]; then
+			echo "No prebuilt GCC toolchain!"
+			exit 1
+		fi
+	elif [ "$RK_KERNEL_ARCH" = arm64 -a "$MACHINE" != aarch64 ]; then
+		GCC=aarch64-linux-gnu-gcc
+	elif [ "$RK_KERNEL_ARCH" = arm -a "$MACHINE" != armv7l ]; then
+		GCC=arm-linux-gnueabihf-gcc
+	else
+		GCC=gcc
 	fi
 
 	export RK_TOOLCHAIN="${GCC%gcc}"
-	echo "Prebuilt toolchain (for kernel & loader):"
-	echo "$RK_TOOLCHAIN"
+	echo "Toolchain (for kernel & loader):"
+	echo "${RK_TOOLCHAIN:-gcc}"
 
 	export PYTHON3=/usr/bin/python3
 

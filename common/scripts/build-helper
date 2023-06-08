@@ -89,7 +89,7 @@ try_hook()
 		for cmd in $CMDS; do
 			# NOTE: There might be patterns in commands
 			ARGS="$(echo $opt | grep -E "^$cmd(:|$)" | \
-				xargs -d ':' || true)"
+				tr ':' ' ' || true)"
 			[ "$ARGS" ] || continue
 
 			DRY_RUN=${DRY_RUN:-${IS_DRY_RUN:+1}} \
