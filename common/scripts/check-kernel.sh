@@ -27,3 +27,14 @@ if ! kernel/scripts/mkbootimg &>/dev/null; then
 	echo -e "\e[0m"
 	exit 1
 fi
+
+if ! lz4 -h 2>&1 | grep -q favor-decSpeed; then
+	echo -e "\e[35m"
+	echo "Your lz4 is too old for kernel: $(lz4 --version)"
+	echo "Please update it:"
+	echo "git clone https://github.com/lz4/lz4.git --depth 1 -b v1.9.4"
+	echo "cd lz4"
+	echo "sudo make install -j8"
+	echo -e "\e[0m"
+	exit 1
+fi
