@@ -38,3 +38,12 @@ if ! lz4 -h 2>&1 | grep -q favor-decSpeed; then
 	echo -e "\e[0m"
 	exit 1
 fi
+
+if [ ! -d /usr/include/openssl ]; then
+	echo -e "\e[35m"
+	echo "Your openssl headers are missing"
+	echo "Please install it:"
+	echo "sudo apt-get install libssl-dev"
+	echo -e "\e[0m"
+	exit 1
+fi
