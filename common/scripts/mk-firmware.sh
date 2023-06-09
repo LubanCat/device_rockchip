@@ -41,10 +41,7 @@ pack_extra_partitions() {
 			continue
 		fi
 
-		# Check generated dir and script (in post-partitions.sh)
-		if [ ! -r "$FAKEROOT_SCRIPT" -o ! -d "$OUTDIR" ]; then
-			fatal "Rootfs not ready?"
-		fi
+		rk_extra_part_prepare $idx
 
 		if [ "$SIZE" = max ]; then
 			SIZE="$(partition_size_kb "$PART_NAME")K"

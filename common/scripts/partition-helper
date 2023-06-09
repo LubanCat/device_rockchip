@@ -356,8 +356,14 @@ rk_extra_part_options()
 rk_extra_part_src()
 {
 	PART_NAME="$(rk_extra_part_name $1)"
-	for s in $(rk_extra_part_arg ${1:-1} 6 | tr ',' ' '); do
-		echo "${PART_NAME}_${s}"
+	for src in $(rk_extra_part_arg ${1:-1} 6 | tr ',' ' '); do
+		# Src is either relative path to $RK_IMAGE_DIR/<name>/, or \
+		# absolute path.
+		if echo "$src" | grep -vq "^/"; then
+			echo "$RK_IMAGE_DIR/$PART_NAME/${PART_NAME}_${src}"
+		else
+			echo "$src"
+		fi
 	done
 }
 
@@ -374,6 +380,12 @@ rk_extra_part_fixed()
 rk_extra_part_builtin()
 {
 	rk_extra_part_arg ${1:-1} 8 | grep -wq builtin
+}
+
+# Symlink to the mountpoint in rootfs dir
+rk_extra_part_mount_dir()
+{
+	echo "$RK_OUTDIR/$(rk_extra_part_name $1)-mount"
 }
 
 rk_extra_part_outdir()
@@ -396,16 +408,15 @@ rk_extra_part_prepare()
 {
 	PART_NAME="$(rk_extra_part_name $1)"
 	OUTDIR="$(rk_extra_part_outdir $1)"
+	MOUNT_DIR="$(rk_extra_part_mount_dir $1)"
 	FAKEROOT_SCRIPT="$(rk_extra_part_fakeroot_script $1)"
 	SRCS="$(rk_extra_part_src $1)"
-	shift
-	EXTRA_SRCS="$@"
 
 	echo "Preparing partiton $PART_NAME"
 
 	rm -rf "$OUTDIR" "$FAKEROOT_SCRIPT"
 
-	if [ -z "$SRCS" ]; then
+	if [ ! "$SRCS" ]; then
 		echo "Ignoring $PART_NAME for no sources"
 		return 0
 	fi
@@ -422,12 +433,9 @@ rk_extra_part_prepare()
 	echo "#!/bin/sh -e" > "$FAKEROOT_SCRIPT"
 	chmod a+x "$FAKEROOT_SCRIPT"
 
-	for src in $SRCS $EXTRA_SRCS; do
-		# Src is either relative path to $RK_IMAGE_DIR/<name>/, or \
-		# absolute path.
-		if echo "$src" | grep -vq "^/"; then
-			src="$RK_IMAGE_DIR/$PART_NAME/$src"
-		fi
+	for src in $MOUNT_DIR $SRCS; do
+		[ -d "$src" ] || continue
+		[ "$(ls "$src/")" ] || continue
 
 		echo "Merging $src into $OUTDIR"
 		rsync -a "$src/" "$OUTDIR"
