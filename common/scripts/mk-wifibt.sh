@@ -7,6 +7,11 @@ build_wifibt()
 {
 	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
 
+	if [ ! -r kernel/include/generated/asm-offsets.h ]; then
+		echo "Kernel is not ready, building it for wifi/BT..."
+		"$SCRIPTS_DIR/mk-kernel.sh"
+	fi
+
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
 	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
@@ -68,8 +73,6 @@ build_wifibt()
 			echo -e "\e[0m"
 		fi
 	fi
-
-	$KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	if [[ "$WIFI_CHIP" =~ "ALL_AP" ]];then
 		echo "building bcmdhd sdio"
