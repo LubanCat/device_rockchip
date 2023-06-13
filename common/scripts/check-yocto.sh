@@ -24,7 +24,7 @@ if [ "${PYTHON3_MIN_VER:-0}" -lt 6 ]; then
 	echo -e "\e[35m"
 	echo "Your python3 is too old for yocto: $(python3 --version)"
 	echo "Please update it:"
-	"$SCRIPTS_DIR/python3-install.sh"
+	"$SCRIPTS_DIR/install-python3.sh"
 	echo -e "\e[0m"
 	exit 1
 fi
