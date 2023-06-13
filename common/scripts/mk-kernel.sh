@@ -93,6 +93,8 @@ clean_hook()
 INIT_CMDS="default $KERNELS"
 init_hook()
 {
+	source "$RK_CONFIG"
+
 	case "$1" in
 		kernel-*) export RK_KERNEL_VERSION=${1#kernel-} ;&
 		*) update_kernel ;;
