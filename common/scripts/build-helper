@@ -98,7 +98,23 @@ try_hook()
 	done
 }
 
-core_usage()
+make_usage()
+{
+	usage_hook | grep "^[a-z]" | grep -v "^[a-z0-9_.-]*:" | \
+		sed 's/\(^[a-z0-9_.-]*\).*\t\(.*$\)/\1@\2/' | \
+	while read LINE; do
+		TARGET=$(echo $LINE | grep -o "^[a-z0-9_.-]*")
+		USAGE=$(echo $LINE | grep -oE "[^@]*$" || true)
+		printf "  %-22s - %s\n" "$TARGET" "$USAGE"
+	done
+}
+
+make_targets()
+{
+	make_usage | cut -d' ' -f3
+}
+
+normalized_usage()
 {
 	usage_hook | sed -e 's/\[:/ \[/g' -e 's/:/ /g'
 }
@@ -106,7 +122,7 @@ core_usage()
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
-	core_usage
+	normalized_usage
 	echo -e "clean                            \tcleanup"
 	echo -e "help                             \tusage"
 	exit 1
@@ -118,10 +134,9 @@ LOG_FILE_NAME="$(basename "${0%.sh}")-$1_$(date +"%F_%H-%M-%S")"
 
 case "$1" in
 	help | h | -h | --help | \?) usage ;;
-	usage)
-		usage_hook
-		exit 0
-		;;
+	make-targets) make_targets; exit 0 ;;
+	make-usage) make_usage; exit 0 ;;
+	usage) usage_hook; exit 0 ;;
 	support-cmds)
 		shift
 		{

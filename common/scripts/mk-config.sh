@@ -159,7 +159,7 @@ usage_hook()
 	echo -e " olddefconfig                     \tresolve any unresolved symbols in .config"
 	echo -e " savedefconfig                    \tsave current config to defconfig"
 	echo -e " menuconfig                       \tinteractive curses-based configurator"
-	echo -e "config                       \tmodify SDK defconfig"
+	echo -e "config                            \tmodify SDK defconfig"
 }
 
 clean_hook()

@@ -157,7 +157,7 @@ run_build_hooks()
 {
 	# Don't log these hooks
 	case "$1" in
-		init | pre-build | usage | support-cmds)
+		init | pre-build | make-* | usage | support-cmds)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
 			return 0
 			;;
@@ -247,6 +247,13 @@ main()
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 
+	# For Makefile
+	case "$@" in
+		make-targets | make-usage)
+			run_build_hooks "$@"
+			exit 0 ;;
+	esac
+
 	if [ ! -d "$RK_LOG_DIR" ]; then
 		mkdir -p "$RK_LOG_DIR"
 		rm -rf "$RK_LOG_BASE_DIR/latest"
@@ -270,12 +277,6 @@ main()
 	rm -f envsetup.sh
 
 	OPTIONS="${@:-allsave}"
-
-	# For Makefile parsing script targets
-	if [ "$OPTIONS" = "core-usage" ]; then
-		run_build_hooks usage
-		exit 0
-	fi
 
 	# Options checking
 	CMDS="$(run_build_hooks support-cmds all | xargs)"
