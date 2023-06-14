@@ -22,9 +22,27 @@ build_yocto()
 	"$SCRIPTS_DIR/check-yocto.sh"
 
 	cd yocto
-	ln -sf $RK_YOCTO_CFG.conf build/conf/local.conf
+	rm -f build/conf/local.conf
 
 	{
+		echo "include include/common.conf"
+		echo "include include/debug.conf"
+		echo "include include/display.conf"
+		echo "include include/multimedia.conf"
+		echo "include include/audio.conf"
+
+		if [ "$RK_WIFIBT_CHIP" ]; then
+			echo "include include/wifibt.conf"
+		fi
+
+		if [ "$RK_YOCTO_CHROMIUM" ]; then
+			echo "include include/browser.conf"
+		fi
+
+		echo
+		echo "MACHINE = \"$RK_YOCTO_CFG\""
+		echo
+
 		echo "PREFERRED_VERSION_linux-rockchip := \"$RK_KERNEL_VERSION_REAL%\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_REAL-custom%\""
 		case "$RK_CHIP_FAMILY" in
@@ -32,12 +50,12 @@ build_yocto()
 				echo "MALI_VERSION := \"g13p0\"" ;;
 		esac
 		echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
-	} > build/rksdk-override.conf
+	} > build/conf/local.conf
 
 	source oe-init-build-env build
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -f -c rootfs -c image_complete \
-		-R conf/include/rksdk.conf -R rksdk-override.conf
+		-R conf/include/rksdk.conf
 
 	ln -rsf "$PWD/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
 

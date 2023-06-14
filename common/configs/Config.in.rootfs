@@ -36,6 +36,10 @@ config RK_YOCTO_CFG
 
 if RK_YOCTO_CFG != ""
 
+config RK_YOCTO_CHROMIUM
+	bool "chromium"
+	default y
+
 config RK_YOCTO_DISPLAY_PLATFORM
 	string
 	default "wayland" if RK_YOCTO_DISPLAY_PLATFORM_WAYLAND
