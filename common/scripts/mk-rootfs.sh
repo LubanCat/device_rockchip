@@ -115,9 +115,44 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/rootfs"
 }
 
+INIT_CMDS="default buildroot debian yocto"
+init_hook()
+{
+	load_config RK_ROOTFS_TYPE
+	check_config RK_ROOTFS_TYPE || return 0
+
+	# Priority: cmdline > custom env
+	if [ "$1" != default ]; then
+		export RK_ROOTFS_SYSTEM=$1
+		echo "Using rootfs system($RK_ROOTFS_SYSTEM) from cmdline"
+	elif [ "$RK_ROOTFS_SYSTEM" ]; then
+		export RK_ROOTFS_SYSTEM=${RK_ROOTFS_SYSTEM//\"/}
+		echo "Using rootfs system($RK_ROOTFS_SYSTEM) from environment"
+	else
+		return 0
+	fi
+
+	ROOTFS_CONFIG="RK_ROOTFS_SYSTEM=\"$RK_ROOTFS_SYSTEM\""
+	ROOTFS_UPPER=$(echo $RK_ROOTFS_SYSTEM | tr 'a-z' 'A-Z')
+	ROOTFS_CHOICE="RK_ROOTFS_SYSTEM_$ROOTFS_UPPER"
+	if ! grep -q "^$ROOTFS_CONFIG$" "$RK_CONFIG"; then
+		if ! grep -wq "$ROOTFS_CHOICE" "$RK_CONFIG"; then
+			echo -e "\e[35m$RK_ROOTFS_SYSTEM not supported!\e[0m"
+			return 0
+		fi
+
+		sed -i -e "/RK_ROOTFS_SYSTEM/d" "$RK_CONFIG"
+		echo "$ROOTFS_CONFIG" >> "$RK_CONFIG"
+		echo "$ROOTFS_CHOICE=y" >> "$RK_CONFIG"
+		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+	fi
+}
+
 PRE_BUILD_CMDS="buildroot-config"
 pre_build_hook()
 {
+	check_config RK_ROOTFS_TYPE || return 0
+
 	BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
 
 	[ "$BUILDROOT_BOARD" ] || return 0
@@ -209,5 +244,6 @@ source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helpe
 
 case "${1:-rootfs}" in
 	buildroot-config) pre_build_hook $@ ;;
+	buildroot | debian | yocto) init_hook $@ ;&
 	*) build_hook $@ ;;
 esac

@@ -364,6 +364,11 @@ main()
 				echo -e "\e[31mCustom RK_KERNEL_VERSION ignored!\e[0m"
 				load_config RK_KERNEL_VERSION
 			fi
+
+			if grep -q "^RK_ROOTFS_SYSTEM=" "$RK_CUSTOM_ENV"; then
+				echo -e "\e[31mCustom RK_ROOTFS_SYSTEM ignored!\e[0m"
+				load_config RK_ROOTFS_SYSTEM
+			fi
 		fi
 	fi
 
