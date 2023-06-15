@@ -144,7 +144,10 @@ prepare_config()
 		return 0
 	fi
 
-	$MAKE olddefconfig &>/dev/null
+	if [ "$RK_CONFIG" -nt "${RK_CONFIG}.old" ]; then
+		$MAKE olddefconfig &>/dev/null
+		touch "${RK_CONFIG}.old"
+	fi
 }
 
 # Hooks
