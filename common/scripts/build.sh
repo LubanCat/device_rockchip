@@ -54,6 +54,16 @@ finish_build()
 	cd "$SDK_DIR"
 }
 
+load_config()
+{
+	[ -r "$RK_CONFIG" ] || return 0
+
+	for var in $@; do
+		export $(grep "^$var=" "$RK_CONFIG" | \
+			tr -d '"' || true) &>/dev/null
+	done
+}
+
 check_config()
 {
 	unset missing
@@ -336,7 +346,7 @@ main()
 
 		# Find custom environments
 		for cfg in $(grep "^RK_" "$RK_INITIAL_ENV" || true); do
-			env | grep -q "^$cfg$" || \
+			env | grep -q "^${cfg//\"/}$" || \
 				echo "$cfg" >> "$RK_CUSTOM_ENV"
 		done
 
@@ -349,6 +359,11 @@ main()
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
 			cp "$RK_CUSTOM_ENV" "$RK_LOG_DIR"
+
+			if grep -q "^RK_KERNEL_VERSION=" "$RK_CUSTOM_ENV"; then
+				echo -e "\e[31mCustom RK_KERNEL_VERSION ignored!\e[0m"
+				load_config RK_KERNEL_VERSION
+			fi
 		fi
 	fi
 

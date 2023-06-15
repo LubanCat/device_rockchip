@@ -10,8 +10,12 @@ update_kernel()
 	# Fallback to 5.10 kernel
 	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
 
-	sed -i "s/^\(RK_KERNEL_VERSION=\).*/\1\"$RK_KERNEL_VERSION\"/" \
-		"$RK_CONFIG"
+	# Update .config
+	KERNEL_CONFIG="RK_KERNEL_VERSION=\"$RK_KERNEL_VERSION\""
+	if ! grep -q "^$KERNEL_CONFIG$" "$RK_CONFIG"; then
+		sed -i "s/^RK_KERNEL_VERSION=.*/$KERNEL_CONFIG/" "$RK_CONFIG"
+		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+	fi
 
 	[ "$(kernel_version)" != "$RK_KERNEL_VERSION" ] || return 0
 
@@ -93,12 +97,18 @@ clean_hook()
 INIT_CMDS="default $KERNELS"
 init_hook()
 {
-	source "$RK_CONFIG"
+	# Priority: cmdline > custom env > .config > current kernel/ symlink
+	if echo $1 | grep -q "^kernel-"; then
+		export RK_KERNEL_VERSION=${1#kernel-}
+		echo "Using kernel version($RK_KERNEL_VERSION) from cmdline"
+	elif [ "$RK_KERNEL_VERSION" ]; then
+		export RK_KERNEL_VERSION=${RK_KERNEL_VERSION//\"/}
+		echo "Using kernel version($RK_KERNEL_VERSION) from environment"
+	else
+		load_config RK_KERNEL_VERSION
+	fi
 
-	case "$1" in
-		kernel-*) export RK_KERNEL_VERSION=${1#kernel-} ;&
-		*) update_kernel ;;
-	esac
+	update_kernel
 }
 
 PRE_BUILD_CMDS="kernel-config"
