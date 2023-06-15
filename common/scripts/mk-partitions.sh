@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+print_usage()
+{
+	normalized_usage | grep -v "^mod-parts"
+	echo -e "done                               \tdone modifying and quit"
+}
+
 modify_partitions()
 {
 	echo "=========================================="
@@ -7,15 +13,16 @@ modify_partitions()
 	echo "=========================================="
 
 	rk_partition_print
+
 	echo
 	echo "Usage:"
-	core_usage | grep -v "^mod-parts"
+	print_usage
 
 	while true; do
 		echo
 		read -p "Commands (? for help): " SUB_CMD ARGS || break
 		case "${SUB_CMD:-print-parts}" in
-			"done") break ;;
+			done) break ;;
 			print-parts)
 				rk_partition_print
 				continue
@@ -37,8 +44,7 @@ modify_partitions()
 		if $FUNC $ARGS; then
 			rk_partition_print
 		else
-			core_usage | grep -v "^mod-parts"
-			echo -e "done                               \tdone modifying"
+			print_usage
 		fi
 	done
 }
@@ -77,7 +83,7 @@ pre_build_hook()
 		rename-part) rk_partition_rename $@ ;;
 		resize-part) rk_partition_resize $@ ;;
 		*)
-			core_usage
+			normalized_usage
 			exit 1
 			;;
 	esac
