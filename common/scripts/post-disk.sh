@@ -34,7 +34,18 @@ if [ "$POST_INIT_BUSYBOX" ]; then
 	install -m 0755 external/rkscript/$SCRIPT "$TARGET_DIR/etc/init.d/"
 fi
 
-[ "$DISK_HELPER_TYPE" = resize ] || exit 0
+if [ "$DISK_HELPER_TYPE" = mount ]; then
+	if [ "$RK_DISK_AUTO_FORMAT" ]; then
+		echo "Enabling auto formatting..."
+		touch "$TARGET_DIR/.auto_mkfs"
+	fi
+
+	if [ "$RK_DISK_SKIP_FSCK" ]; then
+		echo "Disabling boot time fsck..."
+		touch "$TARGET_DIR/.skip_fsck"
+	fi
+	exit 0
+fi
 
 if [ "$POST_INIT_SYSTEMD" ]; then
 	install -m 0755 external/rkscript/$DISK_HELPER_TYPE-all.service \

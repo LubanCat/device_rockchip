@@ -86,6 +86,16 @@ config RK_DISK_HELPERS_DISABLED
 
 endchoice # disk helpers
 
+if ! RK_DISK_HELPERS_DISABLED
+
+config RK_DISK_AUTO_FORMAT
+	bool "format extra partitions when needed"
+
+config RK_DISK_SKIP_FSCK
+	bool "bypass boot time fsck"
+
+endif
+
 config RK_ROOTFS_UDEV_RULES
 	bool "Rockchip udev rules"
 	default y
