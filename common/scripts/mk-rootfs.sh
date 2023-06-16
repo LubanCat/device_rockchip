@@ -94,6 +94,7 @@ build_debian()
 usage_hook()
 {
 	echo -e "buildroot-config[:<config>]       \tmodify buildroot defconfig"
+	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make"
 	echo -e "rootfs[:<rootfs type>]            \tbuild default rootfs"
 	echo -e "buildroot                         \tbuild buildroot rootfs"
 	echo -e "yocto                             \tbuild yocto rootfs"
@@ -148,23 +149,34 @@ init_hook()
 	fi
 }
 
-PRE_BUILD_CMDS="buildroot-config"
+PRE_BUILD_CMDS="buildroot-config buildroot-make bmake"
 pre_build_hook()
 {
 	check_config RK_ROOTFS_TYPE || return 0
 
-	BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
+	case "$1" in
+		buildroot-make | bmake)
+			check_config RK_BUILDROOT_CFG || return 0
 
-	[ "$BUILDROOT_BOARD" ] || return 0
+			shift
+			"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG make $@
+			finish_build buildroot-make $@
+			;;
+		buildroot-config)
+			BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
 
-	TEMP_DIR=$(mktemp -d)
-	"$SDK_DIR/buildroot/build/parse_defconfig.sh" "$BUILDROOT_BOARD" \
-		"$TEMP_DIR/.config"
-	make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" menuconfig
-	"$SDK_DIR/buildroot/build/update_defconfig.sh" "$BUILDROOT_BOARD" \
-		"$TEMP_DIR"
+			[ "$BUILDROOT_BOARD" ] || return 0
 
-	finish_build $@
+			TEMP_DIR=$(mktemp -d)
+			"$SDK_DIR/buildroot/build/parse_defconfig.sh" \
+				"$BUILDROOT_BOARD" "$TEMP_DIR/.config"
+			make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" menuconfig
+			"$SDK_DIR/buildroot/build/update_defconfig.sh" \
+				"$BUILDROOT_BOARD" "$TEMP_DIR"
+
+			finish_build $@
+			;;
+	esac
 }
 
 BUILD_CMDS="rootfs buildroot debian yocto"
@@ -243,7 +255,7 @@ build_hook()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-rootfs}" in
-	buildroot-config) pre_build_hook $@ ;;
+	buildroot-config | buildroot-make | bmake) pre_build_hook $@ ;;
 	buildroot | debian | yocto) init_hook $@ ;&
 	*) build_hook $@ ;;
 esac

@@ -13,6 +13,18 @@ BUILDROOT_OUTPUT_DIR="$BUILDROOT_DIR/output/$BUILDROOT_BOARD"
 BUILDROOT_CONFIG="$BUILDROOT_OUTPUT_DIR/.config"
 BUILDROOT_CONFIG_ORIG="$BUILDROOT_OUTPUT_DIR/.config.orig"
 
+# Handle buildroot make
+if [ "$2" = make ]; then
+	shift
+	shift
+	if [ ! -r "$BUILDROOT_CONFIG" ]; then
+		make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" \
+			${BUILDROOT_BOARD}_defconfig
+	fi
+	make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" $@
+	exit
+fi
+
 # Save the original .config if exists
 if [ -r "$BUILDROOT_CONFIG" ] && [ ! -r "$BUILDROOT_CONFIG_ORIG" ]; then
 	cp "$BUILDROOT_CONFIG" "$BUILDROOT_CONFIG_ORIG"
