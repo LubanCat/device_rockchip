@@ -58,3 +58,9 @@ For building kmsgrab:
 1/ ./build.sh shell
 2/ source ./buildroot/output/$RK_BUILDROOT_CFG/host/environment-setup
 3/ $CC $RK_DATA_DIR/misc/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o $RK_DATA_DIR/tools/kmsgrab
+
+External sources:
+1/ rkwifibt:
+290925f rkwifibt: Fix rtk_hciattach bin
+2/ rktoolkit:
+bc1d85d vendor_storage: fixed hex string begin with 00, get wrong string length when read
