@@ -116,18 +116,20 @@ security_check()
 
 build_security_keys()
 {
-	if [ -d u-boot/keys]; then
+	if [ -d u-boot/keys ]; then
 		echo "ERROR: u-boot/keys already exists"
 		return 1
 	fi
 
 	mkdir -p u-boot/keys
 	cd u-boot/keys
-	"$SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048
+	"$SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048 --out ./
+
+	ln -rsf private_key.pem dev.key
+	ln -rsf public_key.pem dev.pubkey
+
 	cd "$SDK_DIR"
 
-	ln -rsf private_key.pem u-boot/keys/dev.key
-	ln -rsf public_key.pem u-boot/keys/dev.pubkey
 	openssl req -batch -new -x509 -key u-boot/keys/dev.key \
 		-out u-boot/keys/dev.crt
 
@@ -154,7 +156,7 @@ usage_hook()
 	echo -e "security_rootfs                   \tbuild rootfs and others with security(dm-v)"
 }
 
-BUILD_CMDS="security_check security_keys security_uboot security_boot security_recovery \
+BUILD_CMDS="security_check createkeys security_uboot security_boot security_recovery \
 	security_rootfs"
 build_hook()
 {
@@ -162,7 +164,7 @@ build_hook()
 
 	case "$1" in
 		security_check) security_check ;;
-		security_keys) build_security_keys ;;
+		createkeys) build_security_keys ;;
 		security_uboot)
 			"$SCRIPTS_DIR"/mk-loader.sh uboot
 			;;
