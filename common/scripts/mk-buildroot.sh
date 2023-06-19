@@ -21,7 +21,32 @@ if [ "$2" = make ]; then
 		make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" \
 			${BUILDROOT_BOARD}_defconfig
 	fi
-	make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" $@
+
+	case "$1" in
+		external/*)
+			TARGET=$1
+			unset ARG
+
+			COUNT=$(echo $1 | grep -o '-' | wc -l)
+			for I in $(seq 1 $COUNT); do
+				TARGET=$(echo $1 | cut -d'-' -f1-$I)
+				ARG=$(echo $1 | cut -d'-' -f$(($I + 1))-)
+
+				[ -d "$TARGET" ] || continue
+				break
+			done
+
+			PKG="$(basename $(dirname \
+				$(grep -rwl "$TARGET" \
+				"$BUILDROOT_DIR/package")))"
+			TARGET="$PKG${ARG:+-$ARG}"
+			;;
+		*) TARGET="$1" ;;
+	esac
+
+	shift
+	echo "Buildroot make: $TARGET $@"
+	make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" $TARGET $@
 	exit
 fi
 
