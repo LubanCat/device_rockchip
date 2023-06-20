@@ -17,7 +17,7 @@ build_all()
 	#       we will build kernel and ramboot firstly,
 	#       and then copy images into u-boot to sign the images.
 	if [ -z "$RK_SECURITY" ];then
-		"$SCRIPTS_DIR/mk-loader.sh" loader
+		"$SCRIPTS_DIR/mk-loader.sh"
 	fi
 
 	"$SCRIPTS_DIR/mk-security.sh" security_check
@@ -29,7 +29,7 @@ build_all()
 	fi
 
 	if [ "$RK_SECURITY" ];then
-		"$SCRIPTS_DIR/mk-loader.sh" loader
+		"$SCRIPTS_DIR/mk-loader.sh"
 	fi
 
 	"$SCRIPTS_DIR/mk-firmware.sh"

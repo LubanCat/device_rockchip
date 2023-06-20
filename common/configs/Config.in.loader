@@ -14,6 +14,8 @@ config RK_UBOOT_CFG
 		RK_CHIP_FAMILY = "rk3588"
 	default RK_CHIP
 
+if RK_UBOOT_CFG != ""
+
 config RK_UBOOT_CFG_FRAGMENTS
 	string "u-boot defconfig fragments (without .config suffix)"
 
@@ -29,5 +31,29 @@ config RK_UBOOT_SPL_INI
 
 config RK_UBOOT_SPL_CFG
 	string "u-boot spl defconfig"
+
+config RK_UBOOT_ARCH
+	string
+	default "arm" if RK_UBOOT_ARM32
+	default "arm64" if RK_UBOOT_ARM64
+
+choice
+	prompt "u-boot arch"
+	default RK_UBOOT_ARM32 if RK_KERNEL_ARM32
+	default RK_UBOOT_ARM64
+
+config RK_UBOOT_ARM64
+	bool "arm64"
+	depends on RK_CHIP_FAMILY != "px3se" && RK_CHIP_FAMILY != "rk3036" && \
+		RK_CHIP_FAMILY != "rk3128h" && RK_CHIP_FAMILY != "rk312x" && \
+		RK_CHIP_FAMILY != "rk3229" && RK_CHIP_FAMILY != "rk3288" && \
+		RK_CHIP_FAMILY != "rv1126_rv1109"
+
+config RK_UBOOT_ARM32
+	bool "arm"
+
+endchoice
+
+endif # RK_UBOOT_CFG
 
 endmenu # Loader

@@ -91,12 +91,15 @@ usage_hook()
 
 clean_hook()
 {
-	make -C kernel distclean
+	[ ! -d kernel ] || make -C kernel distclean
 }
 
 INIT_CMDS="default $KERNELS"
 init_hook()
 {
+	load_config RK_KERNEL_CFG
+	check_config RK_KERNEL_CFG &>/dev/null || return 0
+
 	# Priority: cmdline > custom env > .config > current kernel/ symlink
 	if echo $1 | grep -q "^kernel-"; then
 		export RK_KERNEL_VERSION=${1#kernel-}

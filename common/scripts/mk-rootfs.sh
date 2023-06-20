@@ -120,7 +120,7 @@ INIT_CMDS="default buildroot debian yocto"
 init_hook()
 {
 	load_config RK_ROOTFS_TYPE
-	check_config RK_ROOTFS_TYPE || return 0
+	check_config RK_ROOTFS_TYPE &>/dev/null || return 0
 
 	# Priority: cmdline > custom env
 	if [ "$1" != default ]; then
