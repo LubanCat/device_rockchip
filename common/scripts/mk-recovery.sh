@@ -34,9 +34,6 @@ build_hook()
 		"$DST_DIR/recovery.img" "$RK_RECOVERY_FIT_ITS"
 	ln -rsf "$DST_DIR/recovery.img" "$RK_FIRMWARE_DIR"
 
-	# For security
-	cp "$RK_FIRMWARE_DIR/recovery.img" u-boot/
-
 	finish_build build_recovery
 }
 

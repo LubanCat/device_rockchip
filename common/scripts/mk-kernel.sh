@@ -161,9 +161,6 @@ build_hook()
 
 	if echo $1 | grep -q "^kernel"; then
 		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
-
-		[ -z "$RK_SECURITY" ] || cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
-
 		"$SCRIPTS_DIR/check-power-domain.sh"
 	fi
 

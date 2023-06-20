@@ -13,14 +13,9 @@ build_all()
 	rm -rf $RK_FIRMWARE_DIR
 	mkdir -p $RK_FIRMWARE_DIR
 
-	# NOTE: On secure boot-up world, if the images build with fit(flattened image tree)
-	#       we will build kernel and ramboot firstly,
-	#       and then copy images into u-boot to sign the images.
-	if [ -z "$RK_SECURITY" ];then
-		"$SCRIPTS_DIR/mk-loader.sh"
+	if [ "$RK_SECURITY" ]; then
+		"$SCRIPTS_DIR/mk-security.sh" security_check
 	fi
-
-	"$SCRIPTS_DIR/mk-security.sh" security_check
 
 	if [ "$RK_KERNEL_CFG" ]; then
 		"$SCRIPTS_DIR/mk-kernel.sh"
@@ -28,9 +23,12 @@ build_all()
 		"$SCRIPTS_DIR/mk-recovery.sh"
 	fi
 
-	if [ "$RK_SECURITY" ];then
-		"$SCRIPTS_DIR/mk-loader.sh"
+	if [ "$RK_SECURITY" ]; then
+		"$SCRIPTS_DIR/mk-security.sh" security_ramboot
 	fi
+
+	# Will repack boot and recovery images when security enabled
+	"$SCRIPTS_DIR/mk-loader.sh"
 
 	"$SCRIPTS_DIR/mk-firmware.sh"
 	"$SCRIPTS_DIR/mk-updateimg.sh"

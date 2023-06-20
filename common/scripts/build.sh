@@ -281,7 +281,9 @@ main()
 	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
 	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_SESSION"
+	export RK_ROCKDEV_DIR="$SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
+	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
 	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
 	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
 	export RK_FINAL_ENV="$RK_OUTDIR/final.env"
@@ -307,12 +309,10 @@ main()
 	cd "$RK_LOG_BASE_DIR"
 	rm -rf $(ls -t | sed '1,10d')
 
-	mkdir -p "$RK_FIRMWARE_DIR"
-	rm -rf "$SDK_DIR/rockdev"
-	ln -rsf "$RK_FIRMWARE_DIR" "$SDK_DIR/rockdev"
-
 	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
+
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
@@ -438,7 +438,7 @@ main()
 			exit 0 ;;
 		cleanall)
 			run_build_hooks clean
-			rm -rf "$RK_OUTDIR"
+			rm -rf "$RK_OUTDIR" "$SDK_DIR/rockdev"
 			finish_build cleanall
 			exit 0 ;;
 		post-rootfs)

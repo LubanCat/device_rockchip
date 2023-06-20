@@ -64,12 +64,17 @@ build_uboot()
 
 	rm -f u-boot/*.bin u-boot/*.img
 
+	if [ "$RK_SECURITY" ]; then
+		cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
+		cp "$RK_FIRMWARE_DIR/recovery.img" u-boot/
+	fi
+
 	do_build_uboot $@
 
 	if [ "$RK_SECURITY" ];then
-		ln -rsf u-boot/boot.img "$RK_FIRMWARE_DIR"
+		ln -rsf u-boot/boot.img "$RK_SECURITY_FIRMWARE_DIR"
 		[ "$RK_AB_UPDATE" ] || \
-			ln -rsf u-boot/recovery.img "$RK_FIRMWARE_DIR"
+			ln -rsf u-boot/recovery.img "$RK_SECURITY_FIRMWARE_DIR"
 	fi
 
 	LOADER="$(echo u-boot/*_loader_*v*.bin | head -1)"

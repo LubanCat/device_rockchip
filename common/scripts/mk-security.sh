@@ -57,8 +57,7 @@ find_string_in_config()
 
 security_check()
 {
-	# check security enabled
-	[ -n "$RK_SECURITY_CHECK_METHOD" ] || return 0
+	[ "$RK_SECURITY" ] || return 0
 
 	if [ ! -d u-boot/keys ]; then
 		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
@@ -103,7 +102,7 @@ security_check()
 	if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ]; then
 		echo "check ramdisk defconfig"
 		defconfig_check \
-			buildroot/configs/${RK_BUILDROOT_CFG}_defconfig \
+			buildroot/configs/${RK_SECURITY_INITRD_CFG}_defconfig \
 			"$ROOTFS_UPDATE_ENGINEBIN_CONFIGS"
 	fi
 
@@ -136,40 +135,65 @@ build_security_keys()
 	openssl rand -out u-boot/keys/system_enc_key -hex 32
 }
 
-security_is_enabled()
+build_security_ramboot()
 {
-	if [ -z "$RK_SECURITY" ]; then
-		echo "Security not enabled"
-		return 1
+	check_config RK_SECURITY_INITRD_CFG || return 0
+
+	echo "=========================================="
+	echo "          Start building security ramboot(buildroot)"
+	echo "=========================================="
+
+	DST_DIR="$RK_OUTDIR/security-ramboot"
+
+	if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
+		echo "Rootfs is not ready, building it for security..."
+		"$SCRIPTS_DIR/mk-rootfs.sh"
 	fi
+
+	# Prepare misc and initrd overlay with rootfs.img
+	"$SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
+		"$RK_FIRMWARE_DIR/rootfs.img"
+
+	/usr/bin/time -f "you take %E to build security initrd(buildroot)" \
+		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG \
+		"$DST_DIR"
+
+	/usr/bin/time -f "you take %E to pack security ramboot image" \
+		"$SCRIPTS_DIR/mk-ramdisk.sh" \
+		"$DST_DIR/rootfs.$RK_SECURITY_INITRD_TYPE" \
+		"$DST_DIR/ramboot.img" "$RK_RECOVERY_FIT_ITS" \
+	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
+
+	finish_build $@
 }
 
 # Hooks
 
 usage_hook()
 {
-	echo -e "security_check                    \tcheck contidions for security features"
-	echo -e "createkeys                        \tbuild secureboot root keys"
+	echo -e "security_check                    \tcheck contidions for security boot"
+	echo -e "createkeys                        \tbuild security boot keys"
+	echo -e "security_ramboot                  \tbuild security ramboot"
 	echo -e "security_uboot                    \tbuild uboot with security"
 	echo -e "security_boot                     \tbuild boot with security"
 	echo -e "security_recovery                 \tbuild recovery with security"
-	echo -e "security_rootfs                   \tbuild rootfs and others with security(dm-v)"
+	echo -e "security_rootfs                   \tbuild rootfs with security"
 }
 
-BUILD_CMDS="security_check createkeys security_uboot security_boot security_recovery \
-	security_rootfs"
+BUILD_CMDS="security_check createkeys security_ramboot security_uboot \
+	security_boot security_recovery security_rootfs"
 build_hook()
 {
-	security_is_enabled || return 0
+	check_config RK_SECURITY || return 0
 
-	case "$1" in
+	case "${1:-security_ramboot}" in
 		security_check) security_check ;;
 		createkeys) build_security_keys ;;
-		security_uboot)
-			"$SCRIPTS_DIR"/mk-loader.sh uboot
-			;;
+		security_ramboot) build_security_ramboot ;;
+		security_uboot) "$SCRIPTS_DIR"/mk-loader.sh uboot ;;
 		security_boot)
-			"$SCRIPTS_DIR"/mk-rootfs.sh
+			"$SCRIPTS_DIR"/mk-kernel.sh
+			build_security_ramboot
 			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		security_recovery)
@@ -178,8 +202,8 @@ build_hook()
 			;;
 		security_rootfs)
 			"$SCRIPTS_DIR"/mk-rootfs.sh
-			"$SCRIPTS_DIR"/mk-loader.sh uboot
-			echo "please update rootfs.img / boot.img"
+			build_security_ramboot
+			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		*) usage ;;
 	esac

@@ -2,33 +2,34 @@
 
 MODE=$1
 INPUT="$(readlink -f "$2")"
-OUTPUT="$(dirname "$INPUT")"
+OUTDIR="$RK_OUTDIR/security-dm"
 
 cd "$SDK_DIR"
+mkdir -p "$OUTDIR"
 
-TEMPDIR="$OUTPUT/tempfile"
+TEMPDIR="$OUTDIR/tempfile"
 if [ "$MODE" = "DM-E" ]; then
-	ROOTFS="$OUTPUT/enc.img"
+	ROOTFS="$OUTDIR/enc.img"
 	cipher=aes-cbc-plain
 	key=$(cat u-boot/keys/system_enc_key)
 else
-	ROOTFS="$OUTPUT/dmv.img"
+	ROOTFS="$OUTDIR/dmv.img"
 fi
 ROOT_HASH="$TEMPDIR/root.hash"
 ROOT_HASH_OFFSET="$TEMPDIR/root.offset"
-OVERLAY_DIR="$COMMON_DIR/security-ramdisk-overlay"
+OVERLAY_DIR="$SDK_DIR/buildroot/board/rockchip/common/security-ramdisk-overlay"
 INIT_FILE="$OVERLAY_DIR/init"
 ROOTFS_INFO=$(ls -l "$INPUT")
 
 PACK=TRUE
-if [ -e "$OUTPUT/rootfs.info" ]; then
-	if [ "$(cat "$OUTPUT/rootfs.info")" = "$(ls -l "$INPUT")" ]; then
+if [ -e "$OUTDIR/rootfs.info" ]; then
+	if [ "$(cat "$OUTDIR/rootfs.info")" = "$(ls -l "$INPUT")" ]; then
 		PACK=FALSE
 	else
-		echo "$(ls -l "$INPUT")" > "$OUTPUT/rootfs.info"
+		echo "$(ls -l "$INPUT")" > "$OUTDIR/rootfs.info"
 	fi
 else
-	echo "$(ls -l "$INPUT")" > "$OUTPUT/rootfs.info"
+	echo "$(ls -l "$INPUT")" > "$OUTDIR/rootfs.info"
 fi
 
 pack_dmv()
@@ -74,7 +75,7 @@ if [ "$PACK" = "TRUE" ]; then
 		pack_dme
 	fi
 
-	ln -rsf "$ROOTFS" "$OUTPUT/security-system.img"
+	ln -rsf "$ROOTFS" "$RK_SECURITY_FIRMWARE_DIR/rootfs.img"
 fi
 
 cp "$OVERLAY_DIR/init.in" "$INIT_FILE"
@@ -93,7 +94,7 @@ elif [ "$MODE" = "DM-E" ]; then
 
 	echo "Generate misc with key"
 	"$SCRIPTS_DIR/mk-misc.sh" "$RK_IMAGE_DIR/$RK_MISC_IMG" \
-		"$RK_IMAGE_DIR/misc.img" 64 \
+		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
 		$(cat "$SDK_DIR/u-boot/keys/system_enc_key")
 fi
 

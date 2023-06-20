@@ -242,41 +242,13 @@ build_hook()
 		exit 1
 	fi
 
-	ln -rsf "$ROOTFS_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
-
-	# For builtin OEM image
-	[ ! -e "$ROOTFS_DIR/oem.img" ] || \
-		ln -rsf "$ROOTFS_DIR/oem.img" "$RK_FIRMWARE_DIR"
-
 	if [ "$RK_ROOTFS_INITRD" ]; then
-		/usr/bin/time -f "you take %E to pack ramboot image" \
-			"$SCRIPTS_DIR/mk-ramdisk.sh" \
-			"$RK_FIRMWARE_DIR/rootfs.img" \
-			"$ROOTFS_DIR/ramboot.img" "$RK_BOOT_FIT_ITS"
-		ln -rsf "$ROOTFS_DIR/ramboot.img" \
-			"$RK_FIRMWARE_DIR/boot.img"
-
-		# For security
-		cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
-	fi
-
-	if [ "$RK_SECURITY" ]; then
-		echo "Try to build init for $RK_SECURITY_CHECK_METHOD"
-
-		if [ "$RK_SECURITY_CHECK_METHOD" = "DM-V" ]; then
-			SYSTEM_IMG=rootfs.squashfs
-		else
-			SYSTEM_IMG=$ROOTFS_IMG
-		fi
-		if [ ! -f "$ROOTFS_DIR/$SYSTEM_IMG" ]; then
-			echo "There's no $SYSTEM_IMG generated..."
-			exit -1
-		fi
-
-		"$SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
-			"$ROOTFS_DIR/$SYSTEM_IMG"
-		ln -rsf "$ROOTFS_DIR/security-system.img" \
-			"$RK_FIRMWARE_DIR/rootfs.img"
+		/usr/bin/time -f "you take %E to pack initrd image" \
+			"$SCRIPTS_DIR/mk-ramdisk.sh" "$ROOTFS_DIR/$ROOTFS_IMG" \
+			"$ROOTFS_DIR/boot.img" "$RK_BOOT_FIT_ITS"
+		ln -rsf "$ROOTFS_DIR/boot.img" "$RK_FIRMWARE_DIR/boot.img"
+	else
+		ln -rsf "$ROOTFS_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi
 
 	finish_build build_rootfs $@

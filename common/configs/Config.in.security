@@ -1,16 +1,42 @@
 #
 
-comment "Security features depend on init ramfs/ramdisk rootfs"
-	depends on !RK_ROOTFS_INITRD
+comment "Security feature depends on linux kernel"
+	depends on RK_KERNEL_CFG = ""
 
-if RK_ROOTFS_INITRD
+comment "Security feature depends on non-initrd rootfs"
+	depends on RK_ROOTFS_INITRD
+
+comment "Security feature depends on u-boot (not SPL)"
+	depends on RK_UBOOT_SPL_CFG != ""
+
+comment "Security feature depends on FIT image"
+	depends on !RK_USE_FIT_IMG
+
+if RK_KERNEL_CFG != "" && !RK_ROOTFS_INITRD && RK_UBOOT_SPL_CFG = "" && RK_USE_FIT_IMG
 
 menu "Security"
 
 config RK_SECURITY
-	bool "security features"
+	bool "security feature"
 
 if RK_SECURITY
+
+config RK_SECURITY_INITRD_BASE_CFG
+	string "buildroot security ramdisk base cfg (rockchip_<cfg>_ramboot_defconfig)"
+	default RK_CHIP_FAMILY
+	help
+	  Base name of buildroot defconfig for security ramdisk.
+
+config RK_SECURITY_INITRD_CFG
+	string
+	default "rockchip_${RK_RECOVERY_BASE_CFG}_ramboot"
+
+config RK_SECURITY_INITRD_TYPE
+	string "security ramdisk filesystem type (cpio/cpio.gz/romfs)"
+	default "cpio.gz"
+
+comment "Security check method (DM-V) needs squashfs rootfs type"
+	depends on RK_ROOTFS_TYPE != "squashfs"
 
 config RK_SECURITY_CHECK_METHOD
 	string
@@ -26,6 +52,7 @@ config RK_SECURITY_CHECK_DM_E
 
 config RK_SECURITY_CHECK_DM_V
 	bool "DM-V"
+	depends on RK_ROOTFS_TYPE = "squashfs"
 
 endchoice
 

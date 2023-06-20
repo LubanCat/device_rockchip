@@ -19,7 +19,7 @@ link_image() {
 	SRC="$1"
 	DST="$2"
 	message "Linking $DST from $SRC..."
-	ln -rsf "$SRC" "$RK_FIRMWARE_DIR/$DST"
+	ln -rsf "$SRC" "$DST"
 }
 
 pack_extra_partitions() {
@@ -71,16 +71,38 @@ build_firmware()
 		exit 1
 	fi
 
-	mkdir -p "$RK_FIRMWARE_DIR"
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+	if [ "$RK_SECURITY" ]; then
+		FIRMWARE_DIR="$RK_SECURITY_FIRMWARE_DIR"
+	else
+		FIRMWARE_DIR="$RK_FIRMWARE_DIR"
+	fi
 
-	link_image "$CHIP_DIR/$RK_PARAMETER" parameter.txt
-	[ -z "$RK_MISC_IMG" ] || \
-		link_image "$RK_IMAGE_DIR/$RK_MISC_IMG" misc.img
+	rm -rf "$RK_ROCKDEV_DIR"
+	ln -rsf "$FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
+
+	link_image "$CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
+
+	if [ "$RK_MISC_IMG" ]; then
+		link_image "$RK_IMAGE_DIR/$RK_MISC_IMG" \
+			"$RK_FIRMWARE_DIR/misc.img"
+	fi
 
 	pack_extra_partitions
 
+	if [ "$RK_SECURITY" ]; then
+		# Link non-security images
+		for f in $(ls "$RK_FIRMWARE_DIR/"); do
+			if [ -r "$FIRMWARE_DIR/$f" ]; then
+				continue
+			fi
+
+			link_image "$RK_FIRMWARE_DIR/$f" "$FIRMWARE_DIR/$f"
+		done
+	fi
+
 	echo "Packed files:"
-	for f in "$RK_FIRMWARE_DIR"/*; do
+	for f in "$FIRMWARE_DIR"/*; do
 		NAME=$(basename "$f")
 
 		echo -n "$NAME"
@@ -103,7 +125,7 @@ build_firmware()
 		fi
 	done
 
-	message "Images in $RK_FIRMWARE_DIR are ready!"
+	message "Images in $FIRMWARE_DIR are ready!"
 
 	finish_build
 }
@@ -117,8 +139,7 @@ usage_hook()
 
 clean_hook()
 {
-	rm -rf "$RK_FIRMWARE_DIR"
-	mkdir -p "$RK_FIRMWARE_DIR"
+	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 }
 
 POST_BUILD_CMDS="firmware"
