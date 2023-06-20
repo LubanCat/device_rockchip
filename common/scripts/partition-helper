@@ -171,18 +171,45 @@ rk_partition_edit()
 	rk_partition_save
 }
 
+rk_partition_parse_name()
+{
+	unset PART_NAME
+
+	[ "$#" -eq 1 ] || return 1
+
+	# Part name
+	if ! echo $1 | grep -qE "^[0-9]*$"; then
+		if ! grep -q "^$1 " $PART_TABLE; then
+			echo -e "\e[35mNo such part ($1)!\e[0m"
+			return 1
+		fi
+
+		PART_NAME=$1
+		return 0
+	fi
+
+	# Part idx
+	IDX=$1
+	if [ "$IDX" -lt 1 ]; then
+		echo -e "\e[35mIndex should not be less than 1!\e[0m"
+		return 1
+	fi
+
+	NUM=$(rk_partition_num)
+	if [ "$IDX" -gt "$NUM" ]; then
+		echo -e "\e[35mIndex should not be greater than $NUM!\e[0m"
+		return 1
+	fi
+
+	PART_NAME=$(sed -n "$(($IDX + 1))s/\(^[^ ]*\) .*/\1/p" $PART_TABLE)
+}
+
 rk_partition_del()
 {
 	[ "$#" -gt 0 ] || return 1
 
-	if echo $1 | grep -qE "^[0-9]*$"; then
-		# Part idx
-		IDX=$(( $1 + 1 ))
-		sed -i "${IDX}d" $PART_TABLE
-	else
-		# Part name
-		sed -i "/^$1 /d" $PART_TABLE
-	fi
+	rk_partition_parse_name $1 || return 1
+	sed -i "/^$PART_NAME /d" $PART_TABLE
 
 	rk_partition_save
 }
@@ -191,14 +218,14 @@ rk_partition_rename()
 {
 	[ "$#" -gt 1 ] || return 1
 
-	if echo $1 | grep -qE "^[0-9]*$"; then
-		# Part idx
-		IDX=$(( $1 + 1 ))
-		sed -i "${IDX}s/^[^ ]*/$2/" $PART_TABLE
-	else
-		# Part name
-		sed -i "s/^$1 /$2 /" $PART_TABLE
+	echo $2 | grep -qE "^[a-zA-Z]" || return 1
+	if rk_partition_parse_name $2 >/dev/null; then
+		echo -e "\e[35mPart already exists ($2)!\e[0m"
+		return 1
 	fi
+
+	rk_partition_parse_name $1 || return 1
+	sed -i "s/^$PART_NAME /$2 /" $PART_TABLE
 
 	rk_partition_save
 }
@@ -206,17 +233,23 @@ rk_partition_rename()
 rk_partition_move()
 {
 	[ "$#" -gt 1 ] || return 1
-	echo $2 | grep -qE "^[0-9]*$" || return 1
 
-	if echo $1 | grep -qE "^[0-9]*$"; then
-		# Part idx
-		IDX=$(( $1 + 1 ))
-		PART=$(sed -n "${IDX}p" $PART_TABLE)
-	else
-		# Part name
-		PART=$(sed -n "/^$1 /p" $PART_TABLE)
+	echo $2 | grep -qE "^[0-9]*$" || return 1
+	rk_partition_parse_name $2 || return 1
+
+	rk_partition_parse_name $1 || return 1
+	PART=$(sed -n "/^$PART_NAME /p" $PART_TABLE)
+
+	NUM=$(rk_partition_num)
+	if [ "$2" -eq "$NUM" ] && grep -q "\-$" $PART_TABLE; then
+		echo -e "\e[35mCannot move after unlimited part!\e[0m"
+		return 1
 	fi
-	[ "$PART" ] || return 1
+
+	if echo "$PART" | grep -q "\-$"; then
+		echo -e "\e[35mCannot move unlimited part ($1)!\e[0m"
+		return 1
+	fi
 
 	sed -i "/^$PART$/d" $PART_TABLE
 	sed -i "$2 a$PART" $PART_TABLE
@@ -233,14 +266,8 @@ rk_partition_resize()
 		*) SIZE="$(rk_partition_size_readable_to_sector $2)" ;;
 	esac
 
-	if echo $1 | grep -qE "^[0-9]*$"; then
-		# Part idx
-		IDX=$(( $1 + 1 ))
-		sed -i "${IDX}s/ .*/ $SIZE/" $PART_TABLE
-	else
-		# Part name
-		sed -i "s/^$1 .*/$1 $SIZE/" $PART_TABLE
-	fi
+	rk_partition_parse_name $1 || return 1
+	sed -i "s/^$PART_NAME .*/$PART_NAME $SIZE/" $PART_TABLE
 
 	rk_partition_save
 }
@@ -249,28 +276,41 @@ rk_partition_insert()
 {
 	[ "$#" -gt 1 ] || return 1
 
+	echo $1 | grep -qE "^[0-9]*$" || return 1
+
 	IDX=$1
-	[ "$IDX" -ge 1 ] || return 1
+	if [ "$IDX" -lt 1 ]; then
+		echo -e "\e[35mIndex should not be less than 1!\e[0m"
+		return 1
+	fi
 
 	NUM=$(rk_partition_num)
-	[ "$IDX" -le "$(( $NUM + 1 ))" ] || return 1
+	if [ "$IDX" -gt "$(($NUM + 1))" ]; then
+		echo -e "\e[35mIndex should not be greater than $(($NUM + 1))!\e[0m"
+		return 1
+	fi
+
+	echo $2 | grep -qE "^[a-zA-Z]" || return 1
+	if rk_partition_parse_name $2 >/dev/null; then
+		echo -e "\e[35mPart already exists ($2)!\e[0m"
+		return 1
+	fi
 
 	case "${3:-grow}" in
 		0x*) SIZE=$3 ;;
 		*) SIZE="$(rk_partition_size_readable_to_sector $3)" ;;
 	esac
 
-	# Only latest part can be unlimited
 	if [ "$SIZE" = "-" ] && [ "$IDX" -lt "$(( $NUM + 1 ))" ]; then
+		echo -e "\e[35mOnly latest part can be unlimited!\e[0m"
 		return 1
 	fi
 
-	# The latest part is unlimited
 	if [ "$IDX" -eq "$(( $NUM + 1 ))" ] && grep -q "\-$" $PART_TABLE; then
+		echo -e "\e[35mCannot insert after unlimited part!\e[0m"
 		return 1
 	fi
 
-	sed -i "/^$2 /d" $PART_TABLE
 	sed -i "$IDX a$2 $SIZE" $PART_TABLE
 
 	rk_partition_save
@@ -292,8 +332,8 @@ rk_partition_create()
 			SIZE="$(rk_partition_size_readable_to_sector $1)"
 			[ -z "$1" ] || shift
 
-			# Only latest part can be unlimited
 			if [ "$1" -a "$SIZE" = "-" ]; then
+				echo -e "\e[35mOnly latest part can be unlimited!\e[0m"
 				break
 			fi
 
