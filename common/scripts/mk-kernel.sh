@@ -111,13 +111,26 @@ init_hook()
 	update_kernel
 }
 
-PRE_BUILD_CMDS="kernel-config"
+PRE_BUILD_CMDS="kernel-config kernel-make kmake"
 pre_build_hook()
 {
 	check_config RK_KERNEL_CFG || return 0
-	do_build $@
 
-	finish_build $@
+	case "$1" in
+		kernel-make | kmake)
+			shift;
+			if [ ! -r kernel/.config ]; then
+				run_command $KMAKE $RK_KERNEL_CFG \
+					$RK_KERNEL_CFG_FRAGMENTS
+			fi
+			run_command $KMAKE $@
+			finish_build kmake $@
+			;;
+		kernel-config)
+			do_build $@
+			finish_build $@
+			;;
+	esac
 }
 
 pre_build_hook_dry()
@@ -205,7 +218,7 @@ post_build_hook_dry()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-config) pre_build_hook $@ ;;
+	kernel-config | kernel-make | kmake) pre_build_hook $@ ;;
 	kernel* | modules)
 		init_hook $@
 		build_hook ${@:-kernel}
