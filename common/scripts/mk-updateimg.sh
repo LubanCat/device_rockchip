@@ -39,6 +39,8 @@ gen_package_file()
 
 build_updateimg()
 {
+	check_config RK_UPDATE || return 0
+
 	TARGET="${1:-$RK_FIRMWARE_DIR/update.img}"
 	TYPE="${2:-update}"
 	PKG_FILE="${3:-$RK_PACKAGE_FILE}"
