@@ -6,6 +6,13 @@ build_buildroot()
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
 
+	BUILDROOT_VERSION=$(grep "export BR2_VERSION := " \
+		"$SDK_DIR/buildroot/Makefile" | xargs -n 1 | tail -n 1)
+
+	echo "=========================================="
+	echo "          Start building buildroot($BUILDROOT_VERSION)"
+	echo "=========================================="
+
 	/usr/bin/time -f "you take %E to build buildroot" \
 		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$ROOTFS_DIR"
 
@@ -52,6 +59,10 @@ build_yocto()
 		echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
 	} > build/conf/local.conf
 
+	echo "=========================================="
+	echo "          Start building machine($RK_YOCTO_CFG)"
+	echo "=========================================="
+
 	source oe-init-build-env build
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -f -c rootfs -c image_complete \
@@ -72,6 +83,10 @@ build_debian()
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
 
 	"$SCRIPTS_DIR/check-debian.sh"
+
+	echo "=========================================="
+	echo "          Start building $RK_DEBIAN_VERSION($ARCH)"
+	echo "=========================================="
 
 	cd debian
 	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
