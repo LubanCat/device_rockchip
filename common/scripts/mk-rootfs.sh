@@ -31,13 +31,31 @@ build_yocto()
 	cd yocto
 	rm -f build/conf/local.conf
 
-	{
-		echo "include include/common.conf"
-		echo "include include/debug.conf"
-		echo "include include/display.conf"
-		echo "include include/multimedia.conf"
-		echo "include include/audio.conf"
+	if echo "$RK_YOCTO_CFG" | grep -q ".conf$"; then
+		ln -sf $RK_YOCTO_CFG build/conf/local.conf
 
+		echo "=========================================="
+		echo "          Start building $RK_YOCTO_CFG"
+		echo "=========================================="
+	else
+		{
+			echo "include include/common.conf"
+			echo "include include/debug.conf"
+			echo "include include/display.conf"
+			echo "include include/multimedia.conf"
+			echo "include include/audio.conf"
+
+			echo
+			echo "MACHINE = \"$RK_YOCTO_CFG\""
+			echo
+		} > build/conf/local.conf
+
+		echo "=========================================="
+		echo "          Start building machine($RK_YOCTO_CFG)"
+		echo "=========================================="
+	fi
+
+	{
 		if [ "$RK_WIFIBT_CHIP" ]; then
 			echo "include include/wifibt.conf"
 		fi
@@ -46,27 +64,24 @@ build_yocto()
 			echo "include include/browser.conf"
 		fi
 
-		echo
-		echo "MACHINE = \"$RK_YOCTO_CFG\""
+		echo "include include/rksdk.conf"
+
 		echo
 
-		echo "PREFERRED_VERSION_linux-rockchip := \"$RK_KERNEL_VERSION_REAL%\""
+		echo "PREFERRED_VERSION_linux-rockchip :=" \
+			"\"$RK_KERNEL_VERSION_REAL%\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_REAL-custom%\""
 		case "$RK_CHIP_FAMILY" in
 			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
 		esac
 		echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
-	} > build/conf/local.conf
-
-	echo "=========================================="
-	echo "          Start building machine($RK_YOCTO_CFG)"
-	echo "=========================================="
+	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -f -c rootfs -c image_complete \
-		-R conf/include/rksdk.conf
+		-R conf/rksdk_override.conf
 
 	ln -rsf "$PWD/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
 
