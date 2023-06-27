@@ -1,9 +1,11 @@
 #!/bin/bash -e
 
-# buildroot would fixup owner in its fakeroot script
-POST_OS_DISALLOWED="recovery pcba buildroot"
-
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+
+# buildroot would fixup owner in its fakeroot script
+if grep -q "^ID=buildroot$" "$TARGET_DIR/etc/os-release"; then
+	exit 0
+fi
 
 echo "Fixing up owner for $TARGET_DIR..."
 

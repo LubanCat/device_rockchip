@@ -21,10 +21,8 @@ cd "$SDK_DIR"
 
 install_overlay "$COMMON_DIR/overlays/overlay-$POST_OS"
 
-# No extra overlays for recovery and pcba
-case "$POST_OS" in
-	recovery | pcba) exit 0 ;;
-esac
+# No extra overlays for non-rootfs
+[ "$POST_ROOTFS" ] || exit 0
 
 for overlay in $RK_ROOTFS_OVERLAY_DIRS; do
 	install_overlay "$overlay"

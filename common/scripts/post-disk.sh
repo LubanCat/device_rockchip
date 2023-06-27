@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-POST_OS_DISALLOWED="recovery pcba"
+POST_ROOTFS_ONLY=1
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 

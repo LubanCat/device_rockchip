@@ -18,9 +18,10 @@ echo "Adding information to /etc/os-release..."
 mkdir -p "$(dirname "$OS_RELEASE")"
 [ -f "$OS_RELEASE" ] || touch "$OS_RELEASE"
 
+fixup_os_release OS "$POST_OS"
 fixup_os_release BUILD_INFO "$(whoami)@$(hostname) $(date)${@:+ - $@}"
 fixup_os_release KERNEL "$RK_KERNEL_VERSION - ${RK_KERNEL_CFG:-unkown}"
 
-if [ "$POST_OS" != recovery -a "$POST_OS" != pcba ]; then
+if [ "$POST_ROOTFS" ]; then
 	cp -f "$OS_RELEASE" "$RK_OUTDIR"
 fi

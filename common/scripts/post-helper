@@ -51,10 +51,17 @@ case "$(grep "^ID=" "$TARGET_DIR/etc/os-release" 2>/dev/null)" in
 	ID=poky) POST_OS=yocto ;;
 esac
 case "$TARGET_DIR/" in
+	*/output/*_ramboot/target/*) POST_OS=ramboot ;;
 	*/output/*_recovery/target/*) POST_OS=recovery ;;
 	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
 echo "$POST_OS_DISALLOWED" | grep -wvq $POST_OS || exit 0
+
+unset POST_ROOTFS
+case "$POST_OS" in
+	buildroot | debian | yocto) POST_ROOTFS=1 ;;
+	*) [ -z "$POST_ROOTFS_ONLY" ] || exit 0 ;;
+esac
 
 unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
 if [ -e "$TARGET_DIR/etc/init.d/rcS" ]; then
