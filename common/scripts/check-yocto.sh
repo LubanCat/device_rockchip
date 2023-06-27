@@ -28,3 +28,14 @@ if [ "${PYTHON3_MIN_VER:-0}" -lt 6 ]; then
 	echo -e "\e[0m"
 	exit 1
 fi
+
+# The yocto's e2fsprogs doesn't support new features like
+# metadata_csum_seed and orphan_file
+if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
+	echo -e "\e[35m"
+	echo "Your mke2fs is too new: $(mke2fs -V 2>&1 | head -n 1)"
+	echo "Please downgrade it:"
+	"$SCRIPTS_DIR/install-e2fsprogs.sh"
+	echo -e "\e[0m"
+	exit 1
+fi
