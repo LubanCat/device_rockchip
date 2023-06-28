@@ -36,6 +36,14 @@ config RK_CHIP
 	help
 	  Rockchip SoC.
 
+config RK_CHIP_ARM32
+	bool
+	depends on RK_CHIP_FAMILY = "px3se" || RK_CHIP_FAMILY = "rk3036" || \
+		RK_CHIP_FAMILY = "rk3128h" || RK_CHIP_FAMILY = "rk312x" || \
+		RK_CHIP_FAMILY = "rk3229" || RK_CHIP_FAMILY = "rk3288" || \
+		RK_CHIP_FAMILY = "rv1126_rv1109"
+	default y
+
 source "Config.in.rootfs"
 source "Config.in.loader"
 source "Config.in.kernel"

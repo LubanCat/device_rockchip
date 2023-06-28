@@ -83,7 +83,7 @@ choice
 
 config RK_DEBIAN_ARM64
 	bool "arm64"
-	depends on RK_KERNEL_ARM64
+	depends on !RK_CHIP_ARM32
 
 config RK_DEBIAN_ARMHF
 	bool "armhf"

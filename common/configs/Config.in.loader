@@ -39,15 +39,10 @@ config RK_UBOOT_ARCH
 
 choice
 	prompt "u-boot arch"
-	default RK_UBOOT_ARM32 if RK_KERNEL_ARM32
-	default RK_UBOOT_ARM64
 
 config RK_UBOOT_ARM64
 	bool "arm64"
-	depends on RK_CHIP_FAMILY != "px3se" && RK_CHIP_FAMILY != "rk3036" && \
-		RK_CHIP_FAMILY != "rk3128h" && RK_CHIP_FAMILY != "rk312x" && \
-		RK_CHIP_FAMILY != "rk3229" && RK_CHIP_FAMILY != "rk3288" && \
-		RK_CHIP_FAMILY != "rv1126_rv1109"
+	depends on !RK_CHIP_ARM32
 
 config RK_UBOOT_ARM32
 	bool "arm"
