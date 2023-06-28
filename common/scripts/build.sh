@@ -116,6 +116,39 @@ start_log()
 	echo "$LOG_FILE"
 }
 
+get_toolchain()
+{
+	TOOLCHAIN_ARCH="${1/arm64/aarch64}"
+
+	MACHINE=$(uname -m)
+	if [ "$MACHINE" = x86_64 ]; then
+		TOOLCHAIN_VENDOR="${2:-none}"
+		TOOLCHAIN_OS="${3:-linux}"
+
+		# RV1126 uses custom toolchain
+		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
+			TOOLCHAIN_VENDOR=rockchip
+		fi
+
+		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
+		GCC="$(find "$TOOLCHAIN_DIR" \
+			-name "*$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-*-gcc" | \
+			head -n 1)"
+		if [ ! -x "$GCC" ]; then
+			echo "No prebuilt GCC toolchain!"
+			exit 1
+		fi
+	elif [ "$TOLLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
+		GCC=aarch64-linux-gnu-gcc
+	elif [ "$TOLLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
+		GCC=arm-linux-gnueabihf-gcc
+	else
+		GCC=gcc
+	fi
+
+	echo "${GCC%gcc}"
+}
+
 # For developing shell only
 
 rroot()
@@ -211,37 +244,6 @@ option_check()
 	done
 
 	return 1
-}
-
-get_toolchain()
-{
-	TOOLCHAIN_ARCH="${1/arm64/aarch64}"
-
-	MACHINE=$(uname -m)
-	if [ "$MACHINE" = x86_64 ]; then
-		# RV1126 uses custom toolchain
-		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-			TOOLCHAIN_OS=rockchip
-		else
-			TOOLCHAIN_OS=none
-		fi
-
-		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-		GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | \
-			head -n 1)"
-		if [ ! -x "$GCC" ]; then
-			echo "No prebuilt GCC toolchain!"
-			exit 1
-		fi
-	elif [ "$TOLLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
-		GCC=aarch64-linux-gnu-gcc
-	elif [ "$TOLLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
-		GCC=arm-linux-gnueabihf-gcc
-	else
-		GCC=gcc
-	fi
-
-	echo "${GCC%gcc}"
 }
 
 main()
@@ -412,19 +414,12 @@ main()
 
 	if [ "$RK_KERNEL_CFG" ]; then
 		export RK_KERNEL_TOOLCHAIN="$(get_toolchain "$RK_KERNEL_ARCH")"
-		echo "Toolchain for kernel:"
-		echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
 
 		CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
 		export KMAKE="make -C kernel/ -j$(( $CPUS + 1 )) \
 			CROSS_COMPILE=$RK_KERNEL_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
-		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
-	fi
 
-	if [ "$RK_UBOOT_CFG" ]; then
-		export RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
-		echo "Toolchain for loader (u-boot):"
-		echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
+		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 	fi
 
 	# Handle special commands

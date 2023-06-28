@@ -119,6 +119,10 @@ pre_build_hook()
 {
 	check_config RK_KERNEL_CFG || return 0
 
+	echo "Toolchain for kernel:"
+	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	echo
+
 	case "$1" in
 		kernel-make | kmake)
 			shift;
@@ -145,6 +149,10 @@ BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+
+	echo "Toolchain for kernel:"
+	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	echo
 
 	if echo $1 | grep -q "^kernel-"; then
 		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then

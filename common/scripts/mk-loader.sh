@@ -1,8 +1,5 @@
 #!/bin/bash -e
 
-UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
-MAKE_CMD="./make.sh CROSS_COMPILE=$RK_UBOOT_TOOLCHAIN"
-
 do_build_uefi()
 {
 	check_config RK_KERNEL_DTB || return 1
@@ -17,9 +14,11 @@ do_build_uefi()
 		return 1
 	fi
 
+	UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
+
 	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
 	run_command cd uefi
-	run_command $MAKE_CMD $RK_UBOOT_CFG
+	run_command $UMAKE $RK_UBOOT_CFG
 }
 
 build_uefi()
@@ -53,7 +52,7 @@ do_build_uboot()
 	fi
 
 	run_command cd u-boot
-	run_command $MAKE_CMD \
+	run_command $UMAKE \
 		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
 	run_command cd ..
 }
@@ -93,8 +92,8 @@ do_build_spl()
 	check_config RK_UBOOT_SPL_CFG || return 0
 
 	run_command cd u-boot
-	run_command $MAKE_CMD $RK_UBOOT_SPL_CFG
-	run_command $MAKE_CMD --spl
+	run_command $UMAKE $RK_UBOOT_SPL_CFG
+	run_command $UMAKE --spl
 	run_command cd ..
 }
 
@@ -130,6 +129,13 @@ clean_hook()
 BUILD_CMDS="loader uboot spl uefi"
 build_hook()
 {
+	export RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
+	echo "Toolchain for loader (u-boot):"
+	echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
+	echo
+
+	export UMAKE="./make.sh CROSS_COMPILE=$RK_UBOOT_TOOLCHAIN"
+
 	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
 	fi
