@@ -83,8 +83,7 @@ build_save()
 		.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
 			"\"$SCRIPTS_DIR/save-patches.sh\" \
 			\"$PATCHES_DIR/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
-		install -D -m 0755 "$RK_DATA_DIR/misc/apply-all.sh" \
-			"$PATCHES_DIR"
+		install -D -m 0755 "$RK_DATA_DIR/apply-all.sh" "$PATCHES_DIR"
 	fi
 
 	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"

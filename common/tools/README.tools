@@ -57,7 +57,7 @@ For building perf:
 For building kmsgrab:
 1/ ./build.sh shell
 2/ source ./buildroot/output/$RK_BUILDROOT_CFG/host/environment-setup
-3/ $CC $RK_DATA_DIR/misc/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o $RK_DATA_DIR/tools/kmsgrab
+3/ $CC $RK_DATA_DIR/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o $RK_TOOL_DIR/kmsgrab
 
 External sources:
 1/ rkwifibt:

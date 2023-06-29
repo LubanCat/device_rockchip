@@ -8,8 +8,7 @@ REBOOT_WRAPPER=busybox-reboot
 
 echo "Fixing up busybox reboot commands..."
 
-install -D -m 0755 "$RK_DATA_DIR/misc/$REBOOT_WRAPPER" \
-	sbin/$REBOOT_WRAPPER
+install -D -m 0755 "$RK_DATA_DIR/$REBOOT_WRAPPER" sbin/$REBOOT_WRAPPER
 
 for cmd in halt reboot poweroff shutdown; do
 	ln -sf $REBOOT_WRAPPER sbin/$cmd

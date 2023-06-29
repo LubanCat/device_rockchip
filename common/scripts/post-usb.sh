@@ -12,7 +12,7 @@ install_adbd()
 
 	find "$TARGET_DIR" -name "*adbd*" -print0 | xargs -0 rm -rf
 
-	install -m 0755 "$RK_DATA_DIR/tools/adbd" "$TARGET_DIR/usr/bin/adbd"
+	install -m 0755 "$RK_TOOL_DIR/adbd" "$TARGET_DIR/usr/bin/adbd"
 
 	if [ "$RK_USB_ADBD_TCP_PORT" -ne 0 ]; then
 		echo "export ADB_TCP_PORT=$RK_USB_ADBD_TCP_PORT" >> \
@@ -25,7 +25,7 @@ install_adbd()
 	fi
 
 	if [ -n "$RK_USB_ADBD_PASSWORD" ]; then
-		install -m 0755 "$RK_DATA_DIR/misc/adbd-auth" \
+		install -m 0755 "$RK_DATA_DIR/adbd-auth" \
 			"$TARGET_DIR/usr/bin/adbd-auth"
 		sed -i "s/AUTH_PASSWORD/$(echo $RK_USB_ADBD_PASSWORD | md5sum)/g" \
 			"$TARGET_DIR/usr/bin/adbd-auth"

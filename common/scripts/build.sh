@@ -269,6 +269,7 @@ main()
 	export CHIP_DIR="$DEVICE_DIR/.chip"
 
 	export RK_DATA_DIR="$COMMON_DIR/data"
+	export RK_TOOL_DIR="$COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
 	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"
 
