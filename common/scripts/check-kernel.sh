@@ -2,6 +2,7 @@
 
 SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 SDK_DIR="${SDK_DIR:-$SCRIPTS_DIR/../../../..}"
+RK_DATA_DIR="${RK_DATA_DIR:-$SCRIPTS_DIR/../data}"
 
 cd "$SDK_DIR"
 
@@ -39,11 +40,6 @@ if ! lz4 -h 2>&1 | grep -q favor-decSpeed; then
 	exit 1
 fi
 
-if [ ! -d /usr/include/openssl ]; then
-	echo -e "\e[35m"
-	echo "Your openssl headers are missing"
-	echo "Please install it:"
-	echo "sudo apt-get install libssl-dev"
-	echo -e "\e[0m"
-	exit 1
-fi
+"$SCRIPTS_DIR/check-header.sh" openssl openssl/ssl.h libssl-dev
+"$SCRIPTS_DIR/check-header.sh" gmp gmp.h libgmp-dev
+"$SCRIPTS_DIR/check-header.sh" mpc mpc.h libmpc-dev
