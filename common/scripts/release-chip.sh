@@ -54,6 +54,7 @@ git checkout --orphan $CHIP &>/dev/null
 git reset &>/dev/null
 git add -f .gitignore common "$CHIPS_DIR/$CHIP" "$CHIP_DIR" "$CHIP"
 git commit -s -F $COMMIT_MSG &>/dev/null
+rm -f $COMMIT_MSG
 
 # Recover
 git add -f .

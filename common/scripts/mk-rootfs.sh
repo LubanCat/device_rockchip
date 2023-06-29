@@ -203,6 +203,7 @@ pre_build_hook()
 			make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" menuconfig
 			"$SDK_DIR/buildroot/build/update_defconfig.sh" \
 				"$BUILDROOT_BOARD" "$TEMP_DIR"
+			rm -rf "$TEMP_DIR"
 
 			finish_build $@
 			;;

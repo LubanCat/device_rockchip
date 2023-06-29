@@ -99,3 +99,5 @@ elif [ "$MODE" = "DM-E" ]; then
 fi
 
 sed -i "s/# exec busybox switch_root/exec busybox switch_root/" "$INIT_FILE"
+
+rm -rf "$TEMPDIR"

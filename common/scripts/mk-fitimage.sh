@@ -26,3 +26,5 @@ sed -i -e "s~@KERNEL_DTB@~$(realpath -q "$KERNEL_DTB")~" \
 	-e "s~@RESOURCE_IMG@~$(realpath -q "$RESOURCE_IMG")~" "$TMP_ITS"
 
 rkbin/tools/mkimage -f "$TMP_ITS"  -E -p 0x800 "$TARGET_IMG"
+
+rm -f "$TMP_ITS"

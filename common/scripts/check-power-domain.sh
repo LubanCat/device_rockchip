@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
-dump_kernel_dtb_file=`mktemp`
-tmp_phandle_file=`mktemp`
-tmp_io_domain_file=`mktemp`
-tmp_regulator_microvolt_file=`mktemp`
-tmp_final_target=`mktemp`
-tmp_grep_file=`mktemp`
+tmpdir=`mktemp -d`
+dump_kernel_dtb_file=`mktemp -p $tmpdir`
+tmp_phandle_file=`mktemp -p $tmpdir`
+tmp_io_domain_file=`mktemp -p $tmpdir`
+tmp_regulator_microvolt_file=`mktemp -p $tmpdir`
+tmp_final_target=`mktemp -p $tmpdir`
+tmp_grep_file=`mktemp -p $tmpdir`
 
 dtc -q -I dtb -O dts -o ${dump_kernel_dtb_file} "$RK_KERNEL_DTB"
 
@@ -18,13 +19,14 @@ if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
 		echo "                status = \"okay\";"
 		echo "        }"
 		echo "To your dts file"
-		return 1;
+		rm -rf $tmpdir
+		exit 1;
 	fi
 fi
 
 if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
 	echo "Not Found io-domains in $RK_KERNEL_DTS"
-	rm -f $tmp_grep_file
+	rm -rf $tmpdir
 	exit 0
 fi
 grep -a supply $tmp_grep_file > $tmp_io_domain_file || true
@@ -62,3 +64,5 @@ echo -e "\e[41;1;30m 请再次确认板级的电源域配置！！！！！！\e
 echo -e "\e[41;1;30m <<< 特别是Wi-Fi，FLASH，以太网这几路IO电源的配置 >>> ！！！！！\e[0m"
 echo -e "\e[41;1;30m 检查内核文件 $RK_KERNEL_DTS 的节点 [pmu_io_domains] \e[0m"
 cat $tmp_final_target
+
+rm -rf $tmpdir

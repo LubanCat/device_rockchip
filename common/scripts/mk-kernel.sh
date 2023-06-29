@@ -186,6 +186,7 @@ post_build_hook()
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
 	OUTPUT_DIR="${2:-"$RK_OUTDIR"}"
+	mkdir -p "$OUTPUT_DIR"
 	HEADER_FILES_SCRIPT=$(mktemp)
 
 	if [ "$DRY_RUN" ]; then
@@ -216,6 +217,8 @@ EOF
 	fi
 
 	run_command cd "$SDK_DIR"
+
+	rm -f "$HEADER_FILES_SCRIPT"
 }
 
 post_build_hook_dry()

@@ -374,8 +374,8 @@ main()
 
 	# Save initial environment
 	if [ -e "$INITIAL_ENV" ]; then
-		cat "$INITIAL_ENV" > "$RK_INITIAL_ENV"
-		rm -f "$RK_CUSTOM_ENV"
+		rm -f "$RK_INITIAL_ENV" "$RK_CUSTOM_ENV"
+		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
 
 		# Find custom environments
 		for cfg in $(grep "^RK_" "$RK_INITIAL_ENV" || true); do

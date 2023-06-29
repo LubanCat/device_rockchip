@@ -68,6 +68,7 @@ git checkout --orphan $CHIP &>/dev/null
 git reset &>/dev/null
 git add .
 git commit -s -F $COMMIT_MSG &>/dev/null
+rm -f $COMMIT_MSG
 
 # Recover
 git checkout $ORIG_COMMIT &>/dev/null
