@@ -300,8 +300,8 @@ main()
 	esac
 
 	if [ ! -d "$RK_LOG_DIR" ]; then
+		rm -rf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
 		mkdir -p "$RK_LOG_DIR"
-		rm -rf "$RK_LOG_BASE_DIR/latest"
 		ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
 		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
 		echo

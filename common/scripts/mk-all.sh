@@ -10,8 +10,8 @@ build_all()
 	echo "          Start building all images"
 	echo "=========================================="
 
-	rm -rf $RK_FIRMWARE_DIR
-	mkdir -p $RK_FIRMWARE_DIR
+	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
 	if [ "$RK_SECURITY" ]; then
 		"$SCRIPTS_DIR/mk-security.sh" security_check
