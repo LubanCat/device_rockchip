@@ -125,19 +125,21 @@ pre_build_hook()
 
 	case "$1" in
 		kernel-make | kmake)
-			shift;
+			shift
+			[ "$1" != cmds ] || shift
+
 			if [ ! -r kernel/.config ]; then
 				run_command $KMAKE $RK_KERNEL_CFG \
 					$RK_KERNEL_CFG_FRAGMENTS
 			fi
 			run_command $KMAKE $@
-			finish_build kmake $@
 			;;
 		kernel-config)
 			do_build $@
-			finish_build $@
 			;;
 	esac
+
+	[ "$DRY_RUN" ] || finish_build $@
 }
 
 pre_build_hook_dry()

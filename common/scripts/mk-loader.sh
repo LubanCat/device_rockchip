@@ -142,6 +142,7 @@ build_hook()
 
 	TARGET="$1"
 	shift
+	[ "$1" != cmds ] || shift
 
 	if [ "$TARGET" = loader ]; then
 		if [ "$RK_UBOOT_SPL_CFG" ]; then
