@@ -36,8 +36,8 @@ config RK_AB_UPDATE
 	bool "A/B update"
 
 config RK_AB_UPDATE_SDCARD
-	bool "SDcard update image for A/B update"
-	depends on RK_AB_UPDATE
+	bool "SDcard update"
+	select RK_AB_UPDATE
 
 endif
 

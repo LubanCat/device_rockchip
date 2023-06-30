@@ -3,18 +3,16 @@
 comment "Security feature depends on linux kernel"
 	depends on RK_KERNEL_CFG = ""
 
-comment "Security feature depends on non-initrd rootfs"
+comment "Security feature would use it's own initrd"
 	depends on RK_ROOTFS_INITRD
 
-comment "Security feature depends on FIT image"
-	depends on !RK_USE_FIT_IMG
-
-if RK_KERNEL_CFG != "" && !RK_ROOTFS_INITRD && RK_USE_FIT_IMG
+if RK_KERNEL_CFG != "" && !RK_ROOTFS_INITRD
 
 menu "Security"
 
 config RK_SECURITY
 	bool "security feature"
+	select RK_USE_FIT_IMG # Security feature depends on FIT image
 
 if RK_SECURITY
 
