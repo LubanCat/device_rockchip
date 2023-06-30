@@ -26,11 +26,10 @@ config RK_UBOOT_OPTS
 config RK_UBOOT_TRUST_INI
 	string "u-boot trust ini config"
 
-config RK_UBOOT_SPL_INI
-	string "u-boot spl ini config"
-
-config RK_UBOOT_SPL_CFG
-	string "u-boot spl defconfig"
+config RK_UBOOT_SPL
+	bool "u-boot SPL bootloader"
+	help
+	  Use U-Boot SPL instead of Rockchip MiniLoader binary for bootloader.
 
 config RK_UBOOT_ARCH
 	string

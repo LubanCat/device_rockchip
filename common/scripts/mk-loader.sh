@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-do_build_uefi()
+build_uefi()
 {
 	check_config RK_KERNEL_DTB || return 1
 
@@ -21,33 +21,23 @@ do_build_uefi()
 	run_command $UMAKE $RK_UBOOT_CFG
 }
 
-build_uefi()
-{
-	do_build_uefi $@
-	finish_build
-}
-
-do_build_uboot()
+build_uboot()
 {
 	check_config RK_UBOOT_CFG || return 0
 
+	[ "$DRY_RUN" ] || rm -f u-boot/*.bin u-boot/*.img
+
 	ARGS="$RK_UBOOT_OPTS \
 		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI} \
-		${RK_UBOOT_SPL_INI:+../rkbin/RKBOOT/$RK_UBOOT_SPL_INI}"
+		${RK_UBOOT_SPL:+--spl-new} \
+		${RK_SECURITY_OTP_DEBUG:+--burn-key-hash}"
 
 	if [ "$RK_SECURITY" ]; then
-		if [ -z "$RK_SECURITY_OTP_DEBUG" ]; then
-			ARGS="$ARGS --burn-key-hash"
-		fi
+		for IMAGE in ${1:-boot recovery}; do
+			[ "$DRY_RUN" ] || \
+				cp "$RK_FIRMWARE_DIR/$IMAGE.img" u-boot/
 
-		if [ "$RK_AB_UPDATE" ]; then
-			DEFAULT_IMAGES=boot
-		else
-			DEFAULT_IMAGES="boot recovery"
-		fi
-
-		for p in ${1:-$DEFAULT_IMAGES}; do
-			ARGS="--${p}_img $SDK_DIR/u-boot/$p.img $ARGS"
+			ARGS="--${IMAGE}_img $SDK_DIR/u-boot/$IMAGE.img $ARGS"
 		done
 	fi
 
@@ -55,69 +45,30 @@ do_build_uboot()
 	run_command $UMAKE \
 		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
 	run_command cd ..
-}
 
-build_uboot()
-{
-	check_config RK_UBOOT_CFG || return 0
-
-	rm -f u-boot/*.bin u-boot/*.img
-
-	if [ "$RK_SECURITY" ]; then
-		cp "$RK_FIRMWARE_DIR/boot.img" u-boot/
-		cp "$RK_FIRMWARE_DIR/recovery.img" u-boot/
-	fi
-
-	do_build_uboot $@
+	[ "$DRY_RUN" ] || return 0
 
 	if [ "$RK_SECURITY" ];then
-		ln -rsf u-boot/boot.img "$RK_SECURITY_FIRMWARE_DIR"
-		[ "$RK_AB_UPDATE" ] || \
-			ln -rsf u-boot/recovery.img "$RK_SECURITY_FIRMWARE_DIR"
+		for IMAGE in u-boot/boot.img u-boot/recovery.img; do
+			[ ! -r $IMAGE ] || \
+				ln -rsf $IMAGE "$RK_SECURITY_FIRMWARE_DIR"
+		done
 	fi
 
-	LOADER="$(echo u-boot/*_loader_*v*.bin | head -1)"
-	SPL="$(echo u-boot/*_loader_spl.bin | head -1)"
-	ln -rsf "${LOADER:-$SPL}" "$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
+	LOADER="$(echo u-boot/*_loader_*.bin | head -1)"
+	ln -rsf "$LOADER" "$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
 
 	ln -rsf u-boot/uboot.img "$RK_FIRMWARE_DIR"
 	[ ! -e u-boot/trust.img ] || \
 		ln -rsf u-boot/trust.img "$RK_FIRMWARE_DIR"
-
-	finish_build
-}
-
-do_build_spl()
-{
-	check_config RK_UBOOT_SPL_CFG || return 0
-
-	run_command cd u-boot
-	run_command $UMAKE $RK_UBOOT_SPL_CFG
-	run_command $UMAKE --spl
-	run_command cd ..
-}
-
-build_spl()
-{
-	check_config RK_UBOOT_SPL_CFG || return 0
-
-	rm -f u-boot/*spl.bin
-
-	do_build_spl $@
-
-	SPL="$(echo u-boot/*_loader_spl.bin | head -1)"
-	ln -rsf "$SPL" "$RK_FIRMWARE_DIR/MiniLoaderAll.bin"
-
-	finish_build
 }
 
 # Hooks
 
 usage_hook()
 {
-	echo -e "loader[:cmds]                    \tbuild loader (uboot|spl)"
+	echo -e "loader[:cmds]                    \tbuild loader (uboot)"
 	echo -e "uboot[:cmds]                     \tbuild u-boot"
-	echo -e "spl[:cmds]                       \tbuild spl"
 	echo -e "uefi[:cmds]                      \tbuild uefi"
 }
 
@@ -126,7 +77,7 @@ clean_hook()
 	make -C u-boot distclean
 }
 
-BUILD_CMDS="loader uboot spl uefi"
+BUILD_CMDS="loader uboot uefi"
 build_hook()
 {
 	export RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
@@ -138,31 +89,23 @@ build_hook()
 
 	if [ "$DRY_RUN" ]; then
 		echo -e "\e[35mCommands of building $1:\e[0m"
+	else
+		echo "=========================================="
+		echo "          Start building $1"
+		echo "=========================================="
 	fi
 
 	TARGET="$1"
 	shift
 	[ "$1" != cmds ] || shift
 
-	if [ "$TARGET" = loader ]; then
-		if [ "$RK_UBOOT_SPL_CFG" ]; then
-			TARGET=spl
-		else
-			TARGET=uboot
-		fi
-	fi
-
 	case "$TARGET" in
-		uboot | spl | uefi)
-			echo "=========================================="
-			echo "          Start building $TARGET"
-			echo "=========================================="
-
-			FUNC=${DRY_RUN:+do_}build_$TARGET
-			$FUNC $@
-			;;
+		uboot | loader) build_uboot $@ ;;
+		uefi) build_uefi $@ ;;
 		*) usage ;;
 	esac
+
+	[ "$DRY_RUN" ] || finish_build build_$TARGET $@
 }
 
 build_hook_dry()

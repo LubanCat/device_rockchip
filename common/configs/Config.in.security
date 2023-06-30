@@ -6,13 +6,10 @@ comment "Security feature depends on linux kernel"
 comment "Security feature depends on non-initrd rootfs"
 	depends on RK_ROOTFS_INITRD
 
-comment "Security feature depends on u-boot (not SPL)"
-	depends on RK_UBOOT_SPL_CFG != ""
-
 comment "Security feature depends on FIT image"
 	depends on !RK_USE_FIT_IMG
 
-if RK_KERNEL_CFG != "" && !RK_ROOTFS_INITRD && RK_UBOOT_SPL_CFG = "" && RK_USE_FIT_IMG
+if RK_KERNEL_CFG != "" && !RK_ROOTFS_INITRD && RK_USE_FIT_IMG
 
 menu "Security"
 
