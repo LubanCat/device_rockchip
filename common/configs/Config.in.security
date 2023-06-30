@@ -13,6 +13,7 @@ menu "Security"
 config RK_SECURITY
 	bool "security feature"
 	select RK_USE_FIT_IMG # Security feature depends on FIT image
+	select RK_UBOOT_SPL # Security feature depends on U-Boot SPL loader
 
 if RK_SECURITY
 
