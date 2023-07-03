@@ -6,6 +6,8 @@ RK_DATA_DIR="${RK_DATA_DIR:-$SCRIPTS_DIR/../data}"
 
 cd "$SDK_DIR"
 
+"$SCRIPTS_DIR/check-grow-align.sh"
+
 if [ -r "kernel/.config" ]; then
 	EXT4_CONFIGS=$(export | grep -oE "\<RK_.*=\"ext4\"$" || true)
 

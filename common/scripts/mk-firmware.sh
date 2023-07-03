@@ -81,6 +81,7 @@ build_firmware()
 	rm -rf "$RK_ROCKDEV_DIR"
 	ln -rsf "$FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 
+	"$SCRIPTS_DIR/check-grow-align.sh"
 	link_image "$CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
 
 	if [ "$RK_MISC_IMG" ]; then
