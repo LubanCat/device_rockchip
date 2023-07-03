@@ -45,7 +45,7 @@ do_build()
 
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
-	if [ ! "$DRY_RUN" ]; then
+	if [ -z "$DRY_RUN" ]; then
 		"$SCRIPTS_DIR/check-kernel.sh"
 	fi
 
@@ -139,7 +139,9 @@ pre_build_hook()
 			;;
 	esac
 
-	[ "$DRY_RUN" ] || finish_build $@
+	if [ -z "$DRY_RUN" ]; then
+		finish_build $@
+	fi
 }
 
 pre_build_hook_dry()
@@ -167,7 +169,9 @@ build_hook()
 
 	do_build $@
 
-	[ ! "$DRY_RUN" ] || return 0
+	if [ "$DRY_RUN" ]; then
+		return 0
+	fi
 
 	if echo $1 | grep -q "^kernel"; then
 		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"

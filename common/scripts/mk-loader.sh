@@ -25,7 +25,9 @@ build_uboot()
 {
 	check_config RK_UBOOT_CFG || return 0
 
-	[ "$DRY_RUN" ] || rm -f u-boot/*.bin u-boot/*.img
+	if [ -z "$DRY_RUN" ]; then
+		rm -f u-boot/*.bin u-boot/*.img
+	fi
 
 	ARGS="$RK_UBOOT_OPTS \
 		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI} \
@@ -46,7 +48,9 @@ build_uboot()
 		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
 	run_command cd ..
 
-	[ "$DRY_RUN" ] || return 0
+	if [ "$DRY_RUN" ]; then
+		return 0
+	fi
 
 	if [ "$RK_SECURITY" ];then
 		for IMAGE in u-boot/boot.img u-boot/recovery.img; do
@@ -110,7 +114,9 @@ build_hook()
 		*) usage ;;
 	esac
 
-	[ "$DRY_RUN" ] || finish_build build_$TARGET $@
+	if [ -z "$DRY_RUN" ]; then
+		finish_build build_$TARGET $@
+	fi
 }
 
 build_hook_dry()
