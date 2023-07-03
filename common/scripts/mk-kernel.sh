@@ -43,11 +43,11 @@ do_build()
 
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+
 	if [ ! "$DRY_RUN" ]; then
 		"$SCRIPTS_DIR/check-kernel.sh"
 	fi
-
-	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	case "$1" in
 		kernel-config)
