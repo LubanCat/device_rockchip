@@ -25,7 +25,7 @@ config RK_SECURITY_INITRD_BASE_CFG
 
 config RK_SECURITY_INITRD_CFG
 	string
-	default "rockchip_${RK_RECOVERY_BASE_CFG}_ramboot"
+	default "rockchip_${RK_SECURITY_INITRD_BASE_CFG}_ramboot"
 
 config RK_SECURITY_INITRD_TYPE
 	string "security ramdisk filesystem type (cpio/cpio.gz/romfs)"
