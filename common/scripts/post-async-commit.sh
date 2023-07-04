@@ -6,7 +6,7 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 echo "Installing async-commit service..."
 
-rm -f etc/init.d/S10async_commit.sh \
+rm -f etc/init.d/S*async_commit.sh \
 	etc/systemd/system/multi-user.target.wants/async.service \
 	usr/lib/systemd/system/async.service
 
@@ -24,13 +24,13 @@ if [ "$POST_INIT_SYSTEMD" ]; then
 fi
 
 if [ "$POST_INIT_SYSV" ]; then
-	install -m 0755 external/rkscript/S10async-commit.sh \
+	install -m 0755 external/rkscript/S*async-commit.sh \
 		"$TARGET_DIR/etc/init.d/async-commit.sh"
-	ln -sf ../init.d/${TYPE}all.sh \
-		"$TARGET_DIR/etc/rcS.d/S10async-commit.sh"
+	ln -sf ../init.d/async-commit.sh \
+		"$TARGET_DIR/etc/rcS.d/S05async-commit.sh"
 fi
 
 if [ "$POST_INIT_BUSYBOX" ]; then
-	install -m 0755 external/rkscript/S10async-commit.sh \
+	install -m 0755 external/rkscript/S*async-commit.sh \
 		"$TARGET_DIR/etc/init.d/"
 fi
