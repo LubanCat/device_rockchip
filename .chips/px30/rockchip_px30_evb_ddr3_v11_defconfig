@@ -1,4 +1,4 @@
 RK_YOCTO_CFG="rockchip-px30-evb"
-RK_KERNEL_DTS_NAME="px30-evb-ddr3-v11-linux"
 RK_WIFIBT_CHIP="AP6212A1"
 RK_WIFIBT_TTY="ttyS1"
+RK_KERNEL_DTS_NAME="px30-evb-ddr3-v11-linux"

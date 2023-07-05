@@ -1,8 +1,7 @@
 RK_BUILDROOT_BASE_CFG="rk3308_release"
 RK_ROOTFS_TYPE="squashfs"
-RK_KERNEL_DTS_NAME="rk3308-evb-dmic-pdm-v11"
 RK_WIFIBT_CHIP="AP6255"
-RK_PARAMETER="parameter-64bit.txt"
+RK_KERNEL_DTS_NAME="rk3308-evb-dmic-pdm-v11"
 RK_EXTRA_PARTITION_1_FSTYPE="ext2"
 RK_EXTRA_PARTITION_2_FSTYPE="ext2"
-
+RK_PARAMETER="parameter-64bit.txt"
