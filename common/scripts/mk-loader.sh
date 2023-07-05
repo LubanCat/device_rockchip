@@ -29,23 +29,36 @@ build_uboot()
 		rm -f u-boot/*.bin u-boot/*.img
 	fi
 
-	ARGS="$RK_UBOOT_OPTS \
-		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI} \
-		${RK_UBOOT_SPL:+--spl-new} \
+	UARGS_COMMON="$RK_UBOOT_OPTS \
+		${RK_UBOOT_INI:+../rkbin/RKBOOT/$RK_UBOOT_INI} \
+		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI}"
+	UARGS="$UARGS_COMMON ${RK_UBOOT_SPL:+--spl-new} \
 		${RK_SECURITY_OTP_DEBUG:+--burn-key-hash}"
 
 	if [ "$RK_SECURITY" ]; then
-		for IMAGE in ${1:-boot ${RK_RECOVERY_CFG:+recovery}}; do
+		for IMAGE in ${1:-boot.img ${RK_RECOVERY_CFG:+recovery.img}}; do
 			[ "$DRY_RUN" ] || \
-				cp "$RK_FIRMWARE_DIR/$IMAGE.img" u-boot/
+				cp "$RK_FIRMWARE_DIR/$IMAGE" u-boot/
 
-			ARGS="--${IMAGE}_img $SDK_DIR/u-boot/$IMAGE.img $ARGS"
+			UARGS="$UARGS --${IMAGE/./_} $SDK_DIR/u-boot/$IMAGE"
 		done
 	fi
 
 	run_command cd u-boot
-	run_command $UMAKE \
-		$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $(echo $ARGS)
+	run_command $UMAKE $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $UARGS
+
+	if [ "$RK_UBOOT_SPL" ]; then
+		if [ "$DRY_RUN" ] || \
+			! grep -q "ROCKCHIP_FIT_IMAGE_PACK=y" .config; then
+			# Repack SPL for non-FIT u-boot
+			run_command $UMAKE $UARGS_COMMON --spl
+		fi
+	fi
+
+	if [ "$RK_UBOOT_RAW" ]; then
+		run_command $UMAKE $UARGS_COMMON --idblock
+	fi
+
 	run_command cd ..
 
 	if [ "$DRY_RUN" ]; then

@@ -5,6 +5,7 @@ menu "Loader (u-boot)"
 config RK_UBOOT_CFG
 	string "u-boot defconfig"
 	default RK_RTOS_UBOOT_CFG if RK_RTOS_UBOOT_CFG != ""
+	default "rk1808" if RK_CHIP_FAMILY = "rk1806"
 	default "evb-px3se" if RK_CHIP_FAMILY = "px3se"
 	default "rk3126" if RK_CHIP = "rk3126c"
 	default "rk3128x" if RK_CHIP_FAMILY = "rk3128h"
@@ -24,13 +25,27 @@ config RK_UBOOT_OPTS
 	string "u-boot compile options"
 	default "--sz-uboot 1024 2 --sz-trust 1024 2" if RK_CHIP_FAMILY = "rk312x"
 
+config RK_UBOOT_INI
+	string "u-boot ini config overriding"
+	help
+	  The .ini file for packing loader.
+	  Set "" to use default one.
+
 config RK_UBOOT_TRUST_INI
-	string "u-boot trust ini config"
+	string "u-boot trust ini config overriding"
+	help
+	  The .ini file for packing trust image.
+	  Set "" to use default one.
 
 config RK_UBOOT_SPL
-	bool "u-boot SPL bootloader"
+	bool "force using u-boot SPL"
 	help
-	  Use U-Boot SPL instead of Rockchip MiniLoader binary for bootloader.
+	  Force using U-Boot SPL instead of Rockchip MiniLoader binary.
+
+config RK_UBOOT_RAW
+	bool "pack u-boot raw bootloader (idblock)"
+	help
+	  Pack U-Boot into direct raw format (idblock).
 
 config RK_UBOOT_ARCH
 	string
