@@ -31,6 +31,11 @@ config RK_SECURITY_INITRD_TYPE
 	string "security ramdisk filesystem type (cpio/cpio.gz/romfs)"
 	default "cpio.gz"
 
+config RK_SECURITY_FIT_ITS
+	string "its script for FIT security ramboot image"
+	default RK_RECOVERY_FIT_ITS if RK_RECOVERY_FIT_ITS != ""
+	default "boot4recovery.its"
+
 comment "Security check method (DM-V) needs squashfs rootfs type"
 	depends on RK_ROOTFS_TYPE != "squashfs"
 

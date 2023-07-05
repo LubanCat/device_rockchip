@@ -35,7 +35,7 @@ build_uboot()
 		${RK_SECURITY_OTP_DEBUG:+--burn-key-hash}"
 
 	if [ "$RK_SECURITY" ]; then
-		for IMAGE in ${1:-boot recovery}; do
+		for IMAGE in ${1:-boot ${RK_RECOVERY_CFG:+recovery}}; do
 			[ "$DRY_RUN" ] || \
 				cp "$RK_FIRMWARE_DIR/$IMAGE.img" u-boot/
 

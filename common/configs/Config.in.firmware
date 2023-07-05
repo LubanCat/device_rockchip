@@ -36,11 +36,6 @@ config RK_PACKAGE_FILE
 
 endif
 
-comment "Misc image depends on recovery"
-	depends on RK_RECOVERY_CFG = ""
-
-if RK_RECOVERY_CFG != ""
-
 config RK_MISC_IMG
 	string "misc image"
 	default "blank-misc.img" if RK_AB_UPDATE
@@ -48,8 +43,6 @@ config RK_MISC_IMG
 	help
 	  Name of misc image under <RK_IMAGE_DIR>/.
 	  Set "" for no misc.
-
-endif
 
 endif # !RK_RTOS
 

@@ -161,7 +161,7 @@ build_security_ramboot()
 	/usr/bin/time -f "you take %E to pack security ramboot image" \
 		"$SCRIPTS_DIR/mk-ramdisk.sh" \
 		"$DST_DIR/rootfs.$RK_SECURITY_INITRD_TYPE" \
-		"$DST_DIR/ramboot.img" "$RK_RECOVERY_FIT_ITS" \
+		"$DST_DIR/ramboot.img" "$RK_SECURITY_FIT_ITS" \
 	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
 
 	finish_build $@
@@ -197,6 +197,7 @@ build_hook()
 			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		security_recovery)
+			check_config RK_RECOVERY_CFG || return 0
 			"$SCRIPTS_DIR"/mk-recovery.sh
 			"$SCRIPTS_DIR"/mk-loader.sh uboot recovery
 			;;

@@ -57,22 +57,14 @@ build_updateimg()
 
 	# Prepare images
 	ln -rsf "$RK_ROCKDEV_DIR"/* .
-	case "$TYPE" in
-		sdcard)
-			ln -rsf "$RK_IMAGE_DIR/sdupdate-ab-misc.img" misc.img
-			ln -rsf "$RK_DATA_DIR/parameter-sdupdate.txt" \
-				parameter.txt
+	if [ "$TYPE" = sdcard ]; then
+		ln -rsf "$RK_IMAGE_DIR/sdupdate-ab-misc.img" misc.img
+		ln -rsf "$RK_DATA_DIR/parameter-sdupdate.txt" \
+			parameter.txt
 
-			# Not packing rootfs partition for sdcard
-			rm -f rootfs.img
-			;;
-		ab | ota)
-			# Not packing recovery partition for security A/B
-			if [ "$RK_SECURITY" ]; then
-				rm -f recovery.img
-			fi
-			;;
-	esac
+		# Not packing rootfs partition for sdcard
+		rm -f rootfs.img
+	fi
 
 	# Prepare package-file
 	if [ "$PKG_FILE" ]; then
