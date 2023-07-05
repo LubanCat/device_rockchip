@@ -9,6 +9,7 @@ menu "Recovery (buildroot)"
 
 config RK_RECOVERY_BASE_CFG
 	string "buildroot recovery base cfg (rockchip_<cfg>_recovery_defconfig)"
+	default "" if RK_AB_UPDATE
 	default RK_CHIP if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default RK_CHIP_FAMILY
 	help
