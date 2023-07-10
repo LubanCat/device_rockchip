@@ -23,7 +23,7 @@ export RK_PARAMETER=parameter-ubuntu-fit.txt
 # 分区表对应的打包文件
 export RK_PACKAGE_FILE=rk356x-package-file-ubuntu
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk3568
+export RK_CFG_BUILDROOT=
 # Recovery config
 export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
