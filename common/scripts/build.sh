@@ -25,6 +25,8 @@ usage()
 	echo -e "help                              \tusage"
 	echo ""
 	echo "Default option is 'allsave'."
+
+	rm -f "$INITIAL_ENV"
 	exit 0
 }
 
@@ -308,27 +310,6 @@ main()
 	# Prepare firmware dirs
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
-	# Prepare log dirs
-	if [ ! -d "$RK_LOG_DIR" ]; then
-		rm -rf "$RK_LOG_BASE_DIR" "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
-		mkdir -p "$RK_LOG_DIR"
-		ln -rsf "$RK_SESSION_DIR" "$RK_LOG_BASE_DIR"
-		ln -rsf "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
-		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
-		echo
-	fi
-
-	# Drop old logs
-	cd "$RK_LOG_BASE_DIR"
-	rm -rf $(ls -t | sed '1,10d')
-
-	# Save initial envionments
-	if [ "$INITIAL_SESSION" ]; then
-		rm -f "$RK_INITIAL_ENV"
-		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
-		ln -rsf "$RK_INITIAL_ENV" "$RK_OUTDIR/"
-	fi
-
 	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
 
@@ -371,6 +352,28 @@ main()
 
 		usage
 	done
+
+	# Prepare log dirs
+	if [ ! -d "$RK_LOG_DIR" ]; then
+		rm -rf "$RK_LOG_BASE_DIR" "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
+		mkdir -p "$RK_LOG_DIR"
+		ln -rsf "$RK_SESSION_DIR" "$RK_LOG_BASE_DIR"
+		ln -rsf "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
+		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
+		echo
+	fi
+
+	# Drop old logs
+	cd "$RK_LOG_BASE_DIR"
+	rm -rf $(ls -t | sed '1,10d')
+	cd "$SDK_DIR"
+
+	# Save initial envionments
+	if [ "$INITIAL_SESSION" ]; then
+		rm -f "$RK_INITIAL_ENV"
+		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
+		ln -rsf "$RK_INITIAL_ENV" "$RK_OUTDIR/"
+	fi
 
 	# Init stage (preparing SDK configs, etc.)
 	run_build_hooks init $OPTIONS
