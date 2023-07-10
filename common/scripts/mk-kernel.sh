@@ -203,6 +203,9 @@ post_build_hook()
 
 	run_command cd kernel
 
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+	run_command $KMAKE modules_prepare
+
 	cat << EOF > "$HEADER_FILES_SCRIPT"
 {
 	# Based on kernel/scripts/package/builddeb
