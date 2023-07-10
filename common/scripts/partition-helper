@@ -6,8 +6,8 @@ if [ "$BASH_SOURCE" = "$0" -o -z "$RK_SESSION" ];then
 	exit 1
 fi
 
-# Temporary parsed partition table file
-PART_TABLE=$(mktemp -p "$RK_LOG_DIR")
+# Parsed partition table file
+PART_TABLE="$RK_LOG_DIR/part-table"
 
 # Hidden header partition (part-table and idblock)
 HDR_PART="<hidden>"

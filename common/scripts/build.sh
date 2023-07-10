@@ -254,8 +254,10 @@ main()
 	set -eE
 
 	# Save intial envionments
+	unset INITIAL_SESSION
 	INITIAL_ENV=$(mktemp -u)
 	if [ -z "$RK_SESSION" ]; then
+		INITIAL_SESSION=1
 		env > "$INITIAL_ENV"
 	fi
 
@@ -280,16 +282,18 @@ main()
 
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
-	export RK_OUTDIR="$SDK_DIR/output"
-	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
-	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_SESSION"
+
+	export RK_OUTDIR="$SDK_DIR/output"
+	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
+	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
+	export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
+	export RK_INITIAL_ENV="$RK_LOG_DIR/initial.env"
+	export RK_CUSTOM_ENV="$RK_LOG_DIR/custom.env"
+	export RK_FINAL_ENV="$RK_LOG_DIR/final.env"
 	export RK_ROCKDEV_DIR="$SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
-	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
-	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
-	export RK_FINAL_ENV="$RK_OUTDIR/final.env"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 
@@ -297,13 +301,19 @@ main()
 	case "$@" in
 		make-targets | make-usage)
 			run_build_hooks "$@"
+			rm -f "$INITIAL_ENV"
 			exit 0 ;;
 	esac
 
+	# Prepare firmware dirs
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+
+	# Prepare log dirs
 	if [ ! -d "$RK_LOG_DIR" ]; then
-		rm -rf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+		rm -rf "$RK_LOG_BASE_DIR" "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
 		mkdir -p "$RK_LOG_DIR"
-		ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
+		ln -rsf "$RK_SESSION_DIR" "$RK_LOG_BASE_DIR"
+		ln -rsf "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
 		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
 		echo
 	fi
@@ -312,10 +322,15 @@ main()
 	cd "$RK_LOG_BASE_DIR"
 	rm -rf $(ls -t | sed '1,10d')
 
+	# Save initial envionments
+	if [ "$INITIAL_SESSION" ]; then
+		rm -f "$RK_INITIAL_ENV"
+		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
+		ln -rsf "$RK_INITIAL_ENV" "$RK_OUTDIR/"
+	fi
+
 	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
-
-	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
@@ -373,12 +388,17 @@ main()
 	source "$RK_CONFIG"
 	cp "$RK_CONFIG" "$RK_LOG_DIR"
 
-	# Save initial environment
-	if [ -e "$INITIAL_ENV" ]; then
-		rm -f "$RK_INITIAL_ENV" "$RK_CUSTOM_ENV"
-		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
+	if [ -z "$INITIAL_SESSION" ]; then
+		# Inherit session environments
+		sed -n 's/^\(RK_.*=\)\(.*\)/\1"\2"/p' "$RK_FINAL_ENV" > \
+			"$INITIAL_ENV"
+		source "$INITIAL_ENV"
+		rm -f "$INITIAL_ENV"
+	else
+		# Detect and save custom environments
 
 		# Find custom environments
+		rm -f "$RK_CUSTOM_ENV"
 		for cfg in $(grep "^RK_" "$RK_INITIAL_ENV" || true); do
 			env | grep -q "^${cfg//\"/}$" || \
 				echo "$cfg" >> "$RK_CUSTOM_ENV"
@@ -386,13 +406,14 @@ main()
 
 		# Allow custom environments overriding
 		if [ -e "$RK_CUSTOM_ENV" ]; then
+			ln -rsf "$RK_CUSTOM_ENV" "$RK_OUTDIR/"
+
 			echo -e "\e[31mWARN: Found custom environments: \e[0m"
 			cat "$RK_CUSTOM_ENV"
 
 			echo -e "\e[31mAssuming that is expected, please clear them if otherwise.\e[0m"
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
-			cp "$RK_CUSTOM_ENV" "$RK_LOG_DIR"
 
 			if grep -q "^RK_KERNEL_VERSION=" "$RK_CUSTOM_ENV"; then
 				echo -e "\e[31mCustom RK_KERNEL_VERSION ignored!\e[0m"
@@ -445,8 +466,9 @@ main()
 	esac
 
 	# Save final environments
+	rm -f "$RK_FINAL_ENV"
 	env > "$RK_FINAL_ENV"
-	cp "$RK_FINAL_ENV" "$RK_LOG_DIR"
+	ln -rsf "$RK_FINAL_ENV" "$RK_OUTDIR/"
 
 	# Log configs
 	echo
