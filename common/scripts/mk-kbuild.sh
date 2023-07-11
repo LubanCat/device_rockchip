@@ -1,9 +1,13 @@
 #!/bin/sh
 
-if [ "$(uname -m)" != armv7l ]; then
-	echo -e "\e[35mThis script is not for $(uname -m)\e[0m"
-	exit 1
-fi
+case "$(uname -m)" in
+	armv7l) KERNEL_ARCH=armhf ;;
+	aarch64) KERNEL_ARCH=aarch64 ;;
+	*)
+		echo -e "\e[35mThis script is not for $(uname -m)\e[0m"
+		exit 1
+		;;
+esac
 
 set -a
 
@@ -21,6 +25,7 @@ fi
 
 env -u ABINAME -u ARCH -u FEATURESET -u FLAVOUR -u VERSION -u LOCALVERSION >/dev/null
 
+KERNAL_ARCH=${1:-$KERNAL_ARCH}
 KVER3=$(grep -A 2 "^VERSION = " Makefile | cut -d' ' -f 3 | paste -sd'.')
 KVER2=$(grep -A 1 "^VERSION = " Makefile | cut -d' ' -f 3 | paste -sd'.')
 GVER=$(git log --oneline -1 | cut -d' ' -f1)
@@ -48,13 +53,13 @@ make_subdir()
 	shift
 
 	mkdir -p "$BUILD_DIR/$SUBDIR"
-	make -j8 KCFLAGS="-fdebug-prefix-map=$PWD/=" \
+	make -j8 -s KCFLAGS="-fdebug-prefix-map=$PWD/=" \
 		-C "$BUILD_DIR/$SUBDIR" \
 		-f "$CUR_DIR/debian/rules.d/$SUBDIR/Makefile" \
 		top_srcdir="$CUR_DIR" top_rulesdir="$CUR_DIR/debian/rules.d" \
-		OUTDIR=$SUBDIR VERSION=$KVER2 KERNEL_ARCH=armhf \
+		OUTDIR=$SUBDIR VERSION=$KVER2 KERNEL_ARCH=$KERNEL_ARCH \
 		KBUILD_HOSTCFLAGS="-static" KBUILD_HOSTLDFLAGS="-static -lz" \
-		HOSTCC="gcc -static" HOSTLD="ld -static" -s $@
+		HOSTCC="gcc -static" HOSTLD="ld -static" $@
 }
 
 echo
@@ -64,13 +69,16 @@ echo
 sed -i 's/\(-lcrypto$\)/\1 -ldl -lpthread/' debian/rules.d/scripts/Makefile
 
 if [ "$KVER2" = 4.4 ]; then
-	sed -i -e '/kconf_id.c/a\	$(CC) $(CFLAGS) -c -o $@ $<' \
-		-e 's/c: kconf_id.c/o: zconf.hash.c/' \
+	sed -i -e '/_shipped/,$d' \
+		-e '$a\\n%.c: %.c_shipped\n	cat $< > $@' \
+		-e '$a\\n%.h: %.h_shipped\n	cat $< > $@' \
+		debian/rules.d/Makefile.inc
+
+	sed -i -e '/lex.c:/,$d' \
+		-e 's/kconf_id.c/zconf.hash.c/' \
 		debian/rules.d/scripts/kconfig/Makefile
 
-	sed -i -e '/parse.tab.c/,$d' \
-		-e '/keywords.c/a\\n%h: %h_shipped\n	cat $< > $@' \
-		-e '/keywords.c/a\\n%c: %c_shipped\n	cat $< > $@' \
+	sed -i -e '/parse.tab.c:/,$d' \
 		-e 's/keywords.c/keywords.hash.c/' \
 		debian/rules.d/scripts/genksyms/Makefile
 
