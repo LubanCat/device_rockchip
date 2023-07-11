@@ -68,6 +68,27 @@ config RK_KERNEL_IMG
 	string
 	default "kernel/arch/$RK_KERNEL_ARCH/boot/$RK_KERNEL_IMG_NAME"
 
+config RK_KERNEL_KBUILD_ARCH
+	string
+	default "host" if RK_KERNEL_KBUILD_HOST
+	default "armhf" if RK_KERNEL_KBUILD_ARM32
+	default "aarch64" if RK_KERNEL_KBUILD_ARM64
+
+choice
+	prompt "kbuild tools arch"
+
+config RK_KERNEL_KBUILD_HOST
+	bool "host arch"
+
+config RK_KERNEL_KBUILD_ARM64
+	bool "aarch64"
+	depends on !RK_CHIP_ARM32
+
+config RK_KERNEL_KBUILD_ARM32
+	bool "armhf"
+
+endchoice
+
 endif
 
 endmenu # Kernel

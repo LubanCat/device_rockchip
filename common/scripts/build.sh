@@ -275,6 +275,7 @@ main()
 	export RK_DATA_DIR="$COMMON_DIR/data"
 	export RK_TOOL_DIR="$COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
+	export RK_KBUILD_DIR="$COMMON_DIR/linux-kbuild"
 	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"
 
 	export RK_BUILD_HOOK_DIR="$COMMON_DIR/build-hooks"
