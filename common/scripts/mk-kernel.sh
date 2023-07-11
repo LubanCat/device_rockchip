@@ -191,12 +191,17 @@ post_build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
+	[ "$1" = "linux-headers" ] || return 0
+	shift
+
+	[ "$1" != cmds ] || shift
 	OUTPUT_DIR="${2:-"$RK_OUTDIR"}"
+
 	mkdir -p "$OUTPUT_DIR"
 	HEADER_FILES_SCRIPT=$(mktemp)
 
 	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building $1:\e[0m"
+		echo -e "\e[35mCommands of building linux-headers:\e[0m"
 	else
 		echo "Saving linux-headers to $OUTPUT_DIR"
 	fi
