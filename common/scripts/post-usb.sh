@@ -12,7 +12,7 @@ install_adbd()
 
 	find "$TARGET_DIR" -name "*adbd*" -print0 | xargs -0 rm -rf
 
-	install -m 0755 "$RK_TOOL_DIR/adbd" "$TARGET_DIR/usr/bin/adbd"
+	install -m 0755 "$RK_TOOL_DIR/armhf/adbd" "$TARGET_DIR/usr/bin/adbd"
 
 	if [ "$RK_USB_ADBD_TCP_PORT" -ne 0 ]; then
 		echo "export ADB_TCP_PORT=$RK_USB_ADBD_TCP_PORT" >> \

@@ -16,7 +16,7 @@ mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/async-commit "$TARGET_DIR/usr/bin/"
 
 find "$TARGET_DIR" -name modetest -print0 | xargs -0 rm -f
-install -m 0755 "$RK_TOOL_DIR/modetest" "$TARGET_DIR/usr/bin/modetest"
+install -m 0755 "$RK_TOOL_DIR/armhf/modetest" "$TARGET_DIR/usr/bin/modetest"
 
 if [ "$POST_INIT_SYSTEMD" ]; then
 	install -m 0755 external/rkscript/async-commit.service \

@@ -1,9 +1,9 @@
-Rockchip prebuilt tools (static linked, mostly 32bit)
+Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-6308c9d876 rkwifibt: Support static
+d92d79eaf2 strace: Fix static configure error when xz and libunwind are enabled
 
-Using rockchip_{rk3036,rk3399}_defconfig with addition configs:
+Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_PACKAGE_ANDROID_TOOLS=y
 BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
 
@@ -57,7 +57,7 @@ For building perf:
 For building kmsgrab:
 1/ ./build.sh shell
 2/ source ./buildroot/output/$RK_BUILDROOT_CFG/host/environment-setup
-3/ $CC $RK_DATA_DIR/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o $RK_TOOL_DIR/kmsgrab
+3/ $CC $RK_DATA_DIR/kmsgrab.c $(pkg-config --cflags --libs libdrm) -static -o kmsgrab
 
 External sources:
 1/ rkwifibt:
