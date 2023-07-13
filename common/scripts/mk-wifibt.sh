@@ -7,14 +7,13 @@ build_wifibt()
 {
 	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
 
-	if [ ! -r kernel/include/generated/asm-offsets.h ]; then
-		echo "Kernel is not ready, building it for wifi/BT..."
-		"$SCRIPTS_DIR/mk-kernel.sh"
-	fi
-
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
 	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
+
+	echo "=========================================="
+	echo "          Start building wifi/BT ($WIFI_CHIP - $BT_TTY_DEV)"
+	echo "=========================================="
 
 	if ls "$ROOTFS_DIR/lib/" | grep -wq ld-linux-armhf.so; then
 		ROOTFS_ARCH=arm
@@ -22,8 +21,38 @@ build_wifibt()
 		ROOTFS_ARCH=arm64
 	fi
 
-	# Debian would call us in root (sudo) environment
-	KMAKE="${SUDO_USER:+sudo -u $SUDO_USER} $KMAKE"
+	RKWIFIBT=$SDK_DIR/external/rkwifibt
+
+	ID=$(stat --format %u "$RKWIFIBT")
+	if [ "$ID" -ne 0 ]; then
+		if [ "$(id -u)" -eq 0 ]; then
+			# Fixing up rkwifibt permissions
+			find "$RKWIFIBT" -user 0 -exec chown -h -R $ID:$ID {} \;
+
+			# Switch back to normal user (for Debian)
+			export KMAKE="sudo -u $ID $KMAKE"
+		else
+			# Check for dirty files owned by root
+			echo -e "\e[36m"
+			if find "$RKWIFIBT" -user 0 | grep ""; then
+				echo -e "\e[31m"
+				echo "$RKWIFIBT is dirty for non-root building!"
+				echo "Please clear it:"
+				echo "cd $RKWIFIBT"
+				echo "git add -f ."
+				echo "sudo git reset --hard"
+				echo -e "\e[0m"
+				exit 1
+			fi
+			echo -e "\e[0m"
+		fi
+	fi
+
+	# Make sure that the kernel is ready
+	if [ ! -r kernel/include/generated/asm-offsets.h ]; then
+		echo "Kernel is not ready, building it for wifi/BT..."
+		"$SCRIPTS_DIR/mk-kernel.sh"
+	fi
 
 	# Check kernel config
 	WIFI_USB=`grep "CONFIG_USB=y" kernel/.config` || true
@@ -43,36 +72,6 @@ build_wifibt()
 		fi
 	fi
 	echo "kernel config: $WIFI_USB $WIFI_SDIO $WIFI_RFKILL"
-
-	RKWIFIBT=$SDK_DIR/external/rkwifibt
-
-	echo "=========================================="
-	echo "          Start building wifi/BT"
-	echo "=========================================="
-
-	echo WIFI_CHIP=$WIFI_CHIP
-	echo BT_TTY_DEV=$BT_TTY_DEV
-
-	ID=$(stat --format %u "$RKWIFIBT")
-	if [ "$ID" -ne 0 ]; then
-		if [ "$(id -u)" -eq 0 ]; then
-			# Fixing up rkwifibt permissions
-			find "$RKWIFIBT" -user 0 -exec chown -h -R $ID:$ID {} \;
-		else
-			echo -e "\e[36m"
-			if find "$RKWIFIBT" -user 0 | grep ""; then
-				echo -e "\e[31m"
-				echo "$RKWIFIBT is dirty for non-root building!"
-				echo "Please clear it:"
-				echo "cd $RKWIFIBT"
-				echo "git add -f ."
-				echo "sudo git reset --hard"
-				echo -e "\e[0m"
-				exit 1
-			fi
-			echo -e "\e[0m"
-		fi
-	fi
 
 	if [[ "$WIFI_CHIP" =~ "ALL_AP" ]];then
 		echo "building bcmdhd sdio"
