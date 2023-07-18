@@ -23,14 +23,15 @@ build_wifibt()
 
 	RKWIFIBT=$SDK_DIR/external/rkwifibt
 
-	ID=$(stat --format %u "$RKWIFIBT")
-	if [ "$ID" -ne 0 ]; then
-		if [ "$(id -u)" -eq 0 ]; then
+	OWNER=$(stat --format %U "$RKWIFIBT")
+	if [ "$OWNER" != "root" ]; then
+		if [ "$(id -un)" = "root" ]; then
 			# Fixing up rkwifibt permissions
-			find "$RKWIFIBT" -user 0 -exec chown -h -R $ID:$ID {} \;
+			find "$RKWIFIBT" -user root \
+				-exec chown -h -R $OWNER:$OWNER {} \;
 
-			# Switch back to normal user (for Debian)
-			export KMAKE="sudo -u $ID $KMAKE"
+			# Sudo to source code owner (for Debian)
+			export KMAKE="sudo -u $OWNER $KMAKE"
 		else
 			# Check for dirty files owned by root
 			echo -e "\e[36m"
