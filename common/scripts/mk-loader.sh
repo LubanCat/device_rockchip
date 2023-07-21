@@ -33,7 +33,7 @@ build_uboot()
 		${RK_UBOOT_INI:+../rkbin/RKBOOT/$RK_UBOOT_INI} \
 		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI}"
 	UARGS="$UARGS_COMMON ${RK_UBOOT_SPL:+--spl-new} \
-		${RK_SECURITY_OTP_DEBUG:+--burn-key-hash}"
+		${RK_SECURITY_BURN_KEY:+--burn-key-hash}"
 
 	if [ "$RK_SECURITY" ]; then
 		for IMAGE in ${1:-boot.img ${RK_RECOVERY_CFG:+recovery.img}}; do

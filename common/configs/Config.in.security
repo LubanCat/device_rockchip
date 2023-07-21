@@ -57,9 +57,13 @@ config RK_SECURITY_CHECK_DM_V
 
 endchoice
 
-config RK_SECURITY_OTP_DEBUG
-	string "security OTP debug"
-	default y
+comment "Burn security key is dangerous and cannot be reverted!"
+	depends on RK_SECURITY_BURN_KEY
+
+config RK_SECURITY_BURN_KEY
+	bool "burn security key"
+	help
+	  Burn security key's hash to non volatile memory.
 
 endif
 
