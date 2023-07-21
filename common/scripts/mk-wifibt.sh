@@ -25,7 +25,7 @@ build_wifibt()
 
 	OWNER=$(stat --format %U "$RKWIFIBT")
 	if [ "$OWNER" != "root" ]; then
-		if [ "$(id -un)" = "root" ]; then
+		if [ "${USER:-$(id -un)}" = "root" ]; then
 			# Fixing up rkwifibt permissions
 			find "$RKWIFIBT" -user root \
 				-exec chown -h -R $OWNER:$OWNER {} \;
