@@ -40,11 +40,16 @@ rk_partition_size_readable_to_sector()
 {
 	SIZE=${1%B}
 
-	# Consider 0 as unlimited
 	case "${SIZE:-grow}" in
+		# Consider 0 as unlimited
 		- | 0 | grow)
 			echo '-'
-			return 0 ;;
+			return 0
+			;;
+		0x*)
+			echo $SIZE
+			return 0
+			;;
 	esac
 
 	{
@@ -84,17 +89,17 @@ rk_partition_parse_names()
 # Cache parsed partition table
 rk_partition_init()
 {
-	rk_partition_parse > $PART_TABLE
+	rk_partition_parse > "$PART_TABLE"
 }
 
 rk_partition_size()
 {
-	grep "^$1 " $PART_TABLE | cut -d' ' -f2 | tr -d '\-' || true
+	grep "^$1 " "$PART_TABLE" | cut -d' ' -f2 | tr -d '\-' || true
 }
 
 rk_partition_num()
 {
-	echo $(( $(cat $PART_TABLE | wc -l) - 1 ))
+	echo $(( $(cat "$PART_TABLE" | wc -l) - 1 ))
 }
 
 # Print partition table info
@@ -117,7 +122,7 @@ rk_partition_print()
 
 			# NOTE: Assuming partitions are contiguous
 			OFFSET=$(( $OFFSET + ${SIZE/-/0} ))
-		done < $PART_TABLE
+		done < "$PART_TABLE"
 	} | sed "=" | sed "N;s/\n/: /"
 
 	echo
@@ -131,12 +136,14 @@ rk_partition_to_cmdline()
 {
 	OFFSET=0
 	while read NAME SIZE; do
-		# Latest grow part
-		if [ "$SIZE" = "-" ]; then
-			echo "$NAME $OFFSET" | \
-				awk '{printf "-@0x%08x(%s:grow)",$2,$1}'
-			break
-		fi
+		case "$SIZE" in
+			-)
+				# Latest grow part
+				echo "$NAME $OFFSET" | \
+					awk '{printf "-@0x%08x(%s:grow)",$2,$1}'
+				break ;;
+			*) SIZE=$(rk_partition_size_readable_to_sector $SIZE) ;;
+		esac
 
 		# Visible parts
 		if [ "$NAME" != "$HDR_PART" ]; then
@@ -146,7 +153,7 @@ rk_partition_to_cmdline()
 
 		# NOTE: Assuming partitions are contiguous
 		OFFSET=$(( $OFFSET + $SIZE ))
-	done < $PART_TABLE | sed 's/)\([^$]\)/),\1/g'
+	done < "$PART_TABLE" | sed 's/)\([^$]\)/),\1/g'
 }
 
 # Save partition table to parameter
@@ -167,7 +174,9 @@ rk_partition_save()
 # Edit raw partition table
 rk_partition_edit()
 {
-	vi $PART_TABLE
+	sed -i '1i # name size' "$PART_TABLE"
+	eval ${EDITOR:-vi} "$PART_TABLE"
+	sed -i '/#/d' "$PART_TABLE"
 	rk_partition_save
 }
 
@@ -179,7 +188,7 @@ rk_partition_parse_name()
 
 	# Part name
 	if ! echo $1 | grep -qE "^[0-9]*$"; then
-		if ! grep -q "^$1 " $PART_TABLE; then
+		if ! grep -q "^$1 " "$PART_TABLE"; then
 			echo -e "\e[35mNo such part ($1)!\e[0m"
 			return 1
 		fi
@@ -201,7 +210,7 @@ rk_partition_parse_name()
 		return 1
 	fi
 
-	PART_NAME=$(sed -n "$(($IDX + 1))s/\(^[^ ]*\) .*/\1/p" $PART_TABLE)
+	PART_NAME=$(sed -n "$(($IDX + 1))s/\(^[^ ]*\) .*/\1/p" "$PART_TABLE")
 }
 
 rk_partition_del()
@@ -209,7 +218,7 @@ rk_partition_del()
 	[ "$#" -gt 0 ] || return 1
 
 	rk_partition_parse_name $1 || return 1
-	sed -i "/^$PART_NAME /d" $PART_TABLE
+	sed -i "/^$PART_NAME /d" "$PART_TABLE"
 
 	rk_partition_save
 }
@@ -225,7 +234,7 @@ rk_partition_rename()
 	fi
 
 	rk_partition_parse_name $1 || return 1
-	sed -i "s/^$PART_NAME /$2 /" $PART_TABLE
+	sed -i "s/^$PART_NAME /$2 /" "$PART_TABLE"
 
 	rk_partition_save
 }
@@ -238,10 +247,10 @@ rk_partition_move()
 	rk_partition_parse_name $2 || return 1
 
 	rk_partition_parse_name $1 || return 1
-	PART=$(sed -n "/^$PART_NAME /p" $PART_TABLE)
+	PART=$(sed -n "/^$PART_NAME /p" "$PART_TABLE")
 
 	NUM=$(rk_partition_num)
-	if [ "$2" -eq "$NUM" ] && grep -q "\-$" $PART_TABLE; then
+	if [ "$2" -eq "$NUM" ] && grep -q "\-$" "$PART_TABLE"; then
 		echo -e "\e[35mCannot move after unlimited part!\e[0m"
 		return 1
 	fi
@@ -251,8 +260,8 @@ rk_partition_move()
 		return 1
 	fi
 
-	sed -i "/^$PART$/d" $PART_TABLE
-	sed -i "$2 a$PART" $PART_TABLE
+	sed -i "/^$PART$/d" "$PART_TABLE"
+	sed -i "$2 a$PART" "$PART_TABLE"
 
 	rk_partition_save
 }
@@ -267,7 +276,7 @@ rk_partition_resize()
 	esac
 
 	rk_partition_parse_name $1 || return 1
-	sed -i "s/^$PART_NAME .*/$PART_NAME $SIZE/" $PART_TABLE
+	sed -i "s/^$PART_NAME .*/$PART_NAME $SIZE/" "$PART_TABLE"
 
 	rk_partition_save
 }
@@ -306,12 +315,12 @@ rk_partition_insert()
 		return 1
 	fi
 
-	if [ "$IDX" -eq "$(( $NUM + 1 ))" ] && grep -q "\-$" $PART_TABLE; then
+	if [ "$IDX" -eq "$(( $NUM + 1 ))" ] && grep -q "\-$" "$PART_TABLE"; then
 		echo -e "\e[35mCannot insert after unlimited part!\e[0m"
 		return 1
 	fi
 
-	sed -i "$IDX a$2 $SIZE" $PART_TABLE
+	sed -i "$IDX a$2 $SIZE" "$PART_TABLE"
 
 	rk_partition_save
 }
@@ -339,7 +348,7 @@ rk_partition_create()
 
 			echo "$NAME $SIZE"
 		done
-	} > $PART_TABLE
+	} > "$PART_TABLE"
 
 	rk_partition_save
 }
