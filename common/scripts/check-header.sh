@@ -7,7 +7,7 @@ PACKAGE="$1"
 HEADER="$2"
 APT_PACKAGE="$3"
 
-if gcc "$RK_DATA_DIR/dummy.c" -E -include "$HEADER" &>/dev/null; then
+if echo | gcc -E -include "$HEADER" - &>/dev/null; then
 	exit 0
 fi
 
