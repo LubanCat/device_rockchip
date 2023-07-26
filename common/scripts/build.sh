@@ -308,6 +308,25 @@ main()
 			exit 0 ;;
 	esac
 
+	# Log SDK information
+	MANIFEST="$SDK_DIR/.repo/manifest.xml"
+	if [ -e "$MANIFEST" ]; then
+		if [ ! -L "$MANIFEST" ]; then
+			MANIFEST="$SDK_DIR/.repo/manifests/$(grep -o "[^\"]*\.xml" "$MANIFEST")"
+		fi
+		TAG="$(grep -o "linux-.*-gen-rkr[^.]*" "$MANIFEST" | \
+			head -n 1 || true)"
+		MANIFEST="$(basename "$(realpath "$MANIFEST")")"
+		echo
+		echo -e "\e[35m############### Rockchip Linux SDK ###############\e[0m"
+		echo
+		echo -e "\e[35mManifest: $MANIFEST\e[0m"
+		if [ "$TAG" ]; then
+			echo -e "\e[35mVersion: $TAG\e[0m"
+		fi
+		echo
+	fi
+
 	# Prepare firmware dirs
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
