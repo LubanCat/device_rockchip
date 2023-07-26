@@ -158,7 +158,7 @@ usage_hook()
 	echo -e "defconfig[:<config>]              \tchoose defconfig"
 	echo -e " *_defconfig                      \tswitch to specified defconfig"
 	echo "    available defconfigs:"
-	echo "$(ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/")"
+	ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/"
 	echo -e " olddefconfig                     \tresolve any unresolved symbols in .config"
 	echo -e " savedefconfig                    \tsave current config to defconfig"
 	echo -e " menuconfig                       \tinteractive curses-based configurator"
@@ -167,7 +167,7 @@ usage_hook()
 
 clean_hook()
 {
-	$MAKE distclean
+	rm -rf "$RK_OUTDIR"/*config* "$RK_OUTDIR/kconf"
 }
 
 INIT_CMDS="chip defconfig lunch .*_defconfig olddefconfig savedefconfig menuconfig config default"
@@ -179,6 +179,7 @@ init_hook()
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
 		config)
+			prepare_config
 			$MAKE menuconfig
 			$MAKE savedefconfig
 			;;

@@ -92,6 +92,7 @@ usage_hook()
 clean_hook()
 {
 	[ ! -d kernel ] || make -C kernel distclean
+	rm -f "$RK_OUTDIR/linux-headers.tar"
 }
 
 INIT_CMDS="default $KERNELS"

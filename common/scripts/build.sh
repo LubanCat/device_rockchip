@@ -20,6 +20,10 @@ usage()
 
 	# Global options
 	echo -e "cleanall                          \tcleanup"
+	echo -e "clean[:module[:module]]...        \tcleanup modules"
+	echo "    available modules:"
+	grep -wl clean_hook "$SCRIPTS_DIR"/mk-*.sh | \
+		sed "s/^.*mk-\(.*\).sh/\t\1/"
 	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
 	echo -e "shell                             \tsetup a shell for developing"
 	echo -e "help                              \tusage"
@@ -343,6 +347,14 @@ main()
 	for opt in $OPTIONS; do
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
+			clean:*)
+				# Check cleanup modules
+				for m in $(echo ${opt#clean:} | tr ':' ' '); do
+					grep -wq clean_hook \
+						"$SCRIPTS_DIR/mk-$m.sh" \
+						2>/dev/null || usage
+				done
+				;&
 			shell | cleanall)
 				# Check single options
 				if [ "$opt" = "$OPTIONS" ]; then
@@ -401,7 +413,7 @@ main()
 
 	# No need to go further
 	CMDS="$(run_build_hooks support-cmds pre-build build \
-		post-build | xargs) shell cleanall post-rootfs"
+		post-build | xargs) shell cleanall clean post-rootfs"
 	option_check "$CMDS" $OPTIONS || return 0
 
 	# Force exporting config environments
@@ -480,6 +492,13 @@ main()
 			run_build_hooks clean
 			rm -rf "$RK_OUTDIR" "$SDK_DIR/rockdev"
 			finish_build cleanall
+			exit 0 ;;
+		clean:*)
+			MODULES="$(echo ${OPTIONS#clean:} | tr ':' ' ')"
+			for m in $MODULES; do
+				"$SCRIPTS_DIR/mk-$m.sh" clean
+			done
+			finish_build clean - $MODULES
 			exit 0 ;;
 		post-rootfs)
 			shift

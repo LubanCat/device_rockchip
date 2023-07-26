@@ -126,7 +126,7 @@ usage_hook()
 
 clean_hook()
 {
-	rm -rf "$RK_OUTDIR"/$BOARD*
+	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/$BOARD*
 }
 
 BUILD_CMDS="all allsave"
