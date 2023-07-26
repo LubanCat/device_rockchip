@@ -93,7 +93,7 @@ elif [ "$MODE" = "DM-E" ]; then
 	sed -i "s/CIPHER=/CIPHER=$cipher/" "$INIT_FILE"
 
 	echo "Generate misc with key"
-	"$SCRIPTS_DIR/mk-misc.sh" "$RK_IMAGE_DIR/$RK_MISC_IMG" \
+	"$SCRIPTS_DIR/mk-misc.sh" "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
 		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
 		$(cat "$SDK_DIR/u-boot/keys/system_enc_key")
 fi

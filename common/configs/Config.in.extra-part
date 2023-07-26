@@ -73,7 +73,7 @@ config RK_EXTRA_PARTITION_1_SRC
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Suffix of source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs under <RK_IMAGE_DIR>/.
 
 config RK_EXTRA_PARTITION_1_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -91,11 +91,16 @@ config RK_EXTRA_PARTITION_1_BUILTIN
 config RK_EXTRA_PARTITION_1_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_1_BUILTIN
+	depends on !RK_EXTRA_PARTITION_1_NOPACK
 	default y if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_1_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_1_BUILTIN
 
 config RK_EXTRA_PARTITION_1_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_1_FIXED:+fixed,}${RK_EXTRA_PARTITION_1_BUILTIN:+builtin}"
+	default "${RK_EXTRA_PARTITION_1_FIXED:+fixed,}${RK_EXTRA_PARTITION_1_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_1_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_1_STR
 	string
@@ -151,7 +156,7 @@ config RK_EXTRA_PARTITION_2_SRC
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Suffix of source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs under <RK_IMAGE_DIR>/.
 
 config RK_EXTRA_PARTITION_2_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -169,11 +174,16 @@ config RK_EXTRA_PARTITION_2_BUILTIN
 config RK_EXTRA_PARTITION_2_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_2_BUILTIN
+	depends on !RK_EXTRA_PARTITION_2_NOPACK
 	default y if RK_EXTRA_PARTITION_2_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_2_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_2_BUILTIN
 
 config RK_EXTRA_PARTITION_2_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_2_FIXED:+fixed,}${RK_EXTRA_PARTITION_2_BUILTIN:+builtin}"
+	default "${RK_EXTRA_PARTITION_2_FIXED:+fixed,}${RK_EXTRA_PARTITION_2_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_2_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_2_STR
 	string
@@ -242,11 +252,16 @@ config RK_EXTRA_PARTITION_3_BUILTIN
 config RK_EXTRA_PARTITION_3_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_3_BUILTIN
+	depends on !RK_EXTRA_PARTITION_3_NOPACK
 	default y if RK_EXTRA_PARTITION_3_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_3_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_3_BUILTIN
 
 config RK_EXTRA_PARTITION_3_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_3_FIXED:+fixed,}${RK_EXTRA_PARTITION_3_BUILTIN:+builtin}"
+	default "${RK_EXTRA_PARTITION_3_FIXED:+fixed,}${RK_EXTRA_PARTITION_3_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_3_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_3_STR
 	string
@@ -315,11 +330,16 @@ config RK_EXTRA_PARTITION_4_BUILTIN
 config RK_EXTRA_PARTITION_4_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_4_BUILTIN
+	depends on !RK_EXTRA_PARTITION_4_NOPACK
 	default y if RK_EXTRA_PARTITION_4_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_4_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_4_BUILTIN
 
 config RK_EXTRA_PARTITION_4_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_4_FIXED:+fixed,}${RK_EXTRA_PARTITION_4_BUILTIN:+builtin}"
+	default "${RK_EXTRA_PARTITION_4_FIXED:+fixed,}${RK_EXTRA_PARTITION_4_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_4_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_4_STR
 	string
@@ -388,11 +408,16 @@ config RK_EXTRA_PARTITION_5_BUILTIN
 config RK_EXTRA_PARTITION_5_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_5_BUILTIN
+	depends on !RK_EXTRA_PARTITION_5_NOPACK
 	default y if RK_EXTRA_PARTITION_5_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_5_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_5_BUILTIN
 
 config RK_EXTRA_PARTITION_5_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_5_FIXED:+fixed,}${RK_EXTRA_PARTITION_5_BUILTIN:+builtin}"
+	default "${RK_EXTRA_PARTITION_5_FIXED:+fixed,}${RK_EXTRA_PARTITION_5_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_5_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_5_STR
 	string

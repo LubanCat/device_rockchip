@@ -59,7 +59,7 @@ build_updateimg()
 	ln -rsf "$RK_ROCKDEV_DIR"/* .
 	rm -f update.img
 	if [ "$TYPE" = sdcard ]; then
-		ln -rsf "$RK_IMAGE_DIR/sdupdate-ab-misc.img" misc.img
+		ln -rsf "$RK_IMAGE_DIR/misc/sdupdate-ab-misc.img" misc.img
 		ln -rsf "$RK_DATA_DIR/parameter-sdupdate.txt" \
 			parameter.txt
 

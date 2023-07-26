@@ -24,11 +24,6 @@ link_image() {
 
 pack_extra_partitions() {
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do
-		# Skip built-in partitions
-		if rk_extra_part_builtin $idx; then
-			continue
-		fi
-
 		PART_NAME="$(rk_extra_part_name $idx)"
 		FS_TYPE="$(rk_extra_part_fstype $idx)"
 		SIZE="$(rk_extra_part_size $idx)"
@@ -36,12 +31,17 @@ pack_extra_partitions() {
 		OUTDIR="$(rk_extra_part_outdir $idx)"
 		DST="$(rk_extra_part_img $idx)"
 
-		if [ -z "$(rk_extra_part_src $idx)" ]; then
-			echo "Ignoring $PART_NAME for no sources"
+		rk_extra_part_prepare $idx
+
+		if rk_extra_part_builtin $idx; then
+			echo "Skip packing $PART_NAME (builtin)"
 			continue
 		fi
 
-		rk_extra_part_prepare $idx
+		if rk_extra_part_nopack $idx; then
+			echo "Skip packing $PART_NAME (not packing)"
+			continue
+		fi
 
 		if [ "$SIZE" = max ]; then
 			SIZE="$(partition_size_kb "$PART_NAME")K"
@@ -84,8 +84,9 @@ build_firmware()
 	"$SCRIPTS_DIR/check-grow-align.sh"
 	link_image "$CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
 
+	rm -f "$RK_FIRMWARE_DIR/misc.img"
 	if [ "$RK_MISC_IMG" ]; then
-		link_image "$RK_IMAGE_DIR/$RK_MISC_IMG" \
+		link_image "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
 			"$RK_FIRMWARE_DIR/misc.img"
 	fi
 

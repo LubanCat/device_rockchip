@@ -406,12 +406,14 @@ rk_extra_part_src()
 {
 	PART_NAME="$(rk_extra_part_name $1)"
 	for src in $(rk_extra_part_arg ${1:-1} 6 | tr ',' ' '); do
-		# Src is either relative path to $RK_IMAGE_DIR/<name>/, or \
-		# absolute path.
-		if echo "$src" | grep -vq "^/"; then
-			echo "$RK_IMAGE_DIR/$PART_NAME/${PART_NAME}_${src}"
-		else
+		if [ -z "$src" -o "$src" = empty ]; then
+			return 0
+		elif echo "$src" | grep -q "^/"; then
 			echo "$src"
+		elif [ -d "$RK_IMAGE_DIR/$PART_NAME/$src" ]; then
+			echo "$RK_IMAGE_DIR/$PART_NAME/$src"
+		else
+			echo "$RK_IMAGE_DIR/$src"
 		fi
 	done
 }
@@ -429,6 +431,11 @@ rk_extra_part_fixed()
 rk_extra_part_builtin()
 {
 	rk_extra_part_arg ${1:-1} 8 | grep -wq builtin
+}
+
+rk_extra_part_nopack()
+{
+	rk_extra_part_arg ${1:-1} 8 | grep -wq nopack
 }
 
 # Symlink to the mountpoint in rootfs dir
@@ -457,23 +464,24 @@ rk_extra_part_prepare()
 {
 	PART_NAME="$(rk_extra_part_name $1)"
 	OUTDIR="$(rk_extra_part_outdir $1)"
+	DST="$(rk_extra_part_img $1)"
 	MOUNT_DIR="$(rk_extra_part_mount_dir $1)"
 	FAKEROOT_SCRIPT="$(rk_extra_part_fakeroot_script $1)"
 	SRCS="$(rk_extra_part_src $1)"
 
 	echo "Preparing partiton $PART_NAME"
 
-	rm -rf "$OUTDIR" "$FAKEROOT_SCRIPT"
+	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT"
 
-	if [ ! "$SRCS" ]; then
-		echo "Ignoring $PART_NAME for no sources"
+	if rk_extra_part_nopack $1; then
+		echo "Skip preparing $PART_NAME (not packing it)"
 		return 0
 	fi
 
 	mkdir -p "$OUTDIR"
 
-	if rk_extra_part_fixed $idx; then
-		if ! rk_extra_part_builtin $idx; then
+	if rk_extra_part_fixed $1; then
+		if ! rk_extra_part_builtin $1; then
 			# Skip boot-time resizing by adding a tag file
 			touch "$OUTDIR/.fixed"
 		fi

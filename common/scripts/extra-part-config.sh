@@ -107,7 +107,7 @@ EOF
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Suffix of source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs under <RK_IMAGE_DIR>/.
 EOF
 	fi
 
@@ -129,11 +129,16 @@ config RK_EXTRA_PARTITION_${i}_BUILTIN
 config RK_EXTRA_PARTITION_${i}_FIXED
 	bool "skip resizing"
 	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
+	depends on !RK_EXTRA_PARTITION_${i}_NOPACK
 	default y if RK_EXTRA_PARTITION_${i}_FSTYPE = "ubi"
+
+config RK_EXTRA_PARTITION_${i}_NOPACK
+	bool "skip packing image"
+	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 
 config RK_EXTRA_PARTITION_${i}_FEATURES
 	string
-	default "\${RK_EXTRA_PARTITION_${i}_FIXED:+fixed,}\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin}"
+	default "\${RK_EXTRA_PARTITION_${i}_FIXED:+fixed,}\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin,}\${RK_EXTRA_PARTITION_${i}_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_${i}_STR
 	string
