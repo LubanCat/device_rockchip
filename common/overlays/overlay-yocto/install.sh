@@ -7,8 +7,8 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 SDK_DIR="${SDK_DIR:-$(realpath "$OVERLAY_DIR/../../../../..")}"
 
 if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
-	echo "Installing weston overlay: $OVERLAY_DIR to $TARGET_DIR..."
-	rsync -av --chmod=u=rwX,go=rX "$OVERLAY_DIR/" "$TARGET_DIR/" \
+	echo "Installing weston overlay: $OVERLAY_DIR/weston to $TARGET_DIR..."
+	rsync -av --chmod=u=rwX,go=rX "$OVERLAY_DIR/weston/" "$TARGET_DIR/" \
 		--exclude="$(basename "$(realpath "$0")")"
 
 	echo "Installing Rockchip test scripts to $TARGET_DIR..."
