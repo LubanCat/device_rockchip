@@ -123,12 +123,19 @@ build_firmware()
 		echo "$NAME" | grep -q ".img$" || continue
 
 		# Assert the image's size smaller then the limit
-		PART_SIZE_KB="$(partition_size_kb "${NAME%.img}")"
+		PART_NAME="${NAME%.img}"
+		PART_SIZE_KB="$(partition_size_kb "$PART_NAME")"
+
+		if [ "$PART_NAME" = rootfs -a "$PART_SIZE_KB" -eq 0 ]; then
+			PART_NAME=system
+			PART_SIZE_KB="$(partition_size_kb "$PART_NAME")"
+		fi
+
 		[ ! "$PART_SIZE_KB" -eq 0 ] || continue
 
 		FILE_SIZE_KB="$(( $(stat -Lc "%s" "$f") / 1024 ))"
 		if [ "$PART_SIZE_KB" -lt "$FILE_SIZE_KB" ]; then
-			fatal "error: $NAME's size exceed parameter's limit!"
+			fatal "error: $NAME's size exceed parameter's $PART_NAME partition size limit!"
 		fi
 	done
 
