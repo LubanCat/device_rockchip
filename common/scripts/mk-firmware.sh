@@ -88,6 +88,11 @@ build_firmware()
 	if [ "$RK_MISC_IMG" ]; then
 		link_image "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
 			"$RK_FIRMWARE_DIR/misc.img"
+
+		if grep -wq boot-recovery "$RK_FIRMWARE_DIR/misc.img" && \
+			[ -z "$(rk_partition_size recovery)" ]; then
+			fatal "$RK_MISC_IMG could not work without recovery partition"
+		fi
 	fi
 
 	pack_extra_partitions
