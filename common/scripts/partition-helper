@@ -94,7 +94,8 @@ rk_partition_init()
 
 rk_partition_size()
 {
-	grep "^$1 " "$PART_TABLE" | cut -d' ' -f2 | tr -d '\-' || true
+	grep -E "^$1(|_[a-z]) " "$PART_TABLE" | cut -d' ' -f2 | tr -d '\-' | \
+		sort | head -n 1 || true
 }
 
 rk_partition_num()
