@@ -6,7 +6,7 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 echo "Installing async-commit service..."
 
-rm -f etc/init.d/S*async_commit.sh \
+rm -f etc/init.d/S*_commit.sh \
 	etc/systemd/system/multi-user.target.wants/async.service \
 	usr/lib/systemd/system/async.service
 
