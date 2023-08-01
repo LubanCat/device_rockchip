@@ -60,8 +60,7 @@ build_updateimg()
 	rm -f update.img
 	if [ "$TYPE" = sdcard ]; then
 		ln -rsf "$RK_IMAGE_DIR/misc/sdupdate-ab-misc.img" misc.img
-		ln -rsf "$RK_DATA_DIR/parameter-sdupdate.txt" \
-			parameter.txt
+		ln -rsf "$CHIP_DIR/$RK_AB_SDCARD_PARAMETER" parameter.txt
 
 		# Not packing rootfs partition for sdcard
 		rm -f rootfs.img
@@ -114,7 +113,7 @@ build_ota_updateimg()
 
 build_sdcard_updateimg()
 {
-	check_config RK_AB_UPDATE RK_AB_UPDATE_SDCARD || return 0
+	check_config RK_AB_UPDATE RK_AB_SDCARD || return 0
 
 	echo "Make A/B update image for SDcard"
 
