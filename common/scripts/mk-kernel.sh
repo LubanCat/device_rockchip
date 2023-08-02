@@ -87,6 +87,7 @@ usage_hook()
 	echo -e "modules[:cmds]                   \tbuild kernel modules"
 	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
 	echo -e "kernel-config[:cmds]             \tmodify kernel defconfig"
+	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make (alias kmake)"
 }
 
 clean_hook()
@@ -128,6 +129,14 @@ pre_build_hook()
 		kernel-make | kmake)
 			shift
 			[ "$1" != cmds ] || shift
+
+			if [ "$DRY_RUN" ]; then
+				echo -e "\e[35mCommands of building ${@:-stuff}:\e[0m"
+			else
+				echo "=========================================="
+				echo "          Start building $@"
+				echo "=========================================="
+			fi
 
 			if [ ! -r kernel/.config ]; then
 				run_command $KMAKE $RK_KERNEL_CFG \

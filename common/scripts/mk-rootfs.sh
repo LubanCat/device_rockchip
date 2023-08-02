@@ -124,7 +124,7 @@ build_debian()
 usage_hook()
 {
 	echo -e "buildroot-config[:<config>]       \tmodify buildroot defconfig"
-	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make"
+	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make (alias bmake)"
 	echo -e "rootfs[:<rootfs type>]            \tbuild default rootfs"
 	echo -e "buildroot                         \tbuild buildroot rootfs"
 	echo -e "yocto                             \tbuild yocto rootfs"
