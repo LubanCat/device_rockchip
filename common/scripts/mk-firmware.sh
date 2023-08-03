@@ -22,6 +22,32 @@ link_image() {
 	ln -rsf "$SRC" "$DST"
 }
 
+pack_misc() {
+	rm -f "$RK_FIRMWARE_DIR/misc.img"
+	MISC_SIZE=$(partition_size_kb misc)
+
+	if [ "$MISC_SIZE" ]; then
+		if [ "$RK_MISC_IMG" ]; then
+			message "Misc: $RK_MISC_IMG ignored"
+		fi
+		return 0
+	fi
+
+	if [ -z "$RK_MISC_IMG" ]; then
+		message "Generating blank misc..."
+		truncate -s ${MISC_SIZE}K "$RK_FIRMWARE_DIR/misc.img"
+		return 0
+	fi
+
+	link_image "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
+		"$RK_FIRMWARE_DIR/misc.img"
+
+	if grep -wq boot-recovery "$RK_FIRMWARE_DIR/misc.img" && \
+		[ -z "$(rk_partition_size recovery)" ]; then
+		fatal "$RK_MISC_IMG could not work without recovery partition!"
+	fi
+}
+
 pack_extra_partitions() {
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do
 		PART_NAME="$(rk_extra_part_name $idx)"
@@ -82,19 +108,9 @@ build_firmware()
 	ln -rsf "$FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 
 	"$SCRIPTS_DIR/check-grow-align.sh"
+
 	link_image "$CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
-
-	rm -f "$RK_FIRMWARE_DIR/misc.img"
-	if [ "$RK_MISC_IMG" ]; then
-		link_image "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
-			"$RK_FIRMWARE_DIR/misc.img"
-
-		if grep -wq boot-recovery "$RK_FIRMWARE_DIR/misc.img" && \
-			[ -z "$(rk_partition_size recovery)" ]; then
-			fatal "$RK_MISC_IMG could not work without recovery partition"
-		fi
-	fi
-
+	pack_misc
 	pack_extra_partitions
 
 	if [ "$RK_SECURITY" ]; then

@@ -40,7 +40,6 @@ config RK_MISC_IMG
 	string "misc image"
 	help
 	  Name of misc image under <RK_IMAGE_DIR>/misc.
-	  Set "" for no misc.
 
 endif # !RK_RTOS
 
