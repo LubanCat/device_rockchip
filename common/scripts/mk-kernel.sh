@@ -120,6 +120,7 @@ PRE_BUILD_CMDS="kernel-config kernel-make kmake"
 pre_build_hook()
 {
 	check_config RK_KERNEL_CFG || return 0
+	source "$SCRIPTS_DIR/kernel-helper"
 
 	echo "Toolchain for kernel:"
 	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
@@ -163,6 +164,7 @@ BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+	source "$SCRIPTS_DIR/kernel-helper"
 
 	echo "Toolchain for kernel:"
 	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
@@ -200,6 +202,7 @@ POST_BUILD_CMDS="linux-headers"
 post_build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
+	source "$SCRIPTS_DIR/kernel-helper"
 
 	[ "$1" = "linux-headers" ] || return 0
 	shift

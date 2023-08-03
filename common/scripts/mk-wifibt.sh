@@ -6,6 +6,7 @@ DEFAULT_ROOTFS_DIR=buildroot/output/$RK_BUILDROOT_CFG/target
 build_wifibt()
 {
 	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
+	source "$SCRIPTS_DIR/kernel-helper"
 
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"

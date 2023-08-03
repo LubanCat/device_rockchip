@@ -97,8 +97,15 @@ clean_hook()
 BUILD_CMDS="loader uboot uefi"
 build_hook()
 {
+	if echo $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS | grep -q aarch32 && \
+		[ "$RK_UBOOT_ARCH" = arm64 ]; then
+		echo -e "\e[31mWrong u-boot arch ($RK_UBOOT_ARCH) for config:" \
+			"$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS\n\e[0m"
+		export RK_UBOOT_ARCH=arm
+	fi
+
 	if [ "$RK_RTOS" ]; then
-		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_RTOS_ARCH" arm none)"
+		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH" arm none)"
 	else
 		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
 	fi

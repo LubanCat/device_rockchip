@@ -468,16 +468,7 @@ main()
 	set +a
 
 	export PYTHON3=/usr/bin/python3
-
-	if [ "$RK_KERNEL_CFG" ]; then
-		export RK_KERNEL_TOOLCHAIN="$(get_toolchain "$RK_KERNEL_ARCH")"
-
-		CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
-		export KMAKE="make -C "$SDK_DIR/kernel/" -j$(( $CPUS + 1 )) \
-			CROSS_COMPILE=$RK_KERNEL_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
-
-		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
-	fi
+	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 
 	# Handle special commands
 	case "$OPTIONS" in
