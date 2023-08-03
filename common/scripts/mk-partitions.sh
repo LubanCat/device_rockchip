@@ -22,18 +22,18 @@ modify_partitions()
 		echo
 		read -p "Commands (? for help): " SUB_CMD ARGS || break
 		case "${SUB_CMD:-print-parts}" in
-			done) break ;;
-			print-parts)
+			done | d) break ;;
+			print-parts | p)
 				rk_partition_print
 				continue
 				;;
-			edit-parts) FUNC=rk_partition_edit ;;
-			new-parts) FUNC=rk_partition_create ;;
-			insert-part) FUNC=rk_partition_insert ;;
-			del-part) FUNC=rk_partition_del ;;
-			move-part) FUNC=rk_partition_move ;;
-			rename-part) FUNC=rk_partition_rename ;;
-			resize-part) FUNC=rk_partition_resize ;;
+			edit-parts | e) FUNC=rk_partition_edit ;;
+			new-parts | n) FUNC=rk_partition_create ;;
+			insert-part | i) FUNC=rk_partition_insert ;;
+			del-part | d) FUNC=rk_partition_del ;;
+			move-part | m) FUNC=rk_partition_move ;;
+			rename-part | rn | r) FUNC=rk_partition_rename ;;
+			resize-part | rs) FUNC=rk_partition_resize ;;
 			help | h | -h | --help | \?) FUNC=false ;;
 			*)
 				echo "Unknown command: $SUB_CMD"
