@@ -253,11 +253,6 @@ config RK_WIFIBT_CHIP
 	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
 	  Set "" for no WIFI/BT.
 
-config RK_WIFIBT_TTY
-	string "BT serial port"
-	depends on RK_WIFIBT_CHIP != ""
-	default "ttyS0"
-
 endif
 
 config RK_ROOTFS_PREBUILT_TOOLS

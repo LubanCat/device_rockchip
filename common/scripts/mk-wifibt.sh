@@ -2,7 +2,7 @@
 
 DEFAULT_ROOTFS_DIR=buildroot/output/$RK_BUILDROOT_CFG/target
 
-# Usage: build_wifibt <rootfs dir> [wifi chip] [bt tty dev]
+# Usage: build_wifibt <rootfs dir> [wifi chip]
 build_wifibt()
 {
 	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
@@ -10,10 +10,12 @@ build_wifibt()
 
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	WIFI_CHIP="${2:-$RK_WIFIBT_CHIP}"
-	BT_TTY_DEV="${3:-$RK_WIFIBT_TTY}"
+
+	# Detect BT's tty device in runtime
+	BT_TTY_DEV="\$(bt-tty)"
 
 	echo "=========================================="
-	echo "          Start building wifi/BT ($WIFI_CHIP - $BT_TTY_DEV)"
+	echo "          Start building wifi/BT ($WIFI_CHIP)"
 	echo "=========================================="
 
 	if ls "$ROOTFS_DIR/lib/" | grep -wq ld-linux-armhf.so; then
@@ -286,6 +288,8 @@ build_wifibt()
 	cp $RKWIFIBT/conf/wpa_supplicant.conf $ROOTFS_DIR/etc/
 	cp $RKWIFIBT/conf/dnsmasq.conf $ROOTFS_DIR/etc/
 
+	cp $RK_DATA_DIR/bt-tty $ROOTFS_DIR/usr/bin/
+
 	if [[ "$WIFI_CHIP" = "ALL_CY" ]];then
 		echo "copy infineon/realtek firmware/nvram to rootfs"
 		cp $RKWIFIBT/drivers/infineon/*.ko \
@@ -451,7 +455,7 @@ build_wifibt()
 
 usage_hook()
 {
-	echo -e "wifibt[:<dst dir>[:<chip>[:<tty>]]] \tbuild Wifi/BT"
+	echo -e "wifibt[:<dst dir>[:<chip>]] \tbuild Wifi/BT"
 }
 
 BUILD_CMDS="wifibt"
