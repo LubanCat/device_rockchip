@@ -47,6 +47,9 @@ build_yocto()
 
 			echo
 			echo "MACHINE = \"$RK_YOCTO_CFG\""
+			if [ "$RK_CHIP" = "rk3288w" ]; then
+				echo "MACHINE_FEATURES:append = \" rk3288w\""
+			fi
 			echo
 		} > build/conf/local.conf
 
