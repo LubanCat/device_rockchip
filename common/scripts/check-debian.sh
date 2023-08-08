@@ -47,10 +47,14 @@ if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
 	echo -e "\e[35m"
 	echo "Your qemu-$QEMU_ARCH-static is too old: $QEMU_VERSION"
 	echo "Please upgrade it:"
-	echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH"
-	echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
-	echo "sudo cp $RK_DATA_DIR/qemu-$QEMU_ARCH-static /usr/bin/"
-	echo "sudo update-binfmts --import qemu-$QEMU_ARCH"
+	if [ "$(uname -m)" = x86_64 ]; then
+		echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH"
+		echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
+		echo "sudo cp $RK_DATA_DIR/qemu-$QEMU_ARCH-static /usr/bin/"
+		echo "sudo update-binfmts --import qemu-$QEMU_ARCH"
+	else
+		echo "https://www.qemu.org/download/"
+	fi
 	echo -e "\e[0m"
 	exit 1
 fi
