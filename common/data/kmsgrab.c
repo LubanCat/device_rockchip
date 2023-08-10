@@ -152,6 +152,23 @@ static int get_plane_fb(int fd, int plane_id) {
 	return id;
 }
 
+static int get_default_fb(int fd) {
+	drmModeCrtcPtr crtc;
+	drmModeResPtr res;
+	int i, fb;
+
+	res = drmModeGetResources(fd);
+	for (i = 0, fb = 0; i < res->count_crtcs; i++) {
+		crtc = drmModeGetCrtc(fd, res->crtcs[i]);
+		if (!fb && crtc && crtc->mode_valid)
+			fb = crtc->buffer_id;
+		drmModeFreeCrtc(crtc);
+	}
+	drmModeFreeResources(res);
+
+	return fb;
+}
+
 static void usage(const char *prog, int fd) {
 	drmModeCrtcPtr crtc;
 	drmModeResPtr res;
@@ -162,7 +179,7 @@ static void usage(const char *prog, int fd) {
 	fprintf(stderr, "Usage:\n");
 	fprintf(stderr, "%s [--crtc|--connector|--plane|--fb] OBJ_ID > out\n",
 		prog);
-	fprintf(stderr, "Valid crtc:");
+	fprintf(stderr, "Valid crtcs:");
 	for (i = 0; i < res->count_crtcs; i++) {
 		crtc = drmModeGetCrtc(fd, res->crtcs[i]);
 		if (crtc && crtc->mode_valid)
@@ -209,12 +226,12 @@ int main(int argc, const char** argv) {
 
 		break;
 	default:
-		usage(argv[0], fd);
+		id = get_default_fb(fd);
 	}
 
 	if (id <= 0) {
 		fprintf(stderr, "Failed to get framebuffer id\n");
-		return -1;
+		usage(argv[0], fd);
 	}
 
 	dump_fb(fd, id);
