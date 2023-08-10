@@ -30,8 +30,9 @@ set -eE
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
-	echo "<rootfs dir>       - target rootfs dir"
-	echo "help               - usage"
+	echo -e "<rootfs dir> [<default os> [<default init>]] \tprocess target dir"
+	echo "    available init: sysv busybox systemd"
+	echo -e "help                                         \tusage"
 	exit 1
 }
 
@@ -44,7 +45,18 @@ esac
 TARGET_DIR=$(realpath "$1")
 shift
 
-POST_OS=unknown
+case "$1" in
+	"" | *_defconfig) ;;
+	*)
+		POST_OS="$1"
+		shift
+		if [ "$1" ]; then
+			POST_INIT="$1"
+			shift
+		fi
+		;;
+esac
+
 case "$(grep "^ID=" "$TARGET_DIR/etc/os-release" 2>/dev/null)" in
 	ID=buildroot) POST_OS=buildroot ;;
 	ID=debian) POST_OS=debian ;;
@@ -55,6 +67,7 @@ case "$TARGET_DIR/" in
 	*/output/*_recovery/target/*) POST_OS=recovery ;;
 	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
+POST_OS=${POST_OS:-unknown}
 echo "$POST_OS_DISALLOWED" | grep -wvq $POST_OS || exit 0
 
 unset POST_ROOTFS
@@ -63,23 +76,29 @@ case "$POST_OS" in
 	*) [ -z "$POST_ROOTFS_ONLY" ] || exit 0 ;;
 esac
 
-unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
 if [ -e "$TARGET_DIR/etc/init.d/rcS" ]; then
 	if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
-		POST_INIT_SYSV=1
 		POST_INIT=sysv
 	fi
 	if grep -wq BusyBox "$TARGET_DIR/etc/inittab"; then
-		POST_INIT_BUSYBOX=1
 		POST_INIT="${POST_INIT:+$POST_INIT }busybox"
 	fi
 fi
 if [ -d "$TARGET_DIR/etc/systemd/system/" ]; then
 	mkdir -p "$TARGET_DIR/lib/systemd/system/"
-	POST_INIT_SYSTEMD=1
 	POST_INIT="${POST_INIT:+$POST_INIT }systemd"
 fi
+POST_INIT="${POST_INIT:-none}"
 
-echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS init=${POST_INIT:-none})..."
+unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
+for t in $POST_INIT; do
+	case $t in
+		sysv) POST_INIT_SYSV=1 ;;
+		busybox) POST_INIT_BUSYBOX=1 ;;
+		systemd) POST_INIT_SYSTEMD=1 ;;
+	esac
+done
+
+echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS init=$POST_INIT)..."
 
 cd "$TARGET_DIR"
