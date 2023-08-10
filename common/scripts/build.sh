@@ -25,7 +25,6 @@ usage()
 	grep -wl clean_hook "$SCRIPTS_DIR"/mk-*.sh | \
 		sed "s/^.*mk-\(.*\).sh/\t\1/"
 	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
-	echo -e "shell                             \tsetup a shell for developing"
 	echo -e "help                              \tusage"
 	echo ""
 	echo "Default option is 'allsave'."
@@ -413,7 +412,7 @@ main()
 
 	# No need to go further
 	CMDS="$(run_build_hooks support-cmds pre-build build \
-		post-build | xargs) shell cleanall clean post-rootfs"
+		post-build | xargs) cleanall clean post-rootfs"
 	option_check "$CMDS" $OPTIONS || return 0
 
 	# Force exporting config environments
@@ -472,13 +471,6 @@ main()
 
 	# Handle special commands
 	case "$OPTIONS" in
-		shell)
-			echo -e "\e[35mDoing this is dangerous and for developing only.\e[0m"
-			# No error handling in develop shell.
-			set +e; trap ERR
-			/bin/bash
-			echo -e "\e[35mExit from $BASH_SOURCE shell.\e[0m"
-			exit 0 ;;
 		cleanall)
 			run_build_hooks clean
 			rm -rf "$RK_OUTDIR" "$SDK_DIR/rockdev"
