@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: ./extra-part-config.sh <max extra partition num> <default extra partition num>
+# Usage: ./gen-part-config.sh <max extra partition num> <default extra partition num>
 
 RK_EXTRA_PARTITION_MAX_NUM=${1:-5}
 RK_EXTRA_PARTITION_NUM=${2:-2}
@@ -126,19 +126,13 @@ config RK_EXTRA_PARTITION_${i}_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_${i}_FIXED
-	bool "skip resizing"
-	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
-	depends on !RK_EXTRA_PARTITION_${i}_NOPACK
-	default y if RK_EXTRA_PARTITION_${i}_FSTYPE = "ubi"
-
 config RK_EXTRA_PARTITION_${i}_NOPACK
 	bool "skip packing image"
 	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 
 config RK_EXTRA_PARTITION_${i}_FEATURES
 	string
-	default "\${RK_EXTRA_PARTITION_${i}_FIXED:+fixed,}\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin,}\${RK_EXTRA_PARTITION_${i}_NOPACK:+nopack,}"
+	default "\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin,}\${RK_EXTRA_PARTITION_${i}_NOPACK:+nopack,}"
 
 config RK_EXTRA_PARTITION_${i}_STR
 	string

@@ -424,11 +424,6 @@ rk_extra_part_size()
 	rk_extra_part_arg ${1:-1} 7 auto
 }
 
-rk_extra_part_fixed()
-{
-	rk_extra_part_arg ${1:-1} 8 | grep -wq fixed
-}
-
 rk_extra_part_builtin()
 {
 	rk_extra_part_arg ${1:-1} 8 | grep -wq builtin
@@ -480,13 +475,6 @@ rk_extra_part_prepare()
 	fi
 
 	mkdir -p "$OUTDIR"
-
-	if rk_extra_part_fixed $1; then
-		if ! rk_extra_part_builtin $1; then
-			# Skip boot-time resizing by adding a tag file
-			touch "$OUTDIR/.fixed"
-		fi
-	fi
 
 	echo "#!/bin/sh -e" > "$FAKEROOT_SCRIPT"
 	chmod a+x "$FAKEROOT_SCRIPT"
