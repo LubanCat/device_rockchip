@@ -21,12 +21,12 @@ usage()
     fatal "Usage: $0 <src_dir> <target_image> <fs_type> <size(M|K)|auto(0)> [label]"
 }
 
-[ ! $# -lt 4 ] || usage "Not enough args${@+: $0 $@}"
+[ ! $# -lt 3 ] || usage "Not enough args${@+: $0 $@}"
 
 export SRC_DIR=$1
 export TARGET=$2
 FS_TYPE=$3
-SIZE=$4
+SIZE=${4:-0}
 LABEL=$5
 
 case $SIZE in
@@ -36,6 +36,9 @@ case $SIZE in
     *K)
         SIZE_KB=$(( ${SIZE%K} ))
         ;;
+    *G)
+        SIZE_KB=$(( ${SIZE%G} * 1024 * 1024 ))
+	;;
     *)
         SIZE_KB=$(( ${SIZE%M} * 1024 )) # default is MB
         ;;
@@ -90,6 +93,14 @@ mkimage()
 {
     echo "Making $TARGET from $SRC_DIR with size(${SIZE_KB}KB)"
     rm -rf $TARGET
+
+    case $FS_TYPE in
+        ubi|ubifs)
+            mk_ubi_image
+            return
+            ;;
+    esac
+
     dd of=$TARGET bs=1K seek=$SIZE_KB count=0 &>/dev/null || \
         fatal "Failed to dd image!"
     case $FS_TYPE in
@@ -119,9 +130,6 @@ mkimage()
             else
                 copy_to_image
             fi
-            ;;
-        ubi|ubifs)
-            mk_ubi_image
             ;;
     esac
 }
@@ -159,11 +167,10 @@ mk_ubi_image()
 
     UBIFS_LEBSIZE=$(( $UBI_BLOCK_SIZE - 2 * $UBI_PAGE_SIZE ))
     UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
+    UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
     UBIFS_IMAGE="$TARGET_DIR/$UBI_VOL_NAME.ubifs"
     UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
-
-    UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
     mkfs.ubifs -x lzo -e $UBIFS_LEBSIZE -m $UBIFS_MINIOSIZE \
         -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $UBIFS_IMAGE || return 1
@@ -173,7 +180,6 @@ mk_ubi_image()
     echo "vol_id=0" >> $UBINIZE_CFG
     echo "vol_type=dynamic" >> $UBINIZE_CFG
     echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
-    echo "vol_size=${SIZE_KB}KiB" >> $UBINIZE_CFG
     echo "vol_alignment=1" >> $UBINIZE_CFG
     echo "vol_flags=autoresize" >> $UBINIZE_CFG
     echo "image=$UBIFS_IMAGE" >> $UBINIZE_CFG
