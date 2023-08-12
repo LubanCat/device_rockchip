@@ -65,6 +65,25 @@ pack_dme()
 	echo "key=$key" >> "$TEMPDIR/enc.info"
 }
 
+make_misc() {
+	INPUT=$1
+	OUTPUT=$2
+	SIZE=$3
+	BUF=$4
+
+	BIG_END=$[SIZE / 256]
+	LIT_END=$[SIZE - (BIG_END * 256)]
+	BIG_END=$(echo "ibase=10;obase=16;$BIG_END" | bc)
+	LIT_END=$(echo "ibase=10;obase=16;$LIT_END" | bc)
+
+	rm -rf "$OUTPUT"
+	dd if="$INPUT" of="$OUTPUT" bs=1k count=10
+	echo -en "\x$LIT_END\x$BIG_END" >> "$OUTPUT"
+	echo -n "$BUF" >> "$OUTPUT"
+	SKIP=$[10 * 1024 + SIZE + 2]
+	dd if="$INPUT" of="$OUTPUT" seek=$SKIP skip=$SKIP bs=1
+}
+
 if [ "$PACK" = "TRUE" ]; then
 	mkdir -p "$TEMPDIR"
 	ROOTFS_SIZE=$(ls "$INPUT" -l | awk '{printf $5}')
@@ -93,7 +112,7 @@ elif [ "$MODE" = "DM-E" ]; then
 	sed -i "s/CIPHER=/CIPHER=$cipher/" "$INIT_FILE"
 
 	echo "Generate misc with key"
-	"$SCRIPTS_DIR/mk-misc.sh" "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
+	make_misc "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
 		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
 		$(cat "$SDK_DIR/u-boot/keys/system_enc_key")
 fi

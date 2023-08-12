@@ -95,7 +95,7 @@ build_save()
 	fi
 
 	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"
-	cp "$RK_CONFIG" "$SAVE_DIR/build_info"
+	ln -sf .config "$SAVE_DIR/build_info"
 
 	echo "Saving build logs..."
 	cp -rp "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
