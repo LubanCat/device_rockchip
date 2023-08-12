@@ -339,7 +339,19 @@ main()
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
 
-	OPTIONS="${@:-allsave}"
+	OPTIONS=${@:-allsave}
+
+	# Special handle for chip and defconfig
+	# e.g. ./build.sh rk3588:rockchip_defconfig
+	for opt in $OPTIONS; do
+		if [ -d "$CHIPS_DIR/${opt%%:*}" ]; then
+			OPTIONS=$(echo "$OPTIONS" | xargs -n 1 | \
+				sed "s/^$opt$/chip:$opt/" | xargs)
+		elif echo "$opt" | grep -q "^[0-9a-z_]*_defconfig$"; then
+			OPTIONS=$(echo "$OPTIONS" | xargs -n 1 | \
+				sed "s/^$opt$/defconfig:$opt/" | xargs)
+		fi
+	done
 
 	# Options checking
 	CMDS="$(run_build_hooks support-cmds all | xargs)"

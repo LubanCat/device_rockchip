@@ -96,6 +96,7 @@ choose_chip()
 			;;
 	esac
 
+	echo "Switching to chip: $CHIP"
 	rm -rf "$CHIP_DIR"
 	ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
 
