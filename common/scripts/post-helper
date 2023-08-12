@@ -45,18 +45,7 @@ esac
 TARGET_DIR=$(realpath "$1")
 shift
 
-case "$1" in
-	"" | *_defconfig) ;;
-	*)
-		POST_OS="$1"
-		shift
-		if [ "$1" ]; then
-			POST_INIT="$1"
-			shift
-		fi
-		;;
-esac
-
+unset POST_OS
 case "$(grep "^ID=" "$TARGET_DIR/etc/os-release" 2>/dev/null)" in
 	ID=buildroot) POST_OS=buildroot ;;
 	ID=debian) POST_OS=debian ;;
@@ -68,6 +57,15 @@ case "$TARGET_DIR/" in
 	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
 POST_OS=${POST_OS:-unknown}
+
+# Override OS type
+case "$1" in
+	buildroot|debian|yocto|ramboot|recovery|pcba|unknown)
+		POST_OS="$1"
+		shift
+		;;
+esac
+
 echo "$POST_OS_DISALLOWED" | grep -wvq $POST_OS || exit 0
 
 unset POST_ROOTFS
@@ -76,6 +74,7 @@ case "$POST_OS" in
 	*) [ -z "$POST_ROOTFS_ONLY" ] || exit 0 ;;
 esac
 
+unset POST_INIT
 if [ -e "$TARGET_DIR/etc/init.d/rcS" ]; then
 	if [ -d "$TARGET_DIR/etc/rcS.d" ]; then
 		POST_INIT=sysv
@@ -89,6 +88,14 @@ if [ -d "$TARGET_DIR/etc/systemd/system/" ]; then
 	POST_INIT="${POST_INIT:+$POST_INIT }systemd"
 fi
 POST_INIT="${POST_INIT:-none}"
+
+# Override init type
+case "$1" in
+	sysv|busybox|systemd)
+		POST_INIT="$1"
+		shift
+		;;
+esac
 
 unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
 for t in $POST_INIT; do
