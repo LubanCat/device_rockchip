@@ -1,7 +1,7 @@
 RK_BUILDROOT_BASE_CFG="rv1126_rv1109_spi_nand"
 RK_ROOTFS_TYPE="ubi"
 RK_UBOOT_CFG_FRAGMENTS="rk-nand"
-RK_UBOOT_OPTS="--spl-new"
+RK_UBOOT_SPL=y
 RK_KERNEL_CFG_FRAGMENTS="rv1126-slc-nand.config"
 RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v12-spi-nand"
 RK_RECOVERY_BASE_CFG="rv1126_rv1109_spi_nand"

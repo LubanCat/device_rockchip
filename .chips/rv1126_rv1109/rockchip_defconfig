@@ -1,5 +1,5 @@
 RK_ROOTFS_TYPE="squashfs"
-RK_UBOOT_OPTS="--spl-new"
+RK_UBOOT_SPL=y
 RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v13"
 RK_EXTRA_PARTITION_1_SRC="empty"
 RK_PARAMETER="parameter-buildroot-fit.txt"
