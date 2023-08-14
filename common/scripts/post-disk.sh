@@ -31,6 +31,7 @@ install -m 0755 external/rkscript/$DISK_HELPER_TYPE-helper \
 SCRIPT=$(ls external/rkscript/ | grep ${DISK_HELPER_TYPE}all.sh)
 
 if [ "$POST_INIT_BUSYBOX" ]; then
+	mkdir -p "$TARGET_DIR/etc/init.d"
 	install -m 0755 external/rkscript/$SCRIPT "$TARGET_DIR/etc/init.d/"
 fi
 
@@ -48,6 +49,7 @@ if [ "$DISK_HELPER_TYPE" = mount ]; then
 fi
 
 if [ "$POST_INIT_SYSTEMD" ]; then
+	mkdir -p "$TARGET_DIR/lib/systemd/system"
 	install -m 0755 external/rkscript/$DISK_HELPER_TYPE-all.service \
 		"$TARGET_DIR/lib/systemd/system/"
 	mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
@@ -56,8 +58,10 @@ if [ "$POST_INIT_SYSTEMD" ]; then
 fi
 
 if [ "$POST_INIT_SYSV" ]; then
+	mkdir -p "$TARGET_DIR/etc/init.d"
 	install -m 0755 external/rkscript/$SCRIPT \
 		"$TARGET_DIR/etc/init.d/${DISK_HELPER_TYPE}all.sh"
+	mkdir -p "$TARGET_DIR/etc/rcS.d"
 	ln -sf ../init.d/${DISK_HELPER_TYPE}all.sh \
 		"$TARGET_DIR/etc/rcS.d/$SCRIPT"
 fi

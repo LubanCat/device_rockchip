@@ -19,6 +19,7 @@ find "$TARGET_DIR" -name modetest -print0 | xargs -0 rm -f
 install -m 0755 "$RK_TOOL_DIR/armhf/modetest" "$TARGET_DIR/usr/bin/modetest"
 
 if [ "$POST_INIT_SYSTEMD" ]; then
+	mkdir -p "$TARGET_DIR/lib/systemd/system"
 	install -m 0755 external/rkscript/async-commit.service \
 		"$TARGET_DIR/lib/systemd/system/"
 	mkdir -p "$TARGET_DIR/etc/systemd/system/sysinit.target.wants"
@@ -27,13 +28,16 @@ if [ "$POST_INIT_SYSTEMD" ]; then
 fi
 
 if [ "$POST_INIT_SYSV" ]; then
+	mkdir -p "$TARGET_DIR/etc/init.d"
 	install -m 0755 external/rkscript/S*async-commit.sh \
 		"$TARGET_DIR/etc/init.d/async-commit.sh"
+	mkdir -p "$TARGET_DIR/etc/rcS.d"
 	ln -sf ../init.d/async-commit.sh \
 		"$TARGET_DIR/etc/rcS.d/S05async-commit.sh"
 fi
 
 if [ "$POST_INIT_BUSYBOX" ]; then
+	mkdir -p "$TARGET_DIR/etc/init.d"
 	install -m 0755 external/rkscript/S*async-commit.sh \
 		"$TARGET_DIR/etc/init.d/"
 fi
