@@ -305,7 +305,11 @@ main()
 
 	# For Makefile
 	case "$@" in
-		make-targets | make-usage)
+		make-targets)
+			# Chip targets
+			ls "$CHIPS_DIR"
+			;&
+		make-usage)
 			run_build_hooks "$@"
 			rm -f "$INITIAL_ENV"
 			exit 0 ;;
