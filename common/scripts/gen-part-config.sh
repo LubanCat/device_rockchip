@@ -40,6 +40,10 @@ config RK_UBI_BLOCK_SIZE
 	hex "ubi image block size (B)"
 	default "0x20000"
 
+config RK_FLASH_SIZE
+	int "size of flash storage (M)"
+	default "1024"
+
 endif
 
 config RK_EXTRA_PARTITION_NUM

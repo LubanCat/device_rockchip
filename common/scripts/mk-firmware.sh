@@ -72,10 +72,15 @@ pack_extra_partitions() {
 		if [ "$SIZE" = max ]; then
 			SIZE="$(partition_size_kb "$PART_NAME")K"
 			if [ "$SIZE" = 0K ]; then
-				fatal "Unable to detect max size of $PART_NAME"
+				if [ "$FS_TYPE" != ubi ]; then
+					fatal "Unable to detect max size of $PART_NAME"
+				fi
+
+				SIZE="${RK_FLASH_SIZE}M"
+				echo "Flash storage size is $SIZE"
 			fi
 
-			echo "Using maxium size: $SIZE"
+			echo "Using maxium size($SIZE) for $PART_NAME"
 		fi
 
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
