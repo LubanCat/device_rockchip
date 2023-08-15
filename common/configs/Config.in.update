@@ -41,19 +41,6 @@ config RK_AB_OTA_PACKAGE_FILE
 	  Name of custom package-file for A/B OTA under <CHIP_DIR>/.
 
 endif
-
-config RK_AB_SDCARD
-	bool "A/B SDcard update"
-
-if RK_AB_SDCARD
-
-config RK_AB_SDCARD_PARAMETER
-	string "parameter for A/B SDcard update"
-	default "parameter-sdupdate.txt"
-	help
-	  Name of parameter file under <CHIP_DIR>/.
-
-endif
 endif
 endif
 

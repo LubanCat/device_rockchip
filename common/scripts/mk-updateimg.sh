@@ -19,10 +19,10 @@ gen_package_file()
 
 	for part in $(rk_partition_parse_names parameter.txt); do
 		if echo $part | grep -q "_b$"; then
-			# Not packing *_b partition for ota|sdcard
-			case $TYPE in
-				ota|sdcard) continue ;;
-			esac
+			# Not packing *_b partition for ota
+			if [ "$TYPE" = ota ]; then
+				continue
+			fi
 		fi
 
 		case $part in
@@ -58,13 +58,6 @@ build_updateimg()
 	# Prepare images
 	ln -rsf "$RK_ROCKDEV_DIR"/* .
 	rm -f update.img
-	if [ "$TYPE" = sdcard ]; then
-		ln -rsf "$RK_IMAGE_DIR/misc/sdupdate-ab-misc.img" misc.img
-		ln -rsf "$CHIP_DIR/$RK_AB_SDCARD_PARAMETER" parameter.txt
-
-		# Not packing rootfs partition for sdcard
-		rm -f rootfs.img
-	fi
 
 	# Prepare package-file
 	if [ "$PKG_FILE" ]; then
@@ -111,23 +104,11 @@ build_ota_updateimg()
 	finish_build
 }
 
-build_sdcard_updateimg()
-{
-	check_config RK_AB_UPDATE RK_AB_SDCARD || return 0
-
-	echo "Make A/B update image for SDcard"
-
-	build_updateimg "$RK_FIRMWARE_DIR/update_sdcard.img" sdcard
-
-	finish_build
-}
-
 build_ab_updateimg()
 {
 	check_config RK_AB_UPDATE || return 0
 
 	build_ota_updateimg
-	build_sdcard_updateimg
 
 	echo "Make A/B update image"
 
@@ -142,19 +123,17 @@ usage_hook()
 {
 	echo -e "updateimg                         \tbuild update image"
 	echo -e "otapackage                        \tbuild A/B OTA update image"
-	echo -e "sdpackage                         \tbuild A/B SDcard update image"
 }
 
 clean_hook()
 {
 	rm -rf "$RK_OUTDIR/update"
 	rm -rf "$RK_OUTDIR/ota"
-	rm -rf "$RK_OUTDIR/sdcard"
 	rm -rf "$RK_OUTDIR/ab"
 	rm -rf "$RK_FIRMWARE_DIR/*update.img"
 }
 
-POST_BUILD_CMDS="updateimg otapackage sdpackage"
+POST_BUILD_CMDS="updateimg otapackage"
 post_build_hook()
 {
 	case "$1" in
@@ -166,7 +145,6 @@ post_build_hook()
 			fi
 			;;
 		otapackage) build_ota_updateimg ;;
-		sdpackage) build_sdcard_updateimg ;;
 		*) usage ;;
 	esac
 }
