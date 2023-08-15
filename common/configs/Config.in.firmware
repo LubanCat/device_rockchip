@@ -38,6 +38,7 @@ endif
 
 config RK_MISC_IMG
 	string "misc image"
+	default "blank"
 	help
 	  Name of misc image under <RK_IMAGE_DIR>/misc.
 

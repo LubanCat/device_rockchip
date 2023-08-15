@@ -26,14 +26,14 @@ pack_misc() {
 	rm -f "$RK_FIRMWARE_DIR/misc.img"
 	MISC_SIZE=$(partition_size_kb misc)
 
-	if [ "$MISC_SIZE" ]; then
+	if [ "$MISC_SIZE" -eq 0 -o -z "$RK_MISC_IMG" ]; then
 		if [ "$RK_MISC_IMG" ]; then
 			message "Misc: $RK_MISC_IMG ignored"
 		fi
 		return 0
 	fi
 
-	if [ -z "$RK_MISC_IMG" ]; then
+	if [ "$RK_MISC_IMG" = blank ]; then
 		message "Generating blank misc..."
 		truncate -s ${MISC_SIZE}K "$RK_FIRMWARE_DIR/misc.img"
 		return 0
