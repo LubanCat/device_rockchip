@@ -1,9 +1,11 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-d92d79eaf2 strace: Fix static configure error when xz and libunwind are enabled
+0af2e99e206 recovery: Support static
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
+BR2_GCC_VERSION_11_X=y
+
 BR2_PACKAGE_ANDROID_TOOLS=y
 BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
 
@@ -38,6 +40,10 @@ BR2_PACKAGE_PROCPS_NG_STATIC=y
 
 BR2_PACKAGE_PROCRANK_LINUX=y
 BR2_PACKAGE_PROCRANK_LINUX_STATIC=y
+
+BR2_PACKAGE_RECOVERY=y
+BR2_PACKAGE_RECOVERY_STATIC=y
+BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN=y
 
 BR2_PACKAGE_RKTOOLKIT=y
 BR2_PACKAGE_RKTOOLKIT_STATIC=y
