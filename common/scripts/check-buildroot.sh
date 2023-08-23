@@ -40,3 +40,5 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	echo -e "\e[0m"
 	exit 1
 fi
+
+"$SCRIPTS_DIR/check-header.sh" libc6 dirent.h libc6-dev
