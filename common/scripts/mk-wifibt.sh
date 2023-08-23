@@ -439,11 +439,11 @@ build_wifibt()
 		#wifi
 		rm -rf $ROOTFS_DIR/etc/init.d/S36load_all_wifi_modules
 		cp $RKWIFIBT/S36load_wifi_modules $ROOTFS_DIR/etc/init.d/
-		if [[ "$WIFI_CHIP" =~ "AP" ]];then
-			sed -i "s/WIFI_KO/\/system\/lib\/modules\/bcmdhd.ko/g" \
+		if [[ "$WIFI_CHIP" =~ "PCIE" ]];then
+			sed -i "s/WIFI_KO/\/system\/lib\/modules\/bcmdhd_pcie.ko/g" \
 				$ROOTFS_DIR/etc/init.d/S36load_wifi_modules
 		else
-			sed -i "s/WIFI_KO/\/system\/lib\/modules\/bcmdhd_pcie.ko/g" \
+			sed -i "s/WIFI_KO/\/system\/lib\/modules\/bcmdhd.ko/g" \
 				$ROOTFS_DIR/etc/init.d/S36load_wifi_modules
 		fi
 	fi
