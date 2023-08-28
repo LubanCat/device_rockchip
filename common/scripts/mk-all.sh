@@ -15,6 +15,7 @@ build_all()
 
 	if [ "$RK_RTOS" ]; then
 		"$SCRIPTS_DIR/mk-loader.sh"
+		"$SCRIPTS_DIR/mk-kernel.sh"
 		"$SCRIPTS_DIR/mk-rtos.sh"
 		"$SCRIPTS_DIR/mk-firmware.sh"
 		finish_build
