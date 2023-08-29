@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-0af2e99e206 recovery: Support static
+1886b190157 lockfile: Support static build
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -53,6 +53,11 @@ BR2_PACKAGE_RKWIFIBT_STATIC=y
 
 BR2_PACKAGE_STRACE=y
 BR2_PACKAGE_STRACE_STATIC=y
+
+BR2_PACKAGE_LIBLOCKFILE=y
+BR2_PACKAGE_LIBLOCKFILE_STATIC=y
+BR2_PACKAGE_LOCKFILE_PROGS=y
+BR2_PACKAGE_LOCKFILE_PROGS_STATIC=y
 
 NOTE:
 For building perf:
