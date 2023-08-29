@@ -4,7 +4,7 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 echo "Adding dirs and links..."
 
-rm -rf mnt/* udisk sdcard data
+rm -rf mnt/udisk mnt/sdcard mnt/usb_storage  mnt/external_sd udisk sdcard data
 mkdir -p mnt/sdcard mnt/udisk
 ln -sf udisk mnt/usb_storage
 ln -sf sdcard mnt/external_sd

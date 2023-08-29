@@ -100,6 +100,22 @@ config RK_ROOTFS_UDEV_RULES
 	bool "Rockchip udev rules"
 	default y
 
+choice
+	prompt "usbmount"
+
+config RK_USBMOUNT_DEFAULT
+	bool "auto"
+	help
+	  Install usbmount for yocto OS.
+
+config RK_USBMOUNT_ENABLED
+	bool "install"
+
+config RK_USBMOUNT_DISABLED
+	bool "not install"
+
+endchoice # usbmount
+
 comment "USB gadget depends on linux kernel"
 	depends on RK_KERNEL_CFG = ""
 
