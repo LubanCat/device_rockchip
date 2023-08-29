@@ -135,7 +135,8 @@ get_toolchain()
 			TOOLCHAIN_VENDOR=rockchip
 		fi
 
-		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
+		TOOLCHAIN_DIR="$(realpath \
+			$SDK_DIR/prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
 		GCC="$(find "$TOOLCHAIN_DIR" \
 			-name "*$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-*-gcc" | \
 			head -n 1)"
