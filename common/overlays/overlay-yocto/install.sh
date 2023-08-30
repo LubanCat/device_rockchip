@@ -7,14 +7,21 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 SDK_DIR="${SDK_DIR:-$(realpath "$OVERLAY_DIR/../../../../..")}"
 
 # Login root on serial console
-sed -i 's~\(respawn:\)/bin/start_getty.*~\1/bin/login -p root~' \
-	"$TARGET_DIR/etc/inittab"
+if [ -r "$TARGET_DIR/etc/inittab" ]; then
+	sed -i 's~\(respawn:\)/bin/start_getty.*~\1/bin/login -p root~' \
+		"$TARGET_DIR/etc/inittab"
+fi
 
 # Use uid to detect root user
-sed -i 's~"$HOME" != "/home/root"~$(id -u) -ne 0~' "$TARGET_DIR/etc/profile"
+if [ -r "$TARGET_DIR/etc/profile" ]; then
+	sed -i 's~"$HOME" != "/home/root"~$(id -u) -ne 0~' \
+		"$TARGET_DIR/etc/profile"
+fi
 
+# Install weston overlays
 if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
-	sed -i 's/\(WESTON_USER=\)weston/\1root/' "$TARGET_DIR/etc/init.d/weston"
+	sed -i 's/\(WESTON_USER=\)weston/\1root/' \
+		"$TARGET_DIR/etc/init.d/weston"
 
 	echo "Installing weston overlay: $OVERLAY_DIR/weston to $TARGET_DIR..."
 	rsync -av --chmod=u=rwX,go=rX "$OVERLAY_DIR/weston/" "$TARGET_DIR/" \
@@ -24,4 +31,22 @@ if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
 	rsync -av --chmod=u=rwX,go=rX "$SDK_DIR/external/rockchip-test/" \
 		"$TARGET_DIR/rockchip-test/" \
 		--include="camera/" --include="video/" --exclude="/*"
+fi
+
+# Install usbmount
+if [ "$RK_YOCTO_USBMOUNT" ]; then
+	mkdir -p "$TARGET_DIR/usr/bin/"
+	install -m 0755 "$RK_TOOL_DIR/armhf/lockfile-create" \
+		"$TARGET_DIR/usr/bin/"
+	install -m 0755 "$RK_TOOL_DIR/armhf/lockfile-remove" \
+		"$TARGET_DIR/usr/bin/"
+
+	tar xvf "$OVERLAY_DIR/usbmount.tar" -C "$TARGET_DIR"
+
+	for type in storage udisk sdcard; do
+		mkdir -p "$TARGET_DIR/media/$type"{1,2,3}
+		mkdir -p "$TARGET_DIR/mnt/$type"
+		rm -rf "$TARGET_DIR/media/${type}0"
+		ln -sf "/mnt/$type" "$TARGET_DIR/media/${type}0"
+	done
 fi

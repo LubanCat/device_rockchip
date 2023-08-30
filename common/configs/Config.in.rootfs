@@ -56,6 +56,10 @@ config RK_YOCTO_DISPLAY_PLATFORM_X11
 
 endchoice
 
+config RK_YOCTO_USBMOUNT
+	bool "usbmount"
+    default y
+
 endif
 
 config RK_DEBIAN_VERSION
