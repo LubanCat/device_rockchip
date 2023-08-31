@@ -9,18 +9,9 @@ build_wifibt()
 	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
 	source "$SCRIPTS_DIR/kernel-helper"
 
-	# Detect BT's tty device in runtime
-	BT_TTY_DEV="\$(bt-tty)"
-
 	echo "=========================================="
 	echo "          Start building wifi/BT ($RK_WIFIBT_CHIP)"
 	echo "=========================================="
-
-	if ls "$TARGET_DIR/lib/" 2>/dev/null | grep -wq ld-linux-armhf.so; then
-		ROOTFS_ARCH=arm
-	else
-		ROOTFS_ARCH=arm64
-	fi
 
 	RKWIFIBT_DIR="$SDK_DIR/external/rkwifibt"
 
@@ -268,35 +259,26 @@ build_wifibt()
 		$KMAKE M=$RKWIFIBT_DIR/drivers/bluetooth_usb_driver
 	fi
 
-	mkdir -p $TARGET_DIR/etc/init.d
-	mkdir -p $TARGET_DIR/usr/bin/
-	mkdir -p $TARGET_DIR/lib/modules/
-	mkdir -p $TARGET_DIR/lib/firmware/rtlbt/
+	mkdir -p $TARGET_DIR/etc/ $TARGET_DIR/usr/bin/ \
+		$TARGET_DIR/lib/modules/ $TARGET_DIR/lib/firmware/rtlbt/
 
-	echo "create dir symlinks"
-	if [ "$(readlink "$TARGET_DIR/lib")" != "usr/lib" ]; then
-		mkdir -p "$TARGET_DIR/usr/lib/"
-		rm -rf "$TARGET_DIR/usr/lib/modules"
-		ln -rsf "$TARGET_DIR/lib/modules" "$TARGET_DIR/usr/lib/modules"
-	fi
-
+	echo "create Android stype dirs"
 	rm -rf "$TARGET_DIR/system"
-	mkdir -p "$TARGET_DIR/system/etc" "$TARGET_DIR/system/lib"
-	ln -rsf "$TARGET_DIR/lib/firmware" "$TARGET_DIR/system/lib/firmware"
-	ln -rsf "$TARGET_DIR/lib/modules" "$TARGET_DIR/system/lib/modules"
-	ln -rsf "$TARGET_DIR/lib/firmware" "$TARGET_DIR/system/etc/firmware"
-
 	rm -rf "$TARGET_DIR/vendor"
+	mkdir -p "$TARGET_DIR/system/etc"
+	ln -rsf "$TARGET_DIR/lib/firmware" "$TARGET_DIR/system/etc/firmware"
 	ln -rsf "$TARGET_DIR/system" "$TARGET_DIR/vendor"
 
-	echo "copy prebuilt tools/sh to rootfs"
-	cp $RKWIFIBT_DIR/bin/$ROOTFS_ARCH/* $TARGET_DIR/usr/bin/
-	cp $RKWIFIBT_DIR/sh/wifi_start.sh $TARGET_DIR/usr/bin/
-	cp $RKWIFIBT_DIR/sh/wifi_ap6xxx_rftest.sh $TARGET_DIR/usr/bin/
-	cp $RKWIFIBT_DIR/conf/wpa_supplicant.conf $TARGET_DIR/etc/
-	cp $RKWIFIBT_DIR/conf/dnsmasq.conf $TARGET_DIR/etc/
-
-	cp $RK_DATA_DIR/bt-tty $TARGET_DIR/usr/bin/
+	echo "copy prebuilt tools/scripts to rootfs"
+	for b in brcm_patchram_plus1 dhd_priv rtk_hciattach; do
+		install -m 0755 "$RK_TOOL_DIR/armhf/$b" "$TARGET_DIR/usr/bin"
+	done
+	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
+	install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"
+	install -m 0755 $RKWIFIBT_DIR/scripts/* "$TARGET_DIR/usr/bin/"
+	for b in bt-tty wifibt-info wifibt-vendor wifibt-chip wifibt-module; do
+		ln -sf wifibt-util.sh "$TARGET_DIR/usr/bin/$b"
+	done
 
 	if [[ "$RK_WIFIBT_CHIP" = "ALL_CY" ]];then
 		echo "copy infineon/realtek firmware/nvram to rootfs"
@@ -304,12 +286,6 @@ build_wifibt()
 			$TARGET_DIR/lib/modules/ || true
 		cp $RKWIFIBT_DIR/firmware/infineon/*/* \
 			$TARGET_DIR/lib/firmware/ || true
-
-		cp $RKWIFIBT_DIR/sh/bt_load_broadcom_firmware $TARGET_DIR/usr/bin/
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_init.sh
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_pcba_test
 
 		#reatek
 		cp $RKWIFIBT_DIR/firmware/realtek/*/* $TARGET_DIR/lib/firmware/
@@ -321,11 +297,6 @@ build_wifibt()
 			cp $RKWIFIBT_DIR/drivers/bluetooth_usb_driver/rtk_btusb.ko \
 				$TARGET_DIR/lib/modules/
 		fi
-
-		rm -rf $TARGET_DIR/etc/init.d/S36load_wifi_modules
-		cp $RKWIFIBT_DIR/S36load_all_wifi_modules $TARGET_DIR/etc/init.d/
-		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
-			$TARGET_DIR/etc/init.d/S36load_all_wifi_modules
 	fi
 
 	if [[ "$RK_WIFIBT_CHIP" = "ALL_AP" ]];then
@@ -335,12 +306,6 @@ build_wifibt()
 			$TARGET_DIR/lib/firmware/ || true
 		cp $RKWIFIBT_DIR/firmware/broadcom/*/bt/* \
 			$TARGET_DIR/lib/firmware/ || true
-
-		cp $RKWIFIBT_DIR/sh/bt_load_broadcom_firmware $TARGET_DIR/usr/bin/
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_init.sh
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_pcba_test
 
 		#reatek
 		echo "copy realtek firmware/nvram to rootfs"
@@ -354,12 +319,6 @@ build_wifibt()
 			cp $RKWIFIBT_DIR/drivers/bluetooth_usb_driver/rtk_btusb.ko \
 				$TARGET_DIR/lib/modules/
 		fi
-
-		echo "copy S36load_wifi_modules to rootfs"
-		rm -rf $TARGET_DIR/etc/init.d/S36load_wifi_modules
-		cp $RKWIFIBT_DIR/S36load_all_wifi_modules $TARGET_DIR/etc/init.d/
-		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
-			$TARGET_DIR/etc/init.d/S36load_all_wifi_modules
 	fi
 
 	if [[ "$RK_WIFIBT_CHIP" =~ "RTL" ]];then
@@ -377,84 +336,35 @@ build_wifibt()
 
 		cp $RKWIFIBT_DIR/drivers/$WIFI_KO_DIR/*.ko \
 			$TARGET_DIR/lib/modules/
-
-		cp $RKWIFIBT_DIR/sh/bt_load_rtk_firmware $TARGET_DIR/usr/bin/
-		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
-			$TARGET_DIR/usr/bin/bt_load_rtk_firmware
-		if [ -n "$WIFI_USB" ]; then
-			cp $RKWIFIBT_DIR/drivers/bluetooth_usb_driver/rtk_btusb.ko \
-				$TARGET_DIR/lib/modules/
-			sed -i "s/BT_DRV/rtk_btusb/g" \
-				$TARGET_DIR/usr/bin/bt_load_rtk_firmware
-		else
-			cp $RKWIFIBT_DIR/drivers/bluetooth_uart_driver/hci_uart.ko \
-				$TARGET_DIR/lib/modules/
-			sed -i "s/BT_DRV/hci_uart/g" \
-				$TARGET_DIR/usr/bin/bt_load_rtk_firmware
-		fi
-		cp $TARGET_DIR/usr/bin/bt_load_rtk_firmware \
-			$TARGET_DIR/usr/bin/bt_init.sh
-		cp $TARGET_DIR/usr/bin/bt_load_rtk_firmware \
-			$TARGET_DIR/usr/bin/bt_pcba_test
-		rm -rf $TARGET_DIR/etc/init.d/S36load_all_wifi_modules
-		cp $RKWIFIBT_DIR/S36load_wifi_modules $TARGET_DIR/etc/init.d/
-		sed -i "s/WIFI_KO/\/lib\/modules\/$RK_WIFIBT_CHIP.ko/g" \
-			$TARGET_DIR/etc/init.d/S36load_wifi_modules
 	fi
 
 	if [[ "$RK_WIFIBT_CHIP" =~ "CYW" ]];then
 		echo "Copy CYW file to rootfs"
-		#firmware
 		cp $RKWIFIBT_DIR/firmware/infineon/$RK_WIFIBT_CHIP/* \
 			$TARGET_DIR/lib/firmware/
 		cp $RKWIFIBT_DIR/drivers/infineon/*.ko \
 			$TARGET_DIR/lib/modules/
-		#bt
-		cp $RKWIFIBT_DIR/sh/bt_load_broadcom_firmware $TARGET_DIR/usr/bin/
-		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
-			$TARGET_DIR/usr/bin/bt_load_broadcom_firmware
-		sed -i "s/BTFIRMWARE_PATH/\/lib\/firmware\//g" \
-			$TARGET_DIR/usr/bin/bt_load_broadcom_firmware
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_init.sh
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_pcba_test
-		#wifi
-		rm -rf $TARGET_DIR/etc/init.d/S36load_all_wifi_modules
-		cp $RKWIFIBT_DIR/S36load_wifi_modules $TARGET_DIR/etc/init.d/
-		sed -i "s/WIFI_KO/\/lib\/modules\/$RK_WIFIBT_CHIP.ko/g" \
-			$TARGET_DIR/etc/init.d/S36load_wifi_modules
 	fi
 
 	if [[ "$RK_WIFIBT_CHIP" =~ "AP6" ]];then
 		echo "Copy AP file to rootfs"
-		#firmware
 		cp $RKWIFIBT_DIR/firmware/broadcom/$RK_WIFIBT_CHIP/wifi/* \
 			$TARGET_DIR/lib/firmware/
 		cp $RKWIFIBT_DIR/firmware/broadcom/$RK_WIFIBT_CHIP/bt/* \
 			$TARGET_DIR/lib/firmware/
 		cp $RKWIFIBT_DIR/drivers/bcmdhd/*.ko $TARGET_DIR/lib/modules/
-		#bt
-		cp $RKWIFIBT_DIR/sh/bt_load_broadcom_firmware $TARGET_DIR/usr/bin/
-		sed -i "s/BT_TTY_DEV/\/dev\/${BT_TTY_DEV}/g" \
-			$TARGET_DIR/usr/bin/bt_load_broadcom_firmware
-		sed -i "s/BTFIRMWARE_PATH/\/lib\/firmware\//g" \
-			$TARGET_DIR/usr/bin/bt_load_broadcom_firmware
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_init.sh
-		cp $TARGET_DIR/usr/bin/bt_load_broadcom_firmware \
-			$TARGET_DIR/usr/bin/bt_pcba_test
-		#wifi
-		rm -rf $TARGET_DIR/etc/init.d/S36load_all_wifi_modules
-		cp $RKWIFIBT_DIR/S36load_wifi_modules $TARGET_DIR/etc/init.d/
-		if [[ "$RK_WIFIBT_CHIP" =~ "PCIE" ]];then
-			sed -i "s/WIFI_KO/\/lib\/modules\/bcmdhd_pcie.ko/g" \
-				$TARGET_DIR/etc/init.d/S36load_wifi_modules
-		else
-			sed -i "s/WIFI_KO/\/lib\/modules\/bcmdhd.ko/g" \
-				$TARGET_DIR/etc/init.d/S36load_wifi_modules
-		fi
 	fi
+
+	# Install boot services
+	install_sysv_service $RKWIFIBT_DIR/S36wifibt-init.sh S
+	install_busybox_service $RKWIFIBT_DIR/S36wifibt-init.sh
+	install_systemd_service $RKWIFIBT_DIR/wifibt-init.service
+
+	# Log collection
+	mkdir -p "$TARGET_DIR/etc/generate_logs.d"
+	echo -e '#!/bin/sh\nwifibt-info > ${1:-/tmp}/wifibt-info.txt' > \
+		"$TARGET_DIR/etc/generate_logs.d/80-wifibt.sh"
+	chmod 755 "$TARGET_DIR/etc/generate_logs.d/80-wifibt.sh"
 }
 
 echo "Building Wifi/BT module and firmwares..."
