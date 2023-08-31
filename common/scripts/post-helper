@@ -36,11 +36,76 @@ usage()
 	exit 1
 }
 
+install_sysv_service()
+{
+	[ "$POST_INIT_SYSV" ] || return 0
+
+	SRC="$1"
+	shift
+
+	SERVICE="$(basename "$SRC" | sed 's~^S[0-9]*\(.*\)~\1~')"
+	SERVICE_DIR="$TARGET_DIR/etc/init.d"
+
+	mkdir -p "$SERVICE_DIR"
+	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+
+	SERVICE_PREFIX=S
+	for level in $@; do
+		case "$level" in
+			start) SERVICE_PREFIX=S ;;
+			stop) SERVICE_PREFIX=K ;;
+			*)
+				LEVEL_DIR="$TARGET_DIR/etc/rc$level.d"
+				if echo $level | grep -wq "[0-9]*"; then
+					level="$(printf "%02d" $level)"
+				fi
+				LEVEL_SERVICE="$SERVICE_PREFIX$level$SERVICE"
+				mkdir -p "$LEVEL_DIR"
+				ln -rsf "$SERVICE_DIR/$SERVICE" \
+					"$LEVEL_DIR/$LEVEL_SERVICE"
+		esac
+	done
+}
+
+install_busybox_service()
+{
+	[ "$POST_INIT_BUSYBOX" ] || return 0
+
+	SRC="$1"
+	SERVICE="$(basename "$SRC")"
+	SERVICE_DIR="$TARGET_DIR/etc/init.d"
+
+	mkdir -p "$SERVICE_DIR"
+	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+}
+
+install_systemd_service()
+{
+	[ "$POST_INIT_SYSTEMD" ] || return 0
+
+	SRC="$1"
+	SERVICE="$(basename "$SRC")"
+	SERVICE_DIR="$TARGET_DIR/lib/systemd/system"
+
+	mkdir -p "$SERVICE_DIR"
+	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+
+	WANTED_BY="$(grep "^WantedBy=" "$SRC" | cut -d'=' -f2)"
+	[ "$WANTED_BY" ] || return 0
+
+	WANTS_DIR="$TARGET_DIR/etc/systemd/system/$WANTED_BY.wants"
+	mkdir -p "$WANTS_DIR"
+	ln -rsf "$SERVICE_DIR/$SERVICE" "$WANTS_DIR/$SERVICE"
+}
+
 case "$1" in
 	usage | help | h | -h | --help | \?) usage ;;
 esac
 
-[ -d "$1" ] || usage
+if [ ! -d "$1" ]; then
+	echo "$1 is not a dir!"
+	usage
+fi
 
 TARGET_DIR=$(realpath "$1")
 shift
