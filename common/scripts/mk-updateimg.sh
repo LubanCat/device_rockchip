@@ -79,8 +79,9 @@ build_updateimg()
 		fi
 		ln -rsf "$PKG_FILE" package-file
 	else
-		echo "Generating package-file for $TYPE :"
+		echo "Generating package-file for $TYPE:"
 		gen_package_file $TYPE
+		cat package-file
 	fi
 
 	echo "Packing $TARGET for $TYPE..."
@@ -166,6 +167,7 @@ init_hook()
 		echo "${BASE_CFG}_CUSTOM=y" >> "$RK_CONFIG"
 		echo "$BASE_CFG=$PKG_FILE" >> "$RK_CONFIG"
                 "$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+                "$SCRIPTS_DIR/mk-config.sh" savedefconfig &>/dev/null
 	fi
 }
 
