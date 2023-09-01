@@ -5,11 +5,18 @@ LOG_TARBALL=/tmp/log-$(date +%m%d%y-%H%M%S).tar.gz
 
 cd "$LOG_DIR"
 
-if [ -d /info ]; then
-	cp -rL /info/* . 2>/dev/null
-fi
-
 date > timestamp.txt
+
+(top -Hbn 1 2>/dev/null || top -bn 1) > top.txt
+(ps aux 2>/dev/null || ps) > ps.txt
+dmesg -c > dmesg.txt
+
+if [ -w /proc/sysrq-trigger ]; then
+	for s in l m q t w; do
+		echo $s > /proc/sysrq-trigger
+	done
+	dmesg > sysrq.txt
+fi
 
 if type modetest >/dev/null 2>/dev/null; then
 	modetest -a > modetest.txt
@@ -22,8 +29,18 @@ if type modetest >/dev/null 2>/dev/null; then
 	fi
 fi
 
+if type lsof >/dev/null 2>/dev/null; then
+	lsof > lsof.txt
+fi
+
+df > df.txt
+
 if type lsblk >/dev/null 2>/dev/null; then
 	lsblk > lsblk.txt
+fi
+
+if [ -d /info ]; then
+	cp -rL /info/* . 2>/dev/null
 fi
 
 if [ -d /etc/generate_logs.d ]; then
