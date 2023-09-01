@@ -2,6 +2,8 @@
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
+[ "$POST_ROOTFS" -a "$RK_ROOTFS_OVERLAY_DIRS" ] || exit 0
+
 install_overlay()
 {
 	OVERLAY="$1"
@@ -22,13 +24,13 @@ cd "$SDK_DIR"
 
 install_overlay "$COMMON_DIR/overlays/overlay-common"
 
-# No extra overlays for non-rootfs
+# No rootfs overlays for non-rootfs
 [ "$POST_ROOTFS" ] || exit 0
 
 install_overlay "$COMMON_DIR/overlays/overlay-rootfs"
 install_overlay "$COMMON_DIR/overlays/overlay-$POST_OS"
 
-for overlay in $RK_ROOTFS_OVERLAY_DIRS; do
+for overlay in $RK_ROOTFS_EXTRA_OVERLAY_DIRS; do
 	install_overlay "$overlay"
 done
 
