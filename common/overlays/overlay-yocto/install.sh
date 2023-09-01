@@ -4,7 +4,6 @@ TARGET_DIR="$1"
 [ "$TARGET_DIR" ] || exit 1
 
 OVERLAY_DIR="$(dirname "$(realpath "$0")")"
-SDK_DIR="${SDK_DIR:-$(realpath "$OVERLAY_DIR/../../../../..")}"
 
 # Login root on serial console
 if [ -r "$TARGET_DIR/etc/inittab" ]; then

@@ -13,16 +13,20 @@ install_overlay()
 		"$OVERLAY/install.sh" "$TARGET_DIR" "$POST_OS"
 	else
 		echo "Installing overlay: $OVERLAY to $TARGET_DIR..."
-		rsync -av --chmod=u=rwX,go=rX "$OVERLAY/" "$TARGET_DIR/"
+		rsync -av --chmod=u=rwX,go=rX --exclude .empty \
+			"$OVERLAY/" "$TARGET_DIR/"
 	fi
 }
 
 cd "$SDK_DIR"
 
-install_overlay "$COMMON_DIR/overlays/overlay-$POST_OS"
+install_overlay "$COMMON_DIR/overlays/overlay-common"
 
 # No extra overlays for non-rootfs
 [ "$POST_ROOTFS" ] || exit 0
+
+install_overlay "$COMMON_DIR/overlays/overlay-rootfs"
+install_overlay "$COMMON_DIR/overlays/overlay-$POST_OS"
 
 for overlay in $RK_ROOTFS_OVERLAY_DIRS; do
 	install_overlay "$overlay"

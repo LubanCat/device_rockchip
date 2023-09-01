@@ -340,6 +340,7 @@ main()
 
 	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
+	[ -d common ] || ln -rsf "$COMMON_DIR" .
 
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh

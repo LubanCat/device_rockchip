@@ -1,0 +1,40 @@
+#!/bin/sh
+
+LOG_DIR=$(mktemp -dt log.XXXXXX)
+LOG_TARBALL=/tmp/log-$(date +%m%d%y-%H%M%S).tar.gz
+
+cd "$LOG_DIR"
+
+if [ -d /info ]; then
+	cp -rL /info/* . 2>/dev/null
+fi
+
+date > timestamp.txt
+
+if type modetest >/dev/null 2>/dev/null; then
+	modetest -a > modetest.txt
+
+	if type kmsgrab >/dev/null 2>/dev/null; then
+		PLANES="$(modetest -p | grep -A 1000 "^P" | grep -o "^[0-9]*")"
+		for p in $PLANES; do
+			kmsgrab --plane $p >plane_$p.txt 2>plane_$p.raw
+		done
+	fi
+fi
+
+if type lsblk >/dev/null 2>/dev/null; then
+	lsblk > lsblk.txt
+fi
+
+if [ -d /etc/generate_logs.d ]; then
+	for s in $(find /etc/generate_logs.d/); do
+		$s "$LOG_DIR"
+	done
+fi
+
+tar czf "$LOG_TARBALL" .
+
+cd /
+rm -rf "$LOG_DIR"
+
+echo "Log files zipped to $LOG_TARBALL"
