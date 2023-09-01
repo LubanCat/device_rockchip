@@ -35,7 +35,10 @@ pack_misc() {
 
 	if [ "$RK_MISC_IMG" = blank ]; then
 		message "Generating blank misc..."
-		truncate -s ${MISC_SIZE}K "$RK_FIRMWARE_DIR/misc.img"
+
+		# Somehow the windows tools don't accept misc > 64K
+		# truncate -s ${MISC_SIZE}K "$RK_FIRMWARE_DIR/misc.img"
+		truncate -s 48K "$RK_FIRMWARE_DIR/misc.img"
 		return 0
 	fi
 
