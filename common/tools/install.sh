@@ -7,7 +7,7 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 echo "Installing prebuilt tools: $OVERLAY_DIR to $TARGET_DIR..."
 
-DEST_DIR="$TARGET_DIR/usr/local/bin/"
+DEST_DIR="$TARGET_DIR/usr/bin/"
 mkdir -p "$DEST_DIR"
 
 if ls "$TARGET_DIR/lib/" | grep -wq "ld-linux-armhf.so"; then

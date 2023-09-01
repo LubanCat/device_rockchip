@@ -13,8 +13,8 @@ install_overlay()
 		"$OVERLAY/install.sh" "$TARGET_DIR" "$POST_OS"
 	else
 		echo "Installing overlay: $OVERLAY to $TARGET_DIR..."
-		rsync -av --chmod=u=rwX,go=rX --exclude .empty \
-			"$OVERLAY/" "$TARGET_DIR/"
+		rsync -av --chmod=u=rwX,go=rX --copy-unsafe-links \
+			--exclude .empty "$OVERLAY/" "$TARGET_DIR/"
 	fi
 }
 
