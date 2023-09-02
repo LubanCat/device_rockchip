@@ -1,0 +1,2 @@
+# RT-Thread config
+RK_RTOS_RTT0_BOARD_CONFIG="board/rk3308_ddr2_v10/defconfig"
