@@ -13,7 +13,7 @@ config RK_UBOOT_CFG
 	default "evb-px30" if RK_CHIP_FAMILY = "rk3358"
 	default "rv1126" if RK_CHIP_FAMILY = "rv1126_rv1109"
 	default RK_CHIP_FAMILY if RK_CHIP_FAMILY = "rk3308" || \
-		RK_CHIP_FAMILY = "rk3588"
+		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "rk3588"
 	default RK_CHIP
 
 if RK_UBOOT_CFG != ""
