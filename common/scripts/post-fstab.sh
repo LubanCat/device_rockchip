@@ -9,7 +9,7 @@ fixup_root()
 	echo "Fixing up rootfs type: $1"
 
 	FS_TYPE=$1
-	sed -i "s#\([[:space:]]/[[:space:]]\+\)\w\+#\1${FS_TYPE}#" "$FSTAB"
+	sed -i "s~\([[:space:]]/[[:space:]]\+\)\w\+~\1${FS_TYPE}~" "$FSTAB"
 }
 
 del_part()
@@ -90,12 +90,13 @@ esac
 
 fixup_basic_part proc /proc
 fixup_basic_part devtmpfs /dev
-fixup_basic_part devpts /dev/pts mode=0620,ptmxmode=0666,gid=5
+fixup_basic_part devpts /dev/pts mode=0620,ptmxmode=0000,gid=5 # tty group
 fixup_basic_part tmpfs /dev/shm nosuid,nodev,noexec
-fixup_basic_part sysfs /sys
+fixup_basic_part sysfs /sys nosuid,nodev,noexec
 fixup_basic_part configfs /sys/kernel/config
 fixup_basic_part debugfs /sys/kernel/debug
-fixup_basic_part pstore /sys/fs/pstore
+fixup_basic_part pstore /sys/fs/pstore nosuid,nodev,noexec
+fixup_basic_part tmpfs /tmp defaults,mode=1777
 
 if [ "$POST_OS" = recovery ]; then
 	fixup_device_part /dev/sda1 /mnt/udisk auto
