@@ -7,6 +7,8 @@ cd "$LOG_DIR"
 
 date > timestamp.txt
 
+ln -sf /var/log .
+
 (top -Hbn 1 2>/dev/null || top -bn 1) > top.txt
 (ps aux 2>/dev/null || ps) > ps.txt
 dmesg -c > dmesg.txt
@@ -16,17 +18,6 @@ if [ -w /proc/sysrq-trigger ]; then
 		echo $s > /proc/sysrq-trigger
 	done
 	dmesg > sysrq.txt
-fi
-
-if type modetest >/dev/null 2>/dev/null; then
-	modetest -a > modetest.txt
-
-	if type kmsgrab >/dev/null 2>/dev/null; then
-		PLANES="$(modetest -p | grep -A 1000 "^P" | grep -o "^[0-9]*")"
-		for p in $PLANES; do
-			kmsgrab --plane $p >plane_$p.txt 2>plane_$p.raw
-		done
-	fi
 fi
 
 if type lsof >/dev/null 2>/dev/null; then
@@ -39,17 +30,13 @@ if type lsblk >/dev/null 2>/dev/null; then
 	lsblk > lsblk.txt
 fi
 
-if [ -d /info ]; then
-	cp -rL /info/* . 2>/dev/null
-fi
-
 if [ -d /etc/generate_logs.d ]; then
-	for s in $(find /etc/generate_logs.d/); do
+	for s in $(find /etc/generate_logs.d/ -type f); do
 		$s "$LOG_DIR"
 	done
 fi
 
-tar czf "$LOG_TARBALL" .
+tar czhf "$LOG_TARBALL" .
 
 cd /
 rm -rf "$LOG_DIR"

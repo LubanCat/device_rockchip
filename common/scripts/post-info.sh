@@ -23,7 +23,7 @@ cp kernel/.config "$INFO_DIR/config-$RK_KERNEL_VERSION"
 cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION"
 
 EXTRA_FILES=" \
-	/etc/os-release /etc/fstab /var/log \
+	/etc/os-release /etc/fstab \
 	/tmp/usbdevice.log /tmp/bootanim.log \
 	/tmp/resize-all.log /tmp/mount-all.log \
 	/proc/version /proc/cmdline /proc/kallsyms /proc/interrupts /proc/cpuinfo \
@@ -35,3 +35,8 @@ EXTRA_FILES=" \
 	/sys/kernel/debug/dma_buf /sys/kernel/debug/dri \
 	"
 ln -sf $EXTRA_FILES "$INFO_DIR/"
+
+mkdir -p "$TARGET_DIR/etc/generate_logs.d"
+echo -e '#!/bin/sh\ncp -rL /info/* . 2>/dev/null || true' > \
+	"$TARGET_DIR/etc/generate_logs.d/10-info.sh"
+chmod 755 "$TARGET_DIR/etc/generate_logs.d/10-info.sh"
