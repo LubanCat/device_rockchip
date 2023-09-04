@@ -53,7 +53,7 @@ SDK_DIR := $(abspath $(DEVICE_DIR)/../..)
 CHIP_DIR := $(DEVICE_DIR)/.chip
 CONFIG_DIR := $(COMMON_DIR)/configs
 CONFIG_CONFIG_IN = Config.in
-CONFIG = $(SDK_DIR)/buildroot/support/kconfig
+CONFIG = $(COMMON_DIR)/kconfig
 OUTDIR := $(SDK_DIR)/output
 BUILD_DIR := $(OUTDIR)/kconf
 SCRIPT_TARGETS := $(shell $(SDK_DIR)/build.sh make-targets)
@@ -127,7 +127,7 @@ COMMON_CONFIG_ENV = \
 	KCONFIG_AUTOCONFIG=$(BUILD_DIR)/auto.conf \
 	KCONFIG_AUTOHEADER=$(BUILD_DIR)/autoconf.h \
 	KCONFIG_TRISTATE=$(BUILD_DIR)/tristate.config \
-	srctree=$(CONFIG_DIR) BR2_CONFIG=$(RK_CONFIG)
+	srctree=$(CONFIG_DIR) RK_CONFIG=$(RK_CONFIG)
 
 menuconfig: $(BUILD_DIR)/mconf
 	$(Q)$(COMMON_CONFIG_ENV) $< $(CONFIG_CONFIG_IN)

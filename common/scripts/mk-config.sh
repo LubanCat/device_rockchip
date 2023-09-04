@@ -22,7 +22,6 @@ switch_defconfig()
 	ln -rsf "$(dirname "$DEFCONFIG")" "$CHIP_DIR"
 
 	$MAKE $(basename "$DEFCONFIG")
-	exit 0
 }
 
 rockchip_defconfigs()
@@ -178,7 +177,10 @@ init_hook()
 		chip) shift; choose_chip $@ ;;
 		lunch|defconfig) shift; choose_defconfig $@ ;;
 		*_defconfig) switch_defconfig "$1" ;;
-		olddefconfig | savedefconfig | menuconfig) $MAKE $1 ;;
+		olddefconfig | savedefconfig | menuconfig)
+			prepare_config
+			$MAKE $1
+			;;
 		config)
 			prepare_config
 			$MAKE menuconfig
