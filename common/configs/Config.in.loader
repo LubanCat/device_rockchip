@@ -4,7 +4,6 @@ menu "Loader (u-boot)"
 
 config RK_UBOOT_CFG
 	string "u-boot defconfig"
-	default RK_RTOS_UBOOT_CFG if RK_RTOS_UBOOT_CFG != ""
 	default "rk1808" if RK_CHIP_FAMILY = "rk1806"
 	default "evb-px3se" if RK_CHIP_FAMILY = "px3se"
 	default "rk3126" if RK_CHIP = "rk3126c"
