@@ -26,28 +26,28 @@ pack_misc() {
 	rm -f "$RK_FIRMWARE_DIR/misc.img"
 	MISC_SIZE=$(partition_size_kb misc)
 
-	if [ "$MISC_SIZE" -eq 0 -o -z "$RK_MISC_IMG" ]; then
-		if [ "$RK_MISC_IMG" ]; then
-			message "Misc: $RK_MISC_IMG ignored"
-		fi
+	if [ "$MISC_SIZE" -eq 0 -o -z "$RK_MISC" ]; then
+		[ -z "$RK_MISC" ] || message "Misc ignored"
 		return 0
 	fi
 
-	if [ "$RK_MISC_IMG" = blank ]; then
+	if [ "$RK_MISC_BLANK" ]; then
 		message "Generating blank misc..."
-
-		# Somehow the windows tools don't accept misc > 64K
-		# truncate -s ${MISC_SIZE}K "$RK_FIRMWARE_DIR/misc.img"
-		truncate -s 48K "$RK_FIRMWARE_DIR/misc.img"
+		"$SCRIPTS_DIR/mk-misc.sh" "$RK_FIRMWARE_DIR/misc.img"
 		return 0
 	fi
 
-	link_image "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
-		"$RK_FIRMWARE_DIR/misc.img"
+	if [ "$RK_MISC_RECOVERY" ]; then
+		message "Generating recovery misc..."
+		"$SCRIPTS_DIR/mk-misc.sh" "$RK_FIRMWARE_DIR/misc.img" \
+			"recovery" "$RK_MISC_RECOVERY_ARG"
+	else
+		link_image "$CHIP_DIR/$RK_MISC_IMG" "$RK_FIRMWARE_DIR/misc.img"
+	fi
 
 	if grep -wq boot-recovery "$RK_FIRMWARE_DIR/misc.img" && \
 		[ -z "$(rk_partition_size recovery)" ]; then
-		fatal "$RK_MISC_IMG could not work without recovery partition!"
+		fatal "This misc would not work without recovery partition!"
 	fi
 }
 
