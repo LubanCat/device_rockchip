@@ -88,7 +88,7 @@ install_systemd_service()
 	SERVICE_DIR="$TARGET_DIR/lib/systemd/system"
 
 	mkdir -p "$SERVICE_DIR"
-	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+	install -m 0644 "$SRC" "$SERVICE_DIR/$SERVICE"
 
 	WANTED_BY="$(grep "^WantedBy=" "$SRC" | cut -d'=' -f2)"
 	[ "$WANTED_BY" ] || return 0
