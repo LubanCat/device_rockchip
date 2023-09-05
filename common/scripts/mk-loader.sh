@@ -104,11 +104,7 @@ build_hook()
 		export RK_UBOOT_ARCH=arm
 	fi
 
-	if [ "$RK_RTOS" ]; then
-		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH" arm none)"
-	else
-		RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
-	fi
+	RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
 
 	echo "Toolchain for loader (u-boot):"
 	echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
