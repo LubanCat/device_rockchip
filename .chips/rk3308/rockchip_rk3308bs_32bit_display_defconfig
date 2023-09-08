@@ -1,5 +1,5 @@
 RK_CHIP="rk3308"
-RK_BUILDROOT_BASE_CFG="rk3308_bs_32_release"
+RK_BUILDROOT_BASE_CFG="rk3308_bs_32_display_release"
 RK_ROOTFS_TYPE="squashfs"
 RK_WIFIBT_CHIP="AP6256"
 RK_UBOOT_CFG="rk3308-aarch32"
