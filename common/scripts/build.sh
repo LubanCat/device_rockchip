@@ -137,9 +137,8 @@ get_toolchain()
 
 		TOOLCHAIN_DIR="$(realpath \
 			$SDK_DIR/prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-		GCC="$(find "$TOOLCHAIN_DIR" \
-			-name "*$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-*-gcc" | \
-			head -n 1)"
+		GCC="$(find "$TOOLCHAIN_DIR"/*/bin -name "*gcc" 2>/dev/null | \
+			grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc")"
 		if [ ! -x "$GCC" ]; then
 			echo "No prebuilt GCC toolchain!"
 			exit 1
