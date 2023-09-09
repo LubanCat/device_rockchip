@@ -1,9 +1,9 @@
 #
 
-comment "Rootfs system depends on linux kernel"
-	depends on RK_KERNEL_CFG = ""
+comment "Rootfs system depends on linux kernel and no RTOS"
+	depends on RK_KERNEL_CFG = "" || RK_RTOS
 
-if RK_KERNEL_CFG != ""
+if RK_KERNEL_CFG != "" && !RK_RTOS
 
 menu "Rootfs"
 
