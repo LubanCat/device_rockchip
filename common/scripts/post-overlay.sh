@@ -34,6 +34,11 @@ for overlay in $RK_ROOTFS_EXTRA_OVERLAY_DIRS; do
 	install_overlay "$overlay"
 done
 
+# Handle prebuilt irqbalance
+if [ "$RK_ROOTFS_IRQBALANCE" ]; then
+	install_overlay "$COMMON_DIR/overlays/overlay-irqbalance"
+fi
+
 # Handle extra fonts
 if [ -z "$RK_EXTRA_FONTS_DISABLED" ]; then
 	if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" != yocto ]; then

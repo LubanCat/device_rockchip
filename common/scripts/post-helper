@@ -36,6 +36,9 @@ usage()
 	exit 1
 }
 
+# Export global functions
+set -a
+
 install_sysv_service()
 {
 	[ "$POST_INIT_SYSV" ] || return 0
@@ -98,6 +101,8 @@ install_systemd_service()
 	ln -rsf "$SERVICE_DIR/$SERVICE" "$WANTS_DIR/$SERVICE"
 }
 
+set +a
+
 case "$1" in
 	usage | help | h | -h | --help | \?) usage ;;
 esac
@@ -121,7 +126,7 @@ case "$TARGET_DIR/" in
 	*/output/*_recovery/target/*) POST_OS=recovery ;;
 	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
-POST_OS=${POST_OS:-unknown}
+export POST_OS=${POST_OS:-unknown}
 
 # Override OS type
 case "$1" in
@@ -152,7 +157,7 @@ if [ -d "$TARGET_DIR/etc/systemd/system/" ]; then
 	mkdir -p "$TARGET_DIR/lib/systemd/system/"
 	POST_INIT="${POST_INIT:+$POST_INIT }systemd"
 fi
-POST_INIT="${POST_INIT:-none}"
+export POST_INIT="${POST_INIT:-none}"
 
 # Override init type
 case "$1" in
@@ -165,9 +170,9 @@ esac
 unset POST_INIT_BUSYBOX POST_INIT_SYSTEMD POST_INIT_SYSV
 for t in $POST_INIT; do
 	case $t in
-		sysv) POST_INIT_SYSV=1 ;;
-		busybox) POST_INIT_BUSYBOX=1 ;;
-		systemd) POST_INIT_SYSTEMD=1 ;;
+		sysv) export POST_INIT_SYSV=1 ;;
+		busybox) export POST_INIT_BUSYBOX=1 ;;
+		systemd) export POST_INIT_SYSTEMD=1 ;;
 	esac
 done
 
