@@ -21,9 +21,6 @@ build_wifibt()
 			# Fixing up rkwifibt permissions
 			find "$RKWIFIBT_DIR" -user root \
 				-exec chown -h -R $OWNER:$OWNER {} \;
-
-			# Sudo to source code owner (for Debian)
-			export KMAKE="sudo -u $OWNER $KMAKE"
 		else
 			# Check for dirty files owned by root
 			echo -e "\e[36m"
