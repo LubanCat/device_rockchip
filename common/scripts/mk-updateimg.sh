@@ -52,7 +52,7 @@ build_updateimg()
 {
 	check_config RK_UPDATE || return 0
 
-	TARGET="${1:-$RK_FIRMWARE_DIR/update.img}"
+	TARGET="${1:-$RK_ROCKDEV_DIR/update.img}"
 	TYPE="${2:-update}"
 	PKG_FILE="${3:-$RK_PACKAGE_FILE}"
 	OUT_DIR="$RK_OUTDIR/$TYPE"
@@ -121,7 +121,7 @@ build_ota_updateimg()
 
 	echo "Make A/B update image for OTA"
 
-	build_updateimg "$RK_FIRMWARE_DIR/update_ota.img" ota \
+	build_updateimg "$RK_ROCKDEV_DIR/update_ota.img" ota \
 		$RK_OTA_PACKAGE_FILE
 
 	finish_build
@@ -135,7 +135,7 @@ build_ab_updateimg()
 
 	echo "Make A/B update image"
 
-	build_updateimg "$RK_FIRMWARE_DIR/update_ab.img" ab
+	build_updateimg "$RK_ROCKDEV_DIR/update_ab.img" ab
 
 	finish_build
 }
@@ -156,6 +156,7 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/ota"
 	rm -rf "$RK_OUTDIR/ab"
 	rm -rf "$RK_FIRMWARE_DIR/*update.img"
+	rm -rf "$RK_ROCKDEV_DIR/*update.img"
 }
 
 INIT_CMDS="edit-package-file edit-ota-package-file"
