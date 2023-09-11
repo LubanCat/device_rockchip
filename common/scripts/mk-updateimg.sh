@@ -58,6 +58,18 @@ build_updateimg()
 	OUT_DIR="$RK_OUTDIR/$TYPE"
 	IMAGE_DIR="$OUT_DIR/Image"
 
+	# Make sure that the firmware is ready
+	if [ ! -r "$RK_ROCKDEV_DIR/parameter.txt" ]; then
+		echo "Firmware is not ready, building it..."
+		"$SCRIPTS_DIR/mk-firmware.sh"
+	fi
+
+	# Make sure that the loader is ready
+	if [ ! -r "$RK_ROCKDEV_DIR/MiniLoaderAll.bin" ]; then
+		echo "Loader is not ready, building it..."
+		"$SCRIPTS_DIR/mk-loader.sh"
+	fi
+
 	echo "=========================================="
 	echo "          Start packing $2 update image"
 	echo "=========================================="
