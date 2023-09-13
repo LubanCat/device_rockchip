@@ -23,11 +23,11 @@ if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
 		"$TARGET_DIR/etc/init.d/weston"
 
 	echo "Installing weston overlay: $OVERLAY_DIR/weston to $TARGET_DIR..."
-	rsync -av --chmod=u=rwX,go=rX "$OVERLAY_DIR/weston/" "$TARGET_DIR/" \
+	$RK_RSYNC "$OVERLAY_DIR/weston/" "$TARGET_DIR/" \
 		--exclude="$(basename "$(realpath "$0")")"
 
 	echo "Installing Rockchip test scripts to $TARGET_DIR..."
-	rsync -av --chmod=u=rwX,go=rX "$SDK_DIR/external/rockchip-test/" \
+	$RK_RSYNC "$SDK_DIR/external/rockchip-test/" \
 		"$TARGET_DIR/rockchip-test/" \
 		--include="camera/" --include="video/" --exclude="/*"
 fi

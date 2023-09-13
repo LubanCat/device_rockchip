@@ -51,22 +51,6 @@ config RK_ROOTFS_LOCALE
 endif
 
 choice
-	prompt "extra fonts"
-
-config RK_EXTRA_FONTS_DEFAULT
-	bool "auto"
-	help
-	  Install extra fonts for yocto OS.
-
-config RK_EXTRA_FONTS_ENABLED
-	bool "install"
-
-config RK_EXTRA_FONTS_DISABLED
-	bool "not install"
-
-endchoice # extra fonts
-
-choice
 	prompt "disk helpers"
 
 config RK_DISK_HELPERS_DEFAULT
@@ -255,18 +239,34 @@ config RK_WIFIBT_CHIP
 
 endif
 
+config RK_ROOTFS_OVERLAY_DIRS
+	bool "rootfs overlay dirs"
+	default y
+
+if RK_ROOTFS_OVERLAY_DIRS
+
+choice
+	prompt "extra fonts"
+
+config RK_EXTRA_FONTS_DEFAULT
+	bool "auto"
+	help
+	  Install extra fonts for yocto OS.
+
+config RK_EXTRA_FONTS_ENABLED
+	bool "install"
+
+config RK_EXTRA_FONTS_DISABLED
+	bool "not install"
+
+endchoice # extra fonts
+
 config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance"
 	default y
 
 config RK_ROOTFS_PREBUILT_TOOLS
 	bool "prebuilt tools"
-
-config RK_ROOTFS_OVERLAY_DIRS
-	bool "rootfs overlay dirs"
-	default y
-
-if RK_ROOTFS_OVERLAY_DIRS
 
 config RK_ROOTFS_EXTRA_OVERLAY_DIRS
 	string "rootfs extra overlay dirs"

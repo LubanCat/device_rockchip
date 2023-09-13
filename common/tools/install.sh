@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+[ "$RK_ROOTFS_PREBUILT_TOOLS" ] || exit 0
+
 TARGET_DIR="$1"
 [ "$TARGET_DIR" ] || exit 1
 
@@ -16,5 +18,5 @@ else
 	TARGET_ARCH=aarch64
 fi
 
-rsync -av --chmod=u=rwX,go=rX --exclude=adbd \
+$RK_RSYNC --exclude=adbd \
 	"$OVERLAY_DIR/perf" "$OVERLAY_DIR/$TARGET_ARCH/" "$DEST_DIR/"
