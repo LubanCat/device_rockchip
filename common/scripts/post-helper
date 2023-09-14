@@ -49,8 +49,7 @@ install_sysv_service()
 	SERVICE="$(basename "$SRC" | sed 's~^S[0-9]*\(.*\)~\1~')"
 	SERVICE_DIR="$TARGET_DIR/etc/init.d"
 
-	mkdir -p "$SERVICE_DIR"
-	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+	install -D -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
 
 	SERVICE_PREFIX=S
 	for level in $@; do
@@ -78,8 +77,7 @@ install_busybox_service()
 	SERVICE="$(basename "$SRC")"
 	SERVICE_DIR="$TARGET_DIR/etc/init.d"
 
-	mkdir -p "$SERVICE_DIR"
-	install -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
+	install -D -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
 }
 
 install_systemd_service()
@@ -90,8 +88,11 @@ install_systemd_service()
 	SERVICE="$(basename "$SRC")"
 	SERVICE_DIR="$TARGET_DIR/lib/systemd/system"
 
-	mkdir -p "$SERVICE_DIR"
-	install -m 0644 "$SRC" "$SERVICE_DIR/$SERVICE"
+	if [ "$2" ]; then
+		install -D -m 0755 "$2" "$TARGET_DIR/${3:-/usr/bin/}"
+	fi
+
+	install -D -m 0644 "$SRC" "$SERVICE_DIR/$SERVICE"
 
 	WANTED_BY="$(grep "^WantedBy=" "$SRC" | cut -d'=' -f2)"
 	[ "$WANTED_BY" ] || return 0

@@ -265,6 +265,9 @@ config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance"
 	default y
 
+config RK_ROOTFS_FRECON
+	bool "frecon virtual terminal (VT)"
+
 config RK_ROOTFS_PREBUILT_TOOLS
 	bool "prebuilt tools"
 
