@@ -19,7 +19,7 @@ config RK_CHIP_FAMILY_FROM_ENV
 	option env="RK_CHIP_FAMILY"
 
 config RK_CHIP_FAMILY
-	string "SoC family"
+	string
 	default RK_CHIP_FAMILY_FROM_ENV if RK_CHIP_FAMILY_FROM_ENV != ""
 	help
 	  Rockchip SoC family, available chip familys are in
@@ -30,7 +30,7 @@ config RK_CHIP_FROM_ENV
 	option env="RK_CHIP"
 
 config RK_CHIP
-	string "SoC"
+	string
 	default RK_CHIP_FROM_ENV if RK_CHIP_FROM_ENV != ""
 	default RK_CHIP_FAMILY
 	help
