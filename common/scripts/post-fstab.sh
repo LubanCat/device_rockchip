@@ -96,7 +96,6 @@ fixup_basic_part sysfs /sys nosuid,nodev,noexec
 fixup_basic_part configfs /sys/kernel/config
 fixup_basic_part debugfs /sys/kernel/debug
 fixup_basic_part pstore /sys/fs/pstore nosuid,nodev,noexec
-fixup_basic_part tmpfs /tmp defaults,mode=1777
 
 if [ "$POST_OS" = recovery ]; then
 	fixup_device_part /dev/sda1 /mnt/udisk auto
