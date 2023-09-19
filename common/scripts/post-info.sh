@@ -24,8 +24,6 @@ cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION"
 
 EXTRA_FILES=" \
 	/etc/os-release /etc/fstab \
-	/tmp/usbdevice.log /tmp/bootanim.log \
-	/tmp/resize-all.log /tmp/mount-all.log \
 	/proc/version /proc/cmdline /proc/kallsyms /proc/interrupts /proc/cpuinfo \
 	/proc/softirqs /proc/device-tree /proc/diskstats /proc/iomem \
 	/proc/meminfo /proc/partitions /proc/slabinfo \
