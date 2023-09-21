@@ -39,7 +39,7 @@ if [ "$2" = make ]; then
 			PKG="$(basename $(dirname \
 				$(grep -rwl "$TARGET" \
 				"$BUILDROOT_DIR/package")))"
-			TARGET="$PKG${ARG:+-$ARG}"
+			TARGET="$PKG-${ARG:-recreate}"
 			;;
 		*) TARGET="$1" ;;
 	esac
