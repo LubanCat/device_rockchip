@@ -261,6 +261,22 @@ config RK_EXTRA_FONTS_DISABLED
 
 endchoice # extra fonts
 
+choice
+	prompt "input-event-daemon (power-key handling)"
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_DEFAULT
+	bool "auto"
+	help
+	  Install input-event-daemon (power-key handling) for yocto OS.
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_ENABLED
+	bool "install"
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED
+	bool "not install"
+
+endchoice # input-event-daemon
+
 config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance"
 	default y
