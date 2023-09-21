@@ -109,7 +109,13 @@ install_systemd_service external/rkscript/usbdevice.service
 
 mkdir -p "$TARGET_DIR/etc/usbdevice.d"
 for hook in $RK_USB_HOOKS; do
-	[ -r "$hook" ] || continue
+	if [ -r "$CHIP_DIR/$hook" ]; then
+		hook="$CHIP_DIR/$hook"
+	elif [ ! -r "$hook" ]; then
+		echo "Ignore non-existant USB hook: $hook"
+		continue
+	fi
+
 	echo "Installing USB hook: $hook"
 	install -m 0644 "$hook" "$TARGET_DIR/etc/usbdevice.d/"
 done
