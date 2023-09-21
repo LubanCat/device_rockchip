@@ -103,7 +103,7 @@ install -m 0755 external/rkscript/usbdevice "$TARGET_DIR/usr/bin/"
 
 echo "Installing USB services..."
 
-install_sysv_service external/rkscript/S*usbdevice.sh start 5 4 3 2 stop 0 1 6
+install_sysv_service external/rkscript/S*usbdevice.sh 5 4 3 2 K01 0 1 6
 install_busybox_service external/rkscript/S*usbdevice.sh
 install_systemd_service external/rkscript/usbdevice.service
 

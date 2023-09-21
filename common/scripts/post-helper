@@ -51,17 +51,14 @@ install_sysv_service()
 
 	install -D -m 0755 "$SRC" "$SERVICE_DIR/$SERVICE"
 
-	SERVICE_PREFIX=S
+	SERVICE_PREFIX="$(echo $(basename "$SRC") | \
+		grep -o "^S[0-9]*" || echo S99)"
 	for level in $@; do
 		case "$level" in
-			start) SERVICE_PREFIX=S ;;
-			stop) SERVICE_PREFIX=K ;;
-			*)
+			S[0-9][0-9] | K[0-9][0-9]) SERVICE_PREFIX=$level ;;
+			S | [0-6])
 				LEVEL_DIR="$TARGET_DIR/etc/rc$level.d"
-				if echo $level | grep -wq "[0-9]*"; then
-					level="$(printf "%02d" $level)"
-				fi
-				LEVEL_SERVICE="$SERVICE_PREFIX$level$SERVICE"
+				LEVEL_SERVICE="$SERVICE_PREFIX$SERVICE"
 				mkdir -p "$LEVEL_DIR"
 				ln -rsf "$SERVICE_DIR/$SERVICE" \
 					"$LEVEL_DIR/$LEVEL_SERVICE"
