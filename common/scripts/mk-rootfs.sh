@@ -32,7 +32,11 @@ build_yocto()
 	rm -f build/conf/local.conf
 
 	if echo "$RK_YOCTO_CFG" | grep -q ".conf$"; then
-		ln -sf $RK_YOCTO_CFG build/conf/local.conf
+		if [ ! -r "$RK_YOCTO_CFG" ]; then
+			RK_YOCTO_CFG="build/conf/$RK_YOCTO_CFG"
+		fi
+
+		ln -rsf "$RK_YOCTO_CFG" build/conf/local.conf
 
 		echo "=========================================="
 		echo "          Start building $RK_YOCTO_CFG"

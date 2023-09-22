@@ -29,9 +29,9 @@ config RK_BUILDROOT_CFG
 	default "rockchip_${RK_BUILDROOT_BASE_CFG}"
 
 config RK_YOCTO_CFG
-	string "yocto rootfs machine or local config when ends with .conf"
+	string "yocto machine name or custom config file name"
 	help
-	  Name of yocto machine or yocto local config when ends with .conf.
+	  Name of yocto machine or custom config file(XXX.conf).
 	  Set "" for no yocto rootfs.
 
 if RK_YOCTO_CFG != ""
