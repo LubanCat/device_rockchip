@@ -70,6 +70,13 @@ do_build()
 						"$RK_KERNEL_IMG"
 				fi
 			fi
+
+			if [ "$RK_WIFIBT_CHIP" ] && [ -r "$RK_KERNEL_DTB" ] && \
+				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
+				echo -e "\e[35m"
+				echo "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
+				echo -e "\e[0m"
+			fi
 			;;
 		modules) run_command $KMAKE modules ;;
 	esac
