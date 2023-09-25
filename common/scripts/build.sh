@@ -321,7 +321,7 @@ main()
 		if [ ! -L "$MANIFEST" ]; then
 			MANIFEST="$SDK_DIR/.repo/manifests/$(grep -o "[^\"]*\.xml" "$MANIFEST")"
 		fi
-		TAG="$(grep -o "linux-.*-gen-rkr[^.]*" "$MANIFEST" | \
+		TAG="$(grep -o "linux-.*-gen-rkr[^.\"]*" "$MANIFEST" | \
 			head -n 1 || true)"
 		MANIFEST="$(basename "$(realpath "$MANIFEST")")"
 		echo
