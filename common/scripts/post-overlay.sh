@@ -3,7 +3,6 @@
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 RK_RSYNC="rsync -av --chmod=u=rwX,go=rX --copy-unsafe-links --exclude .empty"
-RK_OVERLAY_ALLOWED="${@:-$RK_ALLOWED_OVERLAYS}"
 
 cd "$COMMON_DIR/overlays"
 
