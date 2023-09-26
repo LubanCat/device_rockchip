@@ -273,7 +273,8 @@ build_wifibt()
 	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
 	install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"
 	install -m 0755 $RKWIFIBT_DIR/scripts/* "$TARGET_DIR/usr/bin/"
-	for b in bt-tty wifibt-info wifibt-vendor wifibt-chip wifibt-module; do
+	for b in bt-tty wifibt-info wifibt-vendor wifibt-id wifibt-bus \
+		wifibt-chip wifibt-module; do
 		ln -sf wifibt-util.sh "$TARGET_DIR/usr/bin/$b"
 	done
 
