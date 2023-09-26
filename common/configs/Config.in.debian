@@ -1,0 +1,60 @@
+#
+
+comment "Debian is not supported for this chip"
+	depends on !RK_DEBIAN_SUPPORTS
+
+config RK_DEBIAN_SUPPORTS
+	bool
+	default y if RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
+		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
+		RK_CHIP_FAMILY = "rk3399" || RK_CHIP_FAMILY = "rk3399pro" || \
+		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
+		RK_CHIP_FAMILY = "rk3562"
+
+if RK_DEBIAN_SUPPORTS
+
+menu "Debian"
+
+config RK_DEBIAN
+	bool "debian"
+	default y
+
+if RK_DEBIAN
+
+config RK_DEBIAN_VERSION
+	string
+	default "buster" if RK_DEBIAN_BUSTER
+	default "bullseye" if RK_DEBIAN_BULLSEYE
+
+choice
+	prompt "debian version"
+	default RK_DEBIAN_BULLSEYE if RK_CHIP_FAMILY = "rk3399" || \
+		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
+		RK_CHIP_FAMILY = "rk3562" || RK_CHIP_FAMILY = "px30" || \
+		RK_CHIP_FAMILY = "rk3288"
+
+config RK_DEBIAN_BUSTER
+	bool "buster"
+
+config RK_DEBIAN_BULLSEYE
+	bool "bullseye"
+
+endchoice
+
+choice
+	prompt "debian rootfs arch"
+
+config RK_DEBIAN_ARM64
+	bool "arm64"
+	depends on !RK_CHIP_ARM32
+
+config RK_DEBIAN_ARMHF
+	bool "armhf"
+
+endchoice
+
+endif
+
+endmenu # Debian
+
+endif

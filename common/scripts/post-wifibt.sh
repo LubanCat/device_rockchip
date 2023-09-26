@@ -6,7 +6,7 @@ source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 build_wifibt()
 {
-	check_config RK_KERNEL_CFG RK_WIFIBT_CHIP || return 0
+	check_config RK_KERNEL RK_WIFIBT_CHIP || return 0
 	source "$SCRIPTS_DIR/kernel-helper"
 
 	echo "=========================================="

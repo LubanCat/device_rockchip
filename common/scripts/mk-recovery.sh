@@ -7,7 +7,7 @@ usage_hook()
 
 clean_hook()
 {
-	check_config RK_RECOVERY_CFG || return 0
+	check_config RK_RECOVERY || return 0
 	rm -rf buildroot/output/$RK_RECOVERY_CFG
 	rm -rf "$RK_OUTDIR/recovery"
 }
@@ -17,7 +17,7 @@ build_hook()
 {
 	[ -z "$RK_AB_UPDATE" ] || return 0
 
-	check_config RK_RECOVERY_CFG || return 0
+	check_config RK_RECOVERY || return 0
 
 	echo "=========================================="
 	echo "          Start building recovery(buildroot)"

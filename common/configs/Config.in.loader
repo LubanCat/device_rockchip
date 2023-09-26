@@ -2,6 +2,12 @@
 
 menu "Loader (u-boot)"
 
+config RK_LOADER
+	bool "loader (u-boot)"
+	default y
+
+if RK_LOADER
+
 config RK_UBOOT_CFG
 	string "u-boot defconfig"
 	default "rk1808" if RK_CHIP_FAMILY = "rk1806"
@@ -14,8 +20,6 @@ config RK_UBOOT_CFG
 	default RK_CHIP_FAMILY if RK_CHIP_FAMILY = "rk3308" || \
 		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "rk3588"
 	default RK_CHIP
-
-if RK_UBOOT_CFG != ""
 
 config RK_UBOOT_CFG_FRAGMENTS
 	string "u-boot defconfig fragments (without .config suffix)"
@@ -65,6 +69,6 @@ config RK_UBOOT_ARM32
 
 endchoice
 
-endif # RK_UBOOT_CFG
+endif
 
 endmenu # Loader

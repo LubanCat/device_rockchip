@@ -1,6 +1,6 @@
 #
 
-if RK_KERNEL_CFG != ""
+if RK_KERNEL
 
 menu "Boot"
 

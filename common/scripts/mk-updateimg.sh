@@ -179,8 +179,8 @@ init_hook()
 		sed -i '/$BASE_CFG/d' "$RK_CONFIG"
 		echo "${BASE_CFG}_CUSTOM=y" >> "$RK_CONFIG"
 		echo "$BASE_CFG=$PKG_FILE" >> "$RK_CONFIG"
-                "$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
-                "$SCRIPTS_DIR/mk-config.sh" savedefconfig &>/dev/null
+		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+		"$SCRIPTS_DIR/mk-config.sh" savedefconfig &>/dev/null
 	fi
 }
 

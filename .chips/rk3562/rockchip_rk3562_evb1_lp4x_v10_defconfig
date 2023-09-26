@@ -1,4 +1,3 @@
-RK_YOCTO_CFG="rockchip-rk3562-evb"
 RK_WIFIBT_CHIP="AP6275S"
 RK_UBOOT_SPL=y
 RK_KERNEL_DTS_NAME="rk3562-evb1-lp4x-v10-linux"

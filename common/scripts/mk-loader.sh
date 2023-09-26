@@ -2,7 +2,7 @@
 
 build_uefi()
 {
-	check_config RK_KERNEL_DTB || return 1
+	check_config RK_KERNEL_DTS_NAME || return 1
 
 	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
 		echo "UEFI not supported!"
@@ -23,7 +23,7 @@ build_uefi()
 
 build_uboot()
 {
-	check_config RK_UBOOT_CFG || return 0
+	check_config RK_LOADER RK_UBOOT_CFG || return 0
 
 	if [ -z "$DRY_RUN" ]; then
 		rm -f u-boot/*.bin u-boot/*.img

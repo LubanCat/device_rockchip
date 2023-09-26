@@ -7,7 +7,7 @@ usage_hook()
 
 clean_hook()
 {
-	check_config RK_PCBA_CFG || return 0
+	check_config RK_PCBA || return 0
 	rm -rf buildroot/output/$RK_PCBA_CFG
 	rm -rf "$RK_OUTDIR/pcba"
 }
@@ -15,7 +15,7 @@ clean_hook()
 BUILD_CMDS="pcba"
 build_hook()
 {
-	check_config RK_PCBA_CFG || return 0
+	check_config RK_PCBA || return 0
 
 	echo "=========================================="
 	echo "          Start building pcba(buildroot)"

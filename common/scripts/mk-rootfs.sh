@@ -2,7 +2,7 @@
 
 build_buildroot()
 {
-	check_config RK_BUILDROOT_CFG || return 0
+	check_config RK_BUILDROOT || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
 
@@ -22,7 +22,7 @@ build_buildroot()
 
 build_yocto()
 {
-	check_config RK_YOCTO_CFG RK_KERNEL_VERSION_REAL || return 0
+	check_config RK_YOCTO || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
 
@@ -31,15 +31,18 @@ build_yocto()
 	cd yocto
 	rm -f build/conf/local.conf
 
-	if echo "$RK_YOCTO_CFG" | grep -q ".conf$"; then
-		if [ ! -r "$RK_YOCTO_CFG" ]; then
-			RK_YOCTO_CFG="build/conf/$RK_YOCTO_CFG"
+	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
+		if [ ! -r "build/conf/$RK_YOCTO_CFG" ]; then
+			echo "yocto/build/conf/$RK_YOCTO_CFG not exist!"
+			return 1
 		fi
 
-		ln -rsf "$RK_YOCTO_CFG" build/conf/local.conf
+		if [ "$RK_YOCTO_CFG" != local.conf ]; then
+			ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
+		fi
 
 		echo "=========================================="
-		echo "          Start building $RK_YOCTO_CFG"
+		echo "          Start building for $RK_YOCTO_CFG"
 		echo "=========================================="
 	else
 		{
@@ -49,31 +52,33 @@ build_yocto()
 			echo "include include/multimedia.conf"
 			echo "include include/audio.conf"
 
-			echo
-			echo "MACHINE = \"$RK_YOCTO_CFG\""
-			if [ "$RK_CHIP" = "rk3288w" ]; then
-				echo "MACHINE_FEATURES:append = \" rk3288w\""
+			if [ "$RK_WIFIBT_CHIP" ]; then
+				echo "include include/wifibt.conf"
 			fi
+
+			if [ "$RK_YOCTO_CHROMIUM" ]; then
+				echo "include include/browser.conf"
+			fi
+
 			echo
+			echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
+
+			echo
+			echo "MACHINE = \"$RK_YOCTO_MACHINE\""
 		} > build/conf/local.conf
 
 		echo "=========================================="
-		echo "          Start building machine($RK_YOCTO_CFG)"
+		echo "          Start building for machine($RK_YOCTO_MACHINE)"
 		echo "=========================================="
 	fi
 
 	{
-		if [ "$RK_WIFIBT_CHIP" ]; then
-			echo "include include/wifibt.conf"
-		fi
-
-		if [ "$RK_YOCTO_CHROMIUM" ]; then
-			echo "include include/browser.conf"
-		fi
-
 		echo "include include/rksdk.conf"
-
 		echo
+
+		if [ "$RK_CHIP" = "rk3288w" ]; then
+			echo "MACHINE_FEATURES:append = \" rk3288w\""
+		fi
 
 		echo "PREFERRED_VERSION_linux-rockchip :=" \
 			"\"$RK_KERNEL_VERSION_REAL%\""
@@ -82,7 +87,6 @@ build_yocto()
 			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
 		esac
-		echo "DISPLAY_PLATFORM := \"$RK_YOCTO_DISPLAY_PLATFORM\""
 	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
@@ -99,7 +103,7 @@ build_yocto()
 
 build_debian()
 {
-	check_config RK_DEBIAN_VERSION || return 0
+	check_config RK_DEBIAN || return 0
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/debian}"
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
@@ -143,7 +147,7 @@ clean_hook()
 	rm -rf yocto/build/tmp yocto/build/*cache
 	rm -rf debian/binary
 
-	if check_config RK_BUILDROOT_CFG &>/dev/null; then
+	if check_config RK_BUILDROOT &>/dev/null; then
 		rm -rf buildroot/output/$RK_BUILDROOT_CFG
 	fi
 
@@ -193,7 +197,7 @@ pre_build_hook()
 
 	case "$1" in
 		buildroot-make | bmake)
-			check_config RK_BUILDROOT_CFG || return 0
+			check_config RK_BUILDROOT || return 0
 
 			shift
 			"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG make $@

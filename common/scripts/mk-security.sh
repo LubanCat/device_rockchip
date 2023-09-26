@@ -57,7 +57,7 @@ find_string_in_config()
 
 security_check()
 {
-	[ "$RK_SECURITY" ] || return 0
+	check_config RK_SECURITY RK_BUILDROOT || return 0
 
 	if [ ! -d u-boot/keys ]; then
 		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
@@ -198,7 +198,7 @@ build_hook()
 			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		security_recovery)
-			check_config RK_RECOVERY_CFG || return 0
+			check_config RK_RECOVERY || return 0
 			"$SCRIPTS_DIR"/mk-recovery.sh
 			"$SCRIPTS_DIR"/mk-loader.sh uboot recovery
 			;;

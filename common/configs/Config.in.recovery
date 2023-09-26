@@ -1,11 +1,17 @@
 #
 
 comment "Recovery depends on linux kernel and no RTOS"
-	depends on RK_KERNEL_CFG = "" || RK_RTOS
+	depends on !RK_KERNEL || RK_RTOS
 
-if RK_KERNEL_CFG != "" && !RK_RTOS
+if RK_KERNEL && !RK_RTOS
 
-menu "Recovery (buildroot)"
+menu "Recovery (based on buildroot)"
+
+config RK_RECOVERY
+	bool "recovery"
+	default y
+
+if RK_RECOVERY
 
 config RK_RECOVERY_BASE_CFG
 	string "buildroot recovery base cfg (rockchip_<cfg>_recovery_defconfig)"
@@ -14,12 +20,11 @@ config RK_RECOVERY_BASE_CFG
 	default RK_CHIP_FAMILY
 	help
 	  Base name of buildroot defconfig for recovery.
-	  Set "" for no recovery.
-
-if RK_RECOVERY_BASE_CFG != ""
 
 config RK_RECOVERY_CFG
 	string
+	default "rockchip_${RK_CHIP_FAMILY}_recovery" \
+		if RK_RECOVERY_BASE_CFG = ""
 	default "rockchip_${RK_RECOVERY_BASE_CFG}_recovery"
 
 config RK_RECOVERY_FIT_ITS

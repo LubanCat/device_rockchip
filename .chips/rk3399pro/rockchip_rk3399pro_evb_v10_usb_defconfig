@@ -1,2 +1,1 @@
-RK_YOCTO_CFG="rockchip-rk3399pro-evb"
 RK_KERNEL_DTS_NAME="rk3399pro-evb-v10-linux"

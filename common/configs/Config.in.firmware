@@ -9,11 +9,11 @@ config RK_PARAMETER
 	help
 	  Name of parameter file under <CHIP_DIR>/.
 
-if RK_KERNEL_CFG != ""
+if RK_KERNEL
 
 config RK_MISC
 	bool "pack misc image (for recovery, A/B, etc.)"
-	default y if RK_RECOVERY_CFG != ""
+	default y if RK_RECOVERY
 
 if RK_MISC
 

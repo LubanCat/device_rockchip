@@ -84,11 +84,6 @@ config RK_ROOTFS_UDEV_RULES
 	bool "Rockchip udev rules"
 	default y
 
-comment "USB gadget depends on linux kernel"
-	depends on RK_KERNEL_CFG = ""
-
-if RK_KERNEL_CFG != ""
-
 choice
 	prompt "USB gadget"
 
@@ -223,21 +218,12 @@ endmenu # USB gadget
 
 endif
 
-endif
-
-comment "wifi/BT depends on linux kernel"
-	depends on RK_KERNEL_CFG = ""
-
-if RK_KERNEL_CFG != ""
-
 config RK_WIFIBT_CHIP
 	string "wifi/BT chip"
 	default "ALL_AP"
 	help
 	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
 	  Set "" for no WIFI/BT.
-
-endif
 
 config RK_ROOTFS_OVERLAY_DIRS
 	bool "rootfs overlay dirs"

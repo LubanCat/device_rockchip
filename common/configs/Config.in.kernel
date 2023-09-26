@@ -2,6 +2,12 @@
 
 menu "Kernel"
 
+config RK_KERNEL
+	bool "kernel"
+	default y
+
+if RK_KERNEL
+
 config RK_KERNEL_CFG
 	string "kernel defconfig"
 	default "px30_linux_defconfig" if RK_CHIP = "px30" || \
@@ -11,8 +17,6 @@ config RK_KERNEL_CFG
 	default "rk1808_linux_defconfig" if RK_CHIP = "rk1808"
 	default "rk3308_linux_defconfig" if RK_CHIP_FAMILY = "rk3308"
 	default "rockchip_linux_defconfig"
-
-if RK_KERNEL_CFG != ""
 
 config RK_KERNEL_VERSION
 	string "kernel version, e.g. 5.10"

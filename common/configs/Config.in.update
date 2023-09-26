@@ -5,10 +5,10 @@ comment "RTOS doesn't use update image"
 
 if !RK_RTOS
 
-menu "Update (Update image, OTA and A/B)"
+menu "Update (Rockchip update image)"
 
 config RK_UPDATE
-	bool "pack Rockchip update image"
+	bool "update image"
 	default y
 
 if RK_UPDATE

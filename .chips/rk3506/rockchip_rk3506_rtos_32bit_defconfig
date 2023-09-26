@@ -1,2 +1,2 @@
 RK_RTOS=y
-RK_KERNEL_CFG=""
+# RK_KERNEL is not set

@@ -26,7 +26,7 @@ build_all()
 		"$SCRIPTS_DIR/mk-security.sh" security_check
 	fi
 
-	if [ "$RK_KERNEL_CFG" ]; then
+	if [ "$RK_KERNEL" ]; then
 		"$SCRIPTS_DIR/mk-kernel.sh"
 		"$SCRIPTS_DIR/mk-rootfs.sh"
 		"$SCRIPTS_DIR/mk-recovery.sh"
@@ -66,7 +66,7 @@ build_save()
 
 	echo "Saving into $SAVE_DIR..."
 
-	if [ "$RK_KERNEL_CFG" ]; then
+	if [ "$RK_KERNEL" ]; then
 		mkdir -p "$SAVE_DIR/kernel"
 
 		echo "Saving linux-headers..."

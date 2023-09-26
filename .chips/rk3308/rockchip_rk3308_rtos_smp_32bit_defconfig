@@ -3,5 +3,5 @@ RK_UBOOT_INI="RK3308MINIALL_UART4.ini"
 RK_RTOS=y
 RK_RTOS_CFG="rockchip_rk3308_rtos_smp_32bit_cfg"
 RK_RTOS_FIT_ITS="rockchip_rk3308_rtos_smp.its"
-RK_KERNEL_CFG=""
+# RK_KERNEL is not set
 RK_PARAMETER="parameters-rtos-smp.txt"
