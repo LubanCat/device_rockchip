@@ -41,6 +41,11 @@ config RK_DEBIAN_BULLSEYE
 
 endchoice
 
+config RK_DEBIAN_ARCH
+	string
+	default "armhf" if RK_DEBIAN_ARMHF
+	default "arm64" if RK_DEBIAN_ARM64
+
 choice
 	prompt "debian rootfs arch"
 
