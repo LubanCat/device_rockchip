@@ -24,18 +24,28 @@ install_adbd()
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 	fi
 
+	[ -n "$RK_USB_ADBD_SECURE" ] || return 0
+
+	echo "export ADB_SECURE=1" >> "$TARGET_DIR/etc/profile.d/adbd.sh"
+
 	if [ -n "$RK_USB_ADBD_PASSWORD" ]; then
+		ADBD_PASSWORD_MD5="$(echo $RK_USB_ADBD_PASSWORD | md5sum)"
 		install -m 0755 "$RK_DATA_DIR/adbd-auth" \
 			"$TARGET_DIR/usr/bin/adbd-auth"
-		sed -i "s/AUTH_PASSWORD/$(echo $RK_USB_ADBD_PASSWORD | md5sum)/g" \
+		sed -i "s/ADBD_PASSWORD_MD5/$ADBD_PASSWORD_MD5/g" \
 			"$TARGET_DIR/usr/bin/adbd-auth"
 	fi
 
-	if [ -r "$RK_USB_ADBD_RSA_KEY" ]; then
-		install -m 0644 "$RK_USB_ADBD_RSA_KEY" \
-			"$TARGET_DIR/etc/adbkey.pub"
-		echo "export ADBD_RSA_KEY_FILE=/etc/adbkey.pub" >> \
-			"$TARGET_DIR/etc/profile.d/adbd.sh"
+	if [ -n "$RK_USB_ADBD_KEYS" ]; then
+		sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
+
+		SCRIPT_OWNER="$(stat --format %U "$0")"
+		[ "$SCRIPT_OWNER" != "root" ] || return 0
+		[ "${USER:-$(id -un)}" = "root" ] || return 0
+
+		# Sudo to source owner (for Debian's post stage)
+		sudo -u $SCRIPT_OWNER \
+			sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
 	fi
 }
 

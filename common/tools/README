@@ -1,13 +1,13 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-1886b190157 lockfile: Support static build
+966d4469ea6 rockchip: Switch to android-adbd
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
 
-BR2_PACKAGE_ANDROID_TOOLS=y
-BR2_PACKAGE_ANDROID_TOOLS_STATIC=y
+BR2_PACKAGE_ANDROID_ADBD=y
+BR2_PACKAGE_ANDROID_ADBD_STATIC=y
 
 BR2_PACKAGE_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_STATIC=y

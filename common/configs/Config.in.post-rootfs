@@ -120,13 +120,19 @@ config RK_USB_ADBD_BASH
 	bool "adbd prefer using bash"
 	default y
 
+config RK_USB_ADBD_SECURE
+	bool "adbd secure"
+
+if RK_USB_ADBD_SECURE
+
 config RK_USB_ADBD_PASSWORD
 	string "adbd password"
-	default ""
 
-config RK_USB_ADBD_RSA_KEY
-	string "adbd RSA key"
-	default ""
+config RK_USB_ADBD_KEYS
+	string "Android public keys"
+	default "~/.android/adbkey.pub" if RK_USB_ADBD_PASSWORD = ""
+
+endif
 
 endif
 
@@ -208,11 +214,9 @@ endif
 
 config RK_USB_EXTRA
 	string "extra USB gadget configs"
-	default ""
 
 config RK_USB_HOOKS
 	string "hook scripts"
-	default ""
 
 endmenu # USB gadget
 
