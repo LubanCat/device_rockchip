@@ -18,6 +18,7 @@ build_all()
 		"$SCRIPTS_DIR/mk-kernel.sh"
 		"$SCRIPTS_DIR/mk-rtos.sh"
 		"$SCRIPTS_DIR/mk-firmware.sh"
+		"$SCRIPTS_DIR/mk-update.sh"
 		finish_build
 		return 0
 	fi
