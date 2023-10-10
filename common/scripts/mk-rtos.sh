@@ -118,7 +118,8 @@ build_hook()
 
 	"$SCRIPTS_DIR/check-rtos.sh"
 
-	export CROSS_COMPILE=$(get_toolchain "$RK_RTOS_ARCH" arm none)
+	export CROSS_COMPILE=$(get_toolchain RTOS "$RK_RTOS_ARCH" arm none)
+	[ "$CROSS_COMPILE" ] || exit 1
 
 	if [ -f "$CHIP_DIR/$RK_RTOS_CFG" ]; then
 		set -a

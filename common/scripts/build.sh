@@ -123,35 +123,45 @@ start_log()
 
 get_toolchain()
 {
-	TOOLCHAIN_ARCH="${1/arm64/aarch64}"
+	MODULE="$1"
+	TOOLCHAIN_ARCH="${2/arm64/aarch64}"
 
 	MACHINE=$(uname -m)
-	if [ "$MACHINE" = x86_64 ]; then
-		TOOLCHAIN_VENDOR="${2:-none}"
-		TOOLCHAIN_OS="${3:-linux}"
+	if [ "$MACHINE" != x86_64 ]; then
+		echo -e "\e[33mUsing Non-x86 toolchain for $MODULE!\e[0m" >&2
 
-		# RV1126 uses custom toolchain
-		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-			TOOLCHAIN_VENDOR=rockchip
+		if [ "$TOOLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
+			echo aarch64-linux-gnu-
+		elif [ "$TOOLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
+			echo arm-linux-gnueabihf-
 		fi
-
-		TOOLCHAIN_DIR="$(realpath \
-			$SDK_DIR/prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-		GCC="$(find "$TOOLCHAIN_DIR"/*/bin -name "*gcc" 2>/dev/null | \
-			grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc")"
-		if [ ! -x "$GCC" ]; then
-			echo "No prebuilt GCC toolchain!"
-			exit 1
-		fi
-	elif [ "$TOLLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
-		GCC=aarch64-linux-gnu-gcc
-	elif [ "$TOLLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
-		GCC=arm-linux-gnueabihf-gcc
-	else
-		GCC=gcc
+		return 0
 	fi
 
-	echo "${GCC%gcc}"
+	TOOLCHAIN_VENDOR="${3:-none}"
+	TOOLCHAIN_OS="${4:-linux}"
+
+	# RV1126 uses custom toolchain
+	if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
+		TOOLCHAIN_VENDOR=rockchip
+	fi
+
+	TOOLCHAIN_DIR="$SDK_DIR/prebuilts/gcc/linux-x86/$TOOLCHAIN_ARCH"
+	GCC="$(find "$TOOLCHAIN_DIR"/*/bin -name "*gcc" | \
+		grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc" || true)"
+	if [ ! -x "$GCC" ]; then
+		{
+			echo -e "\e[35m"
+			echo "No prebuilt GCC toolchain for $MODULE!"
+			echo "Arch: $TOOLCHAIN_ARCH"
+			echo "Vendor: $TOOLCHAIN_VENDOR"
+			echo "OS: $TOOLCHAIN_OS"
+			echo -e "\e[0m"
+		} >&2
+		exit 1
+	fi
+
+	echo ${GCC%gcc}
 }
 
 # For developing shell only

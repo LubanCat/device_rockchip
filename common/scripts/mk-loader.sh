@@ -104,9 +104,10 @@ build_hook()
 		export RK_UBOOT_ARCH=arm
 	fi
 
-	RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
+	RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
+	[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
 
-	echo "Toolchain for loader (u-boot):"
+	echo "Toolchain for loader (U-Boot):"
 	echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
 	echo
 

@@ -13,7 +13,9 @@ if echo $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS | grep -q aarch32 && \
 	export RK_KERNEL_ARCH=arm
 fi
 
-export RK_KERNEL_TOOLCHAIN="$(get_toolchain "$RK_KERNEL_ARCH")"
+export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel "$RK_KERNEL_ARCH")"
+[ "$RK_KERNEL_TOOLCHAIN" ] || exit 1
+
 export KMAKE="make -C "$SDK_DIR/kernel/" -j$(( $(nproc) + 1 )) \
 	CROSS_COMPILE=$RK_KERNEL_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
 
