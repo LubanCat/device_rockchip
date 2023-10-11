@@ -1,12 +1,15 @@
 #
 
-comment "Security feature depends on linux kernel and no RTOS"
-	depends on !RK_KERNEL || RK_RTOS
+comment "Security feature depends on loader"
+	depends on !RK_LOADER
+
+comment "Security feature depends on linux kernel"
+	depends on !RK_KERNEL
 
 comment "Security feature would use it's own initrd"
 	depends on RK_ROOTFS_INITRD
 
-if RK_KERNEL && !RK_RTOS && !RK_ROOTFS_INITRD
+if RK_LOADER && RK_KERNEL && !RK_ROOTFS_INITRD
 
 menu "Security"
 

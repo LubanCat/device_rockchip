@@ -13,35 +13,20 @@ build_all()
 	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
-	if [ "$RK_RTOS" ]; then
-		"$SCRIPTS_DIR/mk-loader.sh"
-		"$SCRIPTS_DIR/mk-kernel.sh"
-		"$SCRIPTS_DIR/mk-rtos.sh"
-		"$SCRIPTS_DIR/mk-firmware.sh"
-		"$SCRIPTS_DIR/mk-update.sh"
-		finish_build
-		return 0
-	fi
+	[ -z "$RK_SECURITY" ] || "$SCRIPTS_DIR/mk-security.sh" security_check
 
-	if [ "$RK_SECURITY" ]; then
-		"$SCRIPTS_DIR/mk-security.sh" security_check
-	fi
+	[ -z "$RK_KERNEL" ] || "$SCRIPTS_DIR/mk-kernel.sh"
+	[ -z "$RK_ROOTFS"] || "$SCRIPTS_DIR/mk-rootfs.sh"
+	[ -z "$RK_RECOVERY" ] || "$SCRIPTS_DIR/mk-recovery.sh"
 
-	if [ "$RK_KERNEL" ]; then
-		"$SCRIPTS_DIR/mk-kernel.sh"
-		"$SCRIPTS_DIR/mk-rootfs.sh"
-		"$SCRIPTS_DIR/mk-recovery.sh"
-	fi
-
-	if [ "$RK_SECURITY" ]; then
-		"$SCRIPTS_DIR/mk-security.sh" security_ramboot
-	fi
+	[ -z "$RK_RTOS" ] || "$SCRIPTS_DIR/mk-rtos.sh"
+	[ -z "$RK_SECURITY" ] || "$SCRIPTS_DIR/mk-security.sh" security_ramboot
 
 	# Will repack boot and recovery images when security enabled
-	"$SCRIPTS_DIR/mk-loader.sh"
+	[ -z "$RK_LOADER" ] || "$SCRIPTS_DIR/mk-loader.sh"
 
 	"$SCRIPTS_DIR/mk-firmware.sh"
-	"$SCRIPTS_DIR/mk-updateimg.sh"
+	[ -z "$RK_UPDATE" ] || "$SCRIPTS_DIR/mk-updateimg.sh"
 
 	finish_build
 }

@@ -1,15 +1,15 @@
 #
 
-comment "Recovery depends on linux kernel and no RTOS"
-	depends on !RK_KERNEL || RK_RTOS
+comment "Recovery depends on linux kernel"
+	depends on !RK_KERNEL
 
-if RK_KERNEL && !RK_RTOS
+if RK_KERNEL
 
 menu "Recovery (based on buildroot)"
 
 config RK_RECOVERY
 	bool "recovery"
-	default y
+	default y if !RK_RTOS
 
 if RK_RECOVERY
 

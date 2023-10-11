@@ -1,15 +1,15 @@
 #
 
-comment "PCBA depends on linux kernel and no RTOS"
-	depends on !RK_KERNEL || RK_RTOS
+comment "PCBA depends on linux kernel"
+	depends on !RK_KERNEL
 
-if RK_KERNEL && !RK_RTOS
+if RK_KERNEL
 
 menu "PCBA test (based on buildroot)"
 
 config RK_PCBA
 	bool "pcba"
-	default y
+	default y if !RK_RTOS
 
 if RK_PCBA
 

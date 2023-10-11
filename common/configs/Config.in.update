@@ -1,15 +1,10 @@
 #
 
-comment "RTOS doesn't use update image"
-	depends on RK_RTOS
-
-if !RK_RTOS
-
 menu "Update (Rockchip update image)"
 
 config RK_UPDATE
 	bool "update image"
-	default y
+	default y if RK_KERNEL
 
 if RK_UPDATE
 
@@ -70,5 +65,3 @@ endif
 endif
 
 endmenu # Update
-
-endif

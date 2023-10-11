@@ -160,8 +160,8 @@ clean_hook()
 INIT_CMDS="default buildroot debian yocto"
 init_hook()
 {
-	load_config RK_ROOTFS_TYPE
-	check_config RK_ROOTFS_TYPE &>/dev/null || return 0
+	load_config RK_ROOTFS
+	check_config RK_ROOTFS &>/dev/null || return 0
 
 	# Priority: cmdline > custom env
 	if [ "$1" != default ]; then
@@ -193,7 +193,7 @@ init_hook()
 PRE_BUILD_CMDS="buildroot-config buildroot-make bmake"
 pre_build_hook()
 {
-	check_config RK_ROOTFS_TYPE || return 0
+	check_config RK_ROOTFS || return 0
 
 	case "$1" in
 		buildroot-make | bmake)
@@ -225,7 +225,7 @@ pre_build_hook()
 BUILD_CMDS="rootfs buildroot debian yocto"
 build_hook()
 {
-	check_config RK_ROOTFS_TYPE || return 0
+	check_config RK_ROOTFS || return 0
 
 	if [ -z "$1" -o "$1" = rootfs ]; then
 		ROOTFS=${RK_ROOTFS_SYSTEM:-buildroot}

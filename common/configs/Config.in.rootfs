@@ -1,11 +1,17 @@
 #
 
-comment "Rootfs system depends on linux kernel and no RTOS"
-	depends on !RK_KERNEL || RK_RTOS
+comment "Rootfs system depends on linux kernel"
+	depends on !RK_KERNEL
 
-if RK_KERNEL && !RK_RTOS
+if RK_KERNEL
 
 menu "Rootfs"
+
+config RK_ROOTFS
+	bool "rootfs"
+	default y if !RK_RTOS
+
+if RK_ROOTFS
 
 source "Config.in.buildroot"
 source "Config.in.yocto"
@@ -45,6 +51,8 @@ config RK_ROOTFS_INITRD
 	bool "init ramfs/ramdisk for rootfs"
 
 source "Config.in.post-rootfs"
+
+endif
 
 endmenu # Rootfs
 
