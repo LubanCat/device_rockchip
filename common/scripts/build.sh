@@ -312,6 +312,8 @@ main()
 	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
+	export RK_OWNER="$(stat --format %U "$SDK_DIR")"
+	export RK_OWNER_UID="$(stat --format %u "$SDK_DIR")"
 
 	# For Makefile
 	case "$@" in
@@ -410,6 +412,13 @@ main()
 
 		usage
 	done
+
+	if ! id "$RK_OWNER_UID" &>/dev/null; then
+		echo "ERROR: Unknown source owner($RK_OWNER_UID)"
+		echo "Please create it:"
+		echo "sudo useradd rk_compiler -u $RK_OWNER_UID"
+		exit 1
+	fi
 
 	# Prepare log dirs
 	if [ ! -d "$RK_LOG_DIR" ]; then

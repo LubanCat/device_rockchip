@@ -15,12 +15,11 @@ build_wifibt()
 
 	RKWIFIBT_DIR="$SDK_DIR/external/rkwifibt"
 
-	OWNER=$(stat --format %U "$RKWIFIBT_DIR")
-	if [ "$OWNER" != "root" ]; then
+	if [ "$RK_OWNER" != "root" ]; then
 		if [ "${USER:-$(id -un)}" = "root" ]; then
 			# Fixing up rkwifibt permissions
 			find "$RKWIFIBT_DIR" -user root \
-				-exec chown -h -R $OWNER:$OWNER {} \;
+				-exec chown -h -R $RK_OWNER:$RK_OWNER {} \;
 		else
 			# Check for dirty files owned by root
 			echo -e "\e[36m"

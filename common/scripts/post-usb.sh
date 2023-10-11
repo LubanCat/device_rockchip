@@ -36,17 +36,9 @@ install_adbd()
 			"$TARGET_DIR/usr/bin/adbd-auth"
 	fi
 
-	if [ -n "$RK_USB_ADBD_KEYS" ]; then
-		sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
+	[ "$RK_USB_ADBD_KEYS" ] || return 0
 
-		SCRIPT_OWNER="$(stat --format %U "$0")"
-		[ "$SCRIPT_OWNER" != "root" ] || return 0
-		[ "${USER:-$(id -un)}" = "root" ] || return 0
-
-		# Sudo to source owner (for Debian's post stage)
-		sudo -u $SCRIPT_OWNER \
-			sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
-	fi
+	sudo -u "$RK_OWNER" sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
 }
 
 install_ums()
