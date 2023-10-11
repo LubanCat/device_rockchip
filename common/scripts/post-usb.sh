@@ -24,6 +24,10 @@ install_adbd()
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 	fi
 
+	echo -e "#!/bin/sh\ntail -f \${@:--n 99999999} /var/log/messages" > \
+		"$TARGET_DIR/usr/bin/logcat"
+	chmod 755 "$TARGET_DIR/usr/bin/logcat"
+
 	[ -n "$RK_USB_ADBD_SECURE" ] || return 0
 
 	echo "export ADB_SECURE=1" >> "$TARGET_DIR/etc/profile.d/adbd.sh"
