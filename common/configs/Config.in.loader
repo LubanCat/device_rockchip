@@ -57,8 +57,7 @@ config RK_UBOOT_ARCH
 
 choice
 	prompt "u-boot arch"
-	default RK_UBOOT_ARM32 if RK_KERNEL_ARM32
-	default RK_UBOOT_ARM32 if RK_RTOS_ARM32
+	default RK_UBOOT_ARM32 if RK_KERNEL_ARM32 || RK_RTOS_ARM32
 
 config RK_UBOOT_ARM64
 	bool "arm64"

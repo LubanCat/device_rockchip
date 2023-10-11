@@ -1,5 +1,10 @@
 #
 
+comment "RTOS depends on loader"
+	depends on !RK_LOADER
+
+if RK_LOADER
+
 menu "RTOS"
 
 config RK_RTOS
@@ -42,3 +47,5 @@ config RK_RTOS_FIT_ITS
 endif
 
 endmenu # RTOS
+
+endif

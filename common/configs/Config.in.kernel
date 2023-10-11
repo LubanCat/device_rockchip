@@ -1,5 +1,10 @@
 #
 
+comment "Linux kernel depends on loader"
+	depends on !RK_LOADER
+
+if RK_LOADER
+
 menu "Kernel"
 
 config RK_KERNEL
@@ -96,3 +101,5 @@ endchoice
 endif
 
 endmenu # Kernel
+
+endif
