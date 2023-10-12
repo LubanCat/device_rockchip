@@ -32,8 +32,8 @@ install_overlay()
 	fi
 }
 
-# No overlays for rootfs without RK_ROOTFS_OVERLAY_DIRS
-[ "$POST_ROOTFS" -a "$RK_ROOTFS_OVERLAY_DIRS" ] || exit 0
+# No overlays for rootfs without RK_ROOTFS_OVERLAY
+[ "$POST_ROOTFS" -a "$RK_ROOTFS_OVERLAY" ] || exit 0
 
 install_overlay common
 

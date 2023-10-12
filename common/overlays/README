@@ -9,7 +9,7 @@ Overlay dirs
 
 4. Set RK_ROOTFS_EXTRA_OVERLAY_DIRS for custom overlay dirs.
 
-5. Unset RK_ROOTFS_OVERLAY_DIRS to disable overlays.
+5. Unset RK_ROOTFS_OVERLAY to disable overlays.
 
 If there's an install.sh under the overlay dir, it would be executed instead of
 the default rsync installing.

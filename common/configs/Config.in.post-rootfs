@@ -235,11 +235,11 @@ config RK_WIFIBT_CHIP
 	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
 	  Set "" for no WIFI/BT.
 
-config RK_ROOTFS_OVERLAY_DIRS
-	bool "rootfs overlay dirs"
+config RK_ROOTFS_OVERLAY
+	bool "rootfs overlay"
 	default y
 
-if RK_ROOTFS_OVERLAY_DIRS
+if RK_ROOTFS_OVERLAY
 
 choice
 	prompt "extra fonts"
