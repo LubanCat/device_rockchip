@@ -12,7 +12,7 @@ echo "Installing prebuilt tools: $OVERLAY_DIR to $TARGET_DIR..."
 DEST_DIR="$TARGET_DIR/usr/bin/"
 mkdir -p "$DEST_DIR"
 
-if ls "$TARGET_DIR/lib/" | grep -wq "ld-linux-armhf.so"; then
+if [ "$RK_CHIP_ARM32" ]; then
 	TARGET_ARCH=armhf
 else
 	TARGET_ARCH=aarch64
