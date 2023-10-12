@@ -2,6 +2,12 @@
 
 menu "Post rootfs installs"
 
+config RK_ROOTFS_STRIP_MODULES
+	bool "strip kernel modules"
+	default y
+	help
+	  Strip any '.ko' kernel modules.
+
 choice
 	prompt "hostname"
 
