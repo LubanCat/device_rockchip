@@ -135,7 +135,9 @@ build_debian()
 usage_hook()
 {
 	echo -e "buildroot-config[:<config>]       \tmodify buildroot defconfig"
-	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make (alias bmake)"
+	echo -e "bconfig[:<config>]                \talias of buildroot-config"
+	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make"
+	echo -e "bmake[:<arg1>:<arg2>]             \talias of buildroot-make"
 	echo -e "rootfs[:<rootfs type>]            \tbuild default rootfs"
 	echo -e "buildroot                         \tbuild buildroot rootfs"
 	echo -e "yocto                             \tbuild yocto rootfs"
@@ -190,7 +192,7 @@ init_hook()
 	fi
 }
 
-PRE_BUILD_CMDS="buildroot-config buildroot-make bmake"
+PRE_BUILD_CMDS="buildroot-config bconfig buildroot-make bmake"
 pre_build_hook()
 {
 	check_config RK_ROOTFS || return 0
@@ -203,7 +205,7 @@ pre_build_hook()
 			"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG make $@
 			finish_build buildroot-make $@
 			;;
-		buildroot-config)
+		buildroot-config | bconfig)
 			BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
 
 			[ "$BUILDROOT_BOARD" ] || return 0
@@ -269,7 +271,7 @@ build_hook()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-rootfs}" in
-	buildroot-config | buildroot-make | bmake) pre_build_hook $@ ;;
+	buildroot-config | bconfig | buildroot-make | bmake) pre_build_hook $@ ;;
 	buildroot | debian | yocto) init_hook $@ ;&
 	*) build_hook $@ ;;
 esac

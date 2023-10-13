@@ -50,7 +50,7 @@ do_build()
 	fi
 
 	case "$1" in
-		kernel-config)
+		kernel-config | kconfig)
 			KERNEL_CONFIG_DIR="kernel/arch/$RK_KERNEL_ARCH/configs"
 			run_command $KMAKE menuconfig
 			run_command $KMAKE savedefconfig
@@ -94,7 +94,9 @@ usage_hook()
 	echo -e "modules[:cmds]                   \tbuild kernel modules"
 	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
 	echo -e "kernel-config[:cmds]             \tmodify kernel defconfig"
-	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make (alias kmake)"
+	echo -e "kconfig[:cmds]                   \talias of kernel-config"
+	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make"
+	echo -e "kmake[:<arg1>:<arg2>]            \talias of kernel-make"
 }
 
 clean_hook()
@@ -123,7 +125,7 @@ init_hook()
 	update_kernel
 }
 
-PRE_BUILD_CMDS="kernel-config kernel-make kmake"
+PRE_BUILD_CMDS="kernel-config kconfig kernel-make kmake"
 pre_build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
@@ -152,7 +154,7 @@ pre_build_hook()
 			fi
 			run_command $KMAKE $@
 			;;
-		kernel-config)
+		kernel-config | kconfig)
 			do_build $@
 			;;
 	esac
@@ -272,7 +274,7 @@ post_build_hook_dry()
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-config | kernel-make | kmake) pre_build_hook $@ ;;
+	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;
 	kernel* | modules)
 		init_hook $@
 		build_hook ${@:-kernel}
