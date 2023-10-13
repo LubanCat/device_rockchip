@@ -44,8 +44,11 @@ if [ "$2" = make ]; then
 		*) TARGET="$1" ;;
 	esac
 
-	shift
-	echo "Buildroot make: $TARGET $@"
+	if [ "$1" ]; then
+		shift
+		echo "Buildroot make: $TARGET $@"
+	fi
+
 	make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" $TARGET $@
 	exit
 fi
