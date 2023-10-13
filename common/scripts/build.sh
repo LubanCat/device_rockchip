@@ -271,10 +271,9 @@ main()
 	# Save intial envionments
 	unset INITIAL_SESSION
 	INITIAL_ENV=$(mktemp -u)
-	if [ -z "$RK_SESSION" ]; then
-		INITIAL_SESSION=1
-		env > "$INITIAL_ENV"
-	fi
+	env > "$INITIAL_ENV"
+
+	[ "$RK_SESSION" ] || INITIAL_SESSION=1
 
 	export LC_ALL=C
 
@@ -298,15 +297,11 @@ main()
 
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
-	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
-
 	export RK_OUTDIR="$SDK_DIR/output"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
-	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
+	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
 	export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
-	export RK_INITIAL_ENV="$RK_LOG_DIR/initial.env"
-	export RK_CUSTOM_ENV="$RK_LOG_DIR/custom.env"
-	export RK_FINAL_ENV="$RK_LOG_DIR/final.env"
+	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
 	export RK_ROCKDEV_DIR="$SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
@@ -345,6 +340,18 @@ main()
 		fi
 		echo
 	fi
+
+	# Check for session validation
+	if [ -z "$INITIAL_SESSION" ] && [ ! -d "$RK_LOG_DIR" ]; then
+		echo -e "\e[35mSession($RK_SESSION) is invalid!\e\n[0m"
+
+		export RK_SESSION="$(date +%F_%H-%M-%S)"
+		export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
+		INITIAL_SESSION=1
+	fi
+	export RK_INITIAL_ENV="$RK_LOG_DIR/initial.env"
+	export RK_CUSTOM_ENV="$RK_LOG_DIR/custom.env"
+	export RK_FINAL_ENV="$RK_LOG_DIR/final.env"
 
 	# Prepare firmware dirs
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
@@ -438,9 +445,10 @@ main()
 	# Save initial envionments
 	if [ "$INITIAL_SESSION" ]; then
 		rm -f "$RK_INITIAL_ENV"
-		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
+		cp "$INITIAL_ENV" "$RK_INITIAL_ENV"
 		ln -rsf "$RK_INITIAL_ENV" "$RK_OUTDIR/"
 	fi
+	rm -f "$INITIAL_ENV"
 
 	# Init stage (preparing SDK configs, etc.)
 	run_build_hooks init $OPTIONS
