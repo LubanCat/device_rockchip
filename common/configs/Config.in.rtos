@@ -17,6 +17,7 @@ config RK_RTOS_ARCH
 	string
 	default "arm" if RK_RTOS_ARM32
 	default "arm64" if RK_RTOS_ARM64
+
 choice
 	prompt "RTOS arch"
 	default RK_RTOS_ARM32
