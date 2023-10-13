@@ -210,9 +210,8 @@ pre_build_hook()
 
 			TEMP_DIR=$(mktemp -d)
 			unset BUILDROOT_OUTPUT_DIR
-			"$SDK_DIR/buildroot/build/parse_defconfig.sh" \
-				"$BUILDROOT_BOARD" "$TEMP_DIR/.config"
-			make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" menuconfig
+			make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" \
+				"${BUILDROOT_BOARD}_defconfig" menuconfig
 			"$SDK_DIR/buildroot/build/update_defconfig.sh" \
 				"$BUILDROOT_BOARD" "$TEMP_DIR"
 			rm -rf "$TEMP_DIR"
