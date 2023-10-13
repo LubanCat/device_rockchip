@@ -8,4 +8,4 @@ echo "Strip kernel modules..."
 
 source "$SCRIPTS_DIR/kernel-helper"
 
-find "$TARGET_DIR" -name "*.ko" -print0 | xargs -0 ${RK_KERNEL_TOOLCHAIN}strip
+find "$TARGET_DIR" -name "*.ko" -exec ${RK_KERNEL_TOOLCHAIN}strip -v {} \;
