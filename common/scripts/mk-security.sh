@@ -61,7 +61,7 @@ security_check()
 
 	if [ ! -d u-boot/keys ]; then
 		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
-		echo "       Create it by ./build.sh createkeys or move your key to it"
+		echo "       Create it by ./build.sh security_keys or move your key to it"
 		return 1
 	fi
 
@@ -75,7 +75,7 @@ security_check()
 
 		if [ ! -f u-boot/keys/system_enc_key ]; then
 			echo "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
-			echo "       Create it by ./build.sh createkeys or move your key to it"
+			echo "       Create it by ./build.sh security_keys or move your key to it"
 			return 1
 		fi
 
@@ -173,7 +173,8 @@ build_security_ramboot()
 usage_hook()
 {
 	echo -e "security_check                    \tcheck contidions for security boot"
-	echo -e "createkeys                        \tbuild security boot keys"
+	echo -e "security_keys                     \tbuild security boot keys"
+	echo -e "createkeys                        \talias of security_keys"
 	echo -e "security_ramboot                  \tbuild security ramboot"
 	echo -e "security_uboot                    \tbuild uboot with security"
 	echo -e "security_boot                     \tbuild boot with security"
@@ -181,15 +182,15 @@ usage_hook()
 	echo -e "security_rootfs                   \tbuild rootfs with security"
 }
 
-BUILD_CMDS="security_check createkeys security_ramboot security_uboot \
-	security_boot security_recovery security_rootfs"
+BUILD_CMDS="security_check createkeys security_keys security_ramboot \
+	security_uboot security_boot security_recovery security_rootfs"
 build_hook()
 {
 	check_config RK_SECURITY || return 0
 
 	case "${1:-security_ramboot}" in
 		security_check) security_check ;;
-		createkeys) build_security_keys ;;
+		security_keys | createkeys) build_security_keys ;;
 		security_ramboot) build_security_ramboot ;;
 		security_uboot) "$SCRIPTS_DIR"/mk-loader.sh uboot ;;
 		security_boot)
