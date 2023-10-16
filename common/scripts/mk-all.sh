@@ -30,73 +30,73 @@ build_all()
 	finish_build
 }
 
-build_save()
+build_release()
 {
 	echo "=========================================="
-	echo "          Start saving images and build info"
+	echo "          Start releasing images and build info"
 	echo "=========================================="
 
 	shift
-	SAVE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
+	RELEASE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
 	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
-		ID=buildroot) SAVE_DIR="$SAVE_BASE_DIR/BUILDROOT" ;;
-		ID=debian) SAVE_DIR="$SAVE_BASE_DIR/DEBIAN" ;;
-		ID=poky) SAVE_DIR="$SAVE_BASE_DIR/YOCTO" ;;
-		*) SAVE_DIR="$SAVE_BASE_DIR" ;;
+		ID=buildroot) RELEASE_DIR="$RELEASE_BASE_DIR/BUILDROOT" ;;
+		ID=debian) RELEASE_DIR="$RELEASE_BASE_DIR/DEBIAN" ;;
+		ID=poky) RELEASE_DIR="$RELEASE_BASE_DIR/YOCTO" ;;
+		*) RELEASE_DIR="$RELEASE_BASE_DIR" ;;
 	esac
-	[ "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
-	mkdir -p "$SAVE_DIR"
-	rm -rf "$SAVE_BASE_DIR/latest"
-	ln -rsf "$SAVE_DIR" "$SAVE_BASE_DIR/latest"
+	[ "$1" ] || RELEASE_DIR="$RELEASE_DIR/$(date  +%Y%m%d_%H%M%S)"
+	mkdir -p "$RELEASE_DIR"
+	rm -rf "$RELEASE_BASE_DIR/latest"
+	ln -rsf "$RELEASE_DIR" "$RELEASE_BASE_DIR/latest"
 
-	echo "Saving into $SAVE_DIR..."
+	echo "Saving into $RELEASE_DIR..."
 
 	if [ "$RK_KERNEL" ]; then
-		mkdir -p "$SAVE_DIR/kernel"
+		mkdir -p "$RELEASE_DIR/kernel"
 
 		echo "Saving linux-headers..."
 		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers \
-			"$SAVE_DIR/kernel"
+			"$RELEASE_DIR/kernel"
 
 		echo "Saving kernel files..."
 		cp kernel/.config kernel/System.map kernel/vmlinux \
-			$RK_KERNEL_DTB "$SAVE_DIR/kernel"
+			$RK_KERNEL_DTB "$RELEASE_DIR/kernel"
 	fi
 
 	echo "Saving images..."
-	mkdir -p "$SAVE_DIR/IMAGES"
-	cp "$RK_FIRMWARE_DIR"/* "$SAVE_DIR/IMAGES/"
+	mkdir -p "$RELEASE_DIR/IMAGES"
+	cp "$RK_FIRMWARE_DIR"/* "$RELEASE_DIR/IMAGES/"
 
 	echo "Saving build info..."
 	if yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
-		-o "$SAVE_DIR/manifest.xml"; then
+		-o "$RELEASE_DIR/manifest.xml"; then
 		# Only do this when repositories are available
 		echo "Saving patches..."
-		PATCHES_DIR="$SAVE_DIR/PATCHES"
+		PATCHES_DIR="$RELEASE_DIR/PATCHES"
 		mkdir -p "$PATCHES_DIR"
 		.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
-			"\"$SCRIPTS_DIR/save-patches.sh\" \
+			"\"$SCRIPTS_DIR/release-patches.sh\" \
 			\"$PATCHES_DIR/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
 		install -D -m 0755 "$RK_DATA_DIR/apply-all.sh" "$PATCHES_DIR"
 	fi
 
-	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"
-	ln -sf .config "$SAVE_DIR/build_info"
+	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$RELEASE_DIR/"
+	ln -sf .config "$RELEASE_DIR/build_info"
 
 	echo "Saving build logs..."
-	cp -rp "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
+	cp -rp "$RK_LOG_BASE_DIR" "$RELEASE_DIR/"
 
 	finish_build
 }
 
-build_allsave()
+build_all_release()
 {
 	echo "=========================================="
-	echo "          Start building allsave"
+	echo "          Start building and releasing images"
 	echo "=========================================="
 
 	build_all
-	build_save $@
+	build_release $@
 
 	finish_build
 }
@@ -105,9 +105,11 @@ build_allsave()
 
 usage_hook()
 {
-	echo -e "all                               \tbuild all images"
-	echo -e "save                              \tsave images and build info"
-	echo -e "allsave                           \tbuild all images and save them"
+	echo -e "all                               \tbuild images"
+	echo -e "release                           \trelease images and build info"
+	echo -e "save                              \talias of release"
+	echo -e "all-release                       \tbuild and release images"
+	echo -e "allsave                           \talias of all-release"
 }
 
 clean_hook()
@@ -115,26 +117,26 @@ clean_hook()
 	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/$BOARD*
 }
 
-BUILD_CMDS="all allsave"
+BUILD_CMDS="all all-release allsave"
 build_hook()
 {
 	case "$1" in
 		all) build_all ;;
-		allsave) build_allsave $@ ;;
+		all-release | allsave) build_all_release $@ ;;
 	esac
 }
 
-POST_BUILD_CMDS="save"
+POST_BUILD_CMDS="release save"
 post_build_hook()
 {
-	build_save $@
+	build_release $@
 }
 
 source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
-case "${1:-allsave}" in
+case "${1:-all-release}" in
 	all) build_all ;;
-	allsave) build_allsave $@ ;;
-	save) build_save $@ ;;
+	all-release | allsave) build_all_release $@ ;;
+	release | save) build_release $@ ;;
 	*) usage ;;
 esac

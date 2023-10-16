@@ -27,7 +27,7 @@ usage()
 	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
 	echo -e "help                              \tusage"
 	echo ""
-	echo "Default option is 'allsave'."
+	echo "Default option is '$RK_DEFAULT_TARGET'."
 
 	rm -f "$INITIAL_ENV"
 	exit 0
@@ -284,6 +284,7 @@ main()
 	export CHIPS_DIR="$DEVICE_DIR/.chips"
 	export CHIP_DIR="$DEVICE_DIR/.chip"
 
+	export RK_DEFAULT_TARGET="all-release"
 	export RK_DATA_DIR="$COMMON_DIR/data"
 	export RK_TOOL_DIR="$COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
@@ -363,7 +364,7 @@ main()
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
 
-	OPTIONS=${@:-allsave}
+	OPTIONS="${@:-$RK_DEFAULT_TARGET}"
 
 	# Special handle for chip and defconfig
 	# e.g. ./build.sh rk3588:rockchip_defconfig
