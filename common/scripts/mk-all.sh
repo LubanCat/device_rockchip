@@ -26,7 +26,6 @@ build_all()
 	[ -z "$RK_LOADER" ] || "$SCRIPTS_DIR/mk-loader.sh"
 
 	"$SCRIPTS_DIR/mk-firmware.sh"
-	[ -z "$RK_UPDATE" ] || "$SCRIPTS_DIR/mk-updateimg.sh"
 
 	finish_build
 }

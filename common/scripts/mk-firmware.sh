@@ -163,6 +163,8 @@ build_firmware()
 		fi
 	done
 
+	[ -z "$RK_UPDATE" ] || "$SCRIPTS_DIR/mk-updateimg.sh"
+
 	message "Images in $FIRMWARE_DIR are ready!"
 
 	finish_build
