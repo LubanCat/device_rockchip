@@ -2,9 +2,10 @@
 
 source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-if [ "$RK_OWNER" != "root" ] && [ "${USER:-$(id -un)}" = "root" ]; then
+if [ "$RK_SUDO_ROOT" ]; then
 	echo "Fixing up owner for $RK_OUTDIR..."
-	find "$RK_OUTDIR" -user root -exec chown -ch $RK_OWNER:$RK_OWNER {} \;
+	find "$RK_OUTDIR" -user root -exec \
+		chown -ch $RK_OWNER_UID:$RK_OWNER_UID {} \;
 fi
 
 # buildroot would fixup owner in its fakeroot script
@@ -14,7 +15,7 @@ echo "Fixing up owner for $TARGET_DIR..."
 
 if [ "$RK_OWNER" != "root" ]; then
 	echo "Fixing up uid=$RK_OWNER($RK_OWNER_UID) to 0(root)..."
-	find . -user $RK_OWNER -exec chown -ch 0:0 {} \;
+	find . -user $RK_OWNER_UID -exec chown -ch 0:0 {} \;
 fi
 
 if [ -d home ]; then

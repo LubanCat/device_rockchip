@@ -15,26 +15,20 @@ build_wifibt()
 
 	RKWIFIBT_DIR="$SDK_DIR/external/rkwifibt"
 
-	if [ "$RK_OWNER" != "root" ]; then
-		if [ "${USER:-$(id -un)}" = "root" ]; then
-			# Fixing up rkwifibt permissions
-			find "$RKWIFIBT_DIR" -user root \
-				-exec chown -h -R $RK_OWNER:$RK_OWNER {} \;
-		else
-			# Check for dirty files owned by root
-			echo -e "\e[36m"
-			if find "$RKWIFIBT_DIR" -user 0 | grep ""; then
-				echo -e "\e[31m"
-				echo "$RKWIFIBT_DIR is dirty for non-root building!"
-				echo "Please clear it:"
-				echo "cd $RKWIFIBT_DIR"
-				echo "git add -f ."
-				echo "sudo git reset --hard"
-				echo -e "\e[0m"
-				exit 1
-			fi
+	if [ "$RK_SUDO_ROOT" ]; then
+		# Check for dirty files owned by root
+		echo -e "\e[36m"
+		if find "$RKWIFIBT_DIR" -user 0 | grep ""; then
+			echo -e "\e[31m"
+			echo "$RKWIFIBT_DIR is dirty for non-root building!"
+			echo "Please clear it:"
+			echo "cd $RKWIFIBT_DIR"
+			echo "git add -f ."
+			echo "sudo git reset --hard"
 			echo -e "\e[0m"
+			exit 1
 		fi
+		echo -e "\e[0m"
 	fi
 
 	# Make sure that the kernel is ready

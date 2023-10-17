@@ -310,6 +310,10 @@ main()
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 	export RK_OWNER="$(stat --format %U "$SDK_DIR")"
 	export RK_OWNER_UID="$(stat --format %u "$SDK_DIR")"
+	unset RK_SUDO_ROOT
+	if [ "$RK_OWNER" ] && [ "${USER:-$(id -un)}" = "root" ]; then
+		export RK_SUDO_ROOT=1
+	fi
 
 	# For Makefile
 	case "$@" in

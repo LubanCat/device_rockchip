@@ -42,7 +42,8 @@ install_adbd()
 
 	[ "$RK_USB_ADBD_KEYS" ] || return 0
 
-	sudo -u "$RK_OWNER" sh -c "cat $RK_USB_ADBD_KEYS" > "$TARGET_DIR/adb_keys"
+	sudo -u "#$RK_OWNER_UID" sh -c "cat $RK_USB_ADBD_KEYS" > \
+		"$TARGET_DIR/adb_keys"
 }
 
 install_ums()
