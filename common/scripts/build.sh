@@ -284,7 +284,7 @@ main()
 	export CHIPS_DIR="$DEVICE_DIR/.chips"
 	export CHIP_DIR="$DEVICE_DIR/.chip"
 
-	export RK_DEFAULT_TARGET="all-release"
+	export RK_DEFAULT_TARGET="all"
 	export RK_DATA_DIR="$COMMON_DIR/data"
 	export RK_TOOL_DIR="$COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
