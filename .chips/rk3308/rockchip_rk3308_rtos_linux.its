@@ -41,7 +41,7 @@
 			description = "Rockchip AMP images";
 			rollback-index = <0x0>;
 			loadables = "amp3";
-			primary = <0x3>;
+			primary = <0x0>;
 
 			signature {
 				algo = "sha256,rsa2048";
