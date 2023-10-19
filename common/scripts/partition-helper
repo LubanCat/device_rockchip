@@ -92,10 +92,30 @@ rk_partition_init()
 	rk_partition_parse > "$PART_TABLE"
 }
 
+rk_partition_id()
+{
+	grep -v "^$HDR_PART " "$PART_TABLE" | \
+		grep -n -E -m 1 "^$1(|_[a-z]) " | cut -d':' -f1 || true
+}
+
+rk_partition_start()
+{
+	OFFSET=0
+	while read NAME SIZE; do
+		if echo "$NAME" | grep -qE "^$1(|_[a-z])$"; then
+			echo $OFFSET | awk '{printf "0x%08x\n",$1}'
+			return 0
+		fi
+
+		# NOTE: Assuming partitions are contiguous
+		OFFSET=$(( $OFFSET + ${SIZE/-/0} ))
+	done < "$PART_TABLE"
+}
+
 rk_partition_size()
 {
-	grep -E "^$1(|_[a-z]) " "$PART_TABLE" | cut -d' ' -f2 | tr -d '\-' | \
-		sort | head -n 1 || true
+	grep -E -m 1 "^$1(|_[a-z]) " "$PART_TABLE" | cut -d' ' -f2 | \
+		tr -d '\-' || true
 }
 
 rk_partition_num()
