@@ -1,5 +1,6 @@
 RK_UBOOT_CFG="rk3308-aarch32-amp"
 RK_UBOOT_INI="RK3308MINIALL_UART4.ini"
+RK_UBOOT_ARM32=y
 RK_RTOS=y
 RK_RTOS_CFG="rockchip_rk3308_rtos_smp_32bit_cfg"
 RK_RTOS_FIT_ITS="rockchip_rk3308_rtos_smp.its"
