@@ -75,6 +75,16 @@ build_rtthread()
 	export RTT_SHMEM_SIZE=$(grep -wE -A3 "share_memory {" $ITS_FILE | grep size | cut -d'<' -f2 | cut -d'>' -f1)
 	echo "RTT_SHMEM_SIZE=$RTT_SHMEM_SIZE"
 
+	ROOT_PART_OFFSET=$(rk_partition_start rootfs)
+	if [ -n $ROOT_PART_OFFSET ];then
+		export ROOT_PART_OFFSET=$ROOT_PART_OFFSET
+	fi
+
+	ROOT_PART_SIZE=$(rk_partition_size rootfs)
+	if [ -n $ROOT_PART_OFFSET ];then
+		export ROOT_PART_SIZE=$ROOT_PART_SIZE
+	fi
+
 	export CUR_CPU=$1
 	echo "CUR_CPU=$CUR_CPU"
 	AMP_PRIMARY_CORE=$(printf "%d" $(grep -wE "configurations {|primary" $ITS_FILE | grep primary | cut -d'<' -f2 | cut -d'>' -f1))
@@ -88,6 +98,15 @@ build_rtthread()
 	if [ -f "$RK_RTTHREAD_DEFCONFIG" ] && [ -f "$RK_RTTHREAD_DEFCONFIG.h" ] ;then
 		cp $RK_RTTHREAD_DEFCONFIG .config
 		cp $RK_RTTHREAD_DEFCONFIG.h rtconfig.h
+	else
+		echo -e "\e[31mWarning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) or ($RK_RTTHREAD_DEFCONFIG.h) not exit!\n\e[0m"
+		echo -e "\e[31mhelp:\e[0m"
+		echo -e "\e[31m    cd $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET\e[0m"
+		echo -e "\e[31m    cp $RK_RTTHREAD_DEFCONFIG .config\e[0m"
+		echo -e "\e[31m    scons --menuconfig\e[0m"
+		echo -e "\e[31m    cp .config $RK_RTTHREAD_DEFCONFIG\e[0m"
+		echo -e "\e[31m    cp rtconfig.h $RK_RTTHREAD_DEFCONFIG.h\n\e[0m"
+		echo -e "\e[31mDefault .config and rtconfig.h are used!!!\n\e[0m"
 	fi
 
 	scons -c > /dev/null
@@ -103,6 +122,15 @@ build_rtthread()
 	fi
 
 	finish_build build_rtthread $@
+}
+
+clean_hook()
+{
+	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
+	scons -c > /dev/null
+
+	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
+    make clean > /dev/null
 }
 
 BUILD_CMDS="rtos"
