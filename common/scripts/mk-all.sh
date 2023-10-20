@@ -4,6 +4,10 @@ BOARD=$(echo ${RK_KERNEL_DTS_NAME:-$(echo "$RK_DEFCONFIG" | \
 	sed -n "s/.*\($RK_CHIP.*\)_defconfig/\1/p")} | \
 	tr '[:lower:]' '[:upper:]')
 
+message() {
+	echo -e "\e[36m$@\e[0m"
+}
+
 build_all()
 {
 	echo "=========================================="
@@ -27,6 +31,9 @@ build_all()
 
 	"$SCRIPTS_DIR/mk-firmware.sh"
 
+	[ -z "$RK_KERNEL" ] || \
+		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_ROCKDEV_DIR"
+
 	finish_build
 }
 
@@ -45,33 +52,34 @@ build_release()
 		*) RELEASE_DIR="$RELEASE_BASE_DIR" ;;
 	esac
 	[ "$1" ] || RELEASE_DIR="$RELEASE_DIR/$(date  +%Y%m%d_%H%M%S)"
+
+	rm -rf "$RELEASE_DIR"
 	mkdir -p "$RELEASE_DIR"
 	rm -rf "$RELEASE_BASE_DIR/latest"
 	ln -rsf "$RELEASE_DIR" "$RELEASE_BASE_DIR/latest"
 
-	echo "Saving into $RELEASE_DIR..."
+	message "Saving into $RELEASE_DIR...\n"
+
+	message "Saving images..."
+	cp -rvL "$RK_ROCKDEV_DIR" "$RELEASE_DIR/IMAGES"
 
 	if [ "$RK_KERNEL" ]; then
 		mkdir -p "$RELEASE_DIR/kernel"
 
-		echo "Saving linux-headers..."
-		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers \
-			"$RELEASE_DIR/kernel"
+		message "Saving linux-headers..."
+		ln -rvsf "$RELEASE_DIR/IMAGES/linux-headers.tar" \
+			"$RELEASE_DIR/kernel/"
 
-		echo "Saving kernel files..."
-		cp kernel/.config kernel/System.map kernel/vmlinux \
+		message "Saving kernel files..."
+		cp -v kernel/.config kernel/System.map kernel/vmlinux \
 			$RK_KERNEL_DTB "$RELEASE_DIR/kernel"
 	fi
 
-	echo "Saving images..."
-	mkdir -p "$RELEASE_DIR/IMAGES"
-	cp "$RK_FIRMWARE_DIR"/* "$RELEASE_DIR/IMAGES/"
-
-	echo "Saving build info..."
+	message "Saving build info..."
 	if yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
 		-o "$RELEASE_DIR/manifest.xml"; then
 		# Only do this when repositories are available
-		echo "Saving patches..."
+		message "Saving patches..."
 		PATCHES_DIR="$RELEASE_DIR/PATCHES"
 		mkdir -p "$PATCHES_DIR"
 		.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
@@ -80,11 +88,12 @@ build_release()
 		install -D -m 0755 "$RK_DATA_DIR/apply-all.sh" "$PATCHES_DIR"
 	fi
 
-	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$RELEASE_DIR/"
-	ln -sf .config "$RELEASE_DIR/build_info"
+	message "Saving configs..."
+	cp -v "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$RELEASE_DIR/"
+	ln -vsf .config "$RELEASE_DIR/build_info"
 
-	echo "Saving build logs..."
-	cp -rp "$RK_LOG_BASE_DIR" "$RELEASE_DIR/"
+	message "Saving build logs..."
+	cp -rvp "$RK_LOG_BASE_DIR" "$RELEASE_DIR/"
 
 	finish_build
 }

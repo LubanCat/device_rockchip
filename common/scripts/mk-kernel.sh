@@ -217,7 +217,7 @@ post_build_hook()
 	shift
 
 	[ "$1" != cmds ] || shift
-	OUTPUT_FILE="${2:-"$RK_OUTDIR"}/linux-headers.tar"
+	OUTPUT_FILE="${1:-"$RK_OUTDIR"}/linux-headers.tar"
 	mkdir -p "$(dirname "OUTPUT_DIR")"
 
 	HEADER_FILES_SCRIPT=$(mktemp)
