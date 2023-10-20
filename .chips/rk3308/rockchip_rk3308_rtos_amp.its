@@ -56,7 +56,7 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";
-			sys          = "rtt";
+			sys          = "hal";
 			cpu          = <0x2>;
 			thumb        = <0>;
 			hyp          = <0>;
