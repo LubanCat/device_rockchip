@@ -534,7 +534,7 @@ main()
 			exit 0 ;;
 		post-rootfs)
 			shift
-			run_post_hooks $@
+			run_post_hooks "$1"
 			finish_build post-rootfs
 			exit 0 ;;
 	esac

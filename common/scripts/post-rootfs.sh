@@ -8,4 +8,4 @@ SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 
 # Trigger build.sh's post-rootfs hooks
-RK_SESSION=latest "$SCRIPTS_DIR/build.sh" post-rootfs $@
+RK_SESSION=latest "$SCRIPTS_DIR/build.sh" post-rootfs "$1"
