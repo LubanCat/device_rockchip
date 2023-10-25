@@ -1,0 +1,139 @@
+#
+
+choice
+	prompt "USB gadget"
+
+config RK_USB_DEFAULT
+	bool "auto"
+	help
+	  Install USB gadget on non-buildroot OS.
+
+config RK_USB_ENABLED
+	bool "install"
+
+config RK_USB_DISABLED
+	bool "not install"
+
+endchoice # USB gadget
+
+if !RK_USB_DISABLED
+
+menu "USB gadget"
+
+config RK_USB_ADBD
+	bool "adbd"
+	default y
+	help
+	  Android adbd.
+
+if RK_USB_ADBD
+
+config RK_USB_ADBD_TCP_PORT
+	int "adbd tcp port"
+	default 5555
+
+config RK_USB_ADBD_BASH
+	bool "adbd prefer using bash"
+	default y
+
+config RK_USB_ADBD_SECURE
+	bool "adbd secure"
+
+if RK_USB_ADBD_SECURE
+
+config RK_USB_ADBD_PASSWORD
+	string "adbd password"
+
+config RK_USB_ADBD_KEYS
+	string "Android public keys"
+	default "~/.android/adbkey.pub" if RK_USB_ADBD_PASSWORD = ""
+
+endif
+
+endif
+
+config RK_USB_MTP
+	bool "mtp"
+	help
+	  Media Transfer Protocal (MTP).
+
+config RK_USB_ACM
+	bool "acm"
+
+config RK_USB_NTB
+	bool "ntb"
+	help
+	  Rockchip NTB.
+
+config RK_USB_UVC
+	bool "uvc"
+
+config RK_USB_UAC1
+	bool "uac1"
+
+config RK_USB_UAC2
+	bool "uac2"
+
+config RK_USB_HID
+	bool "hid"
+
+config RK_USB_RNDIS
+	bool "rndis"
+
+config RK_USB_UMS
+	bool "ums"
+	help
+	  USB mass storage (UMS).
+
+if RK_USB_UMS
+
+config RK_USB_UMS_FILE
+	string "ums file"
+	default "/userdata/ums_shared.img"
+	help
+	  Block device or image file to share through UMS.
+
+config RK_USB_UMS_SIZE
+	string "ums size"
+	default "256M"
+	help
+	  UMS's size.
+
+config RK_USB_UMS_FSTYPE
+	string "ums fstype"
+	default "vfat"
+	help
+	  UMS's filesystem type.
+
+config RK_USB_UMS_MOUNT
+	bool "ums mount"
+	default n
+	help
+	  Mount when USB disconnected, umount when connected.
+
+	  Warning:
+	  Umounting UMS may failed if it is still in use.
+
+config RK_USB_UMS_MOUNTPOINT
+	string "ums mountpoint"
+	default "/mnt/ums"
+	help
+	  UMS's mountpoint.
+
+config RK_USB_UMS_RO
+	bool "ums ro"
+	default n
+	help
+	  UMS is read-only.
+
+endif
+
+config RK_USB_EXTRA
+	string "extra USB gadget configs"
+
+config RK_USB_HOOKS
+	string "hook scripts"
+
+endmenu # USB gadget
+
+endif
