@@ -137,6 +137,17 @@ config RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED
 
 endchoice # input-event-daemon
 
+config RK_ROOTFS_BOOTANIM
+	bool "bootanim (Boot-time animation)"
+
+if RK_ROOTFS_BOOTANIM
+
+config RK_ROOTFS_BOOTANIM_TIMEOUT
+	int "timeout"
+	default 3
+
+endif
+
 config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance"
 	default y
