@@ -65,7 +65,7 @@ pack_dme()
 	echo "key=$key" >> "$TEMPDIR/enc.info"
 }
 
-make_misc() {
+gen_misc() {
 	INPUT=$1
 	OUTPUT=$2
 	SIZE=$3
@@ -112,7 +112,8 @@ elif [ "$MODE" = "DM-E" ]; then
 	sed -i "s/CIPHER=/CIPHER=$cipher/" "$INIT_FILE"
 
 	echo "Generate misc with key"
-	make_misc "$RK_IMAGE_DIR/misc/$RK_MISC_IMG" \
+	"$SCRIPTS_DIR/mk-misc.sh"
+	gen_misc "$RK_FIRMWARE_DIR/misc.img" \
 		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
 		$(cat "$SDK_DIR/u-boot/keys/system_enc_key")
 fi

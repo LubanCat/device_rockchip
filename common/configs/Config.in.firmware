@@ -13,7 +13,7 @@ if RK_KERNEL
 
 config RK_MISC
 	bool "pack misc image (for recovery, A/B, etc.)"
-	default y if RK_RECOVERY
+	default y if RK_RECOVERY || RK_SECURITY_CHECK_DM_E
 
 if RK_MISC
 
