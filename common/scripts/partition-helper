@@ -149,6 +149,12 @@ rk_partition_size()
 		tr -d '\-' || true
 }
 
+# Get partition size limit, 0 means unlimited or not exists.
+rk_partition_size_kb() {
+	PART_SIZE="$(rk_partition_size "$1")"
+	echo $(( ${PART_SIZE:-0} / 2))
+}
+
 rk_partition_num()
 {
 	echo $(( $(cat "$PART_TABLE" | wc -l) - 1 ))

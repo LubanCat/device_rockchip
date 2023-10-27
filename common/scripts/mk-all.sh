@@ -19,6 +19,7 @@ build_all()
 
 	[ -z "$RK_SECURITY" ] || "$SCRIPTS_DIR/mk-security.sh" security_check
 
+	[ -z "$RK_MISC" ] || "$SCRIPTS_DIR/mk-misc.sh"
 	[ -z "$RK_KERNEL" ] || "$SCRIPTS_DIR/mk-kernel.sh"
 	[ -z "$RK_ROOTFS"] || "$SCRIPTS_DIR/mk-rootfs.sh"
 	[ -z "$RK_RECOVERY" ] || "$SCRIPTS_DIR/mk-recovery.sh"
