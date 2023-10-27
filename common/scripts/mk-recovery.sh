@@ -10,6 +10,9 @@ clean_hook()
 	check_config RK_RECOVERY || return 0
 	rm -rf buildroot/output/$RK_RECOVERY_CFG
 	rm -rf "$RK_OUTDIR/recovery"
+
+	rm -rf "$RK_FIRMWARE_DIR/recovery.img"
+	rm -rf "$RK_ROCKDEV_DIR/recovery.img"
 }
 
 BUILD_CMDS="recovery"

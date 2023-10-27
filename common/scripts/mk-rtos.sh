@@ -130,7 +130,10 @@ clean_hook()
 	scons -c > /dev/null
 
 	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
-    make clean > /dev/null
+	make clean > /dev/null
+
+	rm -rf "$RK_FIRMWARE_DIR/amp.img"
+	rm -rf "$RK_ROCKDEV_DIR/amp.img"
 }
 
 BUILD_CMDS="rtos"

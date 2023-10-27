@@ -467,15 +467,15 @@ rk_extra_part_nopack()
 	rk_extra_part_arg ${1:-1} 8 | grep -wq nopack
 }
 
+rk_extra_part_outdir()
+{
+	echo "$RK_EXTRA_PART_OUTDIR/$(rk_extra_part_name $1)"
+}
+
 # Symlink to the mountpoint in rootfs dir
 rk_extra_part_mount_dir()
 {
-	echo "$RK_OUTDIR/$(rk_extra_part_name $1)-mount"
-}
-
-rk_extra_part_outdir()
-{
-	echo "$RK_OUTDIR/$(rk_extra_part_name $1)"
+	echo "$(rk_extra_part_outdir $1)-mount"
 }
 
 rk_extra_part_fakeroot_script()

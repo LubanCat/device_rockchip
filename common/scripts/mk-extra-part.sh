@@ -7,6 +7,17 @@ usage_hook()
 	echo -e "extra-part                        \tpack extra partition images"
 }
 
+clean_hook()
+{
+	rm -rf "$RK_EXTRA_PART_OUTDIR"
+
+	for idx in $(seq 1 "$(rk_extra_part_num)"); do
+		IMAGE="$(basename "$(rk_extra_part_img $idx)")"
+		rm -rf "$RK_FIRMWARE_DIR/$IMAGE"
+		rm -rf "$RK_ROCKDEV_DIR/$IMAGE"
+	done
+}
+
 POST_BUILD_CMDS="extra-part"
 post_build_hook()
 {

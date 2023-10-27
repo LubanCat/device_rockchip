@@ -102,7 +102,12 @@ usage_hook()
 clean_hook()
 {
 	[ ! -d kernel ] || make -C kernel distclean
-	rm -f "$RK_OUTDIR/linux-headers.tar"
+
+	rm -f "$RK_FIRMWARE_DIR/linux-headers.tar"
+	rm -f "$RK_ROCKDEV_DIR/linux-headers.tar"
+
+	rm -rf "$RK_FIRMWARE_DIR/boot.img"
+	rm -rf "$RK_ROCKDEV_DIR/boot.img"
 }
 
 INIT_CMDS="default $KERNELS"

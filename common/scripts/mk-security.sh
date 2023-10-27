@@ -182,6 +182,11 @@ usage_hook()
 	echo -e "security_rootfs                   \tbuild rootfs with security"
 }
 
+clean_hook()
+{
+	rm -rf "$RK_SECURITY_FIRMWARE_DIR"
+}
+
 BUILD_CMDS="security_check createkeys security_keys security_ramboot \
 	security_uboot security_boot security_recovery security_rootfs"
 build_hook()

@@ -7,6 +7,12 @@ usage_hook()
 	echo -e "misc                              \tpack misc image"
 }
 
+clean_hook()
+{
+	rm -rf "$RK_FIRMWARE_DIR/misc.img"
+	rm -rf "$RK_ROCKDEV_DIR/misc.img"
+}
+
 BUILD_CMDS="misc"
 build_hook()
 {

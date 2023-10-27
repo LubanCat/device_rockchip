@@ -10,6 +10,9 @@ clean_hook()
 	check_config RK_PCBA || return 0
 	rm -rf buildroot/output/$RK_PCBA_CFG
 	rm -rf "$RK_OUTDIR/pcba"
+
+	rm -rf "$RK_FIRMWARE_DIR/pcba.img"
+	rm -rf "$RK_ROCKDEV_DIR/pcba.img"
 }
 
 BUILD_CMDS="pcba"

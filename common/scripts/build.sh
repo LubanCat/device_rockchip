@@ -299,6 +299,7 @@ main()
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$SDK_DIR/output"
+	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-part"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
 	export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
