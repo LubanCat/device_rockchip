@@ -65,7 +65,7 @@ rk_partition_size_readable_to_sector()
 # Parse parameter to "<name> <size>" pairs
 rk_partition_parse()
 {
-	PARAMETER="${1:-$CHIP_DIR/$RK_PARAMETER}"
+	PARAMETER="${1:-$RK_CHIP_DIR/$RK_PARAMETER}"
 
 	if [ ! -r "$PARAMETER" ]; then
 		echo -e "\e[36m$PARAMETER not exists!\e[0m" >&2
@@ -217,7 +217,7 @@ rk_partition_to_cmdline()
 # Save partition table to parameter
 rk_partition_save()
 {
-	PARAMETER="${1:-$CHIP_DIR/$RK_PARAMETER}"
+	PARAMETER="${1:-$RK_CHIP_DIR/$RK_PARAMETER}"
 	[ -r "$PARAMETER" ] || return 1
 
 	PARTS=$(rk_partition_to_cmdline)

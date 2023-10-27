@@ -27,7 +27,7 @@ if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
 		--exclude="$(basename "$(realpath "$0")")"
 
 	echo "Installing Rockchip test scripts to $TARGET_DIR..."
-	$RK_RSYNC "$SDK_DIR/external/rockchip-test/" \
+	$RK_RSYNC "$RK_SDK_DIR/external/rockchip-test/" \
 		"$TARGET_DIR/rockchip-test/" \
 		--include="camera/" --include="video/" --exclude="/*"
 fi

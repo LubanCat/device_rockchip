@@ -33,11 +33,11 @@ build_firmware()
 	rm -rf "$RK_ROCKDEV_DIR"
 	ln -rsf "$FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 
-	"$SCRIPTS_DIR/check-grow-align.sh"
+	"$RK_SCRIPTS_DIR/check-grow-align.sh"
 
-	link_image "$CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
+	link_image "$RK_CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
 
-	"$SCRIPTS_DIR/mk-extra-part.sh"
+	"$RK_SCRIPTS_DIR/mk-extra-part.sh"
 
 	if [ "$RK_SECURITY" ]; then
 		# Link non-security images
@@ -81,7 +81,7 @@ build_firmware()
 		fi
 	done
 
-	[ -z "$RK_UPDATE" ] || "$SCRIPTS_DIR/mk-updateimg.sh"
+	[ -z "$RK_UPDATE" ] || "$RK_SCRIPTS_DIR/mk-updateimg.sh"
 
 	message "Images under $RK_ROCKDEV_DIR/ are ready!"
 
@@ -110,6 +110,6 @@ post_build_hook()
 	build_firmware
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 post_build_hook $@

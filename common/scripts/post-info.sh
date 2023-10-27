@@ -2,7 +2,7 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 INFO_DIR="$TARGET_DIR/info"
 
@@ -11,7 +11,7 @@ echo "Adding info dir..."
 rm -rf "$INFO_DIR"
 mkdir -p "$INFO_DIR"
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
 	-o "$INFO_DIR/manifest.xml" &>/dev/null || true

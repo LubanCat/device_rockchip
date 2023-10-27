@@ -2,11 +2,11 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 [ -z "$RK_DISK_HELPERS_DISABLED" ] || exit 0
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/disk-helper "$TARGET_DIR/usr/bin/"

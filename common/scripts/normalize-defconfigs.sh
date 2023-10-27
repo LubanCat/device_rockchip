@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
-SDK_DIR="${SDK_DIR:-$SCRIPTS_DIR/../../../..}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SDK_DIR="${RK_SDK_DIR:-$RK_SCRIPTS_DIR/../../../..}"
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 for chip in ${@:-""}; do
 	for c in $(find "device/rockchip/.chips/$(basename "$chip")" \

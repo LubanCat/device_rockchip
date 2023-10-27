@@ -38,7 +38,7 @@ build_hook()
 			dd of="$MISC_IMG" bs=1 seek=$((16*1024+64)) conv=notrunc
 		echo -e "Generated recovery misc with: $RK_MISC_RECOVERY_ARG"
 	else
-		ln -rvsf "$CHIP_DIR/$RK_MISC_IMG" "$MISC_IMG"
+		ln -rvsf "$RK_CHIP_DIR/$RK_MISC_IMG" "$MISC_IMG"
 	fi
 
 	echo -e "\e[36m"
@@ -54,6 +54,6 @@ build_hook()
 	finish_build build_misc
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook

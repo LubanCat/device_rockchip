@@ -17,6 +17,6 @@ pre_build_hook()
 	echo -e "\e[35mExit from $BASH_SOURCE shell.\e[0m"
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 pre_build_hook

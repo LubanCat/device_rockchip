@@ -9,7 +9,7 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 echo "Installing bootanim to $TARGET_DIR..."
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/bootanim "$TARGET_DIR/usr/bin/"

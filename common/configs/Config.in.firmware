@@ -7,7 +7,7 @@ config RK_PARAMETER
 	default "parameter-ab.txt" if RK_AB_UPDATE
 	default "parameter.txt"
 	help
-	  Name of parameter file under <CHIP_DIR>/.
+	  Name of parameter file under <RK_CHIP_DIR>/.
 
 if RK_KERNEL
 
@@ -33,7 +33,7 @@ config RK_MISC_RECOVERY
 config RK_MISC_CUSTOM
 	bool "custom"
 	help
-	  Use custom misc image under <CHIP_DIR>/.
+	  Use custom misc image under <RK_CHIP_DIR>/.
 
 endchoice # misc image
 
@@ -53,7 +53,7 @@ config RK_MISC_IMG
 	string "custom misc image"
 	default "misc.img"
 	help
-	  Name of misc image under <CHIP_DIR>/.
+	  Name of misc image under <RK_CHIP_DIR>/.
 
 endif
 endif

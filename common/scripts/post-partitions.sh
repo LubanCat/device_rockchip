@@ -2,7 +2,7 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 echo "Preparing extra partitions..."
 

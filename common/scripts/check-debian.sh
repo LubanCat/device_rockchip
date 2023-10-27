@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
-RK_DATA_DIR="${RK_DATA_DIR:-"$SCRIPTS_DIR/../data/"}"
+RK_DATA_DIR="${RK_DATA_DIR:-"$RK_SCRIPTS_DIR/../data/"}"
 
 if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	echo -e "\e[35m"
@@ -23,7 +23,7 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	echo -e "\e[35m"
 	echo "Your mke2fs is too new: $(mke2fs -V 2>&1 | head -n 1)"
 	echo "Please downgrade it:"
-	"$SCRIPTS_DIR/install-e2fsprogs.sh"
+	"$RK_SCRIPTS_DIR/install-e2fsprogs.sh"
 	echo -e "\e[0m"
 	exit 1
 fi

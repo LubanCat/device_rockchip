@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
-SDK_DIR="${SDK_DIR:-$SCRIPTS_DIR/../../../..}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SDK_DIR="${RK_SDK_DIR:-$RK_SCRIPTS_DIR/../../../..}"
 
 BUILDROOT_BOARD=$1
-ROOTFS_OUTPUT_DIR="${2:-$SDK_DIR/output/buildroot}"
-BUILDROOT_DIR="$SDK_DIR/buildroot"
+ROOTFS_OUTPUT_DIR="${2:-$RK_SDK_DIR/output/buildroot}"
+BUILDROOT_DIR="$RK_SDK_DIR/buildroot"
 
-"$SCRIPTS_DIR/check-buildroot.sh"
+"$RK_SCRIPTS_DIR/check-buildroot.sh"
 
 BUILDROOT_OUTPUT_DIR="$BUILDROOT_DIR/output/$BUILDROOT_BOARD"
 BUILDROOT_CONFIG="$BUILDROOT_OUTPUT_DIR/.config"

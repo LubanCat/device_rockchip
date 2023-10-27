@@ -5,7 +5,7 @@
 [ -d .git ] || exit 1
 
 PATCH_DIR="${1:-$PWD}"
-PROJECT="${2:-${PWD#$SDK_DIR/}}"
+PROJECT="${2:-${PWD#$RK_SDK_DIR/}}"
 BASE_COMMIT=$(git log --pretty="%H" -1 "${3:-HEAD}" --)
 
 echo "[$PROJECT] Base commit: $(git log --oneline $BASE_COMMIT -1)"

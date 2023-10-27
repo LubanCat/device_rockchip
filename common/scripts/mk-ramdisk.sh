@@ -13,7 +13,7 @@ KERNEL_IMG="$RK_KERNEL_IMG"
 
 if [ ! -f "$KERNEL_IMG" ]; then
 	echo "Build kernel for initrd"
-	"$SCRIPTS_DIR/mk-kernel.sh"
+	"$RK_SCRIPTS_DIR/mk-kernel.sh"
 fi
 
 if echo $RAMDISK_IMG | grep -q ".romfs$"; then
@@ -25,7 +25,7 @@ fi
 
 echo "Packing $RAMDISK_IMG to $TARGET_IMG"
 if [ -n "$ITS" ]; then
-	"$SCRIPTS_DIR/mk-fitimage.sh" "$TARGET_IMG" "$ITS" \
+	"$RK_SCRIPTS_DIR/mk-fitimage.sh" "$TARGET_IMG" "$ITS" \
 		"$KERNEL_IMG" "$RAMDISK_IMG"
 else
 	kernel/scripts/mkbootimg --kernel "$KERNEL_IMG" \

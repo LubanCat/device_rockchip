@@ -122,12 +122,12 @@ build_security_keys()
 
 	mkdir -p u-boot/keys
 	cd u-boot/keys
-	"$SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048 --out ./
+	"$RK_SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048 --out ./
 
 	ln -rsf private_key.pem dev.key
 	ln -rsf public_key.pem dev.pubkey
 
-	cd "$SDK_DIR"
+	cd "$RK_SDK_DIR"
 
 	openssl req -batch -new -x509 -key u-boot/keys/dev.key \
 		-out u-boot/keys/dev.crt
@@ -147,19 +147,19 @@ build_security_ramboot()
 
 	if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
 		echo "Rootfs is not ready, building it for security..."
-		"$SCRIPTS_DIR/mk-rootfs.sh"
+		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
 	fi
 
 	# Prepare misc and initrd overlay with rootfs.img
-	"$SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
+	"$RK_SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
 		"$RK_FIRMWARE_DIR/rootfs.img"
 
 	/usr/bin/time -f "you take %E to build security initrd(buildroot)" \
-		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG \
+		"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG \
 		"$DST_DIR"
 
 	/usr/bin/time -f "you take %E to pack security ramboot image" \
-		"$SCRIPTS_DIR/mk-ramdisk.sh" \
+		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
 		"$DST_DIR/rootfs.$RK_SECURITY_INITRD_TYPE" \
 		"$DST_DIR/ramboot.img" "$RK_SECURITY_FIT_ITS"
 
@@ -197,26 +197,26 @@ build_hook()
 		security_check) security_check ;;
 		security_keys | createkeys) build_security_keys ;;
 		security_ramboot) build_security_ramboot ;;
-		security_uboot) "$SCRIPTS_DIR"/mk-loader.sh uboot ;;
+		security_uboot) "$RK_SCRIPTS_DIR"/mk-loader.sh uboot ;;
 		security_boot)
-			"$SCRIPTS_DIR"/mk-kernel.sh
+			"$RK_SCRIPTS_DIR"/mk-kernel.sh
 			build_security_ramboot
-			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
+			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		security_recovery)
 			check_config RK_RECOVERY || return 0
-			"$SCRIPTS_DIR"/mk-recovery.sh
-			"$SCRIPTS_DIR"/mk-loader.sh uboot recovery
+			"$RK_SCRIPTS_DIR"/mk-recovery.sh
+			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot recovery
 			;;
 		security_rootfs)
-			"$SCRIPTS_DIR"/mk-rootfs.sh
+			"$RK_SCRIPTS_DIR"/mk-rootfs.sh
 			build_security_ramboot
-			"$SCRIPTS_DIR"/mk-loader.sh uboot boot
+			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		*) usage ;;
 	esac
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook $@

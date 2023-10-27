@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
-SDK_DIR="${SDK_DIR:-$SCRIPTS_DIR/../../../..}"
-BUILDROOT_DIR="$SDK_DIR/buildroot"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SDK_DIR="${RK_SDK_DIR:-$RK_SCRIPTS_DIR/../../../..}"
+BUILDROOT_DIR="$RK_SDK_DIR/buildroot"
 
 # Buildroot brmake needs unbuffer
 if ! which unbuffer >/dev/null 2>&1; then
@@ -36,9 +36,9 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	echo -e "\e[35m"
 	echo "Your mke2fs is too new: $(mke2fs -V 2>&1 | head -n 1)"
 	echo "Please downgrade it:"
-	"$SCRIPTS_DIR/install-e2fsprogs.sh"
+	"$RK_SCRIPTS_DIR/install-e2fsprogs.sh"
 	echo -e "\e[0m"
 	exit 1
 fi
 
-"$SCRIPTS_DIR/check-header.sh" libc6 dirent.h libc6-dev
+"$RK_SCRIPTS_DIR/check-header.sh" libc6 dirent.h libc6-dev

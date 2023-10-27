@@ -2,18 +2,18 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 build_wifibt()
 {
 	check_config RK_KERNEL RK_WIFIBT_CHIP || return 0
-	source "$SCRIPTS_DIR/kernel-helper"
+	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	echo "=========================================="
 	echo "          Start building wifi/BT ($RK_WIFIBT_CHIP)"
 	echo "=========================================="
 
-	RKWIFIBT_DIR="$SDK_DIR/external/rkwifibt"
+	RKWIFIBT_DIR="$RK_SDK_DIR/external/rkwifibt"
 
 	if [ "$RK_SUDO_ROOT" ]; then
 		# Check for dirty files owned by root
@@ -34,7 +34,7 @@ build_wifibt()
 	# Make sure that the kernel is ready
 	if [ ! -r kernel/include/generated/asm-offsets.h ]; then
 		echo "Kernel is not ready, building it for wifi/BT..."
-		"$SCRIPTS_DIR/mk-kernel.sh"
+		"$RK_SCRIPTS_DIR/mk-kernel.sh"
 	fi
 
 	# Check kernel config
@@ -359,5 +359,5 @@ build_wifibt()
 }
 
 echo "Building Wifi/BT module and firmwares..."
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 build_wifibt

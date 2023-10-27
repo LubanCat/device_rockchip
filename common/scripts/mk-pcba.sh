@@ -27,16 +27,16 @@ build_hook()
 	DST_DIR="$RK_OUTDIR/pcba"
 
 	/usr/bin/time -f "you take %E to build pcba(buildroot)" \
-		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_PCBA_CFG "$DST_DIR"
+		"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_PCBA_CFG "$DST_DIR"
 
 	/usr/bin/time -f "you take %E to pack pcba image" \
-		"$SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
+		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
 		"$DST_DIR/pcba.img"
 	ln -rsf "$DST_DIR/pcba.img" "$RK_FIRMWARE_DIR"
 
 	finish_build build_pcba
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook $@

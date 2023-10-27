@@ -14,7 +14,7 @@ update_kernel()
 	KERNEL_CONFIG="RK_KERNEL_VERSION=\"$RK_KERNEL_VERSION\""
 	if ! grep -q "^$KERNEL_CONFIG$" "$RK_CONFIG"; then
 		sed -i "s/^RK_KERNEL_VERSION=.*/$KERNEL_CONFIG/" "$RK_CONFIG"
-		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+		"$RK_SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
 	fi
 
 	[ "$(kernel_version)" != "$RK_KERNEL_VERSION" ] || return 0
@@ -46,7 +46,7 @@ do_build()
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	if [ -z "$DRY_RUN" ]; then
-		"$SCRIPTS_DIR/check-kernel.sh"
+		"$RK_SCRIPTS_DIR/check-kernel.sh"
 	fi
 
 	case "$1" in
@@ -61,14 +61,12 @@ do_build()
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
 			# The FIT image for initrd would be packed in rootfs stage
-			if [ -n "$RK_BOOT_FIT_ITS" ]; then
-				if [ -z "$RK_ROOTFS_INITRD" ]; then
-					run_command \
-						"$SCRIPTS_DIR/mk-fitimage.sh" \
-						"kernel/$RK_BOOT_IMG" \
-						"$RK_BOOT_FIT_ITS" \
-						"$RK_KERNEL_IMG"
-				fi
+			if [ -n "$RK_BOOT_FIT_ITS" ] && \
+				[ -z "$RK_ROOTFS_INITRD" ]; then
+				run_command "$RK_SCRIPTS_DIR/mk-fitimage.sh" \
+					"kernel/$RK_BOOT_IMG" \
+					"$RK_BOOT_FIT_ITS" \
+					"$RK_KERNEL_IMG"
 			fi
 
 			if [ "$RK_WIFIBT_CHIP" ] && [ -r "$RK_KERNEL_DTB" ] && \
@@ -134,7 +132,7 @@ PRE_BUILD_CMDS="kernel-config kconfig kernel-make kmake"
 pre_build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
-	source "$SCRIPTS_DIR/kernel-helper"
+	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	echo "Toolchain for kernel:"
 	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
@@ -178,7 +176,7 @@ BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
-	source "$SCRIPTS_DIR/kernel-helper"
+	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	echo "Toolchain for kernel:"
 	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
@@ -201,7 +199,7 @@ build_hook()
 
 	if echo $1 | grep -q "^kernel"; then
 		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
-		"$SCRIPTS_DIR/check-power-domain.sh"
+		"$RK_SCRIPTS_DIR/check-power-domain.sh"
 	fi
 
 	finish_build build_$1
@@ -216,7 +214,7 @@ POST_BUILD_CMDS="linux-headers"
 post_build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
-	source "$SCRIPTS_DIR/kernel-helper"
+	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	[ "$1" = "linux-headers" ] || return 0
 	shift
@@ -249,7 +247,7 @@ post_build_hook()
 	-cf "$OUTPUT_FILE"
 EOF
 
-	run_command cd "$SDK_DIR/kernel"
+	run_command cd "$RK_SDK_DIR/kernel"
 
 	cat "$HEADER_FILES_SCRIPT"
 
@@ -266,7 +264,7 @@ EOF
 			;;
 	esac
 
-	run_command cd "$SDK_DIR"
+	run_command cd "$RK_SDK_DIR"
 
 	rm -f "$HEADER_FILES_SCRIPT"
 }
@@ -276,7 +274,7 @@ post_build_hook_dry()
 	DRY_RUN=1 post_build_hook $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;

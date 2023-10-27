@@ -22,7 +22,7 @@ usage()
 	echo -e "cleanall                          \tcleanup"
 	echo -e "clean[:module[:module]]...        \tcleanup modules"
 	echo "    available modules:"
-	grep -wl clean_hook "$SCRIPTS_DIR"/mk-*.sh | \
+	grep -wl clean_hook "$RK_SCRIPTS_DIR"/mk-*.sh | \
 		sed "s/^.*mk-\(.*\).sh/\t\1/"
 	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
 	echo -e "help                              \tusage"
@@ -56,7 +56,7 @@ set -a
 finish_build()
 {
 	echo -e "\e[35mRunning $(basename "${BASH_SOURCE[1]}") - ${@:-${FUNCNAME[1]}} succeeded.\e[0m"
-	cd "$SDK_DIR"
+	cd "$RK_SDK_DIR"
 }
 
 load_config()
@@ -146,7 +146,7 @@ get_toolchain()
 		TOOLCHAIN_VENDOR=rockchip
 	fi
 
-	TOOLCHAIN_DIR="$SDK_DIR/prebuilts/gcc/linux-x86/$TOOLCHAIN_ARCH"
+	TOOLCHAIN_DIR="$RK_SDK_DIR/prebuilts/gcc/linux-x86/$TOOLCHAIN_ARCH"
 	GCC="$(find "$TOOLCHAIN_DIR"/*/bin -name "*gcc" | \
 		grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc" || true)"
 	if [ ! -x "$GCC" ]; then
@@ -168,7 +168,7 @@ get_toolchain()
 
 rroot()
 {
-	cd "$SDK_DIR"
+	cd "$RK_SDK_DIR"
 }
 
 rout()
@@ -178,17 +178,17 @@ rout()
 
 rcommon()
 {
-	cd "$COMMON_DIR"
+	cd "$RK_COMMON_DIR"
 }
 
 rscript()
 {
-	cd "$SCRIPTS_DIR"
+	cd "$RK_SCRIPTS_DIR"
 }
 
 rchip()
 {
-	cd "$(realpath "$CHIP_DIR")"
+	cd "$(realpath "$RK_CHIP_DIR")"
 }
 
 set +a
@@ -199,7 +199,7 @@ run_hooks()
 	DIR="$1"
 	shift
 
-	for dir in "$CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
+	for dir in "$RK_CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
 		[ -d "$dir" ] || continue
 
 		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
@@ -277,40 +277,40 @@ main()
 
 	export LC_ALL=C
 
-	export SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
-	export COMMON_DIR="$(realpath "$SCRIPTS_DIR/..")"
-	export SDK_DIR="$(realpath "$COMMON_DIR/../../..")"
-	export DEVICE_DIR="$SDK_DIR/device/rockchip"
-	export CHIPS_DIR="$DEVICE_DIR/.chips"
-	export CHIP_DIR="$DEVICE_DIR/.chip"
+	export RK_SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
+	export RK_COMMON_DIR="$(realpath "$RK_SCRIPTS_DIR/..")"
+	export RK_SDK_DIR="$(realpath "$RK_COMMON_DIR/../../..")"
+	export RK_DEVICE_DIR="$RK_SDK_DIR/device/rockchip"
+	export RK_CHIPS_DIR="$RK_DEVICE_DIR/.chips"
+	export RK_CHIP_DIR="$RK_DEVICE_DIR/.chip"
 
 	export RK_DEFAULT_TARGET="all"
-	export RK_DATA_DIR="$COMMON_DIR/data"
-	export RK_TOOL_DIR="$COMMON_DIR/tools"
-	export RK_IMAGE_DIR="$COMMON_DIR/images"
-	export RK_KBUILD_DIR="$COMMON_DIR/linux-kbuild"
-	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"
+	export RK_DATA_DIR="$RK_COMMON_DIR/data"
+	export RK_TOOL_DIR="$RK_COMMON_DIR/tools"
+	export RK_IMAGE_DIR="$RK_COMMON_DIR/images"
+	export RK_KBUILD_DIR="$RK_COMMON_DIR/linux-kbuild"
+	export RK_CONFIG_IN="$RK_COMMON_DIR/configs/Config.in"
 
-	export RK_BUILD_HOOK_DIR="$COMMON_DIR/build-hooks"
-	export BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
-	export RK_POST_HOOK_DIR="$COMMON_DIR/post-hooks"
-	export POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
+	export RK_BUILD_HOOK_DIR="$RK_COMMON_DIR/build-hooks"
+	export RK_BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
+	export RK_POST_HOOK_DIR="$RK_COMMON_DIR/post-hooks"
+	export RK_POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
 
-	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
+	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
-	export RK_OUTDIR="$SDK_DIR/output"
+	export RK_OUTDIR="$RK_SDK_DIR/output"
 	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-part"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
 	export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
 	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
-	export RK_ROCKDEV_DIR="$SDK_DIR/rockdev"
+	export RK_ROCKDEV_DIR="$RK_SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
-	export RK_OWNER="$(stat --format %U "$SDK_DIR")"
-	export RK_OWNER_UID="$(stat --format %u "$SDK_DIR")"
+	export RK_OWNER="$(stat --format %U "$RK_SDK_DIR")"
+	export RK_OWNER_UID="$(stat --format %u "$RK_SDK_DIR")"
 	unset RK_SUDO_ROOT
 	if [ "$RK_OWNER" != "root" ] && [ "${USER:-$(id -un)}" = "root" ]; then
 		export RK_SUDO_ROOT=1
@@ -320,7 +320,7 @@ main()
 	case "$@" in
 		make-targets)
 			# Chip targets
-			ls "$CHIPS_DIR"
+			ls "$RK_CHIPS_DIR"
 			;&
 		make-usage)
 			run_build_hooks "$@"
@@ -329,10 +329,10 @@ main()
 	esac
 
 	# Log SDK information
-	MANIFEST="$SDK_DIR/.repo/manifest.xml"
+	MANIFEST="$RK_SDK_DIR/.repo/manifest.xml"
 	if [ -e "$MANIFEST" ]; then
 		if [ ! -L "$MANIFEST" ]; then
-			MANIFEST="$SDK_DIR/.repo/manifests/$(grep -o "[^\"]*\.xml" "$MANIFEST")"
+			MANIFEST="$RK_SDK_DIR/.repo/manifests/$(grep -o "[^\"]*\.xml" "$MANIFEST")"
 		fi
 		TAG="$(grep -o "linux-.*-gen-rkr[^.\"]*" "$MANIFEST" | \
 			head -n 1 || true)"
@@ -362,9 +362,9 @@ main()
 	# Prepare firmware dirs
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
-	cd "$SDK_DIR"
-	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
-	[ -d common ] || ln -rsf "$COMMON_DIR" .
+	cd "$RK_SDK_DIR"
+	[ -f README.md ] || ln -rsf "$RK_COMMON_DIR/README.md" .
+	[ -d common ] || ln -rsf "$RK_COMMON_DIR" .
 
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
@@ -374,7 +374,7 @@ main()
 	# Special handle for chip and defconfig
 	# e.g. ./build.sh rk3588:rockchip_defconfig
 	for opt in $OPTIONS; do
-		if [ -d "$CHIPS_DIR/${opt%%:*}" ]; then
+		if [ -d "$RK_CHIPS_DIR/${opt%%:*}" ]; then
 			OPTIONS=$(echo "$OPTIONS" | xargs -n 1 | \
 				sed "s/^$opt$/chip:$opt/" | xargs)
 		elif echo "$opt" | grep -q "^[0-9a-z_]*_defconfig$"; then
@@ -392,7 +392,7 @@ main()
 				# Check cleanup modules
 				for m in $(echo ${opt#clean:} | tr ':' ' '); do
 					grep -wq clean_hook \
-						"$SCRIPTS_DIR/mk-$m.sh" \
+						"$RK_SCRIPTS_DIR/mk-$m.sh" \
 						2>/dev/null || usage
 				done
 				;&
@@ -446,7 +446,7 @@ main()
 	# Drop old logs
 	cd "$RK_LOG_BASE_DIR"
 	rm -rf $(ls -t | sed '1,10d')
-	cd "$SDK_DIR"
+	cd "$RK_SDK_DIR"
 
 	# Save initial envionments
 	if [ "$INITIAL_SESSION" ]; then
@@ -511,7 +511,7 @@ main()
 		fi
 	fi
 
-	source "$PARTITION_HELPER"
+	source "$RK_PARTITION_HELPER"
 	rk_partition_init
 
 	set +a
@@ -523,13 +523,13 @@ main()
 	case "$OPTIONS" in
 		cleanall)
 			run_build_hooks clean
-			rm -rf "$RK_OUTDIR" "$SDK_DIR/rockdev"
+			rm -rf "$RK_OUTDIR" "$RK_SDK_DIR/rockdev"
 			finish_build cleanall
 			exit 0 ;;
 		clean:*)
 			MODULES="$(echo ${OPTIONS#clean:} | tr ':' ' ')"
 			for m in $MODULES; do
-				"$SCRIPTS_DIR/mk-$m.sh" clean
+				"$RK_SCRIPTS_DIR/mk-$m.sh" clean
 			done
 			finish_build clean - $MODULES
 			exit 0 ;;

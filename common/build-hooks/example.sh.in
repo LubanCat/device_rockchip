@@ -131,7 +131,7 @@ post_build_hook()
 #    Make sure that it's been executed inside of build.sh, or after
 #    "./build.sh shell" for developing.
 # 2: Call build hooks when needed
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 # Test:
 # ./device/rockchip/common/build-hooks/example.sh

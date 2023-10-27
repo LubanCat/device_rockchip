@@ -17,23 +17,24 @@ build_all()
 	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
-	[ -z "$RK_SECURITY" ] || "$SCRIPTS_DIR/mk-security.sh" security_check
+	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" security_check
 
-	[ -z "$RK_MISC" ] || "$SCRIPTS_DIR/mk-misc.sh"
-	[ -z "$RK_KERNEL" ] || "$SCRIPTS_DIR/mk-kernel.sh"
-	[ -z "$RK_ROOTFS"] || "$SCRIPTS_DIR/mk-rootfs.sh"
-	[ -z "$RK_RECOVERY" ] || "$SCRIPTS_DIR/mk-recovery.sh"
+	[ -z "$RK_MISC" ] || "$RK_SCRIPTS_DIR/mk-misc.sh"
+	[ -z "$RK_KERNEL" ] || "$RK_SCRIPTS_DIR/mk-kernel.sh"
+	[ -z "$RK_ROOTFS"] || "$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	[ -z "$RK_RECOVERY" ] || "$RK_SCRIPTS_DIR/mk-recovery.sh"
 
-	[ -z "$RK_RTOS" ] || "$SCRIPTS_DIR/mk-rtos.sh"
-	[ -z "$RK_SECURITY" ] || "$SCRIPTS_DIR/mk-security.sh" security_ramboot
+	[ -z "$RK_RTOS" ] || "$RK_SCRIPTS_DIR/mk-rtos.sh"
+	[ -z "$RK_SECURITY" ] || \
+		"$RK_SCRIPTS_DIR/mk-security.sh" security_ramboot
 
 	# Will repack boot and recovery images when security enabled
-	[ -z "$RK_LOADER" ] || "$SCRIPTS_DIR/mk-loader.sh"
+	[ -z "$RK_LOADER" ] || "$RK_SCRIPTS_DIR/mk-loader.sh"
 
-	"$SCRIPTS_DIR/mk-firmware.sh"
+	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 
 	[ -z "$RK_KERNEL" ] || \
-		"$SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_ROCKDEV_DIR"
+		"$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_ROCKDEV_DIR"
 
 	finish_build
 }
@@ -84,7 +85,7 @@ build_release()
 		PATCHES_DIR="$RELEASE_DIR/PATCHES"
 		mkdir -p "$PATCHES_DIR"
 		.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
-			"\"$SCRIPTS_DIR/release-patches.sh\" \
+			"\"$RK_SCRIPTS_DIR/release-patches.sh\" \
 			\"$PATCHES_DIR/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
 		install -D -m 0755 "$RK_DATA_DIR/apply-all.sh" "$PATCHES_DIR"
 	fi
@@ -142,7 +143,7 @@ post_build_hook()
 	build_release $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-all-release}" in
 	all) build_all ;;

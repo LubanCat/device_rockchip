@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 NAME=$(basename $0)
 NAME=${NAME%.sh}

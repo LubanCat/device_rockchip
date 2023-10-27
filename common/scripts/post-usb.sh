@@ -2,7 +2,7 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 install_adbd()
 {
@@ -86,7 +86,7 @@ if [ "$RK_USB_DEFAULT" -a "$POST_OS" = buildroot ]; then
 	exit 0
 fi
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 mkdir -p "$TARGET_DIR/etc" "$TARGET_DIR/lib" \
 	"$TARGET_DIR/usr/bin" "$TARGET_DIR/usr/lib"
@@ -116,8 +116,8 @@ install_systemd_service external/rkscript/usbdevice.service
 
 mkdir -p "$TARGET_DIR/etc/usbdevice.d"
 for hook in $RK_USB_HOOKS; do
-	if [ -r "$CHIP_DIR/$hook" ]; then
-		hook="$CHIP_DIR/$hook"
+	if [ -r "$RK_CHIP_DIR/$hook" ]; then
+		hook="$RK_CHIP_DIR/$hook"
 	elif [ ! -r "$hook" ]; then
 		echo "Ignore non-existant USB hook: $hook"
 		continue

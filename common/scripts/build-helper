@@ -128,7 +128,7 @@ usage()
 	exit 1
 }
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 
 LOG_FILE_NAME="$(basename "${0%.sh}")-$1_$(date +"%F_%H-%M-%S")"
 

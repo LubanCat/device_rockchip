@@ -7,14 +7,15 @@ build_buildroot()
 	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
 
 	BUILDROOT_VERSION=$(grep "export BR2_VERSION := " \
-		"$SDK_DIR/buildroot/Makefile" | xargs -n 1 | tail -n 1)
+		"$RK_SDK_DIR/buildroot/Makefile" | xargs -n 1 | tail -n 1)
 
 	echo "=========================================="
 	echo "          Start building buildroot($BUILDROOT_VERSION)"
 	echo "=========================================="
 
 	/usr/bin/time -f "you take %E to build buildroot" \
-		"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$ROOTFS_DIR"
+		"$RK_SCRIPTS_DIR/mk-buildroot.sh" \
+		$RK_BUILDROOT_CFG "$ROOTFS_DIR"
 
 	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_buildroot $@
@@ -26,7 +27,7 @@ build_yocto()
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
 
-	"$SCRIPTS_DIR/check-yocto.sh"
+	"$RK_SCRIPTS_DIR/check-yocto.sh"
 
 	cd yocto
 	rm -f build/conf/local.conf
@@ -108,7 +109,7 @@ build_debian()
 	ROOTFS_DIR="${1:-$RK_OUTDIR/debian}"
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
 
-	"$SCRIPTS_DIR/check-debian.sh"
+	"$RK_SCRIPTS_DIR/check-debian.sh"
 
 	echo "=========================================="
 	echo "          Start building $RK_DEBIAN_VERSION($ARCH)"
@@ -191,7 +192,7 @@ init_hook()
 		sed -i -e "/RK_ROOTFS_SYSTEM/d" "$RK_CONFIG"
 		echo "$ROOTFS_CONFIG" >> "$RK_CONFIG"
 		echo "$ROOTFS_CHOICE=y" >> "$RK_CONFIG"
-		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+		"$RK_SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
 	fi
 }
 
@@ -205,7 +206,8 @@ pre_build_hook()
 			check_config RK_BUILDROOT || return 0
 
 			shift
-			"$SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG make $@
+			"$RK_SCRIPTS_DIR/mk-buildroot.sh" \
+				$RK_BUILDROOT_CFG make $@
 			finish_build buildroot-make $@
 			;;
 		buildroot-config | bconfig)
@@ -215,9 +217,9 @@ pre_build_hook()
 
 			TEMP_DIR=$(mktemp -d)
 			unset BUILDROOT_OUTPUT_DIR
-			make -C "$SDK_DIR/buildroot" O="$TEMP_DIR" \
+			make -C "$RK_SDK_DIR/buildroot" O="$TEMP_DIR" \
 				"${BUILDROOT_BOARD}_defconfig" menuconfig
-			"$SDK_DIR/buildroot/build/update_defconfig.sh" \
+			"$RK_SDK_DIR/buildroot/build/update_defconfig.sh" \
 				"$BUILDROOT_BOARD" "$TEMP_DIR"
 			rm -rf "$TEMP_DIR"
 
@@ -261,8 +263,9 @@ build_hook()
 
 	if [ "$RK_ROOTFS_INITRD" ]; then
 		/usr/bin/time -f "you take %E to pack initrd image" \
-			"$SCRIPTS_DIR/mk-ramdisk.sh" "$ROOTFS_DIR/$ROOTFS_IMG" \
-			"$ROOTFS_DIR/boot.img" "$RK_BOOT_FIT_ITS"
+			"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
+			"$ROOTFS_DIR/$ROOTFS_IMG" "$ROOTFS_DIR/boot.img" \
+			"$RK_BOOT_FIT_ITS"
 		ln -rsf "$ROOTFS_DIR/boot.img" "$RK_FIRMWARE_DIR/boot.img"
 	else
 		ln -rsf "$ROOTFS_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
@@ -271,7 +274,7 @@ build_hook()
 	finish_build build_rootfs $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-rootfs}" in
 	buildroot-config | bconfig | buildroot-make | bmake) pre_build_hook $@ ;;

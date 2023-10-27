@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
-DEVICE_DIR="$(realpath "$SCRIPTS_DIR/../../")"
-CHIPS_DIR="$DEVICE_DIR/.chips"
-CHIP_DIR="$DEVICE_DIR/.chip"
+RK_SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
+RK_DEVICE_DIR="$(realpath "$RK_SCRIPTS_DIR/../../")"
+RK_CHIPS_DIR="$RK_DEVICE_DIR/.chips"
+RK_CHIP_DIR="$RK_DEVICE_DIR/.chip"
 
 choose_chip()
 {
-	CHIP_ARRAY=( $(ls "$CHIPS_DIR") )
+	CHIP_ARRAY=( $(ls "$RK_CHIPS_DIR") )
 	CHIP_ARRAY_LEN=${#CHIP_ARRAY[@]}
 	echo "Pick a chip:"
 	echo ""
@@ -21,14 +21,14 @@ choose_chip()
 }
 
 CHIP=$1
-if [ -z "$CHIP" -o ! -e "$CHIPS_DIR/$CHIP" ]; then
+if [ -z "$CHIP" -o ! -e "$RK_CHIPS_DIR/$CHIP" ]; then
 	choose_chip
 	[ "$CHIP" ] || exit 1
 fi
 
 echo "Releasing chip: $CHIP"
 
-cd "$DEVICE_DIR"
+cd "$RK_DEVICE_DIR"
 
 ORIG_COMMIT=$(git log --oneline -1 | cut -d' ' -f1)
 
@@ -44,15 +44,15 @@ git add -f .
 git stash &>/dev/null
 
 # Drop other chips
-rm -f "$CHIP_DIR"
-ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
-ln -rsf "$CHIPS_DIR/$CHIP" .
+rm -f "$RK_CHIP_DIR"
+ln -rsf "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR"
+ln -rsf "$RK_CHIPS_DIR/$CHIP" .
 
 # Create new branch
 git branch -D $CHIP &>/dev/null || true
 git checkout --orphan $CHIP &>/dev/null
 git reset &>/dev/null
-git add -f .gitignore common "$CHIPS_DIR/$CHIP" "$CHIP_DIR" "$CHIP"
+git add -f .gitignore common "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR" "$CHIP"
 git commit -s -F $COMMIT_MSG &>/dev/null
 rm -f $COMMIT_MSG
 

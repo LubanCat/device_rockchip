@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 TARGET_IMG="$1"
-ITS="$CHIP_DIR/$2"
+ITS="$RK_CHIP_DIR/$2"
 KERNEL_IMG="$3"
 RAMDISK_IMG="$4"
 KERNEL_DTB="$RK_KERNEL_DTB"

@@ -40,7 +40,7 @@ build_uboot()
 			[ "$DRY_RUN" ] || \
 				cp "$RK_FIRMWARE_DIR/$IMAGE" u-boot/
 
-			UARGS="$UARGS --${IMAGE/./_} $SDK_DIR/u-boot/$IMAGE"
+			UARGS="$UARGS --${IMAGE/./_} $RK_SDK_DIR/u-boot/$IMAGE"
 		done
 	fi
 
@@ -146,6 +146,6 @@ build_hook_dry()
 	DRY_RUN=1 build_hook $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook ${@:-loader}

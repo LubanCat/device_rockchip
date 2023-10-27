@@ -19,7 +19,7 @@ config RK_PACKAGE_FILE_DEFAULT
 config RK_PACKAGE_FILE_CUSTOM
 	bool "custom"
 	help
-	  Use custom package-file under <CHIP_DIR>/.
+	  Use custom package-file under <RK_CHIP_DIR>/.
 
 endchoice # package-file
 
@@ -29,7 +29,7 @@ config RK_PACKAGE_FILE
 	string "custom package-file"
 	default "package-file"
 	help
-	  Name of custom package-file under <CHIP_DIR>/.
+	  Name of custom package-file under <RK_CHIP_DIR>/.
 
 endif
 
@@ -49,7 +49,7 @@ config RK_AB_OTA_PACKAGE_FILE_DEFAULT
 config RK_AB_OTA_PACKAGE_FILE_CUSTOM
 	bool "custom"
 	help
-	  Use custom A/B OTA package-file under <CHIP_DIR>/.
+	  Use custom A/B OTA package-file under <RK_CHIP_DIR>/.
 
 endchoice # A/B OTA package-file
 
@@ -58,7 +58,7 @@ if RK_AB_OTA_PACKAGE_FILE_CUSTOM
 config RK_AB_OTA_PACKAGE_FILE
 	string "custom package-file for A/B OTA"
 	help
-	  Name of custom package-file for A/B OTA under <CHIP_DIR>/.
+	  Name of custom package-file for A/B OTA under <RK_CHIP_DIR>/.
 
 endif
 endif

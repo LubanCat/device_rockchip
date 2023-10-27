@@ -2,7 +2,7 @@
 
 # Prefer using buildroot host tools for compatible.
 if [ -n "$RK_BUILDROOT_CFG" ]; then
-    HOST_DIR="$SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/host"
+    HOST_DIR="$RK_SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/host"
     export PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin:$PATH
     echo "Using host tools in $HOST_DIR"
 else

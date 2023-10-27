@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
 MAX_CORE_NUMBERS=16
-RK_RTOS_BSP_DIR=$SDK_DIR/rtos/bsp/rockchip
-ITS_FILE="$CHIP_DIR/$RK_RTOS_FIT_ITS"
+RK_RTOS_BSP_DIR=$RK_SDK_DIR/rtos/bsp/rockchip
+ITS_FILE="$RK_CHIP_DIR/$RK_RTOS_FIT_ITS"
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 
 usage_hook()
 {
@@ -44,7 +44,7 @@ build_hal()
 
 	make clean > /dev/null
 	rm -rf hal$1.elf hal$1.bin
-	make -j$(nproc) > ${SDK_DIR}/hal.log 2>&1
+	make -j$(nproc) > ${RK_SDK_DIR}/hal.log 2>&1
 	cp TestDemo.elf hal$1.elf
 	mv TestDemo.bin hal$1.bin
 	ln -rsf hal$1.bin $RK_OUTDIR/cpu$1.bin
@@ -111,13 +111,13 @@ build_rtthread()
 
 	scons -c > /dev/null
 	rm -rf gcc_arm.ld Image/rtt$1.elf Image/rtt$1.bin
-	scons -j$(nproc) > ${SDK_DIR}/rtt.log 2>&1
+	scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
 	cp rtthread.elf Image/rtt$1.elf
 	mv rtthread.bin Image/rtt$1.bin
 	ln -rsf Image/rtt$1.bin $RK_OUTDIR/cpu$1.bin
 
 	if [ -n "$RK_RTOS_RTT_ROOTFS_DATA" ] && [ -n "$RK_RTOS_RTT_ROOTFS_PARAMETERS" ] ;then
-		./mkroot.sh $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA/ $CHIP_DIR/$RK_RTOS_RTT_ROOTFS_PARAMETERS Image/
+		./mkroot.sh $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA/ $RK_CHIP_DIR/$RK_RTOS_RTT_ROOTFS_PARAMETERS Image/
 		ln -rsf Image/root.img $RK_FIRMWARE_DIR/rootfs.img
 	fi
 
@@ -147,14 +147,14 @@ build_hook()
 	echo "          Start building RTOS"
 	echo "=========================================="
 
-	"$SCRIPTS_DIR/check-rtos.sh"
+	"$RK_SCRIPTS_DIR/check-rtos.sh"
 
 	export CROSS_COMPILE=$(get_toolchain RTOS "$RK_RTOS_ARCH" arm none)
 	[ "$CROSS_COMPILE" ] || exit 1
 
-	if [ -f "$CHIP_DIR/$RK_RTOS_CFG" ]; then
+	if [ -f "$RK_CHIP_DIR/$RK_RTOS_CFG" ]; then
 		set -a
-		source $CHIP_DIR/$RK_RTOS_CFG
+		source $RK_CHIP_DIR/$RK_RTOS_CFG
 		set +a
 	fi
 
@@ -186,6 +186,6 @@ build_hook()
 	finish_build rtos $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 build_hook $@

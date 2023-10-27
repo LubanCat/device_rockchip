@@ -4,7 +4,7 @@ MODE=$1
 INPUT="$(readlink -f "$2")"
 OUTDIR="$RK_OUTDIR/security-dm"
 
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"
 mkdir -p "$OUTDIR"
 
 TEMPDIR="$OUTDIR/tempfile"
@@ -17,7 +17,7 @@ else
 fi
 ROOT_HASH="$TEMPDIR/root.hash"
 ROOT_HASH_OFFSET="$TEMPDIR/root.offset"
-OVERLAY_DIR="$SDK_DIR/buildroot/board/rockchip/common/security-ramdisk-overlay"
+OVERLAY_DIR="$RK_SDK_DIR/buildroot/board/rockchip/common/security-ramdisk-overlay"
 INIT_FILE="$OVERLAY_DIR/init"
 ROOTFS_INFO=$(ls -l "$INPUT")
 
@@ -112,10 +112,10 @@ elif [ "$MODE" = "DM-E" ]; then
 	sed -i "s/CIPHER=/CIPHER=$cipher/" "$INIT_FILE"
 
 	echo "Generate misc with key"
-	"$SCRIPTS_DIR/mk-misc.sh"
+	"$RK_SCRIPTS_DIR/mk-misc.sh"
 	gen_misc "$RK_FIRMWARE_DIR/misc.img" \
 		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
-		$(cat "$SDK_DIR/u-boot/keys/system_enc_key")
+		$(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")
 fi
 
 sed -i "s/# exec busybox switch_root/exec busybox switch_root/" "$INIT_FILE"

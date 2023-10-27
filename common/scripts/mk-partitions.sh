@@ -92,6 +92,6 @@ pre_build_hook()
 	finish_build $CMD $@
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 pre_build_hook $@

@@ -59,7 +59,7 @@ post_build_hook()
 		fi
 
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
-		echo "\"$SCRIPTS_DIR/mk-image.sh\" \
+		echo "\"$RK_SCRIPTS_DIR/mk-image.sh\" \
 			\"$OUTDIR\" \"$DST\" \"$FS_TYPE\" \
 			\"$SIZE\" \"$PART_NAME\"" >> "$FAKEROOT_SCRIPT"
 
@@ -72,6 +72,6 @@ post_build_hook()
 	finish_build build_extra_part
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 post_build_hook

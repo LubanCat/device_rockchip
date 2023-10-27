@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 RK_RSYNC="rsync -av --chmod=u=rwX,go=rX --copy-unsafe-links --exclude .empty"
 RK_OVERLAY_ALLOWED="$@"
 
-cd "$COMMON_DIR/overlays"
+cd "$RK_COMMON_DIR/overlays"
 
 install_overlay()
 {

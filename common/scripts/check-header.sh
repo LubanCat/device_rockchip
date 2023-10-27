@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
-RK_DATA_DIR="${RK_DATA_DIR:-$SCRIPTS_DIR/../data}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_DATA_DIR="${RK_DATA_DIR:-$RK_SCRIPTS_DIR/../data}"
 
 PACKAGE="$1"
 HEADER="$2"

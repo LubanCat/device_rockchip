@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="${SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 
 if ! ping google.com -c 1 -W 1 &>/dev/null; then
 	echo -e "\e[35m"
@@ -24,7 +24,7 @@ if [ "${PYTHON3_MIN_VER:-0}" -lt 6 ]; then
 	echo -e "\e[35m"
 	echo "Your python3 is too old for yocto: $(python3 --version)"
 	echo "Please update it:"
-	"$SCRIPTS_DIR/install-python3.sh"
+	"$RK_SCRIPTS_DIR/install-python3.sh"
 	echo -e "\e[0m"
 	exit 1
 fi
@@ -35,7 +35,7 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	echo -e "\e[35m"
 	echo "Your mke2fs is too new: $(mke2fs -V 2>&1 | head -n 1)"
 	echo "Please downgrade it:"
-	"$SCRIPTS_DIR/install-e2fsprogs.sh"
+	"$RK_SCRIPTS_DIR/install-e2fsprogs.sh"
 	echo -e "\e[0m"
 	exit 1
 fi

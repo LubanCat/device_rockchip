@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
-DEVICE_DIR="$(realpath "$SCRIPTS_DIR/../../")"
-SDK_DIR="$(realpath "$DEVICE_DIR/../../")"
-CHIPS_DIR="$DEVICE_DIR/.chips"
+RK_SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
+RK_DEVICE_DIR="$(realpath "$RK_SCRIPTS_DIR/../../")"
+RK_SDK_DIR="$(realpath "$RK_DEVICE_DIR/../../")"
+RK_CHIPS_DIR="$RK_DEVICE_DIR/.chips"
 
 choose_chip()
 {
-	CHIP_ARRAY=( $(ls "$CHIPS_DIR") )
+	CHIP_ARRAY=( $(ls "$RK_CHIPS_DIR") )
 	CHIP_ARRAY_LEN=${#CHIP_ARRAY[@]}
 	echo "Pick a chip:"
 	echo ""
@@ -21,14 +21,14 @@ choose_chip()
 }
 
 CHIP=$1
-if [ -z "$CHIP" -o ! -e "$CHIPS_DIR/$CHIP" ]; then
+if [ -z "$CHIP" -o ! -e "$RK_CHIPS_DIR/$CHIP" ]; then
 	choose_chip
 	[ "$CHIP" ] || exit 1
 fi
 
 DOC_DIR="$2"
 if [ -z "$DOC_DIR" ]; then
-	for d in $(find "$SDK_DIR/docs" -name Socs); do
+	for d in $(find "$RK_SDK_DIR/docs" -name Socs); do
 		"$0" "$CHIP" "$d"
 	done
 	exit 0
@@ -72,4 +72,4 @@ rm -f $COMMIT_MSG
 
 # Recover
 git checkout $ORIG_COMMIT &>/dev/null
-cd "$SDK_DIR"
+cd "$RK_SDK_DIR"

@@ -1,12 +1,13 @@
 #!/bin/bash -e
 
-MAKE="make ${DEBUG:+V=1} -C $(realpath --relative-to="$SDK_DIR" "$COMMON_DIR")"
+MAKE="make ${DEBUG:+V=1} \
+	-C $(realpath --relative-to="$RK_SDK_DIR" "$RK_COMMON_DIR")"
 
 switch_defconfig()
 {
 	DEFCONFIG="$1"
 
-	[ -f "$DEFCONFIG" ] || DEFCONFIG="$CHIP_DIR/$DEFCONFIG"
+	[ -f "$DEFCONFIG" ] || DEFCONFIG="$RK_CHIP_DIR/$DEFCONFIG"
 
 	if [ ! -f "$DEFCONFIG" ]; then
 		echo "No such defconfig: $1"
@@ -18,15 +19,15 @@ switch_defconfig()
 	ln -rsf "$DEFCONFIG" "$RK_DEFCONFIG_LINK"
 
 	DEFCONFIG="$(realpath "$DEFCONFIG")"
-	rm -rf "$CHIP_DIR"
-	ln -rsf "$(dirname "$DEFCONFIG")" "$CHIP_DIR"
+	rm -rf "$RK_CHIP_DIR"
+	ln -rsf "$(dirname "$DEFCONFIG")" "$RK_CHIP_DIR"
 
 	$MAKE $(basename "$DEFCONFIG")
 }
 
 rockchip_defconfigs()
 {
-	cd "$CHIP_DIR"
+	cd "$RK_CHIP_DIR"
 	ls rockchip_defconfig 2>/dev/null || true
 	ls *_defconfig | grep -v rockchip_defconfig || true
 }
@@ -67,7 +68,7 @@ choose_defconfig()
 
 choose_chip()
 {
-	CHIP_ARRAY=( $(ls "$CHIPS_DIR" | grep "$1" || true) )
+	CHIP_ARRAY=( $(ls "$RK_CHIPS_DIR" | grep "$1" || true) )
 	CHIP_ARRAY_LEN=${#CHIP_ARRAY[@]}
 
 	case $CHIP_ARRAY_LEN in
@@ -96,20 +97,20 @@ choose_chip()
 	esac
 
 	echo "Switching to chip: $CHIP"
-	rm -rf "$CHIP_DIR"
-	ln -rsf "$CHIPS_DIR/$CHIP" "$CHIP_DIR"
+	rm -rf "$RK_CHIP_DIR"
+	ln -rsf "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR"
 
 	choose_defconfig $2
 }
 
 prepare_config()
 {
-	[ -e "$CHIP_DIR" ] || choose_chip
+	[ -e "$RK_CHIP_DIR" ] || choose_chip
 
-	cd "$DEVICE_DIR"
-	rm -f $(ls "$CHIPS_DIR")
-	ln -rsf "$(readlink "$CHIP_DIR")" .
-	cd "$SDK_DIR"
+	cd "$RK_DEVICE_DIR"
+	rm -f $(ls "$RK_CHIPS_DIR")
+	ln -rsf "$(readlink "$RK_CHIP_DIR")" .
+	cd "$RK_SDK_DIR"
 
 	if [ ! -r "$RK_DEFCONFIG_LINK" ]; then
 		echo "WARN: $RK_DEFCONFIG_LINK not exists"
@@ -118,7 +119,7 @@ prepare_config()
 	fi
 
 	DEFCONFIG=$(basename "$(realpath "$RK_DEFCONFIG_LINK")")
-	if [ ! "$RK_DEFCONFIG_LINK" -ef "$CHIP_DIR/$DEFCONFIG" ]; then
+	if [ ! "$RK_DEFCONFIG_LINK" -ef "$RK_CHIP_DIR/$DEFCONFIG" ]; then
 		echo "WARN: $RK_DEFCONFIG_LINK is invalid"
 		choose_defconfig
 		return 0
@@ -158,7 +159,7 @@ usage_hook()
 	echo -e "defconfig[:<config>]              \tchoose defconfig"
 	echo -e " *_defconfig                      \tswitch to specified defconfig"
 	echo "    available defconfigs:"
-	ls "$CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/"
+	ls "$RK_CHIP_DIR/" | grep "defconfig$" | sed "s/^/\t/"
 	echo -e " olddefconfig                     \tresolve any unresolved symbols in .config"
 	echo -e " savedefconfig                    \tsave current config to defconfig"
 	echo -e " menuconfig                       \tinteractive curses-based configurator"
@@ -191,6 +192,6 @@ init_hook()
 	esac
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 init_hook $@

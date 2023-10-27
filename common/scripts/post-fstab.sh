@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
 FSTAB="$TARGET_DIR/etc/fstab"
 

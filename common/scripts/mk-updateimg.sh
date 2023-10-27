@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-RK_PACK_TOOL_DIR="$SDK_DIR/tools/linux/Linux_Pack_Firmware/rockdev"
+RK_PACK_TOOL_DIR="$RK_SDK_DIR/tools/linux/Linux_Pack_Firmware/rockdev"
 
 gen_package_file()
 {
@@ -61,13 +61,13 @@ build_updateimg()
 	# Make sure that the basic firmwares are ready
 	if [ ! -r "$RK_ROCKDEV_DIR/parameter.txt" ]; then
 		echo "Basic firmwares are not ready, building it..."
-		RK_UPDATE= "$SCRIPTS_DIR/mk-firmware.sh"
+		RK_UPDATE= "$RK_SCRIPTS_DIR/mk-firmware.sh"
 	fi
 
 	# Make sure that the loader is ready
 	if [ ! -r "$RK_ROCKDEV_DIR/MiniLoaderAll.bin" ]; then
 		echo "Loader is not ready, building it..."
-		"$SCRIPTS_DIR/mk-loader.sh"
+		"$RK_SCRIPTS_DIR/mk-loader.sh"
 	fi
 
 	echo "=========================================="
@@ -84,7 +84,7 @@ build_updateimg()
 
 	# Prepare package-file
 	if [ "$PKG_FILE" ]; then
-		PKG_FILE="$CHIP_DIR/$PKG_FILE"
+		PKG_FILE="$RK_CHIP_DIR/$PKG_FILE"
 		if [ ! -r "$PKG_FILE" ]; then
 			echo "$PKG_FILE not exists!"
 			exit 1
@@ -165,11 +165,11 @@ init_hook()
 	case "$1" in
 		edit-package-file)
 			BASE_CFG=RK_PACKAGE_FILE
-			PKG_FILE="$CHIP_DIR/package-file"
+			PKG_FILE="$RK_CHIP_DIR/package-file"
 			;;
 		edit-ota-package-file)
 			BASE_CFG=RK_AB_OTA_PACKAGE_FILE
-			PKG_FILE="$CHIP_DIR/ab-ota-package-file"
+			PKG_FILE="$RK_CHIP_DIR/ab-ota-package-file"
 			;;
 		*) return 0 ;;
 	esac
@@ -179,8 +179,8 @@ init_hook()
 		sed -i '/$BASE_CFG/d' "$RK_CONFIG"
 		echo "${BASE_CFG}_CUSTOM=y" >> "$RK_CONFIG"
 		echo "$BASE_CFG=$PKG_FILE" >> "$RK_CONFIG"
-		"$SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
-		"$SCRIPTS_DIR/mk-config.sh" savedefconfig &>/dev/null
+		"$RK_SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
+		"$RK_SCRIPTS_DIR/mk-config.sh" savedefconfig &>/dev/null
 	fi
 }
 
@@ -190,10 +190,10 @@ pre_build_hook()
 	case "$1" in
 		edit-package-file)
 			check_config RK_PACKAGE_FILE || return 0
-			PKG_FILE="$CHIP_DIR/$RK_PACKAGE_FILE" ;;
+			PKG_FILE="$RK_CHIP_DIR/$RK_PACKAGE_FILE" ;;
 		edit-ota-package-file)
 			check_config RK_AB_OTA_PACKAGE_FILE || return 0
-			PKG_FILE="$CHIP_DIR/$RK_AB_OTA_PACKAGE_FILE"
+			PKG_FILE="$RK_CHIP_DIR/$RK_AB_OTA_PACKAGE_FILE"
 			;;
 		*) return 0 ;;
 	esac
@@ -201,7 +201,8 @@ pre_build_hook()
 	PKG_FILE="$(realpath "$PKG_FILE")"
 	if [ ! -r "$PKG_FILE" ]; then
 		echo "Generating template $PKG_FILE"
-		gen_package_file template "$CHIP_DIR/$RK_PARAMETER" "$PKG_FILE"
+		gen_package_file template \
+			"$RK_CHIP_DIR/$RK_PARAMETER" "$PKG_FILE"
 	fi
 	eval ${EDITOR:-vi} "$PKG_FILE"
 
@@ -224,7 +225,7 @@ post_build_hook()
 	esac
 }
 
-source "${BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "$@" in
 	edit-package-file|edit-ota-package-file)
