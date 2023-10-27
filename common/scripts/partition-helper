@@ -68,7 +68,7 @@ rk_partition_parse()
 	PARAMETER="${1:-$RK_CHIP_DIR/$RK_PARAMETER}"
 
 	if [ ! -r "$PARAMETER" ]; then
-		echo -e "\e[36m$PARAMETER not exists!\e[0m" >&2
+		error "$PARAMETER not exists!" >&2
 		exit 1
 	fi
 
@@ -105,7 +105,7 @@ rk_partition_name()
 	# Part name
 	if ! echo $1 | grep -qE "^[0-9]*$"; then
 		if ! grep -q "^$1 " "$PART_TABLE"; then
-			echo -e "\e[35mNo such part ($1)!\e[0m" >&2
+			error "No such part ($1)!" >&2
 			return 1
 		fi
 
@@ -116,13 +116,13 @@ rk_partition_name()
 	# Part idx
 	IDX=$1
 	if [ "$IDX" -lt 1 ]; then
-		echo -e "\e[35mIndex should not be less than 1!\e[0m" >&2
+		error "Index should not be less than 1!" >&2
 		return 1
 	fi
 
 	NUM=$(rk_partition_num)
 	if [ "$IDX" -gt "$NUM" ]; then
-		echo -e "\e[35mIndex should not be greater than $NUM!\e[0m" >&2
+		error "Index should not be greater than $NUM!" >&2
 		return 1
 	fi
 
@@ -163,10 +163,9 @@ rk_partition_num()
 # Print partition table info
 rk_partition_print()
 {
-	echo
-	echo "=========================================="
-	echo "          Partition table"
-	echo "=========================================="
+	message "\n=========================================="
+	message "          Partition table"
+	message "=========================================="
 	{
 		OFFSET=0
 		while read NAME SIZE; do
@@ -175,7 +174,7 @@ rk_partition_print()
 
 			if [ "$NAME" != "$HDR_PART" ]; then
 				NAME=$(echo $NAME | awk '{printf "%12s",$1}')
-				echo -e "$NAME at $OFFSET size=$SIZE($SIZE_STR)"
+				message "$NAME at $OFFSET size=$SIZE($SIZE_STR)"
 			fi
 
 			# NOTE: Assuming partitions are contiguous
@@ -184,7 +183,7 @@ rk_partition_print()
 	} | sed "=" | sed "N;s/\n/: /"
 
 	echo
-	echo "Legacy cmdline:"
+	message "Legacy cmdline:"
 	rk_partition_to_cmdline
 	echo
 }
@@ -256,7 +255,7 @@ rk_partition_rename()
 
 	echo $2 | grep -qE "^[a-zA-Z]" || return 1
 	if rk_partition_name $2 &>/dev/null; then
-		echo -e "\e[35mPart already exists ($2)!\e[0m"
+		error "Part already exists ($2)!"
 		return 1
 	fi
 
@@ -283,12 +282,12 @@ rk_partition_move()
 
 	NUM=$(rk_partition_num)
 	if [ "$2" -eq "$NUM" ] && grep -q "\-$" "$PART_TABLE"; then
-		echo -e "\e[35mCannot move after unlimited part!\e[0m"
+		error "Cannot move after unlimited part!"
 		return 1
 	fi
 
 	if echo "$PART" | grep -q "\-$"; then
-		echo -e "\e[35mCannot move unlimited part ($1)!\e[0m"
+		error "Cannot move unlimited part ($1)!"
 		return 1
 	fi
 
@@ -323,19 +322,19 @@ rk_partition_insert()
 
 	IDX=$1
 	if [ "$IDX" -lt 1 ]; then
-		echo -e "\e[35mIndex should not be less than 1!\e[0m"
+		error "Index should not be less than 1!"
 		return 1
 	fi
 
 	NUM=$(rk_partition_num)
 	if [ "$IDX" -gt "$(($NUM + 1))" ]; then
-		echo -e "\e[35mIndex should not be greater than $(($NUM + 1))!\e[0m"
+		error "Index should not be greater than $(($NUM + 1))!"
 		return 1
 	fi
 
 	echo $2 | grep -qE "^[a-zA-Z]" || return 1
 	if rk_partition_name $2 &>/dev/null; then
-		echo -e "\e[35mPart already exists ($2)!\e[0m"
+		error "Part already exists ($2)!"
 		return 1
 	fi
 
@@ -345,12 +344,12 @@ rk_partition_insert()
 	esac
 
 	if [ "$SIZE" = "-" ] && [ "$IDX" -lt "$(( $NUM + 1 ))" ]; then
-		echo -e "\e[35mOnly latest part can be unlimited!\e[0m"
+		error "Only latest part can be unlimited!"
 		return 1
 	fi
 
 	if [ "$IDX" -eq "$(( $NUM + 1 ))" ] && grep -q "\-$" "$PART_TABLE"; then
-		echo -e "\e[35mCannot insert after unlimited part!\e[0m"
+		error "Cannot insert after unlimited part!"
 		return 1
 	fi
 
@@ -376,7 +375,7 @@ rk_partition_create()
 			[ -z "$1" ] || shift
 
 			if [ "$1" -a "$SIZE" = "-" ]; then
-				echo -e "\e[35mOnly latest part can be unlimited!\e[0m"
+				error "Only latest part can be unlimited!"
 				break
 			fi
 
@@ -498,12 +497,12 @@ rk_extra_part_prepare()
 	FAKEROOT_SCRIPT="$(rk_extra_part_fakeroot_script $1)"
 	SRCS="$(rk_extra_part_src $1)"
 
-	echo "Preparing partiton $PART_NAME"
+	notice "Preparing partiton $PART_NAME"
 
 	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT"
 
 	if rk_extra_part_nopack $1; then
-		echo "Skip preparing $PART_NAME (not packing it)"
+		notice "Skip preparing $PART_NAME (not packing it)"
 		return 0
 	fi
 
@@ -516,10 +515,10 @@ rk_extra_part_prepare()
 		[ -d "$src" ] || continue
 		[ "$(ls "$src/")" ] || continue
 
-		echo "Merging $src into $OUTDIR"
+		message "Merging $src into $OUTDIR"
 		rsync -a "$src/" "$OUTDIR"
 		for f in $(ls "$OUTDIR" | grep "\.fs$" || true); do
-			echo "Merging $src/$f into $FAKEROOT_SCRIPT"
+			message "Merging $src/$f into $FAKEROOT_SCRIPT"
 			cat "$OUTDIR/$f" >> "$FAKEROOT_SCRIPT"
 			rm -f "$OUTDIR/$f"
 		done

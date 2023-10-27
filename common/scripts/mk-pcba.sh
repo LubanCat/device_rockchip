@@ -20,9 +20,9 @@ build_hook()
 {
 	check_config RK_PCBA || return 0
 
-	echo "=========================================="
-	echo "          Start building pcba(buildroot)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building pcba(buildroot)"
+	message "=========================================="
 
 	DST_DIR="$RK_OUTDIR/pcba"
 

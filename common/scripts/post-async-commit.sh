@@ -4,7 +4,7 @@ POST_ROOTFS_ONLY=1
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-echo "Installing async-commit service..."
+message "Installing async-commit service..."
 
 rm -f etc/init.d/S*_commit.sh \
 	etc/systemd/system/multi-user.target.wants/async.service \

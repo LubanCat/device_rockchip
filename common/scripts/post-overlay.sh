@@ -20,15 +20,11 @@ install_overlay()
 
 	OVERLAY="$(realpath "$OVERLAY")"
 	if [ -x "$OVERLAY/install.sh" ]; then
-		echo -ne "\e[36m"
-		echo "Handling overlay: $OVERLAY)..."
-		echo -ne "\e[0m"
+		notice "Handling overlay: $OVERLAY)..."
 		RK_RSYNC="$RK_RSYNC" \
 			"$OVERLAY/install.sh" "$TARGET_DIR" "$POST_OS"
 	else
-		echo -ne "\e[36m"
-		echo "Installing overlay: $OVERLAY to $TARGET_DIR..."
-		echo -ne "\e[0m"
+		notice "Installing overlay: $OVERLAY to $TARGET_DIR..."
 		$RK_RSYNC "$OVERLAY/" "$TARGET_DIR/"
 	fi
 }

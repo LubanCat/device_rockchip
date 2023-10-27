@@ -9,9 +9,9 @@ build_wifibt()
 	check_config RK_KERNEL RK_WIFIBT_CHIP || return 0
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
-	echo "=========================================="
-	echo "          Start building wifi/BT ($RK_WIFIBT_CHIP)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building wifi/BT ($RK_WIFIBT_CHIP)"
+	message "=========================================="
 
 	RKWIFIBT_DIR="$RK_SDK_DIR/external/rkwifibt"
 
@@ -19,13 +19,11 @@ build_wifibt()
 		# Check for dirty files owned by root
 		echo -e "\e[36m"
 		if find "$RKWIFIBT_DIR" -user 0 | grep ""; then
-			echo -e "\e[31m"
-			echo "$RKWIFIBT_DIR is dirty for non-root building!"
-			echo "Please clear it:"
-			echo "cd $RKWIFIBT_DIR"
-			echo "git add -f ."
-			echo "sudo git reset --hard"
-			echo -e "\e[0m"
+			error "$RKWIFIBT_DIR is dirty for non-root building!"
+			error "Please clear it:"
+			error "cd $RKWIFIBT_DIR"
+			error "git add -f ."
+			error "sudo git reset --hard"
 			exit 1
 		fi
 		echo -e "\e[0m"
@@ -33,7 +31,7 @@ build_wifibt()
 
 	# Make sure that the kernel is ready
 	if [ ! -r kernel/include/generated/asm-offsets.h ]; then
-		echo "Kernel is not ready, building it for wifi/BT..."
+		notice "Kernel is not ready, building it for wifi/BT..."
 		"$RK_SCRIPTS_DIR/mk-kernel.sh"
 	fi
 
@@ -358,6 +356,6 @@ build_wifibt()
 	chmod 755 "$TARGET_DIR/etc/generate_logs.d/80-wifibt.sh"
 }
 
-echo "Building Wifi/BT module and firmwares..."
+message "Building Wifi/BT module and firmwares..."
 cd "$RK_SDK_DIR"
 build_wifibt

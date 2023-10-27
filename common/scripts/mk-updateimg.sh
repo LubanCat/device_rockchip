@@ -9,7 +9,7 @@ gen_package_file()
 	PKG_FILE="${3:-package-file}"
 
 	if [ ! -r "$PARAMETER" ]; then
-		echo -e "\e[31munable to parse $PARAMETER\e[0m"
+		error "Unable to parse $PARAMETER"
 		exit 1
 	fi
 
@@ -60,19 +60,19 @@ build_updateimg()
 
 	# Make sure that the basic firmwares are ready
 	if [ ! -r "$RK_ROCKDEV_DIR/parameter.txt" ]; then
-		echo "Basic firmwares are not ready, building it..."
+		notice "Basic firmwares are not ready, building it..."
 		RK_UPDATE= "$RK_SCRIPTS_DIR/mk-firmware.sh"
 	fi
 
 	# Make sure that the loader is ready
 	if [ ! -r "$RK_ROCKDEV_DIR/MiniLoaderAll.bin" ]; then
-		echo "Loader is not ready, building it..."
+		notice "Loader is not ready, building it..."
 		"$RK_SCRIPTS_DIR/mk-loader.sh"
 	fi
 
-	echo "=========================================="
-	echo "          Start packing $2 update image"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start packing $2 update image"
+	message "=========================================="
 
 	rm -rf "$TARGET" "$OUT_DIR"
 	mkdir -p "$IMAGE_DIR"
@@ -86,20 +86,20 @@ build_updateimg()
 	if [ "$PKG_FILE" ]; then
 		PKG_FILE="$RK_CHIP_DIR/$PKG_FILE"
 		if [ ! -r "$PKG_FILE" ]; then
-			echo "$PKG_FILE not exists!"
+			error "$PKG_FILE not exists!"
 			exit 1
 		fi
 		ln -rsf "$PKG_FILE" package-file
 	else
-		echo "Generating package-file for $TYPE:"
+		notice "Generating package-file for $TYPE:"
 		gen_package_file $TYPE
 		cat package-file
 	fi
 
-	echo "Packing $TARGET for $TYPE..."
+	notice "Packing $TARGET for $TYPE..."
 
 	if [ ! -r MiniLoaderAll.bin ]; then
-		echo -e "\e[31mMiniLoaderAll.bin is missing\e[0m"
+		error "MiniLoaderAll.bin is missing"
 		exit 1
 	fi
 
@@ -119,7 +119,7 @@ build_ota_updateimg()
 {
 	check_config RK_AB_UPDATE || return 0
 
-	echo "Make A/B update image for OTA"
+	notice "Make A/B update image for OTA"
 
 	build_updateimg "$RK_ROCKDEV_DIR/update_ota.img" ota \
 		$RK_OTA_PACKAGE_FILE
@@ -133,7 +133,7 @@ build_ab_updateimg()
 
 	build_ota_updateimg
 
-	echo "Make A/B update image"
+	notice "Make A/B update image"
 
 	build_updateimg "$RK_ROCKDEV_DIR/update_ab.img" ab
 
@@ -200,7 +200,7 @@ pre_build_hook()
 
 	PKG_FILE="$(realpath "$PKG_FILE")"
 	if [ ! -r "$PKG_FILE" ]; then
-		echo "Generating template $PKG_FILE"
+		notice "Generating template $PKG_FILE"
 		gen_package_file template \
 			"$RK_CHIP_DIR/$RK_PARAMETER" "$PKG_FILE"
 	fi

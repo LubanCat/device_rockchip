@@ -23,7 +23,7 @@ else
 	fi
 fi
 
-echo "Installing $DISK_HELPER_TYPE service..."
+message "Installing $DISK_HELPER_TYPE service..."
 
 install -m 0755 external/rkscript/$DISK_HELPER_TYPE-helper \
 	"$TARGET_DIR/usr/bin/"
@@ -34,12 +34,12 @@ install_busybox_service external/rkscript/$SCRIPT
 
 if [ "$DISK_HELPER_TYPE" = mount ]; then
 	if [ "$RK_DISK_AUTO_FORMAT" ]; then
-		echo "Enabling auto formatting..."
+		message "Enabling auto formatting..."
 		touch "$TARGET_DIR/.auto_mkfs"
 	fi
 
 	if [ "$RK_DISK_SKIP_FSCK" ]; then
-		echo "Disabling boot time fsck..."
+		message "Disabling boot time fsck..."
 		touch "$TARGET_DIR/.skip_fsck"
 	fi
 	exit 0

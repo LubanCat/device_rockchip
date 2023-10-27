@@ -21,9 +21,9 @@ update_kernel()
 
 	# Update kernel
 	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
-	echo "switching to $KERNEL_DIR"
+	notice "switching to $KERNEL_DIR"
 	if [ ! -d "$KERNEL_DIR" ]; then
-		echo "$KERNEL_DIR not exist!"
+		error "$KERNEL_DIR not exist!"
 		exit 1
 	fi
 
@@ -34,11 +34,11 @@ update_kernel()
 do_build()
 {
 	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building $1:\e[0m"
+		notice "Commands of building $1:"
 	else
-		echo "=========================================="
-		echo "          Start building $1"
-		echo "=========================================="
+		message "=========================================="
+		message "          Start building $1"
+		message "=========================================="
 	fi
 
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
@@ -71,9 +71,7 @@ do_build()
 
 			if [ "$RK_WIFIBT_CHIP" ] && [ -r "$RK_KERNEL_DTB" ] && \
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
-				echo -e "\e[35m"
-				echo "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
-				echo -e "\e[0m"
+				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
 			fi
 			;;
 		modules) run_command $KMAKE modules ;;
@@ -117,10 +115,10 @@ init_hook()
 	# Priority: cmdline > custom env > .config > current kernel/ symlink
 	if echo $1 | grep -q "^kernel-"; then
 		export RK_KERNEL_VERSION=${1#kernel-}
-		echo "Using kernel version($RK_KERNEL_VERSION) from cmdline"
+		notice "Using kernel version($RK_KERNEL_VERSION) from cmdline"
 	elif [ "$RK_KERNEL_VERSION" ]; then
 		export RK_KERNEL_VERSION=${RK_KERNEL_VERSION//\"/}
-		echo "Using kernel version($RK_KERNEL_VERSION) from environment"
+		notice "Using kernel version($RK_KERNEL_VERSION) from environment"
 	else
 		load_config RK_KERNEL_VERSION
 	fi
@@ -134,8 +132,8 @@ pre_build_hook()
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
-	echo "Toolchain for kernel:"
-	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	message "Toolchain for kernel:"
+	message "${RK_KERNEL_TOOLCHAIN:-gcc}"
 	echo
 
 	case "$1" in
@@ -144,11 +142,11 @@ pre_build_hook()
 			[ "$1" != cmds ] || shift
 
 			if [ "$DRY_RUN" ]; then
-				echo -e "\e[35mCommands of building ${@:-stuff}:\e[0m"
+				notice "Commands of building ${@:-stuff}:"
 			else
-				echo "=========================================="
-				echo "          Start building $@"
-				echo "=========================================="
+				message "=========================================="
+				message "          Start building $@"
+				message "=========================================="
 			fi
 
 			if [ ! -r kernel/.config ]; then
@@ -178,16 +176,14 @@ build_hook()
 	check_config RK_KERNEL RK_KERNEL_CFG || return 0
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
-	echo "Toolchain for kernel:"
-	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	message "Toolchain for kernel:"
+	message "${RK_KERNEL_TOOLCHAIN:-gcc}"
 	echo
 
 	if echo $1 | grep -q "^kernel-"; then
 		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
-			echo -ne "\e[35m"
-			echo "Kernel version overrided: " \
+			notice "Kernel version overrided: " \
 				"$RK_KERNEL_VERSION -> ${1#kernel-}"
-			echo -ne "\e[0m"
 		fi
 	fi
 
@@ -226,9 +222,9 @@ post_build_hook()
 	HEADER_FILES_SCRIPT=$(mktemp)
 
 	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building linux-headers:\e[0m"
+		notice "Commands of building linux-headers:"
 	else
-		echo "Saving linux-headers to $OUTPUT_FILE"
+		notice "Saving linux-headers to $OUTPUT_FILE"
 	fi
 
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS

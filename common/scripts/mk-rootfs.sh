@@ -9,9 +9,9 @@ build_buildroot()
 	BUILDROOT_VERSION=$(grep "export BR2_VERSION := " \
 		"$RK_SDK_DIR/buildroot/Makefile" | xargs -n 1 | tail -n 1)
 
-	echo "=========================================="
-	echo "          Start building buildroot($BUILDROOT_VERSION)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building buildroot($BUILDROOT_VERSION)"
+	message "=========================================="
 
 	/usr/bin/time -f "you take %E to build buildroot" \
 		"$RK_SCRIPTS_DIR/mk-buildroot.sh" \
@@ -34,7 +34,7 @@ build_yocto()
 
 	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
 		if [ ! -r "build/conf/$RK_YOCTO_CFG" ]; then
-			echo "yocto/build/conf/$RK_YOCTO_CFG not exist!"
+			error "yocto/build/conf/$RK_YOCTO_CFG not exist!"
 			return 1
 		fi
 
@@ -42,9 +42,9 @@ build_yocto()
 			ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
 		fi
 
-		echo "=========================================="
-		echo "          Start building for $RK_YOCTO_CFG"
-		echo "=========================================="
+		message "=========================================="
+		message "          Start building for $RK_YOCTO_CFG"
+		message "=========================================="
 	else
 		{
 			echo "include include/common.conf"
@@ -68,9 +68,9 @@ build_yocto()
 			echo "MACHINE = \"$RK_YOCTO_MACHINE\""
 		} > build/conf/local.conf
 
-		echo "=========================================="
-		echo "          Start building for machine($RK_YOCTO_MACHINE)"
-		echo "=========================================="
+		message "=========================================="
+		message "          Start building for machine($RK_YOCTO_MACHINE)"
+		message "=========================================="
 	fi
 
 	{
@@ -111,9 +111,9 @@ build_debian()
 
 	"$RK_SCRIPTS_DIR/check-debian.sh"
 
-	echo "=========================================="
-	echo "          Start building $RK_DEBIAN_VERSION($ARCH)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building $RK_DEBIAN_VERSION($ARCH)"
+	message "=========================================="
 
 	cd debian
 	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
@@ -172,10 +172,10 @@ init_hook()
 	# Priority: cmdline > custom env
 	if [ "$1" != default ]; then
 		export RK_ROOTFS_SYSTEM=$1
-		echo "Using rootfs system($RK_ROOTFS_SYSTEM) from cmdline"
+		notice "Using rootfs system($RK_ROOTFS_SYSTEM) from cmdline"
 	elif [ "$RK_ROOTFS_SYSTEM" ]; then
 		export RK_ROOTFS_SYSTEM=${RK_ROOTFS_SYSTEM//\"/}
-		echo "Using rootfs system($RK_ROOTFS_SYSTEM) from environment"
+		notice "Using rootfs system($RK_ROOTFS_SYSTEM) from environment"
 	else
 		return 0
 	fi
@@ -185,7 +185,7 @@ init_hook()
 	ROOTFS_CHOICE="RK_ROOTFS_SYSTEM_$ROOTFS_UPPER"
 	if ! grep -q "^$ROOTFS_CONFIG$" "$RK_CONFIG"; then
 		if ! grep -wq "$ROOTFS_CHOICE" "$RK_CONFIG"; then
-			echo -e "\e[35m$RK_ROOTFS_SYSTEM not supported!\e[0m"
+			error "$RK_ROOTFS_SYSTEM not supported!"
 			return 0
 		fi
 
@@ -242,9 +242,9 @@ build_hook()
 	ROOTFS_IMG=rootfs.${RK_ROOTFS_TYPE}
 	ROOTFS_DIR="$RK_OUTDIR/rootfs"
 
-	echo "=========================================="
-	echo "          Start building rootfs($ROOTFS)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building rootfs($ROOTFS)"
+	message "=========================================="
 
 	rm -rf "$ROOTFS_DIR"
 	mkdir -p "$ROOTFS_DIR"
@@ -257,7 +257,7 @@ build_hook()
 	esac
 
 	if [ ! -f "$ROOTFS_DIR/$ROOTFS_IMG" ]; then
-		echo "There's no $ROOTFS_IMG generated..."
+		error "There's no $ROOTFS_IMG generated..."
 		exit 1
 	fi
 

@@ -32,12 +32,12 @@ post_build_hook()
 		rk_extra_part_prepare $idx
 
 		if rk_extra_part_builtin $idx; then
-			echo "Skip packing $PART_NAME (builtin)"
+			notice "Skip packing $PART_NAME (builtin)"
 			continue
 		fi
 
 		if rk_extra_part_nopack $idx; then
-			echo "Skip packing $PART_NAME (not packing)"
+			notice "Skip packing $PART_NAME (not packing)"
 			continue
 		fi
 
@@ -45,17 +45,15 @@ post_build_hook()
 			SIZE="$(rk_partition_size_kb "$PART_NAME")K"
 			if [ "$SIZE" = 0K ]; then
 				if [ "$FS_TYPE" != ubi ]; then
-					echo -e "\e[31m"
-					echo "Unable to detect max size of $PART_NAME"
-					echo -e "\e[0m"
+					error "Unable to detect max size of $PART_NAME"
 					return 1
 				fi
 
 				SIZE="${RK_FLASH_SIZE}M"
-				echo "Flash storage size is $SIZE"
+				notice "Flash storage size is $SIZE"
 			fi
 
-			echo "Using maxium size($SIZE) for $PART_NAME"
+			notice "Using maxium size($SIZE) for $PART_NAME"
 		fi
 
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
@@ -63,10 +61,10 @@ post_build_hook()
 			\"$OUTDIR\" \"$DST\" \"$FS_TYPE\" \
 			\"$SIZE\" \"$PART_NAME\"" >> "$FAKEROOT_SCRIPT"
 
-		echo -e "\e[36mPacking $DST from $FAKEROOT_SCRIPT\e[0m"
+		notice "Packing $DST from $FAKEROOT_SCRIPT"
 		cd "$OUTDIR"
 		fakeroot -- "$FAKEROOT_SCRIPT"
-		echo -e "\e[36mDone packing $DST\e[0m"
+		notice "Done packing $DST"
 	done
 
 	finish_build build_extra_part

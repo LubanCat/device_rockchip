@@ -34,11 +34,11 @@ defconfig_check()
 		echo "look for $i"
 		result=$(cat $1 | grep "${i}=y" -w || echo "No found")
 		if [ "$result" = "No found" ]; then
-			echo -e "\e[41;1;37mSecurity: No found config ${i} in $1 \e[0m"
-			echo "make sure your config include this list"
-			echo "---------------------------------------"
-			echo "$2"
-			echo "---------------------------------------"
+			error "Security: No found config ${i} in $1"
+			error "make sure your config include this list"
+			error "---------------------------------------"
+			error "$2"
+			error "---------------------------------------"
 			return 1;
 		fi
 	done
@@ -49,7 +49,7 @@ find_string_in_config()
 {
 	result=$(cat "$2" | grep "$1" || echo "No found")
 	if [ "$result" = "No found" ]; then
-		echo "Security: No found string $1 in $2"
+		error "Security: No found string $1 in $2"
 		return 1;
 	fi
 	return 0;
@@ -60,22 +60,22 @@ security_check()
 	check_config RK_SECURITY RK_BUILDROOT || return 0
 
 	if [ ! -d u-boot/keys ]; then
-		echo "ERROR: No root keys(u-boot/keys) found in u-boot"
-		echo "       Create it by ./build.sh security_keys or move your key to it"
+		error "ERROR: No root keys(u-boot/keys) found in u-boot"
+		error "       Create it by ./build.sh security_keys or move your key to it"
 		return 1
 	fi
 
 	if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ]; then
 		if [ ! -f u-boot/keys/root_passwd ]; then
-			echo "ERROR: No root passwd(u-boot/keys/root_passwd) found in u-boot"
-			echo "       echo your root key for sudo to u-boot/keys/root_passwd"
-			echo "       some operations need supper user permission when create encrypt image"
+			error "ERROR: No root passwd(u-boot/keys/root_passwd) found in u-boot"
+			error "       echo your root key for sudo to u-boot/keys/root_passwd"
+			error "       some operations need supper user permission when create encrypt image"
 			return 1
 		fi
 
 		if [ ! -f u-boot/keys/system_enc_key ]; then
-			echo "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
-			echo "       Create it by ./build.sh security_keys or move your key to it"
+			error "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
+			error "       Create it by ./build.sh security_keys or move your key to it"
 			return 1
 		fi
 
@@ -116,7 +116,7 @@ security_check()
 build_security_keys()
 {
 	if [ -d u-boot/keys ]; then
-		echo "ERROR: u-boot/keys already exists"
+		error "ERROR: u-boot/keys already exists"
 		return 1
 	fi
 
@@ -139,14 +139,14 @@ build_security_ramboot()
 {
 	check_config RK_SECURITY_INITRD_CFG || return 0
 
-	echo "=========================================="
-	echo "          Start building security ramboot(buildroot)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building security ramboot(buildroot)"
+	message "=========================================="
 
 	DST_DIR="$RK_OUTDIR/security-ramboot"
 
 	if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
-		echo "Rootfs is not ready, building it for security..."
+		notice "Rootfs is not ready, building it for security..."
 		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
 	fi
 

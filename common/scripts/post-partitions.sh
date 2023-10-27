@@ -4,7 +4,7 @@ POST_ROOTFS_ONLY=1
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-echo "Preparing extra partitions..."
+message "Preparing extra partitions..."
 
 for idx in $(seq 1 "$(rk_extra_part_num)"); do
 	MOUNTPOINT="$(rk_extra_part_mountpoint $idx)"
@@ -18,7 +18,7 @@ for idx in $(seq 1 "$(rk_extra_part_num)"); do
 
 	if rk_extra_part_builtin $idx; then
 		rk_extra_part_prepare $idx
-		echo "Merging $OUTDIR into $TARGET_DIR/$MOUNTPOINT (built-in)"
+		message "Merging $OUTDIR into $TARGET_DIR/$MOUNTPOINT (built-in)"
 		rsync -a "$OUTDIR/" "$TARGET_DIR/$MOUNTPOINT/"
 	fi
 done

@@ -1,14 +1,5 @@
 #!/bin/bash -e
 
-message() {
-	echo -e "\e[36m$@\e[0m"
-}
-
-fatal() {
-	echo -e "\e[31m$@\e[0m"
-	exit 1
-}
-
 link_image() {
 	SRC="$1"
 	DST="$2"
@@ -19,7 +10,7 @@ link_image() {
 build_firmware()
 {
 	if ! which fakeroot &>/dev/null; then
-		echo "fakeroot not found! (sudo apt-get install fakeroot)"
+		error "fakeroot not found! (sudo apt-get install fakeroot)"
 		exit 1
 	fi
 
@@ -50,7 +41,7 @@ build_firmware()
 		done
 	fi
 
-	echo "Packed files:"
+	notice "Packed files:"
 	for f in "$FIRMWARE_DIR"/*; do
 		NAME=$(basename "$f")
 
@@ -77,7 +68,8 @@ build_firmware()
 
 		FILE_SIZE_KB="$(( $(stat -Lc "%s" "$f") / 1024 ))"
 		if [ "$PART_SIZE_KB" -lt "$FILE_SIZE_KB" ]; then
-			fatal "error: $NAME's size exceed parameter's $PART_NAME partition size limit!"
+			error "error: $NAME's size exceed parameter's $PART_NAME partition size limit!"
+			return 1
 		fi
 	done
 
@@ -103,9 +95,9 @@ clean_hook()
 POST_BUILD_CMDS="firmware"
 post_build_hook()
 {
-	echo "=========================================="
-	echo "          Start packing firmwares"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start packing firmwares"
+	message "=========================================="
 
 	build_firmware
 }

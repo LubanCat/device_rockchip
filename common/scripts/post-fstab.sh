@@ -6,7 +6,7 @@ FSTAB="$TARGET_DIR/etc/fstab"
 
 fixup_root()
 {
-	echo "Fixing up rootfs type: $1"
+	message "Fixing up rootfs type: $1"
 
 	FS_TYPE=$1
 	sed -i "s~\([[:space:]]/[[:space:]]\+\)\w\+~\1${FS_TYPE}~" "$FSTAB"
@@ -14,7 +14,7 @@ fixup_root()
 
 del_part()
 {
-	echo "Deleting partition: $1 $2"
+	message "Deleting partition: $1 $2"
 
 	SRC="$1"
 	MOUNTPOINT="$2"
@@ -32,7 +32,7 @@ fixup_part()
 {
 	del_part $@
 
-	echo "Fixing up partition: ${@//:/ }"
+	message "Fixing up partition: ${@//:/ }"
 
 	SRC="$1"
 	MOUNTPOINT="$2"
@@ -48,7 +48,7 @@ fixup_part()
 
 fixup_basic_part()
 {
-	echo "Fixing up basic partition: $@"
+	message "Fixing up basic partition: $@"
 
 	FS_TYPE="$1"
 	MOUNTPOINT="$2"
@@ -59,7 +59,7 @@ fixup_basic_part()
 
 fixup_device_part()
 {
-	echo "Fixing up device partition: $@"
+	message "Fixing up device partition: $@"
 
 	DEV="$1"
 
@@ -74,7 +74,7 @@ fixup_device_part()
 	fixup_part "$DEV" "$MOUNTPOINT" "$FS_TYPE" "$MOUNT_OPTS" 2
 }
 
-echo "Fixing up /etc/fstab..."
+message "Fixing up /etc/fstab..."
 
 mkdir -p "$TARGET_DIR/etc"
 touch "$FSTAB"

@@ -5,13 +5,13 @@ source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helpe
 [ -z "$RK_ROOTFS_HOSTNAME_ORIGINAL" ] || exit 0
 
 if [ "$RK_ROOTFS_HOSTNAME_DEFAULT" -a "$POST_OS" = debian ]; then
-	echo -e "\e[33mKeep original hostname for debian by default\e[0m"
+	notice "Keep original hostname for debian by default"
 	exit 0
 fi
 
 HOSTNAME="${RK_ROOTFS_HOSTNAME:-"$RK_CHIP-$POST_OS"}"
 
-echo "Setting hostname: $HOSTNAME"
+message "Setting hostname: $HOSTNAME"
 
 mkdir -p "$TARGET_DIR/etc"
 echo "$HOSTNAME" > "$TARGET_DIR/etc/hostname"

@@ -10,6 +10,6 @@ mkdir -p "$TARGET_DIR/lib/udev/rules.d"
 for rule in external/rkscript/*.rules; do
 	echo $rule | grep -vq usbdevice || continue
 
-	echo "Installing udev rule: $rule"
+	message "Installing udev rule: $rule"
 	install -m 0644 $rule "$TARGET_DIR/lib/udev/rules.d/"
 done

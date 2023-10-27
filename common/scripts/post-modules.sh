@@ -4,7 +4,7 @@ source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helpe
 
 [ "$RK_ROOTFS_STRIP_MODULES" ] || exit 0
 
-echo "Strip kernel modules..."
+message "Strip kernel modules..."
 
 source "$RK_SCRIPTS_DIR/kernel-helper"
 

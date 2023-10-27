@@ -15,9 +15,9 @@ build_hal()
 {
 	check_config RK_RTOS_HAL_TARGET || return 0
 
-	echo "=========================================="
-	echo "  Building CPU$1: HAL-->$RK_RTOS_HAL_TARGET"
-	echo "=========================================="
+	message "=========================================="
+	message "  Building CPU$1: HAL-->$RK_RTOS_HAL_TARGET"
+	message "=========================================="
 
 	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
 
@@ -56,9 +56,9 @@ build_rtthread()
 {
 	check_config RK_RTOS_RTT_TARGET || return 0
 
-	echo "=========================================="
-	echo "  Building CPU$1: RT-Thread-->$RK_RTOS_RTT_TARGET"
-	echo "=========================================="
+	message "=========================================="
+	message "  Building CPU$1: RT-Thread-->$RK_RTOS_RTT_TARGET"
+	message "=========================================="
 
 	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
 
@@ -99,14 +99,14 @@ build_rtthread()
 		cp $RK_RTTHREAD_DEFCONFIG .config
 		cp $RK_RTTHREAD_DEFCONFIG.h rtconfig.h
 	else
-		echo -e "\e[31mWarning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) or ($RK_RTTHREAD_DEFCONFIG.h) not exit!\n\e[0m"
-		echo -e "\e[31mhelp:\e[0m"
-		echo -e "\e[31m    cd $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET\e[0m"
-		echo -e "\e[31m    cp $RK_RTTHREAD_DEFCONFIG .config\e[0m"
-		echo -e "\e[31m    scons --menuconfig\e[0m"
-		echo -e "\e[31m    cp .config $RK_RTTHREAD_DEFCONFIG\e[0m"
-		echo -e "\e[31m    cp rtconfig.h $RK_RTTHREAD_DEFCONFIG.h\n\e[0m"
-		echo -e "\e[31mDefault .config and rtconfig.h are used!!!\n\e[0m"
+		warning "Warning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) or ($RK_RTTHREAD_DEFCONFIG.h) not exit!\n"
+		warning "help:"
+		warning "    cd $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
+		warning "    cp $RK_RTTHREAD_DEFCONFIG .config"
+		warning "    scons --menuconfig"
+		warning "    cp .config $RK_RTTHREAD_DEFCONFIG"
+		warning "    cp rtconfig.h $RK_RTTHREAD_DEFCONFIG.h\n"
+		warning "Default .config and rtconfig.h are used!!!\n"
 	fi
 
 	scons -c > /dev/null
@@ -143,9 +143,9 @@ build_hook()
 
 	check_config RK_RTOS || return 0
 
-	echo "=========================================="
-	echo "          Start building RTOS"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building RTOS"
+	message "=========================================="
 
 	"$RK_SCRIPTS_DIR/check-rtos.sh"
 
@@ -165,7 +165,7 @@ build_hook()
 		CORE_SYS=$(grep -wE "amp[0-9]* {|sys" $ITS_FILE | grep amp${i} -A1 | grep sys | cut -d'"' -f2)
 
 		if ! [ "$CORE_ID" -lt "$MAX_CORE_NUMBERS" ] 2>/dev/null; then
-			echo "Invalid core($CORE_ID) should be (0-$MAX_CORE_NUMBERS)!"
+			error "Invalid core($CORE_ID) should be (0-$MAX_CORE_NUMBERS)!"
 			exit 1
 		fi
 

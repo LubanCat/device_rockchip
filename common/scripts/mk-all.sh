@@ -4,15 +4,11 @@ BOARD=$(echo ${RK_KERNEL_DTS_NAME:-$(echo "$RK_DEFCONFIG" | \
 	sed -n "s/.*\($RK_CHIP.*\)_defconfig/\1/p")} | \
 	tr '[:lower:]' '[:upper:]')
 
-message() {
-	echo -e "\e[36m$@\e[0m"
-}
-
 build_all()
 {
-	echo "=========================================="
-	echo "          Start building all images"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building all images"
+	message "=========================================="
 
 	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
@@ -41,9 +37,9 @@ build_all()
 
 build_release()
 {
-	echo "=========================================="
-	echo "          Start releasing images and build info"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start releasing images and build info"
+	message "=========================================="
 
 	shift
 	RELEASE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
@@ -102,9 +98,9 @@ build_release()
 
 build_all_release()
 {
-	echo "=========================================="
-	echo "          Start building and releasing images"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building and releasing images"
+	message "=========================================="
 
 	build_all
 	build_release $@

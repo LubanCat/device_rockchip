@@ -8,7 +8,7 @@ install_adbd()
 {
 	[ -n "$RK_USB_ADBD" ] || return 0
 
-	echo "Installing adbd..."
+	message "Installing adbd..."
 
 	find "$TARGET_DIR" -name "*adbd*" -print0 | xargs -0 rm -rf
 
@@ -50,7 +50,7 @@ install_ums()
 {
 	[ -n "$RK_USB_UMS" ] || return 0
 
-	echo "Installing UMS..."
+	message "Installing UMS..."
 
 	{
 		echo "export UMS_FILE=${RK_USB_UMS_FILE:-/userdata/ums_shared.img}"
@@ -82,7 +82,7 @@ usb_funcs()
 [ -z "$RK_USB_DISABLED" ] || exit 0
 
 if [ "$RK_USB_DEFAULT" -a "$POST_OS" = buildroot ]; then
-	echo -e "\e[33mKeep original USB gadget for buildroot by default\e[0m"
+	notice "Keep original USB gadget for buildroot by default"
 	exit 0
 fi
 
@@ -95,7 +95,7 @@ find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
 	"$TARGET_DIR/usr/lib" -name "*usbdevice*" -print0 | xargs -0 rm -rf
 find "$TARGET_DIR/etc" -name ".usb_config" -print0 | xargs -0 rm -rf
 
-echo "USB gadget functions: $(usb_funcs)"
+message "USB gadget functions: $(usb_funcs)"
 mkdir -p "$TARGET_DIR/etc/profile.d"
 echo "export USB_FUNCS=\"$(usb_funcs)\"" > "$TARGET_DIR/etc/profile.d/usbdevice.sh"
 
@@ -108,7 +108,7 @@ install -m 0644 external/rkscript/61-usbdevice.rules \
 
 install -m 0755 external/rkscript/usbdevice "$TARGET_DIR/usr/bin/"
 
-echo "Installing USB services..."
+message "Installing USB services..."
 
 install_sysv_service external/rkscript/S*usbdevice.sh 5 4 3 2 K01 0 1 6
 install_busybox_service external/rkscript/S*usbdevice.sh
@@ -119,10 +119,10 @@ for hook in $RK_USB_HOOKS; do
 	if [ -r "$RK_CHIP_DIR/$hook" ]; then
 		hook="$RK_CHIP_DIR/$hook"
 	elif [ ! -r "$hook" ]; then
-		echo "Ignore non-existant USB hook: $hook"
+		warning "Ignore non-existant USB hook: $hook"
 		continue
 	fi
 
-	echo "Installing USB hook: $hook"
+	message "Installing USB hook: $hook"
 	install -m 0644 "$hook" "$TARGET_DIR/etc/usbdevice.d/"
 done

@@ -6,7 +6,7 @@ REBOOT_WRAPPER=busybox-reboot
 
 [ "$(readlink sbin/reboot)" = busybox ] || exit 0
 
-echo "Fixing up busybox reboot commands..."
+message "Fixing up busybox reboot commands..."
 
 install -D -m 0755 "$RK_DATA_DIR/$REBOOT_WRAPPER" sbin/$REBOOT_WRAPPER
 

@@ -22,9 +22,9 @@ build_hook()
 
 	check_config RK_RECOVERY || return 0
 
-	echo "=========================================="
-	echo "          Start building recovery(buildroot)"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start building recovery(buildroot)"
+	message "=========================================="
 
 
 	DST_DIR="$RK_OUTDIR/recovery"

@@ -7,7 +7,7 @@ TARGET_DIR="$1"
 
 OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
-echo "Installing bootanim to $TARGET_DIR..."
+message "Installing bootanim to $TARGET_DIR..."
 
 cd "$RK_SDK_DIR"
 

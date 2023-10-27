@@ -13,14 +13,14 @@ err_handler()
 	ret=${1:-$?}
 	[ "$ret" -eq 0 ] && return
 
-	echo "ERROR: Running $0 - ${2:-${FUNCNAME[1]}} failed!"
-	echo "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
-	echo "    ${3:-$BASH_COMMAND}"
-	echo "ERROR: call stack:"
+	error "ERROR: Running $0 - ${2:-${FUNCNAME[1]}} failed!"
+	error "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
+	error "    ${3:-$BASH_COMMAND}"
+	error "ERROR: call stack:"
 	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
 		SOURCE="${BASH_SOURCE[$i]}"
 		LINE=${BASH_LINENO[$(( $i - 1 ))]}
-		echo "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
+		error "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
 	done
 	exit $ret
 }
@@ -106,7 +106,7 @@ case "$1" in
 esac
 
 if [ ! -d "$1" ]; then
-	echo "$1 is not a dir!"
+	error "$1 is not a dir!"
 	usage
 fi
 
@@ -174,6 +174,6 @@ for t in $POST_INIT; do
 	esac
 done
 
-echo "Running $(basename "$0") for $TARGET_DIR ($POST_OS init=$POST_INIT)..."
+message "Running $(basename "$0") for $TARGET_DIR ($POST_OS init=$POST_INIT)..."
 
 cd "$TARGET_DIR"

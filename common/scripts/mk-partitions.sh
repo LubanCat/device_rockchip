@@ -8,9 +8,9 @@ print_usage()
 
 modify_partitions()
 {
-	echo "=========================================="
-	echo "          Start modifying partitions"
-	echo "=========================================="
+	message "=========================================="
+	message "          Start modifying partitions"
+	message "=========================================="
 
 	rk_partition_print
 
@@ -36,7 +36,7 @@ modify_partitions()
 			resize-part | rs) FUNC=rk_partition_resize ;;
 			help | h | -h | --help | \?) FUNC=false ;;
 			*)
-				echo "Unknown command: $SUB_CMD"
+				error "Unknown command: $SUB_CMD"
 				FUNC=false
 				;;
 		esac

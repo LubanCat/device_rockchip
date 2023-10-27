@@ -33,29 +33,32 @@ usage()
 	exit 0
 }
 
-err_handler()
-{
-	ret=${1:-$?}
-	[ "$ret" -eq 0 ] && return
-
-	echo "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
-	echo "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
-	echo "    ${3:-$BASH_COMMAND}"
-	echo "ERROR: call stack:"
-	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
-		SOURCE="${BASH_SOURCE[$i]}"
-		LINE=${BASH_LINENO[$(( $i - 1 ))]}
-		echo "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
-	done
-	exit $ret
-}
-
 # Export global functions
 set -a
 
+message()
+{
+	echo -e "\e[30m$@\e[0m"
+}
+
+notice()
+{
+	echo -e "\e[35m$@\e[0m"
+}
+
+warning()
+{
+	echo -e "\e[34m$@\e[0m"
+}
+
+error()
+{
+	echo -e "\e[31m$@\e[0m"
+}
+
 finish_build()
 {
-	echo -e "\e[35mRunning $(basename "${BASH_SOURCE[1]}") - ${@:-${FUNCNAME[1]}} succeeded.\e[0m"
+	notice "Running $(basename "${BASH_SOURCE[1]}") - ${@:-${FUNCNAME[1]}} succeeded."
 	cd "$RK_SDK_DIR"
 }
 
@@ -80,7 +83,7 @@ check_config()
 
 	[ -z "$missing" ] && return 0
 
-	echo "Skipping $(basename "${BASH_SOURCE[1]}") - ${FUNCNAME[1]} for missing configs: $missing."
+	notice "Skipping $(basename "${BASH_SOURCE[1]}") - ${FUNCNAME[1]} for missing configs: $missing."
 	return 1
 }
 
@@ -128,7 +131,7 @@ get_toolchain()
 
 	MACHINE=$(uname -m)
 	if [ "$MACHINE" != x86_64 ]; then
-		echo -e "\e[33mUsing Non-x86 toolchain for $MODULE!\e[0m" >&2
+		notice "Using Non-x86 toolchain for $MODULE!" >&2
 
 		if [ "$TOOLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
 			echo aarch64-linux-gnu-
@@ -151,12 +154,10 @@ get_toolchain()
 		grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc" || true)"
 	if [ ! -x "$GCC" ]; then
 		{
-			echo -e "\e[35m"
-			echo "No prebuilt GCC toolchain for $MODULE!"
-			echo "Arch: $TOOLCHAIN_ARCH"
-			echo "Vendor: $TOOLCHAIN_VENDOR"
-			echo "OS: $TOOLCHAIN_OS"
-			echo -e "\e[0m"
+			error "No prebuilt GCC toolchain for $MODULE!"
+			error "Arch: $TOOLCHAIN_ARCH"
+			error "Vendor: $TOOLCHAIN_VENDOR"
+			error "OS: $TOOLCHAIN_OS"
 		} >&2
 		exit 1
 	fi
@@ -193,6 +194,23 @@ rchip()
 
 set +a
 # End of global functions
+
+err_handler()
+{
+	ret=${1:-$?}
+	[ "$ret" -eq 0 ] && return
+
+	error "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
+	error "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
+	error "    ${3:-$BASH_COMMAND}"
+	error "ERROR: call stack:"
+	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
+		SOURCE="${BASH_SOURCE[$i]}"
+		LINE=${BASH_LINENO[$(( $i - 1 ))]}
+		error "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
+	done
+	exit $ret
+}
 
 run_hooks()
 {
@@ -337,19 +355,17 @@ main()
 		TAG="$(grep -o "linux-.*-gen-rkr[^.\"]*" "$MANIFEST" | \
 			head -n 1 || true)"
 		MANIFEST="$(basename "$(realpath "$MANIFEST")")"
-		echo
-		echo -e "\e[35m############### Rockchip Linux SDK ###############\e[0m"
-		echo
-		echo -e "\e[35mManifest: $MANIFEST\e[0m"
+		notice "\n############### Rockchip Linux SDK ###############\n"
+		notice "Manifest: $MANIFEST"
 		if [ "$TAG" ]; then
-			echo -e "\e[35mVersion: $TAG\e[0m"
+			notice "Version: $TAG"
 		fi
 		echo
 	fi
 
 	# Check for session validation
 	if [ -z "$INITIAL_SESSION" ] && [ ! -d "$RK_LOG_DIR" ]; then
-		echo -e "\e[35mSession($RK_SESSION) is invalid!\e\n[0m"
+		warning "Session($RK_SESSION) is invalid!"
 
 		export RK_SESSION="$(date +%F_%H-%M-%S)"
 		export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
@@ -402,7 +418,7 @@ main()
 					break
 				fi
 
-				echo "ERROR: $opt cannot combine with other options!"
+				error "ERROR: $opt cannot combine with other options!"
 				;;
 			post-rootfs)
 				if [ "$opt" = "$1" -a -d "$2" ]; then
@@ -411,7 +427,7 @@ main()
 					break
 				fi
 
-				echo "ERROR: $opt should be the first option followed by rootfs dir!"
+				error "ERROR: $opt should be the first option followed by rootfs dir!"
 				;;
 			*)
 				# Make sure that all options are handled
@@ -419,7 +435,7 @@ main()
 					continue
 				fi
 
-				echo "ERROR: Unhandled option: $opt"
+				error "ERROR: Unhandled option: $opt"
 				;;
 		esac
 
@@ -427,9 +443,9 @@ main()
 	done
 
 	if ! id "$RK_OWNER_UID" &>/dev/null; then
-		echo "ERROR: Unknown source owner($RK_OWNER_UID)"
-		echo "Please create it:"
-		echo "sudo useradd rk_compiler -u $RK_OWNER_UID"
+		error "ERROR: Unknown source owner($RK_OWNER_UID)"
+		error "Please create it:"
+		error "sudo useradd rk_compiler -u $RK_OWNER_UID"
 		exit 1
 	fi
 
@@ -439,8 +455,7 @@ main()
 		mkdir -p "$RK_LOG_DIR"
 		ln -rsf "$RK_SESSION_DIR" "$RK_LOG_BASE_DIR"
 		ln -rsf "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
-		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
-		echo
+		message "Log saved at $RK_LOG_DIR"
 	fi
 
 	# Drop old logs
@@ -492,20 +507,20 @@ main()
 		if [ -e "$RK_CUSTOM_ENV" ]; then
 			ln -rsf "$RK_CUSTOM_ENV" "$RK_OUTDIR/"
 
-			echo -e "\e[31mWARN: Found custom environments: \e[0m"
+			warning "WARN: Found custom environments:"
 			cat "$RK_CUSTOM_ENV"
 
-			echo -e "\e[31mAssuming that is expected, please clear them if otherwise.\e[0m"
+			warning "Assuming that is expected, please clear them if otherwise."
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
 
 			if grep -q "^RK_KERNEL_VERSION=" "$RK_CUSTOM_ENV"; then
-				echo -e "\e[31mCustom RK_KERNEL_VERSION ignored!\e[0m"
+				warning "Custom RK_KERNEL_VERSION ignored!"
 				load_config RK_KERNEL_VERSION
 			fi
 
 			if grep -q "^RK_ROOTFS_SYSTEM=" "$RK_CUSTOM_ENV"; then
-				echo -e "\e[31mCustom RK_ROOTFS_SYSTEM ignored!\e[0m"
+				warning "Custom RK_ROOTFS_SYSTEM ignored!"
 				load_config RK_ROOTFS_SYSTEM
 			fi
 		fi
@@ -546,10 +561,9 @@ main()
 	ln -rsf "$RK_FINAL_ENV" "$RK_OUTDIR/"
 
 	# Log configs
-	echo
-	echo "=========================================="
-	echo "          Final configs"
-	echo "=========================================="
+	message "\n=========================================="
+	message "          Final configs"
+	message "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
 		grep -vE "=\"\"$|_DEFAULT=y" | \
 		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | sort

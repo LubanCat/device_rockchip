@@ -2,7 +2,7 @@
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-echo "Adding dirs and links..."
+message "Adding dirs and links..."
 
 rm -rf mnt/udisk mnt/sdcard mnt/usb_storage  mnt/external_sd udisk sdcard data
 mkdir -p mnt/sdcard mnt/udisk

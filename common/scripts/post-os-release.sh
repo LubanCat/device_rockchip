@@ -13,7 +13,7 @@ fixup_os_release()
 	echo "$KEY=\"$@\"" >> "$OS_RELEASE"
 }
 
-echo "Adding information to /etc/os-release..."
+message "Adding information to /etc/os-release..."
 
 mkdir -p "$(dirname "$OS_RELEASE")"
 [ -f "$OS_RELEASE" ] || touch "$OS_RELEASE"

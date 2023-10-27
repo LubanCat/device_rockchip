@@ -46,7 +46,7 @@ if [ "$2" = make ]; then
 
 	if [ "$1" ]; then
 		shift
-		echo "Buildroot make: $TARGET $@"
+		message "Buildroot make: $TARGET $@"
 	fi
 
 	make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" $TARGET $@
@@ -63,12 +63,9 @@ make -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR" ${BUILDROOT_BOARD}_defconfig
 # Warn about config changes
 if [ -r "$BUILDROOT_CONFIG_ORIG" ]; then
 	if ! diff "$BUILDROOT_CONFIG" "$BUILDROOT_CONFIG_ORIG"; then
-		echo -e "\e[35m"
-		echo "Buildroot config changed!"
-		echo "You might need to clean it before building:"
-		echo "rm -rf $BUILDROOT_OUTPUT_DIR"
-		echo -e "\e[0m"
-		echo
+		warning "Buildroot config changed!"
+		warning "You might need to clean it before building:"
+		warning "rm -rf $BUILDROOT_OUTPUT_DIR\n"
 	fi
 fi
 
@@ -87,14 +84,12 @@ ln -rsf "$LOG_FILE" br.log
 unset LD_LIBRARY_PATH
 
 if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR"; then
-	echo "Failed to build $BUILDROOT_BOARD:"
+	error "Failed to build $BUILDROOT_BOARD:"
 	tail -n 100 "$LOG_FILE"
-	echo -e "\e[35m"
-	echo "Please check details in $LOG_FILE"
-	echo -e "\e[0m"
+	error "Please check details in $LOG_FILE"
 	exit 1
 fi
 
-echo "Log saved on $LOG_FILE"
-echo "Generated images:"
+notice "Log saved on $LOG_FILE"
+notice "Generated images:"
 ls "$ROOTFS_OUTPUT_DIR"/rootfs.*

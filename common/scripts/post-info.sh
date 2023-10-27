@@ -6,7 +6,7 @@ source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helpe
 
 INFO_DIR="$TARGET_DIR/info"
 
-echo "Adding info dir..."
+message "Adding info dir..."
 
 rm -rf "$INFO_DIR"
 mkdir -p "$INFO_DIR"

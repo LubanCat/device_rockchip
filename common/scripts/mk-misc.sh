@@ -22,7 +22,7 @@ build_hook()
 	[ "$RK_MISC" ] || return 0
 
 	if [ -z "$(rk_partition_size misc)" ]; then
-		echo "Misc ignored"
+		notice "Misc ignored"
 		return 0
 	fi
 
@@ -30,24 +30,22 @@ build_hook()
 	truncate -s 48k "$MISC_IMG"
 
 	if [ "$RK_MISC_BLANK" ]; then
-		echo "Generated blank misc image"
+		notice "Generated blank misc image"
 	elif [ "$RK_MISC_RECOVERY" ]; then
 		echo -n "boot-recovery" | \
 			dd of="$MISC_IMG" bs=1 seek=$((16*1024)) conv=notrunc
 		echo -e -n "recovery\n$RK_MISC_RECOVERY_ARG" | \
 			dd of="$MISC_IMG" bs=1 seek=$((16*1024+64)) conv=notrunc
-		echo -e "Generated recovery misc with: $RK_MISC_RECOVERY_ARG"
+		notice "Generated recovery misc with: $RK_MISC_RECOVERY_ARG"
 	else
 		ln -rvsf "$RK_CHIP_DIR/$RK_MISC_IMG" "$MISC_IMG"
 	fi
 
-	echo -e "\e[36m"
-	echo "Done packing $MISC_IMG"
-	echo -e "\e[0m"
+	notice "Done packing $MISC_IMG"
 
 	if grep -wq boot-recovery "$MISC_IMG" && \
 		[ -z "$(rk_partition_size recovery)" ]; then
-		echo -e "\e[31mRecovery misc requires recovery partition!\e[0m"
+		error "Recovery misc requires recovery partition!"
 		return 1
 	fi
 

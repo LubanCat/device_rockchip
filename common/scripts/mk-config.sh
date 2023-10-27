@@ -10,11 +10,11 @@ switch_defconfig()
 	[ -f "$DEFCONFIG" ] || DEFCONFIG="$RK_CHIP_DIR/$DEFCONFIG"
 
 	if [ ! -f "$DEFCONFIG" ]; then
-		echo "No such defconfig: $1"
+		error "No such defconfig: $1"
 		exit 1
 	fi
 
-	echo "Switching to defconfig: $DEFCONFIG"
+	notice "Switching to defconfig: $DEFCONFIG"
 	rm -f "$RK_DEFCONFIG_LINK"
 	ln -rsf "$DEFCONFIG" "$RK_DEFCONFIG_LINK"
 
@@ -40,7 +40,7 @@ choose_defconfig()
 
 	case $DEFCONFIG_ARRAY_LEN in
 		0)
-			echo "No available defconfigs${1:+" for: $1"}"
+			error "No available defconfigs${1:+" for: $1"}"
 			return 1
 			;;
 		1)	DEFCONFIG=${DEFCONFIG_ARRAY[0]} ;;
@@ -49,8 +49,7 @@ choose_defconfig()
 				# Prefer exact-match
 				DEFCONFIG="$1"
 			else
-				echo "Pick a defconfig:"
-				echo ""
+				message "Pick a defconfig:\n"
 
 				echo ${DEFCONFIG_ARRAY[@]} | xargs -n 1 | \
 					sed "=" | sed "N;s/\n/. /"
@@ -73,7 +72,7 @@ choose_chip()
 
 	case $CHIP_ARRAY_LEN in
 		0)
-			echo "No available chips${1:+" for: $1"}"
+			error "No available chips${1:+" for: $1"}"
 			return 1
 			;;
 		1)	CHIP=${CHIP_ARRAY[0]} ;;
@@ -82,8 +81,7 @@ choose_chip()
 				# Prefer exact-match
 				CHIP="$1"
 			else
-				echo "Pick a chip:"
-				echo ""
+				message "Pick a chip:\n"
 
 				echo ${CHIP_ARRAY[@]} | xargs -n 1 | sed "=" | \
 					sed "N;s/\n/. /"
@@ -96,7 +94,7 @@ choose_chip()
 			;;
 	esac
 
-	echo "Switching to chip: $CHIP"
+	notice "Switching to chip: $CHIP"
 	rm -rf "$RK_CHIP_DIR"
 	ln -rsf "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR"
 
@@ -113,34 +111,34 @@ prepare_config()
 	cd "$RK_SDK_DIR"
 
 	if [ ! -r "$RK_DEFCONFIG_LINK" ]; then
-		echo "WARN: $RK_DEFCONFIG_LINK not exists"
+		warning "WARN: $RK_DEFCONFIG_LINK not exists"
 		choose_defconfig
 		return 0
 	fi
 
 	DEFCONFIG=$(basename "$(realpath "$RK_DEFCONFIG_LINK")")
 	if [ ! "$RK_DEFCONFIG_LINK" -ef "$RK_CHIP_DIR/$DEFCONFIG" ]; then
-		echo "WARN: $RK_DEFCONFIG_LINK is invalid"
+		warning "WARN: $RK_DEFCONFIG_LINK is invalid"
 		choose_defconfig
 		return 0
 	fi
 
 	if [ "$RK_CONFIG" -ot "$RK_DEFCONFIG_LINK" ]; then
-		echo "WARN: $RK_CONFIG is out-dated"
+		warning "WARN: $RK_CONFIG is out-dated"
 		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi
 
 	CONFIG_DIR="$(dirname "$RK_CONFIG_IN")"
 	if find "$CONFIG_DIR" -cnewer "$RK_CONFIG" | grep -q ""; then
-		echo "WARN: $CONFIG_DIR is updated"
+		warning "WARN: $CONFIG_DIR is updated"
 		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi
 
 	CFG="RK_DEFCONFIG=\"$(realpath "$RK_DEFCONFIG_LINK")\""
 	if ! grep -wq "$CFG" "$RK_CONFIG"; then
-		echo "WARN: $RK_CONFIG is invalid"
+		warning "WARN: $RK_CONFIG is invalid"
 		$MAKE $DEFCONFIG &>/dev/null
 		return 0
 	fi

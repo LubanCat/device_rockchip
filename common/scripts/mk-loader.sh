@@ -5,12 +5,12 @@ build_uefi()
 	check_config RK_KERNEL_DTS_NAME || return 1
 
 	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
-		echo "UEFI not supported!"
+		error "UEFI not supported!"
 		return 1
 	fi
 
 	if [ ! -f "$RK_KERNEL_DTB" ]; then
-		echo "$RK_KERNEL_DTB not exists!"
+		error "$RK_KERNEL_DTB not exists!"
 		return 1
 	fi
 
@@ -104,26 +104,26 @@ build_hook()
 {
 	if echo $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS | grep -q aarch32 && \
 		[ "$RK_UBOOT_ARCH" = arm64 ]; then
-		echo -e "\e[31mWrong u-boot arch ($RK_UBOOT_ARCH) for config:" \
-			"$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS\n\e[0m"
+		error "Wrong u-boot arch ($RK_UBOOT_ARCH) for config:" \
+			"$RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS\n"
 		export RK_UBOOT_ARCH=arm
 	fi
 
 	RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
 	[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
 
-	echo "Toolchain for loader (U-Boot):"
-	echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
+	message "Toolchain for loader (U-Boot):"
+	message "${RK_UBOOT_TOOLCHAIN:-gcc}"
 	echo
 
 	export UMAKE="./make.sh CROSS_COMPILE=$RK_UBOOT_TOOLCHAIN"
 
 	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building $1:\e[0m"
+		notice "Commands of building $1:"
 	else
-		echo "=========================================="
-		echo "          Start building $1"
-		echo "=========================================="
+		message "=========================================="
+		message "          Start building $1"
+		message "=========================================="
 	fi
 
 	TARGET="$1"

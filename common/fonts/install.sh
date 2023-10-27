@@ -2,7 +2,7 @@
 
 [ -z "$RK_EXTRA_FONTS_DISABLED" ] || exit 0
 if [ "$RK_EXTRA_FONTS_DEFAULT" -a "$POST_OS" != yocto ]; then
-	echo -e "\e[33mNo extra fonts for $POST_OS by default\e[0m"
+	notice "No extra fonts for $POST_OS by default"
 	exit 0
 fi
 
@@ -13,6 +13,6 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 cd "$OVERLAY_DIR"
 
 for f in *.tar; do
-	echo "Installing extra font(${f%.tar}) to $TARGET_DIR..."
+	message "Installing extra font(${f%.tar}) to $TARGET_DIR..."
 	tar xf "$f" -C "$TARGET_DIR"
 done
