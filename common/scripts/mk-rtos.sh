@@ -81,7 +81,7 @@ build_rtthread()
 	fi
 
 	ROOT_PART_SIZE=$(rk_partition_size rootfs)
-	if [ -n $ROOT_PART_OFFSET ];then
+	if [ -n $ROOT_PART_SIZE ];then
 		export ROOT_PART_SIZE=$ROOT_PART_SIZE
 	fi
 
@@ -116,8 +116,17 @@ build_rtthread()
 	mv rtthread.bin Image/rtt$1.bin
 	ln -rsf Image/rtt$1.bin $RK_OUTDIR/cpu$1.bin
 
-	if [ -n "$RK_RTOS_RTT_ROOTFS_DATA" ] && [ -n "$RK_RTOS_RTT_ROOTFS_PARAMETERS" ] ;then
-		./mkroot.sh $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA/ $RK_CHIP_DIR/$RK_RTOS_RTT_ROOTFS_PARAMETERS Image/
+	if [ -n "$RK_RTOS_RTT_ROOTFS_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
+
+		RTT_TOOLS_PATH=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/../tools
+		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA
+		RTT_ROOTFS_SECTOR_SIZE=$(($(printf "%d" $ROOT_PART_SIZE) / 8)) # covert to 4096B
+
+		dd of=root.img bs=4K seek=$RTT_ROOTFS_SECTOR_SIZE count=0 2>&1 || fatal "Failed to dd image!"
+		mkfs.fat -S 4096 root.img
+		MTOOLS_SKIP_CHECK=1 $RTT_TOOLS_PATH/mcopy -bspmn -D s -i root.img $RTT_ROOTFS_USERDAT/* ::/
+
+		mv root.img Image/
 		ln -rsf Image/root.img $RK_FIRMWARE_DIR/rootfs.img
 	fi
 

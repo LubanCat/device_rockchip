@@ -5,7 +5,6 @@ RK_RTOS_RTT2_BOARD_CONFIG="board/rk3308_ddr2_v10/amp_rtt2_defconfig"
 RK_RTOS_RTT3_BOARD_CONFIG="board/rk3308_ddr2_v10/amp_rtt3_defconfig"
 
 RK_RTOS_RTT_ROOTFS_DATA="userdata"
-RK_RTOS_RTT_ROOTFS_PARAMETERS="parameters-rtos-amp.txt"
 
 # Share Memory config
 RTT_SHRPMSG_SIZE=0x00080000
