@@ -1,6 +1,6 @@
 
 # RT-Thread config
-RK_RTOS_RTT3_BOARD_CONFIG="board/rk3308_ddr2_v10/defconfig_amp_linux-rtt"
+RK_RTOS_RTT3_BOARD_CONFIG="board/rk3308_ddr2_v10/amp_rtt3_defconfig"
 AMP_KERNEL_ENABLE=true
 
 # Share Memory config
