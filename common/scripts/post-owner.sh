@@ -13,7 +13,7 @@ fi
 
 message "Fixing up owner for $TARGET_DIR..."
 
-if [ "$RK_OWNER" != "root" ]; then
+if [ "$RK_OWNER_UID" -ne 0 ]; then
 	message "Fixing up uid=$RK_OWNER($RK_OWNER_UID) to 0(root)..."
 	find . -user $RK_OWNER_UID -exec chown -ch 0:0 {} \;
 fi

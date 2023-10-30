@@ -13,7 +13,7 @@ for idx in $(seq 1 "$(rk_extra_part_num)"); do
 	MOUNT_DIR="$(rk_extra_part_mount_dir $idx)"
 
 	rm -rf "$FAKEROOT_SCRIPT" "$OUTDIR" "$MOUNT_DIR"
-	mkdir -p "$TARGET_DIR/$MOUNTPOINT"
+	mkdir -p "$TARGET_DIR/$MOUNTPOINT" "$(dirname "$MOUNT_DIR")"
 	ln -rsf "$TARGET_DIR/$MOUNTPOINT" "$MOUNT_DIR"
 
 	if rk_extra_part_builtin $idx; then

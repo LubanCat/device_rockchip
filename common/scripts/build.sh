@@ -330,7 +330,7 @@ main()
 	export RK_OWNER="$(stat --format %U "$RK_SDK_DIR")"
 	export RK_OWNER_UID="$(stat --format %u "$RK_SDK_DIR")"
 	unset RK_SUDO_ROOT
-	if [ "$RK_OWNER" != "root" ] && [ "${USER:-$(id -un)}" = "root" ]; then
+	if [ "$RK_OWNER_UID" -ne 0 ] && [ "${USER:-$(id -un)}" = "root" ]; then
 		export RK_SUDO_ROOT=1
 	fi
 
@@ -442,7 +442,8 @@ main()
 		usage
 	done
 
-	if ! id "$RK_OWNER_UID" &>/dev/null; then
+	# Check /etc/passwd directly for pseudo environment
+	if ! cut -d':' -f3 /etc/passwd | grep -q "^$RK_OWNER_UID$"; then
 		error "ERROR: Unknown source owner($RK_OWNER_UID)"
 		error "Please create it:"
 		error "sudo useradd rk_compiler -u $RK_OWNER_UID"
