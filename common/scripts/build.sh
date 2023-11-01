@@ -127,37 +127,40 @@ start_log()
 get_toolchain()
 {
 	MODULE="$1"
-	TOOLCHAIN_ARCH="${2/arm64/aarch64}"
+	TC_ARCH="${2/arm64/aarch64}"
+	TC_VENDOR="${3-none}"
+	TC_OS="${4:-linux}"
 
 	MACHINE=$(uname -m)
 	if [ "$MACHINE" != x86_64 ]; then
 		notice "Using Non-x86 toolchain for $MODULE!" >&2
 
-		if [ "$TOOLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
+		if [ "$TC_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
 			echo aarch64-linux-gnu-
-		elif [ "$TOOLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
+		elif [ "$TC_ARCH" = arm -a "$MACHINE" != armv7l ]; then
 			echo arm-linux-gnueabihf-
 		fi
 		return 0
 	fi
 
-	TOOLCHAIN_VENDOR="${3:-none}"
-	TOOLCHAIN_OS="${4:-linux}"
-
 	# RV1126 uses custom toolchain
 	if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-		TOOLCHAIN_VENDOR=rockchip
+		TC_VENDOR=rockchip
 	fi
 
-	TOOLCHAIN_DIR="$RK_SDK_DIR/prebuilts/gcc/linux-x86/$TOOLCHAIN_ARCH"
-	GCC="$(find "$TOOLCHAIN_DIR"/*/bin -name "*gcc" | \
-		grep -m 1 "$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-[^-]*-gcc" || true)"
+	TC_DIR="$RK_SDK_DIR/prebuilts/gcc/linux-x86/$TC_ARCH"
+	if [ "$TC_VENDOR" ]; then
+		TC_PATTERN="$TC_ARCH-$TC_VENDOR-$TC_OS-[^-]*-gcc"
+	else
+		TC_PATTERN="$TC_ARCH-$TC_OS-[^-]*-gcc"
+	fi
+	GCC="$(find "$TC_DIR" -name "*gcc" | grep -m 1 "/$TC_PATTERN$" || true)"
 	if [ ! -x "$GCC" ]; then
 		{
 			error "No prebuilt GCC toolchain for $MODULE!"
-			error "Arch: $TOOLCHAIN_ARCH"
-			error "Vendor: $TOOLCHAIN_VENDOR"
-			error "OS: $TOOLCHAIN_OS"
+			error "Arch: $TC_ARCH"
+			error "Vendor: $TC_VENDOR"
+			error "OS: $TC_OS"
 		} >&2
 		exit 1
 	fi
