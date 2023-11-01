@@ -17,7 +17,7 @@ build_all()
 
 	[ -z "$RK_MISC" ] || "$RK_SCRIPTS_DIR/mk-misc.sh"
 	[ -z "$RK_KERNEL" ] || "$RK_SCRIPTS_DIR/mk-kernel.sh"
-	[ -z "$RK_ROOTFS"] || "$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	[ -z "$RK_ROOTFS" ] || "$RK_SCRIPTS_DIR/mk-rootfs.sh"
 	[ -z "$RK_RECOVERY" ] || "$RK_SCRIPTS_DIR/mk-recovery.sh"
 
 	[ -z "$RK_RTOS" ] || "$RK_SCRIPTS_DIR/mk-rtos.sh"
