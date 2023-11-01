@@ -14,8 +14,6 @@ fixup_root()
 
 del_part()
 {
-	message "Deleting partition: $1 $2"
-
 	SRC="$1"
 	MOUNTPOINT="$2"
 
@@ -31,8 +29,6 @@ del_part()
 fixup_part()
 {
 	del_part $@
-
-	message "Fixing up partition: ${@//:/ }"
 
 	SRC="$1"
 	MOUNTPOINT="$2"
