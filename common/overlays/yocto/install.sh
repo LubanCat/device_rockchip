@@ -49,3 +49,12 @@ if [ "$RK_YOCTO_USBMOUNT" ]; then
 		ln -sf "/mnt/$type" "$TARGET_DIR/media/${type}0"
 	done
 fi
+
+# Install pulseaudio
+if [ -x "$TARGET_DIR/usr/bin/pulseaudio" ]; then
+	$RK_RSYNC "$TARGET_DIR/etc/pulse" "$TARGET_DIR/etc/"
+
+	mkdir -p "$TARGET_DIR/etc/rcS.d"
+	install -m 0755 "$OVERLAY_DIR/pulseaudio/etc/rcS.d/S50pulseaudio" \
+		"$TARGET_DIR/etc/rcS.d/"
+fi
