@@ -169,7 +169,7 @@ clean_hook()
 	rm -rf "$RK_OUTDIR"/*config* "$RK_OUTDIR/kconf"
 }
 
-INIT_CMDS="chip defconfig lunch .*_defconfig olddefconfig savedefconfig menuconfig config default"
+INIT_CMDS="chip defconfig lunch [^:]*_defconfig olddefconfig savedefconfig menuconfig config default"
 init_hook()
 {
 	case "${1:-default}" in
