@@ -33,6 +33,8 @@ update_kernel()
 
 do_build()
 {
+	check_config RK_KERNEL RK_KERNEL_CFG || false
+
 	if [ "$DRY_RUN" ]; then
 		notice "Commands of building $1:"
 	else
@@ -40,8 +42,6 @@ do_build()
 		message "          Start building $1"
 		message "=========================================="
 	fi
-
-	check_config RK_KERNEL RK_KERNEL_CFG || return 0
 
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
@@ -129,7 +129,7 @@ init_hook()
 PRE_BUILD_CMDS="kernel-config kconfig kernel-make kmake"
 pre_build_hook()
 {
-	check_config RK_KERNEL RK_KERNEL_CFG || return 0
+	check_config RK_KERNEL RK_KERNEL_CFG || false
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	message "Toolchain for kernel:"
@@ -173,7 +173,7 @@ pre_build_hook_dry()
 BUILD_CMDS="$KERNELS kernel modules"
 build_hook()
 {
-	check_config RK_KERNEL RK_KERNEL_CFG || return 0
+	check_config RK_KERNEL RK_KERNEL_CFG || false
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	message "Toolchain for kernel:"
@@ -209,7 +209,7 @@ build_hook_dry()
 POST_BUILD_CMDS="linux-headers"
 post_build_hook()
 {
-	check_config RK_KERNEL RK_KERNEL_CFG || return 0
+	check_config RK_KERNEL RK_KERNEL_CFG || false
 	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	[ "$1" = "linux-headers" ] || return 0

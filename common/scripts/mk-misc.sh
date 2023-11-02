@@ -19,7 +19,7 @@ build_hook()
 	MISC_IMG="$RK_FIRMWARE_DIR/misc.img"
 	rm -f "$MISC_IMG"
 
-	[ "$RK_MISC" ] || return 0
+	check_config MISC_IMG || false
 
 	if [ -z "$(rk_partition_size misc)" ]; then
 		notice "Misc ignored"

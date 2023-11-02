@@ -50,7 +50,7 @@ gen_package_file()
 
 build_updateimg()
 {
-	check_config RK_UPDATE || return 0
+	check_config RK_UPDATE || false
 
 	TARGET="${1:-$RK_ROCKDEV_DIR/update.img}"
 	TYPE="${2:-update}"
@@ -117,7 +117,7 @@ build_updateimg()
 
 build_ota_updateimg()
 {
-	check_config RK_AB_UPDATE || return 0
+	check_config RK_AB_UPDATE || false
 
 	notice "Make A/B update image for OTA"
 
@@ -129,7 +129,7 @@ build_ota_updateimg()
 
 build_ab_updateimg()
 {
-	check_config RK_AB_UPDATE || return 0
+	check_config RK_AB_UPDATE || false
 
 	build_ota_updateimg
 
@@ -189,10 +189,10 @@ pre_build_hook()
 {
 	case "$1" in
 		edit-package-file)
-			check_config RK_PACKAGE_FILE || return 0
+			check_config RK_PACKAGE_FILE || false
 			PKG_FILE="$RK_CHIP_DIR/$RK_PACKAGE_FILE" ;;
 		edit-ota-package-file)
-			check_config RK_AB_OTA_PACKAGE_FILE || return 0
+			check_config RK_AB_OTA_PACKAGE_FILE || false
 			PKG_FILE="$RK_CHIP_DIR/$RK_AB_OTA_PACKAGE_FILE"
 			;;
 		*) return 0 ;;

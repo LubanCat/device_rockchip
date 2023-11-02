@@ -57,7 +57,7 @@ find_string_in_config()
 
 security_check()
 {
-	check_config RK_SECURITY RK_BUILDROOT || return 0
+	check_config RK_SECURITY RK_BUILDROOT || false
 
 	if [ ! -d u-boot/keys ]; then
 		error "ERROR: No root keys(u-boot/keys) found in u-boot"
@@ -137,7 +137,7 @@ build_security_keys()
 
 build_security_ramboot()
 {
-	check_config RK_SECURITY_INITRD_CFG || return 0
+	check_config RK_SECURITY_INITRD_CFG || false
 
 	message "=========================================="
 	message "          Start building security ramboot(buildroot)"
@@ -191,7 +191,7 @@ BUILD_CMDS="security_check createkeys security_keys security_ramboot \
 	security_uboot security_boot security_recovery security_rootfs"
 build_hook()
 {
-	check_config RK_SECURITY || return 0
+	check_config RK_SECURITY || false
 
 	case "${1:-security_ramboot}" in
 		security_check) security_check ;;
@@ -204,7 +204,7 @@ build_hook()
 			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot boot
 			;;
 		security_recovery)
-			check_config RK_RECOVERY || return 0
+			check_config RK_RECOVERY || false
 			"$RK_SCRIPTS_DIR"/mk-recovery.sh
 			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot recovery
 			;;

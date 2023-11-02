@@ -111,11 +111,13 @@ elif [ "$MODE" = "DM-E" ]; then
 	sed -i "s/ENC_EN=/ENC_EN=true/" "$INIT_FILE"
 	sed -i "s/CIPHER=/CIPHER=$cipher/" "$INIT_FILE"
 
-	echo "Generate misc with key"
-	"$RK_SCRIPTS_DIR/mk-misc.sh"
-	gen_misc "$RK_FIRMWARE_DIR/misc.img" \
-		"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
-		$(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")
+	if [ "$RK_MISC" ]; then
+		echo "Generate misc with key"
+		$RK_SCRIPTS_DIR/mk-misc.sh"
+		gen_misc "$RK_FIRMWARE_DIR/misc.img" \
+			"$RK_SECURITY_FIRMWARE_DIR/misc.img" 64 \
+			$(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")
+	fi
 fi
 
 sed -i "s/# exec busybox switch_root/exec busybox switch_root/" "$INIT_FILE"

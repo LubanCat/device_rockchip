@@ -150,7 +150,7 @@ build_hook()
 {
 	local i
 
-	check_config RK_RTOS || return 0
+	check_config RK_RTOS || false
 
 	message "=========================================="
 	message "          Start building RTOS"

@@ -2,7 +2,7 @@
 
 build_buildroot()
 {
-	check_config RK_BUILDROOT || return 0
+	check_config RK_BUILDROOT || false
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
 
@@ -23,7 +23,7 @@ build_buildroot()
 
 build_yocto()
 {
-	check_config RK_YOCTO || return 0
+	check_config RK_YOCTO || false
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
 
@@ -104,7 +104,7 @@ build_yocto()
 
 build_debian()
 {
-	check_config RK_DEBIAN || return 0
+	check_config RK_DEBIAN || false
 
 	ROOTFS_DIR="${1:-$RK_OUTDIR/debian}"
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
@@ -186,7 +186,7 @@ init_hook()
 	if ! grep -q "^$ROOTFS_CONFIG$" "$RK_CONFIG"; then
 		if ! grep -wq "$ROOTFS_CHOICE" "$RK_CONFIG"; then
 			error "$RK_ROOTFS_SYSTEM not supported!"
-			return 0
+			return 1
 		fi
 
 		sed -i -e "/RK_ROOTFS_SYSTEM/d" "$RK_CONFIG"
@@ -199,11 +199,11 @@ init_hook()
 PRE_BUILD_CMDS="buildroot-config bconfig buildroot-make bmake"
 pre_build_hook()
 {
-	check_config RK_ROOTFS || return 0
+	check_config RK_ROOTFS || false
 
 	case "$1" in
 		buildroot-make | bmake)
-			check_config RK_BUILDROOT || return 0
+			check_config RK_BUILDROOT || false
 
 			shift
 			"$RK_SCRIPTS_DIR/mk-buildroot.sh" \
@@ -231,7 +231,7 @@ pre_build_hook()
 BUILD_CMDS="rootfs buildroot debian yocto"
 build_hook()
 {
-	check_config RK_ROOTFS || return 0
+	check_config RK_ROOTFS || false
 
 	if [ -z "$1" -o "$1" = rootfs ]; then
 		ROOTFS=${RK_ROOTFS_SYSTEM:-buildroot}

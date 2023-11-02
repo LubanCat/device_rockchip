@@ -68,7 +68,7 @@ usage_hook()
 PRE_BUILD_CMDS="print-parts list-parts mod-parts edit-parts new-parts insert-part del-part move-part rename-part resize-part"
 pre_build_hook()
 {
-	check_config RK_PARAMETER || return 0
+	check_config RK_PARAMETER || false
 
 	CMD=$1
 	shift
