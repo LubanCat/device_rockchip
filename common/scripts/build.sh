@@ -56,6 +56,11 @@ error()
 	echo -e "\e[31m$@\e[0m"
 }
 
+fatal()
+{
+	echo -e "\e[47m$@\e[0m"
+}
+
 finish_build()
 {
 	notice "Running $(basename "${BASH_SOURCE[1]}") - ${@:-${FUNCNAME[1]}} succeeded."
@@ -203,14 +208,14 @@ err_handler()
 	ret=${1:-$?}
 	[ "$ret" -eq 0 ] && return
 
-	error "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
-	error "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
-	error "    ${3:-$BASH_COMMAND}"
-	error "ERROR: call stack:"
+	fatal "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
+	fatal "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
+	fatal "    ${3:-$BASH_COMMAND}"
+	fatal "ERROR: call stack:"
 	for i in $(seq 1 $((${#FUNCNAME[@]} - 1))); do
 		SOURCE="${BASH_SOURCE[$i]}"
 		LINE=${BASH_LINENO[$(( $i - 1 ))]}
-		error "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
+		fatal "    $(basename "$SOURCE"): ${FUNCNAME[$i]}($LINE)"
 	done
 	exit $ret
 }
