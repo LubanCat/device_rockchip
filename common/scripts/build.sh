@@ -38,7 +38,7 @@ set -a
 
 message()
 {
-	echo -e "\e[30m$@\e[0m"
+	echo -e "\e[36m$@\e[0m"
 }
 
 notice()
