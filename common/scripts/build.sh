@@ -66,12 +66,12 @@ warning()
 
 error()
 {
-	rk_log 31 "$@"
+	rk_log 91 "$@"
 }
 
 fatal()
 {
-	rk_log 47 "$@"
+	rk_log 31 "$@"
 }
 
 finish_build()
