@@ -592,6 +592,12 @@ main()
 
 			ln -rsf "$TARGET_DIR" "$POST_DIR/target"
 			finish_build post-rootfs
+
+			notice "Files changed in post-rootfs stage:"
+			cd "$TARGET_DIR"
+			find . \( -type f -o -type l \) \
+				-cnewer "$POST_DIR/.stamp_post_start" | \
+				tee "$POST_DIR/.files_post.txt"
 			exit 0 ;;
 	esac
 
