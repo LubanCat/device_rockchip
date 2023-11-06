@@ -36,29 +36,42 @@ usage()
 # Export global functions
 set -a
 
+rk_log()
+{
+	LOG_COLOR="$1"
+	shift
+	if [ "$1" = "-n" ]; then
+		shift
+		LOG_FLAG="-ne"
+	else
+		LOG_FLAG="-e"
+	fi
+	echo $LOG_FLAG "\e[${LOG_COLOR}m$@\e[0m"
+}
+
 message()
 {
-	echo -e "\e[36m$@\e[0m"
+	rk_log 36 "$@"
 }
 
 notice()
 {
-	echo -e "\e[35m$@\e[0m"
+	rk_log 35 "$@"
 }
 
 warning()
 {
-	echo -e "\e[34m$@\e[0m"
+	rk_log 34 "$@"
 }
 
 error()
 {
-	echo -e "\e[31m$@\e[0m"
+	rk_log 31 "$@"
 }
 
 fatal()
 {
-	echo -e "\e[47m$@\e[0m"
+	rk_log 47 "$@"
 }
 
 finish_build()
@@ -370,6 +383,14 @@ main()
 		fi
 		echo
 	fi
+
+	notice -n "Log colors: "
+	message -n "message "
+	notice -n "notice "
+	warning -n "warning "
+	error -n "error "
+	fatal "fatal"
+	echo
 
 	# Check for session validation
 	if [ -z "$INITIAL_SESSION" ] && [ ! -d "$RK_LOG_DIR" ]; then
