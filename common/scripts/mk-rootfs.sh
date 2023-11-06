@@ -4,7 +4,7 @@ build_buildroot()
 {
 	check_config RK_BUILDROOT || false
 
-	ROOTFS_DIR="${1:-$RK_OUTDIR/buildroot}"
+	IMAGE_DIR="${1:-$RK_OUTDIR/buildroot}"
 
 	BUILDROOT_VERSION=$(grep "export BR2_VERSION := " \
 		"$RK_SDK_DIR/buildroot/Makefile" | xargs -n 1 | tail -n 1)
@@ -13,9 +13,7 @@ build_buildroot()
 	message "          Start building buildroot($BUILDROOT_VERSION)"
 	message "=========================================="
 
-	/usr/bin/time -f "you take %E to build buildroot" \
-		"$RK_SCRIPTS_DIR/mk-buildroot.sh" \
-		$RK_BUILDROOT_CFG "$ROOTFS_DIR"
+	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$IMAGE_DIR"
 
 	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_buildroot $@
@@ -25,7 +23,7 @@ build_yocto()
 {
 	check_config RK_YOCTO || false
 
-	ROOTFS_DIR="${1:-$RK_OUTDIR/yocto}"
+	IMAGE_DIR="${1:-$RK_OUTDIR/yocto}"
 
 	"$RK_SCRIPTS_DIR/check-yocto.sh"
 
@@ -95,7 +93,7 @@ build_yocto()
 		bitbake core-image-minimal -C rootfs \
 		-R conf/rksdk_override.conf
 
-	ln -rsf "$PWD/latest/rootfs.img" $ROOTFS_DIR/rootfs.ext4
+	ln -rsf "$PWD/latest/rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
 	touch "$RK_LOG_DIR/post-rootfs.log"
 	cat "$RK_LOG_DIR/post-rootfs.log"
@@ -106,7 +104,7 @@ build_debian()
 {
 	check_config RK_DEBIAN || false
 
-	ROOTFS_DIR="${1:-$RK_OUTDIR/debian}"
+	IMAGE_DIR="${1:-$RK_OUTDIR/debian}"
 	ARCH=${RK_DEBIAN_ARCH:-armhf}
 
 	"$RK_SCRIPTS_DIR/check-debian.sh"
@@ -126,7 +124,7 @@ build_debian()
 	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
 
-	ln -rsf "$PWD/linaro-rootfs.img" $ROOTFS_DIR/rootfs.ext4
+	ln -rsf "$PWD/linaro-rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
 	finish_build build_debian $@
 }
@@ -240,35 +238,42 @@ build_hook()
 	fi
 
 	ROOTFS_IMG=rootfs.${RK_ROOTFS_TYPE}
-	ROOTFS_DIR="$RK_OUTDIR/rootfs"
+	ROOTFS_DIR="$RK_OUTDIR/$ROOTFS"
+	IMAGE_DIR="$ROOTFS_DIR/images"
 
 	message "=========================================="
 	message "          Start building rootfs($ROOTFS)"
 	message "=========================================="
 
-	rm -rf "$ROOTFS_DIR"
-	mkdir -p "$ROOTFS_DIR"
-
 	case "$ROOTFS" in
-		yocto) build_yocto "$ROOTFS_DIR" ;;
-		debian) build_debian "$ROOTFS_DIR" ;;
-		buildroot) build_buildroot "$ROOTFS_DIR" ;;
+		yocto | debian | buildroot) ;;
 		*) usage ;;
 	esac
 
-	if [ ! -f "$ROOTFS_DIR/$ROOTFS_IMG" ]; then
+	rm -rf "$ROOTFS_DIR" "$RK_OUTDIR/rootfs"
+	mkdir -p "$IMAGE_DIR"
+	ln -rsf "$ROOTFS_DIR" "$RK_OUTDIR/rootfs"
+
+	touch "$ROOTFS_DIR/.stamp_build_start"
+	case "$ROOTFS" in
+		yocto) build_yocto "$IMAGE_DIR" ;;
+		debian) build_debian "$IMAGE_DIR" ;;
+		buildroot) build_buildroot "$IMAGE_DIR" ;;
+	esac
+	touch "$ROOTFS_DIR/.stamp_build_finish"
+
+	if [ ! -f "$IMAGE_DIR/$ROOTFS_IMG" ]; then
 		error "There's no $ROOTFS_IMG generated..."
 		exit 1
 	fi
 
 	if [ "$RK_ROOTFS_INITRD" ]; then
-		/usr/bin/time -f "you take %E to pack initrd image" \
-			"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
-			"$ROOTFS_DIR/$ROOTFS_IMG" "$ROOTFS_DIR/boot.img" \
+		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
+			"$IMAGE_DIR/$ROOTFS_IMG" "$IMAGE_DIR/boot.img" \
 			"$RK_BOOT_FIT_ITS"
-		ln -rsf "$ROOTFS_DIR/boot.img" "$RK_FIRMWARE_DIR/boot.img"
+		ln -rsf "$IMAGE_DIR/boot.img" "$RK_FIRMWARE_DIR/boot.img"
 	else
-		ln -rsf "$ROOTFS_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
+		ln -rsf "$IMAGE_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi
 
 	finish_build build_rootfs $@

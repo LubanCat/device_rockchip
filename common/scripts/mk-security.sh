@@ -143,8 +143,6 @@ build_security_ramboot()
 	message "          Start building security ramboot(buildroot)"
 	message "=========================================="
 
-	DST_DIR="$RK_OUTDIR/security-ramboot"
-
 	if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
 		notice "Rootfs is not ready, building it for security..."
 		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
@@ -154,12 +152,15 @@ build_security_ramboot()
 	"$RK_SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
 		"$RK_FIRMWARE_DIR/rootfs.img"
 
-	/usr/bin/time -f "you take %E to build security initrd(buildroot)" \
-		"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG \
-		"$DST_DIR"
+	DST_DIR="$RK_OUTDIR/security-ramboot/images"
+	mkdir -p "$DST_DIR"
 
-	/usr/bin/time -f "you take %E to pack security ramboot image" \
-		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
+	touch "$(dirname "$DST_DIR")/.stamp_build_start"
+	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG \
+		"$DST_DIR"
+	touch "$(dirname "$DST_DIR")/.stamp_build_finish"
+
+	"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
 		"$DST_DIR/rootfs.$RK_SECURITY_INITRD_TYPE" \
 		"$DST_DIR/ramboot.img" "$RK_SECURITY_FIT_ITS"
 

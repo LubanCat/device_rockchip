@@ -24,13 +24,14 @@ build_hook()
 	message "=========================================="
 
 
-	DST_DIR="$RK_OUTDIR/recovery"
+	DST_DIR="$RK_OUTDIR/recovery/images"
+	mkdir -p "$DST_DIR"
 
-	/usr/bin/time -f "you take %E to build recovery(buildroot)" \
-		"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_RECOVERY_CFG "$DST_DIR"
+	touch "$(dirname "$DST_DIR")/.stamp_build_start"
+	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_RECOVERY_CFG "$DST_DIR"
+	touch "$(dirname "$DST_DIR")/.stamp_build_finish"
 
-	/usr/bin/time -f "you take %E to pack recovery image" \
-		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
+	"$RK_SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
 		"$DST_DIR/recovery.img" "$RK_RECOVERY_FIT_ITS"
 	ln -rsf "$DST_DIR/recovery.img" "$RK_FIRMWARE_DIR"
 

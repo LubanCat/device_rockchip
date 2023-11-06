@@ -72,13 +72,20 @@ fi
 # Use buildroot images dir as image output dir
 IMAGE_DIR="$BUILDROOT_OUTPUT_DIR/images"
 rm -rf "$ROOTFS_OUTPUT_DIR"
-mkdir -p "$IMAGE_DIR"
+mkdir -p "$IMAGE_DIR" "$(dirname "$ROOTFS_OUTPUT_DIR")"
 ln -rsf "$IMAGE_DIR" "$ROOTFS_OUTPUT_DIR"
 cd "${RK_LOG_DIR:-$ROOTFS_OUTPUT_DIR}"
 
 LOG_PREFIX="br-$(basename "$BUILDROOT_OUTPUT_DIR")"
 LOG_FILE="$(start_log "$LOG_PREFIX" 2>/dev/null || echo $PWD/$LOG_PREFIX.log)"
 ln -rsf "$LOG_FILE" br.log
+
+case "$BUILDROOT_BOARD" in
+	*_recovery_*) ln -rsf "$LOG_FILE" br-recovery.log ;;
+	*_pcba_*) ln -rsf "$LOG_FILE" br-pcba.log ;;
+	*_ramboot_*) ln -rsf "$LOG_FILE" br-ramboot.log ;;
+	*) ln -rsf "$LOG_FILE" br-rootfs.log ;;
+esac
 
 # Buildroot doesn't like it
 unset LD_LIBRARY_PATH

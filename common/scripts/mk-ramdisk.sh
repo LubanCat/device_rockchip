@@ -6,7 +6,7 @@ ITS="$3"
 
 if [ ! -f "$RAMDISK_IMG" ]; then
 	echo "$RAMDISK_IMG doesn't exist"
-	exit 0
+	exit 1
 fi
 
 KERNEL_IMG="$RK_KERNEL_IMG"

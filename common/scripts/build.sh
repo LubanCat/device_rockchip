@@ -559,7 +559,17 @@ main()
 			exit 0 ;;
 		post-rootfs)
 			shift
-			run_post_hooks "$1"
+			TARGET_DIR="$1"
+
+			source "$RK_POST_HELPER"
+			POST_DIR="$RK_OUTDIR/$POST_OS"
+			mkdir -p "$POST_DIR"
+
+			touch "$POST_DIR/.stamp_post_start"
+			run_post_hooks "$TARGET_DIR"
+			touch "$POST_DIR/.stamp_post_finish"
+
+			ln -rsf "$TARGET_DIR" "$POST_DIR/target"
 			finish_build post-rootfs
 			exit 0 ;;
 	esac
