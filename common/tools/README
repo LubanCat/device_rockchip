@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-966d4469ea6 rockchip: Switch to android-adbd
+2ae39e8c360 {memtester, stressapptest}: Support static
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -58,6 +58,12 @@ BR2_PACKAGE_LIBLOCKFILE=y
 BR2_PACKAGE_LIBLOCKFILE_STATIC=y
 BR2_PACKAGE_LOCKFILE_PROGS=y
 BR2_PACKAGE_LOCKFILE_PROGS_STATIC=y
+
+BR2_PACKAGE_MEMTESTER=y
+BR2_PACKAGE_MEMTESTER_STATIC=y
+
+BR2_PACKAGE_STRESSAPPTEST=y
+BR2_PACKAGE_STRESSAPPTEST_STATIC=y
 
 NOTE:
 For building perf:
