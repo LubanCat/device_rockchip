@@ -135,11 +135,13 @@ build_rtthread()
 
 clean_hook()
 {
+	[ "$RK_RTOS" ] || return 0
+
 	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
-	scons -c > /dev/null
+	scons -c >/dev/null || true
 
 	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
-	make clean > /dev/null
+	make clean >/dev/null || true
 
 	rm -rf "$RK_FIRMWARE_DIR/amp.img"
 	rm -rf "$RK_ROCKDEV_DIR/amp.img"
