@@ -611,8 +611,10 @@ main()
 	message "          Final configs"
 	message "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
-		grep -vE "=\"\"$|_DEFAULT=y" | \
-		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | sort
+		grep -vE "=\"\"$|_DEFAULT=y|RK_DEFAULT_TARGET" | \
+		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | \
+		grep -vE "_HELPER=|_SUPPORTS=|_ARM64=|_ARM=|_HOST=" | \
+		grep -vE "^RK_ROOTFS_SYSTEM_|^RK_YOCTO_DISPLAY_PLATFORM_" | sort
 	echo
 
 	# Pre-build stage (submodule configuring, etc.)
