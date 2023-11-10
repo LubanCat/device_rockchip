@@ -33,8 +33,8 @@ build_hook()
 	"$RK_SCRIPTS_DIR/mk-kernel.sh" recovery-kernel
 
 	"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$DST_DIR" \
-		"$IMAGE_DIR/rootfs.cpio.gz" "$RK_RECOVERY_FIT_ITS" \
-		"$RK_OUTDIR/recovery-kernel.img" \
+		"$IMAGE_DIR/rootfs.$RK_RECOVERY_INITRD_TYPE" \
+		"$RK_RECOVERY_FIT_ITS" "$RK_OUTDIR/recovery-kernel.img" \
 		"$RK_OUTDIR/recovery-kernel.dtb" \
 		"$RK_OUTDIR/recovery-resource.img"
 	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/recovery.img"

@@ -27,6 +27,10 @@ config RK_RECOVERY_CFG
 		if RK_RECOVERY_BASE_CFG = ""
 	default "rockchip_${RK_RECOVERY_BASE_CFG}_recovery"
 
+config RK_RECOVERY_INITRD_TYPE
+	string "recovery ramdisk filesystem type (cpio/cpio.gz/romfs)"
+	default "cpio.gz"
+
 if RK_USE_FIT_IMG
 
 config RK_RECOVERY_FIT_ITS_NAME
