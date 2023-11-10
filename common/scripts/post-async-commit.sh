@@ -4,7 +4,7 @@ POST_ROOTFS_ONLY=1
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
-[ "$RK_ROOTFS_ASYNC_COMMIT" ] || return 0
+[ "$RK_ROOTFS_ASYNC_COMMIT" ] || exit 0
 
 message "Installing async-commit service..."
 
