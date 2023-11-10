@@ -56,6 +56,14 @@ config RK_ROOTFS_LOCALE
 
 endif
 
+config RK_ROOTFS_ASYNC_COMMIT
+	bool "async-commit DRM driver hack"
+	default y
+
+config RK_ROOTFS_DEBUG_INFO
+	bool "debug information dir (/info/)"
+	default y
+
 choice
 	prompt "disk helpers"
 

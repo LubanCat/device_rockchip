@@ -4,6 +4,8 @@ POST_ROOTFS_ONLY=1
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
+[ "$RK_ROOTFS_DEBUG_INFO" ] || return 0
+
 INFO_DIR="$TARGET_DIR/info"
 
 message "Adding info dir..."
