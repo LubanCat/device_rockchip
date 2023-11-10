@@ -23,16 +23,13 @@ build_hook()
 	message "          Start building pcba(buildroot)"
 	message "=========================================="
 
-	DST_DIR="$RK_OUTDIR/pcba/images"
-	mkdir -p "$DST_DIR"
+	DST_DIR="$RK_OUTDIR/pcba"
+	IMAGE_DIR="$DST_DIR/images"
+	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_PCBA_CFG "$IMAGE_DIR"
 
-	touch "$(dirname "$DST_DIR")/.stamp_build_start"
-	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_PCBA_CFG "$DST_DIR"
-	touch "$(dirname "$DST_DIR")/.stamp_build_finish"
-
-	"$RK_SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
-		"$DST_DIR/pcba.img"
-	ln -rsf "$DST_DIR/pcba.img" "$RK_FIRMWARE_DIR"
+	"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$DST_DIR" \
+		"$IMAGE_DIR/rootfs.cpio.gz"
+	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/pcba.img"
 
 	finish_build build_pcba
 }

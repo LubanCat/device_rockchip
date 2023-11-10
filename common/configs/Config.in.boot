@@ -18,12 +18,20 @@ config RK_BOOT_COMPRESSED
 		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "rk3308" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3358"
 
-config RK_BOOT_FIT_ITS
+if RK_USE_FIT_IMG
+
+config RK_BOOT_FIT_ITS_NAME
 	string "its script for FIT boot image"
 	depends on RK_USE_FIT_IMG
 	default "boot.its" if RK_CHIP_FAMILY = "rv1126_rv1109"
 	default "zboot.its" if RK_BOOT_COMPRESSED
 	default "boot.its"
+
+config RK_BOOT_FIT_ITS
+	string
+	default "$RK_CHIP_DIR/$RK_BOOT_FIT_ITS_NAME"
+
+endif
 
 endmenu # Boot
 

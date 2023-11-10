@@ -24,16 +24,20 @@ build_hook()
 	message "=========================================="
 
 
-	DST_DIR="$RK_OUTDIR/recovery/images"
-	mkdir -p "$DST_DIR"
+	DST_DIR="$RK_OUTDIR/recovery"
+	IMAGE_DIR="$DST_DIR/images"
+	mkdir -p "$IMAGE_DIR"
 
-	touch "$(dirname "$DST_DIR")/.stamp_build_start"
-	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_RECOVERY_CFG "$DST_DIR"
-	touch "$(dirname "$DST_DIR")/.stamp_build_finish"
+	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_RECOVERY_CFG "$IMAGE_DIR"
 
-	"$RK_SCRIPTS_DIR/mk-ramdisk.sh" "$DST_DIR/rootfs.cpio.gz" \
-		"$DST_DIR/recovery.img" "$RK_RECOVERY_FIT_ITS"
-	ln -rsf "$DST_DIR/recovery.img" "$RK_FIRMWARE_DIR"
+	"$RK_SCRIPTS_DIR/mk-kernel.sh" recovery-kernel
+
+	"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$DST_DIR" \
+		"$IMAGE_DIR/rootfs.cpio.gz" "$RK_RECOVERY_FIT_ITS" \
+		"$RK_OUTDIR/recovery-kernel.img" \
+		"$RK_OUTDIR/recovery-kernel.dtb" \
+		"$RK_OUTDIR/recovery-resource.img"
+	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/recovery.img"
 
 	finish_build build_recovery
 }

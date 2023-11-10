@@ -27,10 +27,17 @@ config RK_RECOVERY_CFG
 		if RK_RECOVERY_BASE_CFG = ""
 	default "rockchip_${RK_RECOVERY_BASE_CFG}_recovery"
 
-config RK_RECOVERY_FIT_ITS
+if RK_USE_FIT_IMG
+
+config RK_RECOVERY_FIT_ITS_NAME
 	string "its script for FIT recovery image"
-	depends on RK_USE_FIT_IMG
 	default "boot4recovery.its"
+
+config RK_RECOVERY_FIT_ITS
+	string
+	default "$RK_CHIP_DIR/$RK_RECOVERY_FIT_ITS_NAME"
+
+endif
 
 endif
 

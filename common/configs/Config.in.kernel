@@ -23,6 +23,13 @@ config RK_KERNEL_CFG
 	default "rk3308_linux_defconfig" if RK_CHIP_FAMILY = "rk3308"
 	default "rockchip_linux_defconfig"
 
+if RK_RECOVERY
+
+config RK_KERNEL_RECOVERY_CFG
+	string "kernel defconfig for recovery"
+
+endif
+
 config RK_KERNEL_VERSION
 	string "kernel version, e.g. 5.10"
 

@@ -90,12 +90,14 @@ esac
 # Buildroot doesn't like it
 unset LD_LIBRARY_PATH
 
+touch "$BUILDROOT_OUTPUT_DIR/.stamp_build_start"
 if ! "$BUILDROOT_DIR"/utils/brmake -C "$BUILDROOT_DIR" O="$BUILDROOT_OUTPUT_DIR"; then
 	error "Failed to build $BUILDROOT_BOARD:"
 	tail -n 100 "$LOG_FILE"
 	error "Please check details in $LOG_FILE"
 	exit 1
 fi
+touch "$BUILDROOT_OUTPUT_DIR/.stamp_build_finish"
 
 notice "Log saved on $LOG_FILE"
 notice "Generated images:"

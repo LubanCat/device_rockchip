@@ -66,16 +66,68 @@ do_build()
 				run_command "$RK_SCRIPTS_DIR/mk-fitimage.sh" \
 					"kernel/$RK_BOOT_IMG" \
 					"$RK_BOOT_FIT_ITS" \
-					"$RK_KERNEL_IMG"
+					"$RK_KERNEL_IMG" "$RK_KERNEL_DTB" \
+					"kernel/resource.img"
 			fi
 
-			if [ "$RK_WIFIBT_CHIP" ] && [ -r "$RK_KERNEL_DTB" ] && \
+			run_command ln -rsf "kernel/$RK_BOOT_IMG" \
+				"$RK_FIRMWARE_DIR/boot.img"
+
+			[ -z "$DRY_RUN" ] || return 0
+
+			"$RK_SCRIPTS_DIR/check-power-domain.sh"
+
+			if [ "$RK_WIFIBT_CHIP" ] && \
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
 				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
 			fi
 			;;
 		modules) run_command $KMAKE modules ;;
 	esac
+}
+
+build_recovery_kernel()
+{
+	check_config RK_KERNEL || false
+
+	if [ "$DRY_RUN" ]; then
+		notice "Commands of building $1:"
+	else
+		message "=========================================="
+		message "          Start building $1"
+		message "=========================================="
+	fi
+
+	if [ -z "$RK_KERNEL_RECOVERY_CFG" ]; then
+		RECOVERY_KERNEL_DIR=kernel
+		do_build kernel
+	else
+		RECOVERY_KERNEL_DIR="$RK_OUTDIR/recovery-kernel"
+		run_command mkdir -p "$RECOVERY_KERNEL_DIR"
+
+		# HACK: Fake mrproper
+		run_command tar cf "$RK_OUTDIR/kernel.tar" \
+			--remove-files --ignore-failed-read \
+			kernel/.config kernel/include/config \
+			kernel/arch/$RK_KERNEL_ARCH/include/generated
+
+		KMAKE="$KMAKE O=$RECOVERY_KERNEL_DIR"
+		run_command $KMAKE $RK_KERNEL_RECOVERY_CFG
+		run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
+
+		run_command tar xf "$RK_OUTDIR/kernel.tar"
+		run_command rm -f "$RK_OUTDIR/kernel.tar"
+	fi
+
+	run_command ln -rsf \
+		"$RECOVERY_KERNEL_DIR/${RK_KERNEL_IMG#kernel/}" \
+		"$RK_OUTDIR/recovery-kernel.img"
+	run_command ln -rsf \
+		"$RECOVERY_KERNEL_DIR/${RK_KERNEL_DTB#kernel/}" \
+		"$RK_OUTDIR/recovery-kernel.dtb"
+	run_command ln -rsf \
+		"$RECOVERY_KERNEL_DIR/resource.img" \
+		"$RK_OUTDIR/recovery-resource.img"
 }
 
 # Hooks
@@ -87,6 +139,7 @@ usage_hook()
 	done
 
 	echo -e "kernel[:cmds]                    \tbuild kernel"
+	echo -e "recovery-kernel[:cmds]           \tbuild kernel for recovery"
 	echo -e "modules[:cmds]                   \tbuild kernel modules"
 	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
 	echo -e "kernel-config[:cmds]             \tmodify kernel defconfig"
@@ -98,6 +151,10 @@ usage_hook()
 clean_hook()
 {
 	[ ! -d kernel ] || make -C kernel distclean
+
+	rm -rf "$RK_OUTDIR/recovery-kernel" "$RK_OUTDIR/recovery-kernel.img" \
+		"$RK_OUTDIR/recovery-kernel.dtb" \
+		"$RK_OUTDIR/recovery-resource.img"
 
 	rm -f "$RK_FIRMWARE_DIR/linux-headers.tar"
 	rm -f "$RK_ROCKDEV_DIR/linux-headers.tar"
@@ -170,7 +227,7 @@ pre_build_hook_dry()
 	DRY_RUN=1 pre_build_hook $@
 }
 
-BUILD_CMDS="$KERNELS kernel modules"
+BUILD_CMDS="$KERNELS kernel recovery-kernel modules"
 build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -180,23 +237,16 @@ build_hook()
 	message "${RK_KERNEL_TOOLCHAIN:-gcc}"
 	echo
 
-	if echo $1 | grep -q "^kernel-"; then
-		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
-			notice "Kernel version overrided: " \
-				"$RK_KERNEL_VERSION -> ${1#kernel-}"
-		fi
-	fi
-
-	do_build $@
-
-	if [ "$DRY_RUN" ]; then
-		return 0
-	fi
-
-	if echo $1 | grep -q "^kernel"; then
-		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
-		"$RK_SCRIPTS_DIR/check-power-domain.sh"
-	fi
+	case "$1" in
+		recovery-kernel) build_recovery_kernel $@ ;;
+		kernel-*)
+			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
+				notice "Kernel version overrided: " \
+					"$RK_KERNEL_VERSION -> ${1#kernel-}"
+			fi
+			;&
+		*) do_build $@ ;;
+	esac
 
 	finish_build build_$1
 }
@@ -228,7 +278,7 @@ post_build_hook()
 	fi
 
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
-	run_command $KMAKE modules_prepare
+	run_command $KMAKE $RK_KERNEL_IMG_NAME
 
 	cat << EOF > "$HEADER_FILES_SCRIPT"
 {
@@ -274,7 +324,7 @@ source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-he
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;
-	kernel* | modules)
+	kernel* | recovery-kernel | modules)
 		init_hook $@
 		build_hook ${@:-kernel}
 		;;

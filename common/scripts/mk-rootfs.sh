@@ -268,10 +268,9 @@ build_hook()
 	fi
 
 	if [ "$RK_ROOTFS_INITRD" ]; then
-		"$RK_SCRIPTS_DIR/mk-ramdisk.sh" \
-			"$IMAGE_DIR/$ROOTFS_IMG" "$IMAGE_DIR/boot.img" \
-			"$RK_BOOT_FIT_ITS"
-		ln -rsf "$IMAGE_DIR/boot.img" "$RK_FIRMWARE_DIR/boot.img"
+		"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$ROOTFS_DIR" \
+			"$IMAGE_DIR/$ROOTFS_IMG" "$RK_BOOT_FIT_ITS"
+		ln -rsf "$ROOTFS_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
 	else
 		ln -rsf "$IMAGE_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi
