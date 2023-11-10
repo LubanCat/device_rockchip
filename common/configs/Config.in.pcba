@@ -9,7 +9,6 @@ menu "PCBA test (based on buildroot)"
 
 config RK_PCBA
 	bool "pcba"
-	default y if !RK_RTOS
 
 if RK_PCBA
 
