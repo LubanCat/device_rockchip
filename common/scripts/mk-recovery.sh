@@ -26,7 +26,6 @@ build_hook()
 
 	DST_DIR="$RK_OUTDIR/recovery"
 	IMAGE_DIR="$DST_DIR/images"
-	mkdir -p "$IMAGE_DIR"
 
 	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_RECOVERY_CFG "$IMAGE_DIR"
 

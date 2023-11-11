@@ -154,7 +154,6 @@ build_security_ramboot()
 
 	DST_DIR="$RK_OUTDIR/security-ramboot"
 	IMAGE_DIR="$DST_DIR/images"
-	mkdir -p "$IMAGE_DIR"
 
 	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_SECURITY_INITRD_CFG "$IMAGE_DIR"
 

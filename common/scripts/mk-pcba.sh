@@ -25,6 +25,7 @@ build_hook()
 
 	DST_DIR="$RK_OUTDIR/pcba"
 	IMAGE_DIR="$DST_DIR/images"
+
 	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_PCBA_CFG "$IMAGE_DIR"
 
 	"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$DST_DIR" \
