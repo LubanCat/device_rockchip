@@ -28,11 +28,7 @@ config RK_DEBIAN_VERSION
 
 choice
 	prompt "debian version"
-	default RK_DEBIAN_BULLSEYE if RK_CHIP_FAMILY = "rk3399" || \
-		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
-		RK_CHIP_FAMILY = "rk3562" || RK_CHIP_FAMILY = "px30" || \
-		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "rk3328" || \
-		RK_CHIP_FAMILY = "rk3528"
+	default RK_DEBIAN_BULLSEYE
 
 config RK_DEBIAN_BUSTER
 	bool "buster"
