@@ -345,7 +345,6 @@ main()
 	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
 	export RK_ROCKDEV_DIR="$RK_SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
-	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 	export RK_OWNER="$(stat --format %U "$RK_SDK_DIR")"
@@ -406,8 +405,7 @@ main()
 	export RK_CUSTOM_ENV="$RK_LOG_DIR/custom.env"
 	export RK_FINAL_ENV="$RK_LOG_DIR/final.env"
 
-	# Prepare firmware dirs
-	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+	mkdir -p "$RK_FIRMWARE_DIR"
 
 	cd "$RK_SDK_DIR"
 	[ -f README.md ] || ln -rsf "$RK_COMMON_DIR/README.md" .

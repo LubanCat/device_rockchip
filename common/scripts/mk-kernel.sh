@@ -76,6 +76,12 @@ do_build()
 			[ -z "$DRY_RUN" ] || return 0
 
 			"$RK_SCRIPTS_DIR/check-power-domain.sh"
+			"$RK_SCRIPTS_DIR/check-security.sh" kernel dts
+
+			[ -z "$RK_SECURITY_CHECK_BASE" ] || \
+				"$RK_SCRIPTS_DIR/mk-security.sh" \
+				sign boot $RK_FIRMWARE_DIR/boot.img \
+				$RK_FIRMWARE_DIR/boot.img
 
 			if [ "$RK_WIFIBT_CHIP" ] && \
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then

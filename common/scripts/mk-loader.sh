@@ -35,17 +35,11 @@ build_uboot()
 	UARGS="$UARGS_COMMON ${RK_UBOOT_SPL:+--spl-new} \
 		${RK_SECURITY_BURN_KEY:+--burn-key-hash}"
 
-	if [ "$RK_SECURITY" ]; then
-		for IMAGE in ${1:-boot.img ${RK_RECOVERY_CFG:+recovery.img}}; do
-			[ "$DRY_RUN" ] || \
-				cp "$RK_FIRMWARE_DIR/$IMAGE" u-boot/
-
-			UARGS="$UARGS --${IMAGE/./_} $RK_SDK_DIR/u-boot/$IMAGE"
-		done
-	fi
-
 	run_command cd u-boot
-	run_command $UMAKE $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $UARGS
+
+	run_command make ${RK_UBOOT_CFG}_defconfig $RK_UBOOT_CFG_FRAGMENTS
+	[ ! -z "$DRY_RUN" ] || $RK_SCRIPTS_DIR/check-security.sh uboot
+	run_command $UMAKE $UARGS
 
 	if [ "$RK_UBOOT_SPL" ]; then
 		if [ "$DRY_RUN" ] || \
@@ -63,13 +57,6 @@ build_uboot()
 
 	if [ "$DRY_RUN" ]; then
 		return 0
-	fi
-
-	if [ "$RK_SECURITY" ];then
-		for IMAGE in u-boot/boot.img u-boot/recovery.img; do
-			[ ! -r $IMAGE ] || \
-				ln -rsf $IMAGE "$RK_SECURITY_FIRMWARE_DIR"
-		done
 	fi
 
 	LOADER="$(echo u-boot/*_loader_*.bin | head -1)"

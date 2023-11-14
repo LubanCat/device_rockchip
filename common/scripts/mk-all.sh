@@ -10,22 +10,20 @@ build_all()
 	message "          Start building all images"
 	message "=========================================="
 
-	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
-	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+	rm -rf "$RK_FIRMWARE_DIR"
+	mkdir -p "$RK_FIRMWARE_DIR"
 
-	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" security_check
+	"$RK_SCRIPTS_DIR/check-security.sh" keys
 
 	[ -z "$RK_MISC" ] || "$RK_SCRIPTS_DIR/mk-misc.sh"
+	[ -z "$RK_LOADER" ] || "$RK_SCRIPTS_DIR/mk-loader.sh"
 	[ -z "$RK_KERNEL" ] || "$RK_SCRIPTS_DIR/mk-kernel.sh"
 	[ -z "$RK_ROOTFS" ] || "$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	[ -z "$RK_SECURITY_INITRD_CFG" ] || \
+		"$RK_SCRIPTS_DIR/mk-security.sh" security-ramboot
 	[ -z "$RK_RECOVERY" ] || "$RK_SCRIPTS_DIR/mk-recovery.sh"
 
 	[ -z "$RK_RTOS" ] || "$RK_SCRIPTS_DIR/mk-rtos.sh"
-	[ -z "$RK_SECURITY" ] || \
-		"$RK_SCRIPTS_DIR/mk-security.sh" security_ramboot
-
-	# Will repack boot and recovery images when security enabled
-	[ -z "$RK_LOADER" ] || "$RK_SCRIPTS_DIR/mk-loader.sh"
 
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 

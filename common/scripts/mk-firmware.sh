@@ -14,15 +14,10 @@ build_firmware()
 		exit 1
 	fi
 
-	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
-	if [ "$RK_SECURITY" ]; then
-		FIRMWARE_DIR="$RK_SECURITY_FIRMWARE_DIR"
-	else
-		FIRMWARE_DIR="$RK_FIRMWARE_DIR"
-	fi
+	mkdir -p "$RK_FIRMWARE_DIR"
 
 	rm -rf "$RK_ROCKDEV_DIR"
-	ln -rsf "$FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
+	ln -rsf "$RK_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 
 	"$RK_SCRIPTS_DIR/check-grow-align.sh"
 
@@ -30,19 +25,8 @@ build_firmware()
 
 	"$RK_SCRIPTS_DIR/mk-extra-part.sh"
 
-	if [ "$RK_SECURITY" ]; then
-		# Link non-security images
-		for f in $(ls "$RK_FIRMWARE_DIR/"); do
-			if [ -r "$FIRMWARE_DIR/$f" ]; then
-				continue
-			fi
-
-			link_image "$RK_FIRMWARE_DIR/$f" "$FIRMWARE_DIR/$f"
-		done
-	fi
-
 	notice "Packed files:"
-	for f in "$FIRMWARE_DIR"/*; do
+	for f in "$RK_FIRMWARE_DIR"/*; do
 		NAME=$(basename "$f")
 
 		echo -n "$NAME"
@@ -89,7 +73,7 @@ usage_hook()
 
 clean_hook()
 {
-	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
+	rm -rf "$RK_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 }
 
 POST_BUILD_CMDS="firmware"

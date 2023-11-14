@@ -83,8 +83,14 @@ ln -rsf "$LOG_FILE" br.log
 case "$BUILDROOT_BOARD" in
 	*_recovery_*) ln -rsf "$LOG_FILE" br-recovery.log ;;
 	*_pcba_*) ln -rsf "$LOG_FILE" br-pcba.log ;;
-	*_ramboot_*) ln -rsf "$LOG_FILE" br-ramboot.log ;;
-	*) ln -rsf "$LOG_FILE" br-rootfs.log ;;
+	*_ramboot_*)
+		ln -rsf "$LOG_FILE" br-ramboot.log
+		$RK_SCRIPTS_DIR/check-security.sh ramboot
+		;;
+	*)
+		ln -rsf "$LOG_FILE" br-rootfs.log
+		$RK_SCRIPTS_DIR/check-security.sh system
+		;;
 esac
 
 # Buildroot doesn't like it

@@ -36,7 +36,12 @@ build_hook()
 		"$RK_RECOVERY_FIT_ITS" "$RK_OUTDIR/recovery-kernel.img" \
 		"$RK_OUTDIR/recovery-kernel.dtb" \
 		"$RK_OUTDIR/recovery-resource.img"
-	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/recovery.img"
+
+	if [ "$RK_SECURITY" ]; then
+		"$RK_SCRIPTS_DIR/mk-security.sh" sign recovery $DST_DIR/ramboot.img $RK_FIRMWARE_DIR/recovery.img
+	else
+		ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/recovery.img"
+	fi
 
 	finish_build build_recovery
 }

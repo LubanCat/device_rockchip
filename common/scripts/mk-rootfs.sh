@@ -15,6 +15,9 @@ build_buildroot()
 
 	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$IMAGE_DIR"
 
+	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" system \
+		$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$RK_ROOTFS_TYPE
+
 	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_buildroot $@
 }
@@ -271,6 +274,10 @@ build_hook()
 		"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$ROOTFS_DIR" \
 			"$IMAGE_DIR/$ROOTFS_IMG" "$RK_BOOT_FIT_ITS"
 		ln -rsf "$ROOTFS_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
+	elif [ "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" -o \
+		"$RK_SECURITY_CHECK_SYSTEM_VERITY" ]; then
+		ln -rsf "$IMAGE_DIR/security_system.img" \
+			"$RK_FIRMWARE_DIR/rootfs.img"
 	else
 		ln -rsf "$IMAGE_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi

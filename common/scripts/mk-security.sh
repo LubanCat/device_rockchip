@@ -1,138 +1,201 @@
 #!/bin/bash -e
 
-BOOT_FIXED_CONFIGS=" \
-	CONFIG_BLK_DEV_DM \
-	CONFIG_DM_CRYPT \
-	CONFIG_BLK_DEV_CRYPTOLOOP \
-	CONFIG_DM_VERITY"
+###################################################
+RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SDK_DIR="${RK_SDK_DIR:-$RK_SCRIPTS_DIR/../../../..}"
+UBOOT=$RK_SDK_DIR/u-boot
+KERNEL=$RK_SDK_DIR/kernel
+BUILDROOT=$RK_SDK_DIR/buildroot
+RK_SIGN_TOOL=$RK_SDK_DIR/rkbin/tools/rk_sign_tool
+###################################################
 
-BOOT_OPTEE_FIXED_CONFIGS=" \
-	CONFIG_TEE \
-	CONFIG_OPTEE"
-
-UBOOT_FIXED_CONFIGS=" \
-	CONFIG_FIT_SIGNATURE \
-	CONFIG_SPL_FIT_SIGNATURE"
-
-UBOOT_AB_FIXED_CONFIGS=" \
-	CONFIG_ANDROID_AB"
-
-ROOTFS_UPDATE_ENGINEBIN_CONFIGS=" \
-	BR2_PACKAGE_RECOVERY \
-	BR2_PACKAGE_RECOVERY_UPDATEENGINEBIN"
-
-ROOTFS_AB_FIXED_CONFIGS=" \
-	$ROOTFS_UPDATE_ENGINEBIN_CONFIGS \
-	BR2_PACKAGE_RECOVERY_BOOTCONTROL"
-
-defconfig_check()
+# 1 -> input misc	# 2 -> output misc
+# 3 -> size		# 4 -> enc_key
+rk_security_setup_misc()
 {
-	# 1. defconfig 2. fixed config
-	echo debug-$1
-	for i in $2
-	do
-		echo "look for $i"
-		result=$(cat $1 | grep "${i}=y" -w || echo "No found")
-		if [ "$result" = "No found" ]; then
-			error "Security: No found config ${i} in $1"
-			error "make sure your config include this list"
-			error "---------------------------------------"
-			error "$2"
-			error "---------------------------------------"
-			return 1;
-		fi
-	done
-	return 0
+	input=$1
+	output=$2
+	size=$3
+	buf=$4
+	echo buf=$buf
+
+	tmpmisc=$(mktemp -u)
+	mv $input $tmpmisc
+
+	big_end=$[size / 256]
+	lit_end=$[size - (big_end * 256)]
+	big_end=$(echo "ibase=10;obase=16;$big_end" | bc)
+	lit_end=$(echo "ibase=10;obase=16;$lit_end" | bc)
+
+	rm -rf $output
+	dd if="$tmpmisc" of="$output" bs=1k count=10
+	echo -en "\x$lit_end\x$big_end" >> "$output"
+	echo -n "$buf" >> "$output"
+	skip=$[10 * 1024 + size + 2]
+	dd if="$tmpmisc" of="$output" seek=$skip skip=$skip bs=1
+	rm $tmpmisc
 }
 
-find_string_in_config()
+rk_security_setup_createkeys()
 {
-	result=$(cat "$2" | grep "$1" || echo "No found")
-	if [ "$result" = "No found" ]; then
-		error "Security: No found string $1 in $2"
-		return 1;
-	fi
-	return 0;
-}
+	mkdir -p $UBOOT/keys
+	cd $UBOOT/keys
 
-security_check()
-{
-	check_config RK_SECURITY RK_BUILDROOT || false
-
-	if [ ! -d u-boot/keys ]; then
-		error "ERROR: No root keys(u-boot/keys) found in u-boot"
-		error "       Create it by ./build.sh security_keys or move your key to it"
-		return 1
-	fi
-
-	if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ]; then
-		if [ ! -f u-boot/keys/root_passwd ]; then
-			error "ERROR: No root passwd(u-boot/keys/root_passwd) found in u-boot"
-			error "       echo your root key for sudo to u-boot/keys/root_passwd"
-			error "       some operations need supper user permission when create encrypt image"
-			return 1
-		fi
-
-		if [ ! -f u-boot/keys/system_enc_key ]; then
-			error "ERROR: No enc key(u-boot/keys/system_enc_key) found in u-boot"
-			error "       Create it by ./build.sh security_keys or move your key to it"
-			return 1
-		fi
-
-		BOOT_FIXED_CONFIGS="$BOOT_FIXED_CONFIGS $BOOT_OPTEE_FIXED_CONFIGS"
-	fi
-
-	echo "check kernel defconfig"
-	defconfig_check \
-		kernel/arch/$RK_KERNEL_ARCH/configs/$RK_KERNEL_CFG \
-		"$BOOT_FIXED_CONFIGS"
-
-	if [ -n "$RK_AB_UPDATE" ]; then
-		UBOOT_FIXED_CONFIGS="$UBOOT_FIXED_CONFIGS \
-			$UBOOT_AB_FIXED_CONFIGS"
-
-		defconfig_check \
-			buildroot/configs/${RK_BUILDROOT_CFG}_defconfig \
-			"$ROOTFS_AB_FIXED_CONFIGS"
-	fi
-	echo "check uboot defconfig"
-	defconfig_check u-boot/configs/${RK_UBOOT_CFG}_defconfig \
-		"$UBOOT_FIXED_CONFIGS"
-
-	if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ]; then
-		echo "check ramdisk defconfig"
-		defconfig_check \
-			buildroot/configs/${RK_SECURITY_INITRD_CFG}_defconfig \
-			"$ROOTFS_UPDATE_ENGINEBIN_CONFIGS"
-	fi
-
-	echo "check rootfs defconfig"
-	find_string_in_config "security-system-overlay" \
-		"buildroot/configs/${RK_BUILDROOT_CFG}_defconfig"
-
-	echo "Security: finish check"
-}
-
-build_security_keys()
-{
-	if [ -d u-boot/keys ]; then
-		error "ERROR: u-boot/keys already exists"
-		return 1
-	fi
-
-	mkdir -p u-boot/keys
-	cd u-boot/keys
-	"$RK_SDK_DIR/rkbin/tools/rk_sign_tool" kk --bits 2048 --out ./
+	$RK_SIGN_TOOL kk --bits 2048 --out ./
 
 	ln -rsf private_key.pem dev.key
 	ln -rsf public_key.pem dev.pubkey
+	# TODO: Some rk_sign_tool may create privateKey.pem / publicKey.pem
 
-	cd "$RK_SDK_DIR"
+	openssl req -batch -new -x509 -key $UBOOT/keys/dev.key \
+		-out $UBOOT/keys/dev.crt
 
-	openssl req -batch -new -x509 -key u-boot/keys/dev.key \
-		-out u-boot/keys/dev.crt
+	if [ "$1" == "system-encryption" ]; then
+		openssl rand -out $UBOOT/keys/system_enc_key -hex 32
+	fi
+}
 
-	openssl rand -out u-boot/keys/system_enc_key -hex 32
+rk_security_setup_system_verity()
+{
+	target_image=$(readlink -f $1)
+	outdir=$(cd $(dirname $target_image);pwd)
+	security_system=$outdir/security_system.img
+
+	if [ -f "$outdir/security.info" ]; then
+		source $outdir/security.info
+		if [ "$(ls -l --time-style=long-iso $target_image | cut -d ' ' -f 6,7)" == "$touch" ]; then
+			echo "security_system.img not be updated!!!"
+			return
+		fi
+	fi
+
+	sectors=$(ls -l "$target_image" | awk '{printf $5}')
+	hash_offset=$[(sectors / 1024 / 1024 + 2) * 1024 * 1024]
+	tmp_file=$(mktemp)
+	cp "$target_image" "$security_system"
+	veritysetup --hash-offset=$hash_offset format "$security_system" "$security_system" > $tmp_file
+
+	echo "touch=\"$(ls -l --time-style=long-iso $target_image | cut -d ' ' -f 6,7)\"" > $outdir/security.info
+	echo "hash_offset=$hash_offset" >> $outdir/security.info
+	root_hash=$(cat $tmp_file)
+	echo "root_hash=$(echo ${root_hash##*:})" >> $outdir/security.info
+	# cat "$tmp_file" >> $outdir/info
+	rm $tmp_file
+}
+
+rk_security_setup_system_encryption()
+{
+	target_image=$(readlink -f $1)
+	outdir=$(cd $(dirname $target_image);pwd)
+	security_system=$outdir/security_system.img
+
+	key=$(cat $UBOOT/keys/system_enc_key)
+	cipher=aes-cbc-plain
+
+	if [ -f "$outdir/security.info" ]; then
+		source $outdir/security.info
+		if [ "$(ls -l --time-style=long-iso $target_image | cut -d ' ' -f 6,7)" == "$touch" ]; then
+			echo "security_system.img not be updated!!!"
+			return
+		fi
+	fi
+
+	sectors=$(ls -l "$target_image" | awk '{printf $5}')
+	sectors=$[(sectors + (21 * 1024 * 1024) - 1) / 512] # remain 20M for partition info / unit: 512 bytes
+
+	loopdevice=$(losetup -f)
+	mappername=encfs-$(shuf -i 1-10000000000000000000 -n 1)
+	dd if=/dev/null of="$security_system" seek=$sectors bs=512
+
+	sudo -S losetup $loopdevice "$security_system" < $UBOOT/keys/root_passwd
+	sudo -S dmsetup create $mappername --table "0 $sectors crypt $cipher $key 0 $loopdevice 0 1 allow_discards" < $UBOOT/keys/root_passwd
+	sudo -S dd if="$target_image" of=/dev/mapper/$mappername conv=fsync < $UBOOT/keys/root_passwd
+	sync && sudo -S dmsetup remove $mappername < $UBOOT/keys/root_passwd
+	sudo -S losetup -d $loopdevice < $UBOOT/keys/root_passwd
+
+	echo "touch=\"$(ls -l --time-style=long-iso $target_image | cut -d ' ' -f 6,7)\"" > $outdir/security.info
+	echo "sectors=$sectors" >> $outdir/security.info
+	echo "cipher=$cipher" >> $outdir/security.info
+	echo "key=$key" >> $outdir/security.info
+}
+
+rk_security_setup_system()
+{
+	case $1 in
+		system-verity) shift; rk_security_setup_system_verity $@ ;;
+		system-encryption) shift; rk_security_setup_system_encryption $@ ;;
+		base) ;;
+		*) exit -1;;
+	esac
+}
+
+rk_security_setup_ramboot_prebuild()
+{
+	check_method=$1
+	shift
+	init_in=$1
+	shift
+	security_file=$1
+	shift
+
+	case $check_method in
+		system-encryption) echo encryption ;;
+		system-verity) echo verity ;;
+		base) return ;;
+		*) exit -1;;
+	esac
+
+	if [ ! -f "$init_in" ] || [ ! -f "$security_file" ]; then
+		echo -e "\e[41;1;37minit_in or security_file is missed\e[0m"
+		exit -1
+	fi
+
+	init_file="$(dirname $init_in)/init"
+	cp $init_in $init_file
+
+	if [ "$check_method" == "system-encryption" ]; then
+		source "$security_file"
+		sed -i "s/ENC_EN=/ENC_EN=true/" "$init_file"
+		sed -i "s/CIPHER=/CIPHER=$cipher/" "$init_file"
+	else
+		source "$security_file"
+		sed -i "s/ENC_EN=/ENC_EN=false/" "$init_file"
+		sed -i "s/OFFSET=/OFFSET=$hash_offset/" "$init_file"
+		sed -i "s/HASH=/HASH=$root_hash/" "$init_file"
+	fi
+
+	sed -i "s/# exec busybox switch_root/exec busybox switch_root/" "$init_file"
+	echo "Generate ramdisk init for security"
+}
+
+rk_security_setup_sign()
+{
+	input=$(realpath $2)
+	output=$(realpath $3)
+
+	cd $UBOOT
+	case $1 in
+		boot|recovery)
+			./scripts/fit.sh --${1}_img $input
+			cp ${1}.img $output
+			;;
+		*) exit -1;;
+	esac
+	cd -
+}
+
+# -----------------------------------
+# For SDK
+# -----------------------------------
+build_security_system()
+{
+	[ "$RK_ROOTFS_SYSTEM_BUILDROOT" ] || warning "rootfs is not buildroot!"
+	"$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	[ -z "$RK_SECURITY_CHECK_SYSTEM_VERITY" ] ||
+		"$RK_SCRIPTS_DIR/mk-security.sh" security-ramboot
+
+	notice "Security rootfs.img has update in output/firmware/rootfs.img"
+	finish_build $@
 }
 
 build_security_ramboot()
@@ -148,9 +211,9 @@ build_security_ramboot()
 		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
 	fi
 
-	# Prepare misc and initrd overlay with rootfs.img
-	"$RK_SCRIPTS_DIR/mk-dm.sh" $RK_SECURITY_CHECK_METHOD \
-		"$RK_FIRMWARE_DIR/rootfs.img"
+	"$RK_SCRIPTS_DIR/mk-security.sh" ramboot_prebuild $RK_SECURITY_CHECK_METHOD \
+			$RK_SDK_DIR/buildroot/board/rockchip/common/security-ramdisk-overlay/init.in \
+			$RK_OUTDIR/buildroot/images/security.info
 
 	DST_DIR="$RK_OUTDIR/security-ramboot"
 	IMAGE_DIR="$DST_DIR/images"
@@ -160,60 +223,53 @@ build_security_ramboot()
 	"$RK_SCRIPTS_DIR/mk-ramboot.sh" "$DST_DIR" \
 		"$IMAGE_DIR/rootfs.$RK_SECURITY_INITRD_TYPE" \
 		"$RK_SECURITY_FIT_ITS"
-	ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
+	"$RK_SCRIPTS_DIR/mk-security.sh" sign boot $DST_DIR/ramboot.img $RK_FIRMWARE_DIR/boot.img
+	notice "Security boot.img has update in output/firmware/boot.img"
 
 	finish_build $@
 }
 
 # Hooks
 
+BUILD_CMDS="security-createkeys security-misc security-ramboot security-system"
+HID_CMDS="createkeys misc system ramboot_prebuild sign"
+build_hook()
+{
+	case $1 in
+		security-createkeys)
+			rk_security_setup_createkeys $RK_SECURITY_CHECK_METHOD;;
+		security-misc)
+			[ -z "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" ] || \
+			       $RK_SCRIPTS_DIR/mk-misc.sh;;
+		security-ramboot) build_security_ramboot;;
+		security-system) build_security_system;;
+	esac
+
+	for item in $HID_CMDS
+	do
+		if [ "$item" = "$1" ]; then
+			append=$1
+			shift
+			"rk_security_setup_$append" $@
+			return
+		fi
+	done
+}
+
 usage_hook()
 {
-	echo -e "security_check                    \tcheck contidions for security boot"
-	echo -e "security_keys                     \tbuild security boot keys"
-	echo -e "createkeys                        \talias of security_keys"
-	echo -e "security_ramboot                  \tbuild security ramboot"
-	echo -e "security_uboot                    \tbuild uboot with security"
-	echo -e "security_boot                     \tbuild boot with security"
-	echo -e "security_recovery                 \tbuild recovery with security"
-	echo -e "security_rootfs                   \tbuild rootfs with security"
+	echo -e "security-createkeys               \tcreate keys for security"
+	echo -e "security-misc                     \tbuild misc with system encryption key"
+	echo -e "security-ramboot                  \tbuild security ramboot"
+	echo -e "security-system                   \tbuild security system"
 }
 
 clean_hook()
 {
-	rm -rf "$RK_SECURITY_FIRMWARE_DIR"
+	rm -rf $RK_OUTDIR/security-ramboot
 }
 
-BUILD_CMDS="security_check createkeys security_keys security_ramboot \
-	security_uboot security_boot security_recovery security_rootfs"
-build_hook()
-{
-	check_config RK_SECURITY || false
+[ -z "$RK_SESSION" ] || \
+	source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
-	case "${1:-security_ramboot}" in
-		security_check) security_check ;;
-		security_keys | createkeys) build_security_keys ;;
-		security_ramboot) build_security_ramboot ;;
-		security_uboot) "$RK_SCRIPTS_DIR"/mk-loader.sh uboot ;;
-		security_boot)
-			"$RK_SCRIPTS_DIR"/mk-kernel.sh
-			build_security_ramboot
-			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot boot
-			;;
-		security_recovery)
-			check_config RK_RECOVERY || false
-			"$RK_SCRIPTS_DIR"/mk-recovery.sh
-			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot recovery
-			;;
-		security_rootfs)
-			"$RK_SCRIPTS_DIR"/mk-rootfs.sh
-			build_security_ramboot
-			"$RK_SCRIPTS_DIR"/mk-loader.sh uboot boot
-			;;
-		*) usage ;;
-	esac
-}
-
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
-
-build_hook $@
+[ -z "$1" ] || build_hook $@

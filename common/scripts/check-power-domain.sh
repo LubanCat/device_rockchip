@@ -10,20 +10,6 @@ tmp_grep_file=`mktemp -p $tmpdir`
 
 dtc -q -I dtb -O dts -o ${dump_kernel_dtb_file} "$RK_KERNEL_DTB"
 
-if [ "$RK_SECURITY_CHECK_METHOD" = "DM-E" ] ; then
-	if ! grep -q "compatible = \"linaro,optee-tz\";" $dump_kernel_dtb_file; then
-		echo "Please add: "
-		echo "        optee: optee {"
-		echo "                compatible = \"linaro,optee-tz\";"
-		echo "                method = \"smc\";"
-		echo "                status = \"okay\";"
-		echo "        }"
-		echo "To your dts file"
-		rm -rf $tmpdir
-		exit 1;
-	fi
-fi
-
 if ! grep -Pzo "io-domains\s*{(\n|\w|-|;|=|<|>|\"|_|\s|,)*};" $dump_kernel_dtb_file 1>$tmp_grep_file 2>/dev/null; then
 	echo "Not Found io-domains in $RK_KERNEL_DTS"
 	rm -rf $tmpdir

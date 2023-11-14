@@ -27,6 +27,8 @@ if [ -r "kernel/.config" ]; then
 		echo -e "\e[0m"
 		exit 1
 	fi
+
+	"$RK_SCRIPTS_DIR/check-security.sh" kernel config
 fi
 
 if ! kernel/scripts/mkbootimg &>/dev/null; then

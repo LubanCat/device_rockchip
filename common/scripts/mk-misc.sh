@@ -43,6 +43,12 @@ build_hook()
 
 	notice "Done packing $MISC_IMG"
 
+	if [ "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" ]; then
+		$RK_SCRIPTS_DIR/mk-security.sh misc $MISC_IMG \
+			$MISC_IMG 64 $(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")
+		notice "Done repacking $MISC_IMG with encryption keys"
+	fi
+
 	if grep -wq boot-recovery "$MISC_IMG" && \
 		[ -z "$(rk_partition_size recovery)" ]; then
 		error "Recovery misc requires recovery partition!"
