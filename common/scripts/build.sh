@@ -392,6 +392,8 @@ main()
 	fatal "fatal"
 	echo
 
+	"$RK_SCRIPTS_DIR/check-sdk.sh"
+
 	# Check for session validation
 	if [ -z "$INITIAL_SESSION" ] && [ ! -d "$RK_LOG_DIR" ]; then
 		warning "Session($RK_SESSION) is invalid!"
