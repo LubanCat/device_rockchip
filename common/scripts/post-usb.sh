@@ -4,6 +4,13 @@ POST_ROOTFS_ONLY=1
 
 source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
 
+remove_usb()
+{
+	find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr" \
+		-name "*usbdevice*" -print0 -o -name ".usb_config" -print0 \
+		2>/dev/null | xargs -0 rm -rf
+}
+
 install_adbd()
 {
 	[ -n "$RK_USB_ADBD" ] || return 0
@@ -79,7 +86,11 @@ usb_funcs()
 	} | xargs
 }
 
-[ -z "$RK_USB_DISABLED" ] || exit 0
+if [ "$RK_USB_DISABLED" ]; then
+	notice "Disabling USB gadget..."
+	remove_usb
+	exit 0
+fi
 
 if [ "$RK_USB_DEFAULT" -a "$POST_OS" = buildroot ]; then
 	notice "Keep original USB gadget for buildroot by default"
@@ -88,12 +99,10 @@ fi
 
 cd "$RK_SDK_DIR"
 
-mkdir -p "$TARGET_DIR/etc" "$TARGET_DIR/lib" \
-	"$TARGET_DIR/usr/bin" "$TARGET_DIR/usr/lib"
+mkdir -p "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
+	"$TARGET_DIR/usr/lib"
 
-find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
-	"$TARGET_DIR/usr/lib" -name "*usbdevice*" -print0 | xargs -0 rm -rf
-find "$TARGET_DIR/etc" -name ".usb_config" -print0 | xargs -0 rm -rf
+remove_usb
 
 message "USB gadget functions: $(usb_funcs)"
 mkdir -p "$TARGET_DIR/etc/profile.d"

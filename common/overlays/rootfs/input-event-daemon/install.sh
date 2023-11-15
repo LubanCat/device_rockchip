@@ -1,13 +1,20 @@
 #!/bin/bash -e
 
-[ -z "$RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED" ] || exit 0
+TARGET_DIR="$1"
+[ "$TARGET_DIR" ] || exit 1
+
+if [ "$RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED" ]; then
+	notice "Disabling input-event-daemon..."
+	find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr" \
+		-name "*input-event-daemon*" -print0 2>/dev/null | \
+		xargs -0 rm -rf
+	exit 0
+fi
+
 if [ "$RK_ROOTFS_INPUT_EVENT_DAEMON_DEFAULT" ]; then
 	[ "$POST_OS" = yocto ] || exit 0
 	notice "Install input-event-daemon for yocto by default"
 fi
-
-TARGET_DIR="$1"
-[ "$TARGET_DIR" ] || exit 1
 
 OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
