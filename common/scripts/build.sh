@@ -561,7 +561,6 @@ main()
 
 	set +a
 
-	export PYTHON3=/usr/bin/python3
 	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 
 	# Handle special commands

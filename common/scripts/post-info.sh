@@ -15,7 +15,7 @@ mkdir -p "$INFO_DIR"
 
 cd "$RK_SDK_DIR"
 
-yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
+yes | python3 .repo/repo/repo manifest -r \
 	-o "$INFO_DIR/manifest.xml" &>/dev/null || true
 
 cat "$RK_CONFIG" | sed "s/\(PASSWORD=\)\".*\"/\1\"********\"/" > \

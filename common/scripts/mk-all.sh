@@ -72,7 +72,7 @@ build_release()
 	fi
 
 	message "Saving build info..."
-	if yes | ${PYTHON3:-python3} .repo/repo/repo manifest -r \
+	if yes | python3 .repo/repo/repo manifest -r \
 		-o "$RELEASE_DIR/manifest.xml"; then
 		# Only do this when repositories are available
 		message "Saving patches..."
