@@ -6,10 +6,13 @@ comment "Security feature depends on loader"
 comment "Security feature depends on linux kernel"
 	depends on !RK_KERNEL
 
+comment "Security feature depends on buildroot rootfs"
+	depends on !RK_ROOTFS_SYSTEM_BUILDROOT
+
 comment "Security feature would use it's own initrd"
 	depends on RK_ROOTFS_INITRD
 
-if RK_LOADER && RK_KERNEL && !RK_ROOTFS_INITRD
+if RK_LOADER && RK_KERNEL && RK_ROOTFS_SYSTEM_BUILDROOT && !RK_ROOTFS_INITRD
 
 menu "Security"
 
