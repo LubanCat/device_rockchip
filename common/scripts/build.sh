@@ -85,8 +85,8 @@ load_config()
 	[ -r "$RK_CONFIG" ] || return 0
 
 	for var in $@; do
-		export $(grep "^$var=" "$RK_CONFIG" | \
-			tr -d '"' || true) &>/dev/null
+		export "$(grep "^$var=" "$RK_CONFIG" | tr -d '"' || true)" \
+			&>/dev/null
 	done
 }
 
@@ -94,12 +94,12 @@ check_config()
 {
 	unset missing
 	for var in $@; do
-		eval [ \$$var ] && continue
+		eval [ -z \"\$$var\" ] || continue
 
 		missing="$missing $var"
 	done
 
-	[ -z "$missing" ] && return 0
+	[ "$missing" ] || return 0
 
 	notice "Skipping $(basename "${BASH_SOURCE[1]}") - ${FUNCNAME[1]} for missing configs: $missing."
 	return 1
