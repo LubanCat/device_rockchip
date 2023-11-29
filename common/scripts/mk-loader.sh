@@ -37,8 +37,8 @@ build_uboot()
 
 	run_command cd u-boot
 
-	run_command make ${RK_UBOOT_CFG}_defconfig $RK_UBOOT_CFG_FRAGMENTS
-	[ ! -z "$DRY_RUN" ] || $RK_SCRIPTS_DIR/check-security.sh uboot
+	run_command $UMAKE $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS
+	[ ! -z "$DRY_RUN" ] || "$RK_SCRIPTS_DIR/check-security.sh" uboot
 	run_command $UMAKE $UARGS
 
 	if [ "$RK_UBOOT_SPL" ]; then
