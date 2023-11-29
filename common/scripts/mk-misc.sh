@@ -9,17 +9,17 @@ usage_hook()
 
 clean_hook()
 {
-	rm -rf "$RK_FIRMWARE_DIR/misc.img"
-	rm -rf "$RK_ROCKDEV_DIR/misc.img"
+	rm -rf "$RK_FIRMWARE_DIR/misc.img" "$RK_OUTDIR/misc.img"
 }
 
 BUILD_CMDS="misc"
 build_hook()
 {
-	MISC_IMG="$RK_FIRMWARE_DIR/misc.img"
-	rm -f "$MISC_IMG"
+	DST="$RK_FIRMWARE_DIR/misc.img"
+	MISC_IMG="$RK_OUTDIR/misc.img"
+	rm -f "$DST" "$MISC_IMG"
 
-	check_config MISC_IMG || false
+	check_config RK_MISC || false
 
 	if [ -z "$(rk_partition_size misc)" ]; then
 		notice "Misc ignored"
@@ -41,15 +41,16 @@ build_hook()
 		ln -rvsf "$RK_CHIP_DIR/$RK_MISC_IMG" "$MISC_IMG"
 	fi
 
-	notice "Done packing $MISC_IMG"
-
 	if [ "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" ]; then
-		$RK_SCRIPTS_DIR/mk-security.sh misc $MISC_IMG \
-			$MISC_IMG 64 $(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")
-		notice "Done repacking $MISC_IMG with encryption keys"
+		"$RK_SCRIPTS_DIR/mk-security.sh" misc "$MISC_IMG" "$DST" 64 \
+			"$(cat "$RK_SDK_DIR/u-boot/keys/system_enc_key")"
+		notice "Done packing $DST with encryption keys"
+	else
+		ln -rsf "$MISC_IMG" "$DST"
+		notice "Done packing $DST"
 	fi
 
-	if grep -wq boot-recovery "$MISC_IMG" && \
+	if grep -wq boot-recovery "$DST" && \
 		[ -z "$(rk_partition_size recovery)" ]; then
 		error "Recovery misc requires recovery partition!"
 		return 1

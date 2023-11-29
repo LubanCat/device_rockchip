@@ -80,7 +80,7 @@ do_build()
 
 			[ -z "$RK_SECURITY_CHECK_BASE" ] || \
 				"$RK_SCRIPTS_DIR/mk-security.sh" \
-				sign boot $RK_FIRMWARE_DIR/boot.img \
+				sign boot "kernel/$RK_BOOT_IMG" \
 				$RK_FIRMWARE_DIR/boot.img
 
 			if [ "$RK_WIFIBT_CHIP" ] && \
