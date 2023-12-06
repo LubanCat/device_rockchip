@@ -86,7 +86,7 @@ load_config()
 
 	for var in $@; do
 		export "$(grep "^$var=" "$RK_CONFIG" | tr -d '"' || true)" \
-			&>/dev/null
+			&>/dev/null || true
 	done
 }
 
