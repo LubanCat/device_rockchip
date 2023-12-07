@@ -81,9 +81,9 @@ LOG_FILE="$(start_log "$LOG_PREFIX" 2>/dev/null || echo $PWD/$LOG_PREFIX.log)"
 ln -rsf "$LOG_FILE" br.log
 
 case "$BUILDROOT_BOARD" in
-	*_recovery_*) ln -rsf "$LOG_FILE" br-recovery.log ;;
-	*_pcba_*) ln -rsf "$LOG_FILE" br-pcba.log ;;
-	*_ramboot_*)
+	*_recovery) ln -rsf "$LOG_FILE" br-recovery.log ;;
+	*_pcba) ln -rsf "$LOG_FILE" br-pcba.log ;;
+	*_ramboot)
 		ln -rsf "$LOG_FILE" br-ramboot.log
 		"$RK_SCRIPTS_DIR/check-security.sh" ramboot
 		;;
