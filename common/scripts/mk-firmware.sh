@@ -16,6 +16,7 @@ build_firmware()
 
 	mkdir -p "$RK_FIRMWARE_DIR"
 
+	# Legacy rockdev/
 	rm -rf "$RK_ROCKDEV_DIR"
 	ln -rsf "$RK_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 
@@ -59,7 +60,7 @@ build_firmware()
 
 	[ -z "$RK_UPDATE" ] || "$RK_SCRIPTS_DIR/mk-updateimg.sh"
 
-	message "Images under $RK_ROCKDEV_DIR/ are ready!"
+	message "Images under $RK_FIRMWARE_DIR/ are ready!"
 
 	finish_build
 }

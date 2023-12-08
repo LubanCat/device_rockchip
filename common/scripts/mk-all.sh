@@ -28,7 +28,7 @@ build_all()
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 
 	[ -z "$RK_KERNEL" ] || \
-		"$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_ROCKDEV_DIR"
+		"$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_FIRMWARE_DIR"
 
 	finish_build
 }
@@ -57,7 +57,7 @@ build_release()
 	message "Saving into $RELEASE_DIR...\n"
 
 	message "Saving images..."
-	cp -rvL "$RK_ROCKDEV_DIR" "$RELEASE_DIR/IMAGES"
+	cp -rvL "$RK_FIRMWARE_DIR" "$RELEASE_DIR/IMAGES"
 
 	if [ "$RK_KERNEL" ]; then
 		mkdir -p "$RELEASE_DIR/kernel"

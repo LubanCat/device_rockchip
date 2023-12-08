@@ -159,9 +159,7 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/yocto"
 	rm -rf "$RK_OUTDIR/debian"
 	rm -rf "$RK_OUTDIR/rootfs"
-
 	rm -rf "$RK_FIRMWARE_DIR/rootfs.img"
-	rm -rf "$RK_ROCKDEV_DIR/rootfs.img"
 }
 
 INIT_CMDS="default buildroot debian yocto"

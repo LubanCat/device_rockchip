@@ -11,7 +11,6 @@ clean_hook()
 	rm -rf "$RK_OUTDIR/recovery"
 
 	rm -rf "$RK_FIRMWARE_DIR/recovery.img"
-	rm -rf "$RK_ROCKDEV_DIR/recovery.img"
 }
 
 BUILD_CMDS="recovery"

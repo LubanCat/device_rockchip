@@ -144,7 +144,6 @@ clean_hook()
 	make clean >/dev/null || true
 
 	rm -rf "$RK_FIRMWARE_DIR/amp.img"
-	rm -rf "$RK_ROCKDEV_DIR/amp.img"
 }
 
 BUILD_CMDS="rtos"

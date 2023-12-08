@@ -14,7 +14,6 @@ clean_hook()
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do
 		IMAGE="$(basename "$(rk_extra_part_img $idx)")"
 		rm -rf "$RK_FIRMWARE_DIR/$IMAGE"
-		rm -rf "$RK_ROCKDEV_DIR/$IMAGE"
 	done
 }
 

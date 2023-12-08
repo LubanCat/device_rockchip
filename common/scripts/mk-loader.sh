@@ -81,8 +81,6 @@ clean_hook()
 
 	rm -rf "$RK_FIRMWARE_DIR/uboot.img"
 	rm -rf "$RK_FIRMWARE_DIR/MiniLoaderAll.bin"
-	rm -rf "$RK_ROCKDEV_DIR/uboot.img"
-	rm -rf "$RK_ROCKDEV_DIR/MiniLoaderAll.bin"
 }
 
 BUILD_CMDS="loader uboot uefi"

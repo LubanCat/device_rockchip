@@ -158,15 +158,9 @@ clean_hook()
 {
 	[ ! -d kernel ] || make -C kernel distclean
 
-	rm -rf "$RK_OUTDIR/recovery-kernel" "$RK_OUTDIR/recovery-kernel.img" \
-		"$RK_OUTDIR/recovery-kernel.dtb" \
-		"$RK_OUTDIR/recovery-resource.img"
-
+	rm -rf "$RK_OUTDIR/recovery-*"
 	rm -f "$RK_FIRMWARE_DIR/linux-headers.tar"
-	rm -f "$RK_ROCKDEV_DIR/linux-headers.tar"
-
 	rm -rf "$RK_FIRMWARE_DIR/boot.img"
-	rm -rf "$RK_ROCKDEV_DIR/boot.img"
 }
 
 INIT_CMDS="default $KERNELS"
