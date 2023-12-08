@@ -17,6 +17,16 @@ if [ -r "$TARGET_DIR/etc/profile" ]; then
 		"$TARGET_DIR/etc/profile"
 fi
 
+# Apply global NTP server
+if [ -r "$TARGET_DIR/etc/ntp.conf" ] && \
+	! grep -q "^server .*ntp" "$TARGET_DIR/etc/ntp.conf"; then
+	echo >> "$TARGET_DIR/etc/ntp.conf"
+	echo "server 0.pool.ntp.org iburst" >> "$TARGET_DIR/etc/ntp.conf"
+	echo "server 1.pool.ntp.org iburst" >> "$TARGET_DIR/etc/ntp.conf"
+	echo "server 2.pool.ntp.org iburst" >> "$TARGET_DIR/etc/ntp.conf"
+	echo "server 3.pool.ntp.org iburst" >> "$TARGET_DIR/etc/ntp.conf"
+fi
+
 # Install weston overlays
 if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
 	sed -i 's/\(WESTON_USER=\)weston/\1root/' \
