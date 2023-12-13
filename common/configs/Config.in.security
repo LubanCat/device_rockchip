@@ -18,13 +18,55 @@ menu "Security"
 
 config RK_SECURITY
 	bool "security feature"
-	select RK_USE_FIT_IMG # Security feature depends on FIT image
-	select RK_UBOOT_SPL # Security feature depends on U-Boot SPL loader
 
 if RK_SECURITY
 
 comment "Security check method (system-verity) needs squashfs rootfs type"
 	depends on RK_ROOTFS_TYPE != "squashfs"
+
+config RK_SECUREBOOT_METHOD
+	string
+	default "avb" if RK_SECUREBOOT_AVB
+	default "fit" if RK_SECUREBOOT_FIT
+
+choice
+	prompt "Secureboot Method"
+	default RK_SECUREBOOT_FIT
+
+config RK_SECUREBOOT_FIT
+	bool "fit"
+	depends on RK_USE_FIT_IMG
+	select RK_UBOOT_SPL # Security feature depends on U-Boot SPL loader
+	help
+	  Open Source 'Flattened Image Tree'.
+	  For RK3568/RK3588/RK3562 etc..
+
+config RK_SECUREBOOT_AVB
+	bool "avb"
+	help
+	  Features follow Android Verified Boot.
+	  For RK3308/RK3399/RK3326/PX30 etc..
+endchoice
+
+config RK_SECURITY_OPTEE_STORAGE
+	string
+	default "rpmb" if RK_SECURITY_OPTEE_STORAGE_RPMB
+	default "security" if RK_SECURITY_OPTEE_STORAGE_SECURITY
+
+choice
+	prompt "Optee Storage"
+	default RK_SECURITY_OPTEE_STORAGE_RPMB
+
+config RK_SECURITY_OPTEE_STORAGE_RPMB
+	bool "rpmb"
+	help
+	  HW partitions in eMMC device.
+
+config RK_SECURITY_OPTEE_STORAGE_SECURITY
+	bool "security"
+	help
+	  Logic partitions can be defined by user in any storage.
+endchoice
 
 config RK_SECURITY_CHECK_METHOD
 	string
@@ -74,6 +116,7 @@ config RK_SECURITY_INITRD_TYPE
 
 config RK_SECURITY_FIT_ITS
 	string "its script for FIT security ramboot image"
+	depends on RK_SECUREBOOT_FIT
 	default RK_RECOVERY_FIT_ITS if RK_RECOVERY_FIT_ITS != ""
 	default "boot4recovery.its"
 endif

@@ -17,9 +17,23 @@ ROOTFS_AB_FIXED_CONFIGS=" \
 	$ROOTFS_UPDATE_ENGINEBIN_CONFIGS \
 	BR2_PACKAGE_RECOVERY_BOOTCONTROL"
 
-UBOOT_FIXED_CONFIGS=" \
+UBOOT_FIT_FIXED_CONFIGS=" \
 	CONFIG_FIT_SIGNATURE \
 	CONFIG_SPL_FIT_SIGNATURE"
+
+UBOOT_AVB_FIXED_CONFIGS=" \
+	CONFIG_ANDROID_AVB \
+	CONFIG_AVB_LIBAVB \
+	CONFIG_AVB_LIBAVB_AB \
+	CONFIG_AVB_LIBAVB_ATX \
+	CONFIG_AVB_LIBAVB_USER \
+	CONFIG_RK_AVB_LIBAVB_USER \
+	CONFIG_OPTEE_CLIENT \
+	CONFIG_AVB_VBMETA_PUBLIC_KEY_VALIDATE \
+	CONFIG_RK_AVB_LIBAVB_ENABLE_ATH_UNLOCK \
+	CONFIG_OPTEE_V."
+
+# TODO:  CONFIG_ROCKCHIP_PRELOADER_PUB_KEY
 
 RAMBOOT_FIXED_CONFIG=" \
 	BR2_PACKAGE_TEE_USER_APP \
@@ -135,7 +149,7 @@ rk_security_check_kernel_dts()
 		exit -1
 	fi
 
-	status=$(cat $tmp_file | grep -a status)
+	status=$(cat $tmp_file | grep -a status || true)
 	if [ "$(echo $status | grep disabled)" ]; then
 		rm -f $tmp_file
 		test "$2" = "$dtsfile" || rm $dtsfile
@@ -176,7 +190,14 @@ rk_security_check_ramboot()
 
 rk_security_check_uboot()
 {
-	config_check $1 "$UBOOT_FIXED_CONFIGS"
+	METHOD=$1
+	shift
+
+	if [ "$METHOD" = "fit" ]; then
+		config_check $1 "$UBOOT_FIT_FIXED_CONFIGS"
+	else
+		config_check $1 "$UBOOT_AVB_FIXED_CONFIGS"
+	fi
 }
 
 rk_security_check_main()
@@ -211,7 +232,7 @@ rk_security_check_sdk()
 			;;
 		system) rk_security_check_main system $RK_SECURITY_CHECK_METHOD $RK_SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/.config ;;
 		ramboot) rk_security_check_main ramboot $RK_SECURITY_CHECK_METHOD $RK_SDK_DIR/buildroot/output/$RK_SECURITY_INITRD_CFG/.config ;;
-		uboot) rk_security_check_main uboot $RK_SDK_DIR/u-boot/.config ;;
+		uboot) rk_security_check_main uboot $RK_SECUREBOOT_METHOD $RK_SDK_DIR/u-boot/.config ;;
 	esac
 }
 

@@ -70,18 +70,22 @@ do_build()
 					"kernel/resource.img"
 			fi
 
-			run_command ln -rsf "kernel/$RK_BOOT_IMG" \
-				"$RK_FIRMWARE_DIR/boot.img"
+			if [ "$RK_SECURITY" ]; then
+				if [ "$RK_SECURITY_CHECK_BASE" ]; then
+					run_command \
+						"$RK_SCRIPTS_DIR/mk-security.sh" \
+						sign boot "kernel/$RK_BOOT_IMG" \
+						$RK_FIRMWARE_DIR/
+				fi
+			else
+				run_command ln -rsf "kernel/$RK_BOOT_IMG" \
+					"$RK_FIRMWARE_DIR/boot.img"
+			fi
 
 			[ -z "$DRY_RUN" ] || return 0
 
 			"$RK_SCRIPTS_DIR/check-power-domain.sh"
 			"$RK_SCRIPTS_DIR/check-security.sh" kernel dts
-
-			[ -z "$RK_SECURITY_CHECK_BASE" ] || \
-				"$RK_SCRIPTS_DIR/mk-security.sh" \
-				sign boot "kernel/$RK_BOOT_IMG" \
-				$RK_FIRMWARE_DIR/boot.img
 
 			if [ "$RK_WIFIBT_CHIP" ] && \
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then

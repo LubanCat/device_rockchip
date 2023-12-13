@@ -32,13 +32,28 @@ build_uboot()
 	UARGS_COMMON="$RK_UBOOT_OPTS \
 		${RK_UBOOT_INI:+../rkbin/RKBOOT/$RK_UBOOT_INI} \
 		${RK_UBOOT_TRUST_INI:+../rkbin/RKTRUST/$RK_UBOOT_TRUST_INI}"
-	UARGS="$UARGS_COMMON ${RK_UBOOT_SPL:+--spl-new} \
-		${RK_SECURITY_BURN_KEY:+--burn-key-hash}"
+	UARGS="$UARGS_COMMON ${RK_UBOOT_SPL:+--spl-new}"
+
+	[ ! "$RK_SECURITY_BURN_KEY" ] || \
+		UARGS="$UARGS ${RK_SECUREBOOT_FIT:+--burn-key-hash}"
 
 	run_command cd u-boot
 
 	run_command $UMAKE $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS $UARGS
 	[ ! -z "$DRY_RUN" ] || "$RK_SCRIPTS_DIR/check-security.sh" uboot
+
+	if [ "$RK_SECURITY_OPTEE_STORAGE_SECURITY" ]; then
+		if [ -z "$(rk_partition_size security)" ]; then
+			error "\"security\" partition not found in parameter"
+			return 1
+		fi
+
+		if [ -z "$(rk_partition_size vbmeta)" ]; then
+			error "\"vbmeta\" partition not found in parameter"
+			return 1
+		fi
+
+	fi
 
 	if [ "$RK_UBOOT_SPL" ]; then
 		if [ "$DRY_RUN" ] || \
@@ -59,11 +74,19 @@ build_uboot()
 	fi
 
 	LOADER="$(echo u-boot/*_loader_*.bin | head -1)"
-	ln -rsf "$LOADER" "$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
-
-	ln -rsf u-boot/uboot.img "$RK_FIRMWARE_DIR"
-	[ ! -e u-boot/trust.img ] || \
-		ln -rsf u-boot/trust.img "$RK_FIRMWARE_DIR"
+	if [ "$RK_SECUREBOOT_AVB" ]; then
+	       "$RK_SCRIPTS_DIR/mk-security.sh" sign loader $LOADER \
+				"$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
+	       "$RK_SCRIPTS_DIR/mk-security.sh" sign uboot u-boot/uboot.img \
+				"$RK_FIRMWARE_DIR"/uboot.img
+	       "$RK_SCRIPTS_DIR/mk-security.sh" sign trust u-boot/trust.img \
+				"$RK_FIRMWARE_DIR"/trust.img
+	else
+		ln -rsf "$LOADER" "$RK_FIRMWARE_DIR"/MiniLoaderAll.bin
+		ln -rsf u-boot/uboot.img "$RK_FIRMWARE_DIR"
+		[ ! -e u-boot/trust.img ] || \
+			ln -rsf u-boot/trust.img "$RK_FIRMWARE_DIR"
+	fi
 }
 
 # Hooks

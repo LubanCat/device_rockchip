@@ -38,7 +38,7 @@ build_hook()
 
 	if [ "$RK_SECURITY" ]; then
 		"$RK_SCRIPTS_DIR/mk-security.sh" sign recovery \
-			$DST_DIR/ramboot.img $RK_FIRMWARE_DIR/recovery.img
+			$DST_DIR/ramboot.img $RK_FIRMWARE_DIR
 	else
 		ln -rsf "$DST_DIR/ramboot.img" "$RK_FIRMWARE_DIR/recovery.img"
 	fi
