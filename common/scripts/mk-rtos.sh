@@ -95,18 +95,11 @@ build_rtthread()
 
 	export RK_RTTHREAD_DEFCONFIG=$(eval echo \$RK_RTOS_RTT$1_BOARD_CONFIG)
 
-	if [ -f "$RK_RTTHREAD_DEFCONFIG" ] && [ -f "$RK_RTTHREAD_DEFCONFIG.h" ] ;then
-		cp $RK_RTTHREAD_DEFCONFIG .config
-		cp $RK_RTTHREAD_DEFCONFIG.h rtconfig.h
+	if [ -f "$RK_RTTHREAD_DEFCONFIG" ] ;then
+		scons --useconfig="$RK_RTTHREAD_DEFCONFIG"
 	else
-		warning "Warning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) or ($RK_RTTHREAD_DEFCONFIG.h) not exit!\n"
-		warning "help:"
-		warning "    cd $RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
-		warning "    cp $RK_RTTHREAD_DEFCONFIG .config"
-		warning "    scons --menuconfig"
-		warning "    cp .config $RK_RTTHREAD_DEFCONFIG"
-		warning "    cp rtconfig.h $RK_RTTHREAD_DEFCONFIG.h\n"
-		warning "Default .config and rtconfig.h are used!!!\n"
+		warning "Warning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) not exit!\n"
+		warning "Default config(.config) will be used!\n"
 	fi
 
 	scons -c > /dev/null
