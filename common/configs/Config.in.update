@@ -8,6 +8,9 @@ config RK_UPDATE
 
 if RK_UPDATE
 
+config RK_AB_UPDATE
+	bool "A/B update"
+
 choice
 	prompt "package-file"
 
@@ -33,34 +36,29 @@ config RK_PACKAGE_FILE
 
 endif
 
-config RK_AB_UPDATE
-	bool "A/B update"
-
-if RK_AB_UPDATE
-
 choice
-	prompt "package-file for A/B OTA"
+	prompt "package-file for OTA"
 
-config RK_AB_OTA_PACKAGE_FILE_DEFAULT
+config RK_OTA_PACKAGE_FILE_DEFAULT
 	bool "auto"
 	help
 	  Auto-generated.
 
-config RK_AB_OTA_PACKAGE_FILE_CUSTOM
+config RK_OTA_PACKAGE_FILE_CUSTOM
 	bool "custom"
 	help
-	  Use custom A/B OTA package-file under <RK_CHIP_DIR>/.
+	  Use custom package-file for OTA under <RK_CHIP_DIR>/.
 
-endchoice # A/B OTA package-file
+endchoice # OTA package-file
 
-if RK_AB_OTA_PACKAGE_FILE_CUSTOM
+if RK_OTA_PACKAGE_FILE_CUSTOM
 
-config RK_AB_OTA_PACKAGE_FILE
-	string "custom package-file for A/B OTA"
+config RK_OTA_PACKAGE_FILE
+	string "custom package-file for OTA"
+	default "ota-package-file"
 	help
-	  Name of custom package-file for A/B OTA under <RK_CHIP_DIR>/.
+	  Name of custom package-file for OTA under <RK_CHIP_DIR>/.
 
-endif
 endif
 endif
 
