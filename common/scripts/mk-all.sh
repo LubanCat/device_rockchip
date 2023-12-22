@@ -112,9 +112,7 @@ usage_hook()
 {
 	echo -e "all                               \tbuild images"
 	echo -e "release                           \trelease images and build info"
-	echo -e "save                              \talias of release"
 	echo -e "all-release                       \tbuild and release images"
-	echo -e "allsave                           \talias of all-release"
 }
 
 clean_hook()
@@ -122,16 +120,16 @@ clean_hook()
 	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/$BOARD*
 }
 
-BUILD_CMDS="all all-release allsave"
+BUILD_CMDS="all all-release"
 build_hook()
 {
 	case "$1" in
 		all) build_all ;;
-		all-release | allsave) build_all_release $@ ;;
+		all-release) build_all_release $@ ;;
 	esac
 }
 
-POST_BUILD_CMDS="release save"
+POST_BUILD_CMDS="release"
 post_build_hook()
 {
 	build_release $@
@@ -141,7 +139,7 @@ source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-he
 
 case "${1:-all-release}" in
 	all) build_all ;;
-	all-release | allsave) build_all_release $@ ;;
-	release | save) build_release $@ ;;
+	all-release) build_all_release $@ ;;
+	release) build_release $@ ;;
 	*) usage ;;
 esac
