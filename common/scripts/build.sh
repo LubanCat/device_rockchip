@@ -242,6 +242,15 @@ run_hooks()
 		[ -d "$dir" ] || continue
 
 		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
+			case "$1" in
+				init | pre-build | build | post-build)
+					grep "$(realpath "$hook")$" \
+						"$RK_PARSED_CMDS" | \
+						grep -i "RK_${1//-/_}_CMDS" | \
+						grep -qE "default|${2%:*}" || \
+						continue
+			esac
+
 			"$hook" $@ && continue
 			HOOK_RET=$?
 			err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$hook $*"
@@ -254,7 +263,7 @@ run_build_hooks()
 {
 	# Don't log these hooks
 	case "$1" in
-		init | pre-build | make-* | usage | support-cmds)
+		init | pre-build | make-* | usage | parse-cmds)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
 			return 0
 			;;
@@ -338,6 +347,7 @@ main()
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
+	export RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
 	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-part"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
@@ -428,8 +438,19 @@ main()
 		fi
 	done
 
+	# Parse supported commands
+	if [ ! -r "$RK_PARSED_CMDS" ] || \
+		find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS" | \
+			grep -q ""; then
+		message "Parsing supported commands...\n"
+		rm -rf "$RK_PARSED_CMDS"
+		run_build_hooks parse-cmds
+        fi
+	source "$RK_PARSED_CMDS"
+
 	# Options checking
-	CMDS="$(run_build_hooks support-cmds all | xargs)"
+	CMDS="$RK_INIT_CMDS $RK_PRE_BUILD_CMDS $RK_BUILD_CMDS \
+		$RK_POST_BUILD_CMDS"
 	for opt in $OPTIONS; do
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
@@ -506,8 +527,8 @@ main()
 	rm -f "$RK_OUTDIR/.tmpconfig*"
 
 	# No need to go further
-	CMDS="$(run_build_hooks support-cmds pre-build build \
-		post-build | xargs) cleanall clean post-rootfs"
+	CMDS="$RK_PRE_BUILD_CMDS $RK_BUILD_CMDS $RK_POST_BUILD_CMDS \
+		cleanall clean post-rootfs"
 	option_check "$CMDS" $OPTIONS || return 0
 
 	# Force exporting config environments
@@ -610,7 +631,7 @@ main()
 	message "          Final configs"
 	message "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
-		grep -vE "=\"\"$|_DEFAULT=y|RK_DEFAULT_TARGET" | \
+		grep -vE "=\"\"$|_DEFAULT=y|^RK_DEFAULT_TARGET|CMDS=" | \
 		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | \
 		grep -vE "_HELPER=|_SUPPORTS=|_ARM64=|_ARM=|_HOST=" | \
 		grep -vE "^RK_ROOTFS_SYSTEM_|^RK_YOCTO_DISPLAY_PLATFORM_" | sort
@@ -619,16 +640,8 @@ main()
 	# Pre-build stage (submodule configuring, etc.)
 	run_build_hooks pre-build $OPTIONS
 
-	# No need to go further
-	CMDS="$(run_build_hooks support-cmds build post-build | xargs)"
-	option_check "$CMDS" $OPTIONS || return 0
-
 	# Build stage (building, etc.)
 	run_build_hooks build $OPTIONS
-
-	# No need to go further
-	CMDS="$(run_build_hooks support-cmds post-build | xargs)"
-	option_check "$CMDS" $OPTIONS || return 0
 
 	# Post-build stage (firmware packing, etc.)
 	run_build_hooks post-build $OPTIONS

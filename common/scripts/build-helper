@@ -137,21 +137,23 @@ case "$1" in
 	make-targets) make_targets; exit 0 ;;
 	make-usage) make_usage; exit 0 ;;
 	usage) usage_hook; exit 0 ;;
-	support-cmds)
+	parse-cmds)
 		shift
+		source "$RK_PARSED_CMDS" 2>/dev/null || true
+
 		{
-			ALL_CMDS="$INIT_CMDS $PRE_BUILD_CMDS $BUILD_CMDS \
-				$POST_BUILD_CMDS"
-			for stage in ${@:-all}; do
-				case $stage in
-					init) echo "$INIT_CMDS" ;;
-					pre-build) echo "$PRE_BUILD_CMDS" ;;
-					build) echo "$BUILD_CMDS" ;;
-					post-build) echo "$POST_BUILD_CMDS" ;;
-					all) echo "$ALL_CMDS" ;;
-				esac
-			done
-		} | xargs -n 1 | grep -v "^default$" | xargs || true
+			SCRIPT="$(realpath "$0")"
+			echo "# Parsed from $SCRIPT."
+
+			[ -z "$INIT_CMDS" ] || \
+				echo "RK_INIT_CMDS=\"\$RK_INIT_CMDS $(echo $INIT_CMDS | sort)\" # $SCRIPT"
+			[ -z "$PRE_BUILD_CMDS" ] || \
+				echo "RK_PRE_BUILD_CMDS=\"\$RK_PRE_BUILD_CMDS $(echo $PRE_BUILD_CMDS | sort)\" # $SCRIPT"
+			[ -z "$BUILD_CMDS" ] || \
+				echo "RK_BUILD_CMDS=\"\$RK_BUILD_CMDS $(echo $BUILD_CMDS | sort)\" # $SCRIPT"
+			[ -z "$POST_BUILD_CMDS" ] || \
+				echo "RK_POST_BUILD_CMDS=\"\$RK_POST_BUILD_CMDS $(echo $POST_BUILD_CMDS | sort)\" # $SCRIPT"
+		} >> "$RK_PARSED_CMDS"
 		exit 0
 		;;
 	clean)
