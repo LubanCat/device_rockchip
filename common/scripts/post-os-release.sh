@@ -24,9 +24,8 @@ case "$POST_OS" in
 	yocto) BUILD_INFO="$BUILD_INFO - ${RK_YOCTO_MACHINE:-$RK_YOCTO_CFG}" ;;
 esac
 
-fixup_os_release OS "$POST_OS"
-fixup_os_release BUILD_INFO "$BUILD_INFO"
-fixup_os_release KERNEL "$RK_KERNEL_VERSION - ${RK_KERNEL_CFG:-unkown}"
+fixup_os_release ID_LIKE "$POST_OS"
+fixup_os_release RK_BUILD_INFO "$BUILD_INFO"
 
 if [ "$POST_ROOTFS" ]; then
 	cp -f "$OS_RELEASE" "$RK_OUTDIR"
