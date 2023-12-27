@@ -1,8 +1,5 @@
 #!/bin/bash -e
 
-MAKE="make ${DEBUG:+V=1} \
-	-C $(realpath --relative-to="$RK_SDK_DIR" "$RK_COMMON_DIR")"
-
 switch_defconfig()
 {
 	DEFCONFIG="$1"
@@ -22,7 +19,7 @@ switch_defconfig()
 	rm -rf "$RK_CHIP_DIR"
 	ln -rsf "$(dirname "$DEFCONFIG")" "$RK_CHIP_DIR"
 
-	$MAKE $(basename "$DEFCONFIG")
+	make $(basename "$DEFCONFIG")
 }
 
 rockchip_defconfigs()
@@ -125,26 +122,26 @@ prepare_config()
 
 	if [ "$RK_CONFIG" -ot "$RK_DEFCONFIG_LINK" ]; then
 		warning "WARN: $RK_CONFIG is out-dated"
-		$MAKE $DEFCONFIG &>/dev/null
+		make $DEFCONFIG
 		return 0
 	fi
 
 	CONFIG_DIR="$(dirname "$RK_CONFIG_IN")"
 	if find "$CONFIG_DIR" -cnewer "$RK_CONFIG" | grep -q ""; then
 		warning "WARN: $CONFIG_DIR is updated"
-		$MAKE $DEFCONFIG &>/dev/null
+		make $DEFCONFIG
 		return 0
 	fi
 
 	CFG="RK_DEFCONFIG=\"$(realpath "$RK_DEFCONFIG_LINK")\""
 	if ! grep -wq "$CFG" "$RK_CONFIG"; then
 		warning "WARN: $RK_CONFIG is invalid"
-		$MAKE $DEFCONFIG &>/dev/null
+		make $DEFCONFIG
 		return 0
 	fi
 
 	if [ "$RK_CONFIG" -nt "${RK_CONFIG}.old" ]; then
-		$MAKE olddefconfig &>/dev/null
+		make olddefconfig >/dev/null
 		touch "${RK_CONFIG}.old"
 	fi
 }
@@ -178,12 +175,12 @@ init_hook()
 		*_defconfig) switch_defconfig "$1" ;;
 		olddefconfig | savedefconfig | menuconfig)
 			prepare_config
-			$MAKE $1
+			make $1
 			;;
 		config)
 			prepare_config
-			$MAKE menuconfig
-			$MAKE savedefconfig
+			make menuconfig
+			make savedefconfig
 			;;
 		default) prepare_config ;; # End of init
 		*) usage ;;
