@@ -25,11 +25,11 @@ cp kernel/.config "$INFO_DIR/config-$RK_KERNEL_VERSION"
 cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION"
 
 EXTRA_FILES=" \
-	/etc/os-release /etc/fstab \
-	/proc/version /proc/cmdline /proc/kallsyms /proc/interrupts /proc/cpuinfo \
-	/proc/softirqs /proc/device-tree /proc/diskstats /proc/iomem \
-	/proc/meminfo /proc/partitions /proc/slabinfo \
-	/proc/rk_dmabuf /proc/rkcif-mipi-lvds /proc/rkisp0-vir0 \
+	/etc/os-release /etc/fstab /proc/config.gz \
+	/proc/cpuinfo /proc/version /proc/cmdline /proc/kallsyms \
+	/proc/interrupts /proc/softirqs /proc/device-tree /proc/diskstats \
+	/proc/iomem /proc/meminfo /proc/partitions /proc/slabinfo \
+	/proc/mpp_service /proc/rk_dmabuf /proc/rkcif-mipi-lvds /proc/rkisp0-vir0 \
 	/sys/kernel/debug/wakeup_sources /sys/kernel/debug/clk/clk_summary \
 	/sys/kernel/debug/gpio /sys/kernel/debug/pinctrl/ \
 	/sys/kernel/debug/dma_buf /sys/kernel/debug/dri \
