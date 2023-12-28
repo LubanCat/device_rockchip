@@ -25,6 +25,7 @@ config RK_DEBIAN_VERSION
 	string
 	default "buster" if RK_DEBIAN_BUSTER
 	default "bullseye" if RK_DEBIAN_BULLSEYE
+	default "bookworm" if RK_DEBIAN_BOOKWORM || RK_KERNEL_VERSION = "6.1"
 
 choice
 	prompt "debian version"
@@ -35,6 +36,9 @@ config RK_DEBIAN_BUSTER
 
 config RK_DEBIAN_BULLSEYE
 	bool "bullseye"
+
+config RK_DEBIAN_BOOKWORM
+	bool "bookworm"
 
 endchoice
 
