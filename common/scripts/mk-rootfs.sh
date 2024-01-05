@@ -78,10 +78,6 @@ build_yocto()
 		echo "include include/rksdk.conf"
 		echo
 
-		if [ "$RK_CHIP" = "rk3288w" ]; then
-			echo "MACHINE_FEATURES:append = \" rk3288w\""
-		fi
-
 		echo "PREFERRED_VERSION_linux-rockchip :=" \
 			"\"$RK_KERNEL_VERSION_REAL%\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_REAL-custom%\""

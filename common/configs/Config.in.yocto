@@ -52,6 +52,7 @@ if RK_YOCTO_CFG_DEFAULT
 config RK_YOCTO_MACHINE
 	string "yocto machine name"
 	default "rockchip-px3se-evb" if RK_CHIP_FAMILY = "px3se"
+	default "rockchip-rk3288w-evb" if RK_CHIP = "rk3288w"
 	default "rockchip-rk3288-evb" if RK_CHIP_FAMILY = "rk3288"
 	default "rockchip-rk3308-evb" if RK_CHIP_FAMILY = "rk3308"
 	default "rockchip-px30-evb" if RK_CHIP_FAMILY = "px30"
