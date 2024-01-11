@@ -21,7 +21,8 @@ if [ -r "kernel/.config" ]; then
 		exit 1
 	fi
 
-	if ! grep -q "CONFIG_DRM_IGNORE_IOTCL_PERMIT=y" kernel/.config; then
+	if grep -q "CONFIG_DRM=y" kernel/.config &&
+		! grep -q "CONFIG_DRM_IGNORE_IOTCL_PERMIT=y" kernel/.config; then
 		echo -e "\e[35m"
 		echo "Please enable CONFIG_DRM_IGNORE_IOTCL_PERMIT in kernel."
 		echo -e "\e[0m"
