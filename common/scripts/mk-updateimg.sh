@@ -78,7 +78,8 @@ do_build_updateimg()
 	message "          Start packing $TYPE image"
 	message "=========================================="
 
-	if ! rk_partition_parse_names "$RK_FIRMWARE_DIR/parameter.txt" | \
+	if [ "$RK_AB_UPDATE" ] && \
+		! rk_partition_parse_names "$RK_FIRMWARE_DIR/parameter.txt" | \
 		grep -qE "_a$|_b$"; then
 		warning "RK_AB_UPDATE enabled, without having A/B partitions!"
 	fi
@@ -125,15 +126,21 @@ do_build_updateimg()
 		ln -sf "$(basename "$TARGET")" \
 			"$RK_FIRMWARE_DIR/${TYPE/-ab/}.img"
 	fi
+
+	case "$TYPE" in
+		*ota*) EDIT_CMD="edit-ota-package-file" ;;
+		*) EDIT_CMD="edit-package-file" ;;
+	esac
+	notice "\nRun 'make $EDIT_CMD' if you want to change the package-file.\n"
 }
 
 build_updateimg()
 {
 	if [ "$RK_AB_UPDATE" ]; then
-		notice "Make A/B update image"
+		notice "Making A/B update image..."
 		do_build_updateimg ab
 	else
-		notice "Make update image"
+		notice "Making update image..."
 		do_build_updateimg
 	fi
 
@@ -143,10 +150,10 @@ build_updateimg()
 build_ota_updateimg()
 {
 	if [ "$RK_AB_UPDATE" ]; then
-		notice "Make A/B update image for OTA"
+		notice "Making A/B update image for OTA..."
 		do_build_updateimg ab-ota
 	else
-		notice "Make update image for OTA"
+		notice "Making update image for OTA..."
 		do_build_updateimg ota
 	fi
 
