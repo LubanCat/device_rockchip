@@ -4,8 +4,6 @@ adbd-auth: Auth script for adbd service
 
 apply-all.sh: Script to apply all saved SDK patches
 
-bt-tty: Script to print BT's tty device
-
 busybox-reboot: Wrapper for busybox reboot commands
 
 kmsgrab.c: Tool for grabbing display buffer from DRM
