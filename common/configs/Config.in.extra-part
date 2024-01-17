@@ -73,11 +73,12 @@ config RK_EXTRA_PARTITION_1_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_1_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs, each of them can be either of absolute path(/<dir>) or
+	  relative to <RK_IMAGE_DIR> or relative to <RK_IMAGE_DIR>/<part name>.
 
 config RK_EXTRA_PARTITION_1_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -151,11 +152,12 @@ config RK_EXTRA_PARTITION_2_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_2_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs, each of them can be either of absolute path(/<dir>) or
+	  relative to <RK_IMAGE_DIR> or relative to <RK_IMAGE_DIR>/<part name>.
 
 config RK_EXTRA_PARTITION_2_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -228,7 +230,7 @@ config RK_EXTRA_PARTITION_3_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_3_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 
 config RK_EXTRA_PARTITION_3_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -301,7 +303,7 @@ config RK_EXTRA_PARTITION_4_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_4_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 
 config RK_EXTRA_PARTITION_4_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
@@ -374,7 +376,7 @@ config RK_EXTRA_PARTITION_5_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_5_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 
 config RK_EXTRA_PARTITION_5_SIZE
 	string "image size (size(M|K)|auto(0)|max)"

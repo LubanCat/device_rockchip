@@ -103,7 +103,7 @@ config RK_EXTRA_PARTITION_${i}_OPTIONS
 	default "defaults"
 
 config RK_EXTRA_PARTITION_${i}_SRC
-	string "source dirs' suffix"
+	string "source dirs"
 EOF
 
 	if [ $i -lt 3 ]; then
@@ -111,7 +111,8 @@ EOF
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "normal"
 	help
-	  Source dirs under <RK_IMAGE_DIR>/.
+	  Source dirs, each of them can be either of absolute path(/<dir>) or
+	  relative to <RK_IMAGE_DIR> or relative to <RK_IMAGE_DIR>/<part name>.
 EOF
 	fi
 
