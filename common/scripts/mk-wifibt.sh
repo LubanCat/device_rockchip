@@ -2,7 +2,7 @@
 
 build_wifibt()
 {
-	DEFAULT_ROOTFS_DIR=buildroot/output/$RK_BUILDROOT_CFG/target
+	DEFAULT_ROOTFS_DIR="$RK_OUTDIR/rootfs/target"
 	ROOTFS_DIR="${1:-$DEFAULT_ROOTFS_DIR}"
 	if [ ! -d "$ROOTFS_DIR" ]; then
 		error "$ROOTFS_DIR is not a dir!"
