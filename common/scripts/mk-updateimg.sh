@@ -79,8 +79,7 @@ do_build_updateimg()
 	message "=========================================="
 
 	if [ "$RK_AB_UPDATE" ] && \
-		! rk_partition_parse_names "$RK_FIRMWARE_DIR/parameter.txt" | \
-		grep -qE "_a$|_b$"; then
+		! rk_partition_parse_names | grep -qE "_a\>|_b\>"; then
 		warning "RK_AB_UPDATE enabled, without having A/B partitions!"
 	fi
 

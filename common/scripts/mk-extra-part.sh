@@ -64,6 +64,10 @@ post_build_hook()
 		cd "$OUTDIR"
 		fakeroot -- "$FAKEROOT_SCRIPT"
 		notice "Done packing $DST"
+
+		if ! rk_partition_parse_names | grep -qE "\<$PART_NAME\>"; then
+			warning "Packed $DST without having $PART_NAME partition!"
+		fi
 	done
 
 	finish_build build_extra_part
