@@ -16,15 +16,17 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";	 // "arm64" or "arm"
-			sys          = "hal";	 // "hal" or "rtt"
 			cpu          = <0x000>;  // mpidr
 			thumb        = <0>;      // 0: arm or thumb2; 1: thumb
 			hyp          = <0>;      // 0: el1/svc; 1: el2/hyp
 			load         = <0x02600000>;
-			size         = <0x00900000>;
-			srambase     = <0xfffb0000>;
-			sramsize     = <0x00010000>;
 			udelay       = <10000>;
+			compile {
+				size         = <0x00900000>;
+				srambase     = <0xfffb0000>;
+				sramsize     = <0x00010000>;
+				sys          = "hal";	 // "hal" or "rtt"
+			};
 			hash {
 				algo = "sha256";
 			};
@@ -36,15 +38,18 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";
-			sys          = "rtt";
 			cpu          = <0x1>;
 			thumb        = <0>;
 			hyp          = <0>;
 			load         = <0x00800000>;
-			size         = <0x00a00000>;
-			srambase     = <0xfff88000>;
-			sramsize     = <0x00008000>;
 			udelay       = <10000>;
+			compile {
+				size         = <0x00a00000>;
+				srambase     = <0xfff88000>;
+				sramsize     = <0x00008000>;
+				sys          = "rtt";
+				rtt_config   = "board/rk3308_ddr2_v10/amp_rtt1_defconfig"
+			};
 			hash {
 				algo = "sha256";
 			};
@@ -56,15 +61,17 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";
-			sys          = "hal";
 			cpu          = <0x2>;
 			thumb        = <0>;
 			hyp          = <0>;
 			load         = <0x01200000>;
-			size         = <0x00a00000>;
-			srambase     = <0xfff90000>;
-			sramsize     = <0x00010000>;
 			udelay       = <10000>;
+			compile {
+				size         = <0x00a00000>;
+				srambase     = <0xfff90000>;
+				sramsize     = <0x00010000>;
+				sys          = "hal";
+			};
 			hash {
 				algo = "sha256";
 			};
@@ -76,15 +83,17 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";
-			sys          = "hal";
 			cpu          = <0x3>;
 			thumb        = <0>;
 			hyp          = <0>;
 			load         = <0x01c00000>;
-			size         = <0x00a00000>;
-			srambase     = <0xfffa0000>;
-			sramsize     = <0x00010000>;
 			udelay       = <10000>;
+			compile {
+				size         = <0x00a00000>;
+				srambase     = <0xfffa0000>;
+				sramsize     = <0x00010000>;
+				sys          = "hal";
+			};
 			hash {
 				algo = "sha256";
 			};
@@ -92,8 +101,8 @@
 	};
 
 	share_memory {
-		base         = <0x02f00000>;
-		size         = <0x00100000>;
+		shm_base         = <0x02f00000>;
+		shm_size         = <0x00100000>;
 	};
 
 	configurations {
