@@ -15,14 +15,16 @@
 			type         = "firmware";
 			compression  = "none";
 			arch         = "arm";
-			sys          = "hal";    // "hal" or "rtt"
 			cpu          = <0x3>;
 			thumb        = <0>;
 			hyp          = <0>;
 			load         = <0x01800000>;
-            size         = <0x00800000>;
-            srambase     = <0xfe480000>;
-            sramsize     = <0x00010000>;
+			compile {
+				size         = <0x00800000>;
+				srambase     = <0xfe480000>;
+				sramsize     = <0x00010000>;
+				sys          = "hal";    // "hal" or "rtt"
+			}
 			udelay       = <10000>;
 			hash {
 				algo = "sha256";
@@ -30,10 +32,12 @@
 		};
 	};
 
-    share_memory {
-        base         = <0x07800000>;
-        size         = <0x00400000>;
-    };
+	share_memory {
+		shm_base         = <0x07800000>;
+		shm_size         = <0x00400000>;
+		rpmsg_base       = <0x07C00000>;
+		rpmsg_size       = <0x00500000>;
+	};
 
 	configurations {
 		default = "conf";
