@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-MAX_CORE_NUMBERS=16
 RK_RTOS_BSP_DIR=$RK_SDK_DIR/rtos/bsp/rockchip
 ITS_FILE="$RK_CHIP_DIR/$RK_RTOS_FIT_ITS"
 
@@ -9,6 +8,39 @@ RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 usage_hook()
 {
 	echo -e "rtos                             \tbuild and pack RTOS"
+}
+
+rtos_get_value()
+{
+	echo "$1" | grep -owP "$2\s*=\s*<([^>]+)>" | awk -F'<|>' '{print $2}'
+}
+
+rtos_get_string()
+{
+	echo "$1" | grep -owP "$2\s*=\s*\"([^>]+)\"" | awk -F'"' '{print $2}'
+}
+
+rtos_get_node()
+{
+	echo "$1" | \
+	awk -v node="$2" \
+		'$0 ~ node " {" {
+		in_block = 1;
+		block = $0;
+		next;
+		}
+		in_block {
+			block = block "\n" $0;
+			if (/}/) {
+				count_open = gsub(/{/, "&", block);
+				count_close = gsub(/}/, "&", block);
+				if (count_open == count_close) {
+					in_block = 0;
+					print block;
+					block = "";
+				}
+			}
+		}'
 }
 
 build_hal()
@@ -20,27 +52,6 @@ build_hal()
 	message "=========================================="
 
 	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
-
-	export FIRMWARE_CPU_BASE=$(grep -wE "amp[0-9]* {|load" $ITS_FILE | grep amp$1 -A1 | grep load | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "FIRMWARE_CPU_BASE=$FIRMWARE_CPU_BASE"
-	export DRAM_SIZE=$(grep -wE "amp[0-9]* {|size" $ITS_FILE | grep amp$1 -A1 | grep size | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "DRAM_SIZE=$DRAM_SIZE"
-	export SRAM_BASE=$(grep -wE "amp[0-9]* {|srambase" $ITS_FILE | grep amp$1 -A1 | grep srambase | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "SRAM_BASE=$SRAM_BASE"
-	export SRAM_SIZE=$(grep -wE "amp[0-9]* {|sramsize" $ITS_FILE | grep amp$1 -A1 | grep sramsize | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "SRAM_SIZE=$SRAM_SIZE"
-	export SHMEM_BASE=$(grep -wE -A3 "share_memory {" $ITS_FILE | grep base | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "SHMEM_BASE=$SHMEM_BASE"
-	export SHMEM_SIZE=$(grep -wE -A3 "share_memory {" $ITS_FILE | grep size | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "SHMEM_SIZE=$SHMEM_SIZE"
-
-	export CUR_CPU=$1
-	echo "CUR_CPU=$CUR_CPU"
-	AMP_PRIMARY_CORE=$(printf "%d" $(grep -wE "configurations {|primary" $ITS_FILE | grep primary | cut -d'<' -f2 | cut -d'>' -f1))
-	if [ "$AMP_PRIMARY_CORE" = "$1" ]; then
-		export AMP_PRIMARY_CORE=$AMP_PRIMARY_CORE
-		echo "AMP_PRIMARY_CORE=$AMP_PRIMARY_CORE"
-	fi
 
 	make clean > /dev/null
 	rm -rf hal$1.elf hal$1.bin
@@ -58,22 +69,18 @@ build_rtthread()
 
 	message "=========================================="
 	message "  Building CPU$1: RT-Thread-->$RK_RTOS_RTT_TARGET"
+	message "                  Config-->$2"
 	message "=========================================="
 
 	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
 
-	export RTT_PRMEM_BASE=$(grep -wE "amp[0-9]* {|load" $ITS_FILE | grep amp$1 -A1 | grep load | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_PRMEM_BASE=$RTT_PRMEM_BASE"
-	export RTT_PRMEM_SIZE=$(grep -wE "amp[0-9]* {|size" $ITS_FILE | grep amp$1 -A1 | grep size | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_PRMEM_SIZE=$RTT_PRMEM_SIZE"
-	export RTT_SRAM_BASE=$(grep -wE "amp[0-9]* {|srambase" $ITS_FILE | grep amp$1 -A1 | grep srambase | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_SRAM_BASE=$RTT_SRAM_BASE"
-	export RTT_SRAM_SIZE=$(grep -wE "amp[0-9]* {|sramsize" $ITS_FILE | grep amp$1 -A1 | grep sramsize | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_SRAM_SIZE=$RTT_SRAM_SIZE"
-	export RTT_SHMEM_BASE=$(grep -wE -A3 "share_memory {" $ITS_FILE | grep base | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_SHMEM_BASE=$RTT_SHMEM_BASE"
-	export RTT_SHMEM_SIZE=$(grep -wE -A3 "share_memory {" $ITS_FILE | grep size | cut -d'<' -f2 | cut -d'>' -f1)
-	echo "RTT_SHMEM_SIZE=$RTT_SHMEM_SIZE"
+	export RTT_ROOT=$RK_RTOS_BSP_DIR/../../
+	export RTT_PRMEM_BASE=$FIRMWARE_CPU_BASE
+	export RTT_PRMEM_SIZE=$DRAM_SIZE
+	export RTT_SRAM_BASE=$SRAM_BASE
+	export RTT_SRAM_SIZE=$SRAM_SIZE
+	export RTT_SHMEM_BASE=$SHMEM_BASE
+	export RTT_SHMEM_SIZE=$SHMEM_SIZE
 
 	ROOT_PART_OFFSET=$(rk_partition_start rootfs)
 	if [ -n $ROOT_PART_OFFSET ];then
@@ -85,20 +92,10 @@ build_rtthread()
 		export ROOT_PART_SIZE=$ROOT_PART_SIZE
 	fi
 
-	export CUR_CPU=$1
-	echo "CUR_CPU=$CUR_CPU"
-	AMP_PRIMARY_CORE=$(printf "%d" $(grep -wE "configurations {|primary" $ITS_FILE | grep primary | cut -d'<' -f2 | cut -d'>' -f1))
-	if [ "$AMP_PRIMARY_CORE" = "$1" ]; then
-		export AMP_PRIMARY_CORE=$AMP_PRIMARY_CORE
-		echo "AMP_PRIMARY_CORE=$AMP_PRIMARY_CORE"
-	fi
-
-	export RK_RTTHREAD_DEFCONFIG=$(eval echo \$RK_RTOS_RTT$1_BOARD_CONFIG)
-
-	if [ -f "$RK_RTTHREAD_DEFCONFIG" ] ;then
-		scons --useconfig="$RK_RTTHREAD_DEFCONFIG"
+	if [ -f "$2" ] ;then
+		scons --useconfig="$2"
 	else
-		warning "Warning: RK_RTOS_RTT$1_BOARD_CONFIG config ($RK_RTTHREAD_DEFCONFIG) not exit!\n"
+		warning "Warning: Config $2 not exit!\n"
 		warning "Default config(.config) will be used!\n"
 	fi
 
@@ -139,6 +136,44 @@ clean_hook()
 	rm -rf "$RK_FIRMWARE_DIR/amp.img"
 }
 
+build_images()
+{
+	for item in $1
+	do
+		ITS_IMAGE=$(rtos_get_node "$(cat $ITS_FILE)" $item)
+		export FIRMWARE_CPU_BASE=$(rtos_get_value "$ITS_IMAGE" load)
+		export DRAM_SIZE=$(rtos_get_value "$ITS_IMAGE" size)
+		export SRAM_BASE=$(rtos_get_value "$ITS_IMAGE" srambase)
+		export SRAM_SIZE=$(rtos_get_value "$ITS_IMAGE" sramsize)
+		export CUR_CPU=$(rtos_get_value "$ITS_IMAGE" cpu)
+		if (( $CUR_CPU > 0xff )); then
+			CUR_CPU=$((CUR_CPU >> 8))
+		fi
+		CUR_CPU=$(($CUR_CPU))
+		export AMP_PRIMARY_CORE=$(rtos_get_value "$ITS_IMAGE" primary)
+
+		echo Image info: $item
+		for p in FIRMWARE_CPU_BASE DRAM_SIZE SRAM_BASE SRAM_SIZE SHMEM_BASE \
+			 SHMEM_SIZE LINUX_RPMSG_BASE LINUX_RPMSG_SIZE CUR_CPU
+		do
+			echo $(env | grep -w $p && true)
+		done
+
+		SYS=$(rtos_get_string "$ITS_IMAGE" sys)
+
+		case $SYS in
+			hal)
+				build_hal $CUR_CPU
+				;;
+			rtt)
+				build_rtthread $CUR_CPU "$(rtos_get_string "$ITS_IMAGE" rtt_config)"
+				;;
+			*)
+				break;;
+		esac
+	done
+}
+
 BUILD_CMDS="rtos"
 build_hook()
 {
@@ -163,27 +198,30 @@ build_hook()
 
 	CORE_NUMBERS=$(grep -wcE "amp[0-9]* {" $ITS_FILE)
 	echo "CORE_NUMBERS=$CORE_NUMBERS"
-	for ((i = 0; i < $MAX_CORE_NUMBERS; i++)); do
-		CORE_ID=$(printf "%d" $(grep -wE "amp[0-9]* {|cpu" $ITS_FILE | grep amp${i} -A1 | grep cpu | cut -d'<' -f2 | cut -d'>' -f1))
-		CORE_SYS=$(grep -wE "amp[0-9]* {|sys" $ITS_FILE | grep amp${i} -A1 | grep sys | cut -d'"' -f2)
 
-		if ! [ "$CORE_ID" -lt "$MAX_CORE_NUMBERS" ] 2>/dev/null; then
-			error "Invalid core($CORE_ID) should be (0-$MAX_CORE_NUMBERS)!"
-			exit 1
+	EXT_MEMORY=$(rtos_get_node "$(cat $ITS_FILE)" share_memory)
+	if [ "$EXT_MEMORY" ]; then
+		SHMEM_BASE=$(rtos_get_value "$EXT_MEMORY" "shm_base")
+		if [ "$SHMEM_BASE" ]; then
+			export SHMEM_BASE
+			export SHMEM_SIZE=$(rtos_get_value "$EXT_MEMORY" "shm_size")
 		fi
 
-		case $CORE_SYS in
-			hal)
-				build_hal $CORE_ID
-				;;
-			rtt)
-				build_rtthread $CORE_ID
-				;;
-		esac
-	done
+		LINUX_RPMSG_BASE=$(rtos_get_value "$EXT_MEMORY" "rpmsg_base")
+		if [ "$LINUX_RPMSG_BASE" ]; then
+			export LINUX_RPMSG_BASE=$LINUX_RPMSG_BASE
+			export LINUX_RPMSG_SIZE=$(rtos_get_value "$EXT_MEMORY" "rpmsg_size")
+		fi
+	fi
+
+	ITS_IMAGES=$(grep -wE "amp[0-9]* {" $ITS_FILE | grep -o amp[0-9]*)
+	build_images "$ITS_IMAGES"
 
 	cd "$RK_OUTDIR"
 	ln -rsf $ITS_FILE amp.its
+	sed -i '/share_memory {/,/}/d' amp.its
+	sed -i '/compile {/,/}/d' amp.its
+
 	$RK_RTOS_BSP_DIR/tools/mkimage -f amp.its -E -p 0xe00 $RK_FIRMWARE_DIR/amp.img
 
 	finish_build rtos $@
