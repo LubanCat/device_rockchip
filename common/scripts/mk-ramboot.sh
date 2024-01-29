@@ -40,11 +40,9 @@ ln -rsf "$SECOND_IMG" second.img
 case "$(realpath ramdisk.img)" in
 	*.gz | *.bz | *.bz2 | *.xz) ;;
 	*)
-		for f in ramdisk.img kernel.img; do
-			ln -f $f ${f}.orig
-			gzip -f -9 $f
-			ln -sf ${f}.gz $f
-		done
+		ln -f ramdisk.img ramdisk.img.orig
+		gzip -f -9 ramdisk.img
+		ln -sf ramdisk.img.gz ramdisk.img
 		;;
 esac
 
