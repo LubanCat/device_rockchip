@@ -38,7 +38,7 @@ ln -rsf "$SECOND_IMG" second.img
 
 # Force using compressed ramdisk
 case "$(realpath ramdisk.img)" in
-	*.gz | *.bz | *.bz2 | *.xz) ;;
+	*.gz | *.bz | *.bz2 | *.xz | *.squashfs) ;;
 	*)
 		ln -f ramdisk.img ramdisk.img.orig
 		gzip -f -9 ramdisk.img
