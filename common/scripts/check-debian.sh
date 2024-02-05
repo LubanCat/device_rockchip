@@ -4,6 +4,14 @@ RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
 RK_DATA_DIR="${RK_DATA_DIR:-"$RK_SCRIPTS_DIR/../data/"}"
 
+if findmnt -fnu -o OPTIONS -T "$RK_SCRIPTS_DIR" | grep -qE "nodev"; then
+	echo -e "\e[35m"
+	echo "Please remount to allow creating devices on the filesystem:"
+	echo "sudo mount -o remount,dev $(findmnt -fnu -o TARGET -T "$RK_SCRIPTS_DIR")"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	echo -e "\e[35m"
 	echo "Your live-build doesn't support $RK_DEBIAN_VERSION"
