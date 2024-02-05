@@ -247,7 +247,7 @@ run_hooks()
 					grep "$(realpath "$hook")$" \
 						"$RK_PARSED_CMDS" | \
 						grep -i "RK_${1//-/_}_CMDS" | \
-						grep -qE "default|${2%:*}" || \
+						grep -qE "default|${2%%:*}" || \
 						continue
 			esac
 
