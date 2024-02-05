@@ -51,27 +51,27 @@ rk_log()
 
 message()
 {
-	rk_log 36 "$@"
+	rk_log 36 "$@" # light blue
 }
 
 notice()
 {
-	rk_log 35 "$@"
+	rk_log 35 "$@" # purple
 }
 
 warning()
 {
-	rk_log 34 "$@"
+	rk_log 34 "$@" # dark blue
 }
 
 error()
 {
-	rk_log 91 "$@"
+	rk_log 91 "$@" # light red
 }
 
 fatal()
 {
-	rk_log 31 "$@"
+	rk_log 31 "$@" # dark red
 }
 
 finish_build()
@@ -219,7 +219,9 @@ set +a
 err_handler()
 {
 	ret=${1:-$?}
-	[ "$ret" -eq 0 ] && return
+	if [ "$ret" -eq 0 ]; then
+		return 0
+	fi
 
 	fatal "ERROR: Running $BASH_SOURCE - ${2:-${FUNCNAME[1]}} failed!"
 	fatal "ERROR: exit code $ret from line ${BASH_LINENO[0]}:"
@@ -233,35 +235,64 @@ err_handler()
 	exit $ret
 }
 
+# option_check "<supported commands>" <option 1> [option 2] ...
+option_check()
+{
+	CMDS="$1"
+	shift
+
+	for opt in $@; do
+		for cmd in $CMDS; do
+			if [ "$cmd" = "${opt%%:*}" ]; then
+				return 0
+			fi
+		done
+	done
+	return 1
+}
+
+# hook_check <hook> <stage> <cmd>
+hook_check()
+{
+	case "$2" in
+		init | pre-build | build | post-build) ;;
+		*) return 0 ;;
+	esac
+
+	CMDS="$(sed -n \
+		"s@^RK_${2//-/_}_CMDS[^ ]*\(.*\)\" # $(realpath "$1")\$@\1@ip" \
+		"$RK_PARSED_CMDS") default"
+	option_check "$CMDS" "$3"
+}
+
+# Run specific hook scripts
 run_hooks()
 {
 	DIR="$1"
 	shift
 
+	# Prefer chips' hooks than the common ones
 	for dir in "$RK_CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
 		[ -d "$dir" ] || continue
 
 		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
-			case "$1" in
-				init | pre-build | build | post-build)
-					grep "$(realpath "$hook")$" \
-						"$RK_PARSED_CMDS" | \
-						grep -i "RK_${1//-/_}_CMDS" | \
-						grep -qE "default|${2%%:*}" || \
-						continue
-			esac
+			# Ignore unrelated hooks
+			hook_check "$hook" "$1" "$2" || continue
 
-			"$hook" $@ && continue
-			HOOK_RET=$?
-			err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$hook $*"
-			exit $HOOK_RET
+			if ! "$hook" $@; then
+				HOOK_RET=$?
+				err_handler $HOOK_RET \
+					"${FUNCNAME[0]} $*" "$hook $*"
+				exit $HOOK_RET
+			fi
 		done
 	done
 }
 
+# Run build hook scripts for normal stages
 run_build_hooks()
 {
-	# Don't log these hooks
+	# Don't log these stages (either interactive or with useless logs)
 	case "$1" in
 		init | pre-build | make-* | usage | parse-cmds)
 			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
@@ -280,6 +311,7 @@ run_build_hooks()
 	fi
 }
 
+# Run post hook scripts for post-rootfs stage
 run_post_hooks()
 {
 	LOG_FILE="$(start_log post-rootfs)"
@@ -291,22 +323,6 @@ run_post_hooks()
 		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
 		exit $HOOK_RET
 	fi
-}
-
-option_check()
-{
-	CMDS="$1"
-	shift
-
-	for opt in $@; do
-		for cmd in $CMDS; do
-			# NOTE: There might be patterns in commands
-			echo "${opt%%:*}" | grep -q "^$cmd$" || continue
-			return 0
-		done
-	done
-
-	return 1
 }
 
 main()
@@ -367,7 +383,7 @@ main()
 	# For Makefile
 	case "$@" in
 		make-targets)
-			# Chip targets
+			# Report chip targets as well
 			ls "$RK_CHIPS_DIR"
 			;&
 		make-usage)
@@ -472,7 +488,7 @@ main()
 				;;
 			post-rootfs)
 				if [ "$opt" = "$1" -a -d "$2" ]; then
-					# Hide other args from build stages
+					# Hide args from later checks
 					OPTIONS=$opt
 					break
 				fi
@@ -577,11 +593,13 @@ main()
 		fi
 	fi
 
+	# Parse partition table
 	source "$RK_PARTITION_HELPER"
 	rk_partition_init
 
 	set +a
 
+	# The real kernel version: 4.4/4.19/5.10/6.1, etc.
 	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 
 	# Handle special commands
