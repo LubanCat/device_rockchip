@@ -82,7 +82,7 @@ build_yocto()
 			"\"$RK_KERNEL_VERSION_REAL%\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_REAL-custom%\""
 		case "$RK_CHIP_FAMILY" in
-			px30|rk3326|rk3562|rk3566_rk3568|rk3588)
+			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
 		esac
 	} > build/conf/rksdk_override.conf
