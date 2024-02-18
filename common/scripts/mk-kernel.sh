@@ -271,7 +271,7 @@ post_build_hook()
 
 	[ "$1" != cmds ] || shift
 	OUTPUT_FILE="${1:-"$RK_OUTDIR"}/linux-headers.tar"
-	mkdir -p "$(dirname "OUTPUT_DIR")"
+	mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 	HEADER_FILES_SCRIPT=$(mktemp)
 
@@ -281,9 +281,11 @@ post_build_hook()
 		notice "Saving linux-headers to $OUTPUT_FILE"
 	fi
 
+	# Preparing kernel
 	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 	run_command $KMAKE $RK_KERNEL_IMG_NAME
 
+	# Packing headers
 	cat << EOF > "$HEADER_FILES_SCRIPT"
 {
 	# Based on kernel/scripts/package/builddeb
@@ -305,6 +307,7 @@ EOF
 		. "$HEADER_FILES_SCRIPT"
 	fi
 
+	# Packing kbuild
 	case "$RK_KERNEL_KBUILD_ARCH" in
 		host) run_command tar -uf "$OUTPUT_FILE" scripts tools ;;
 		*)
@@ -317,6 +320,51 @@ EOF
 	run_command cd "$RK_SDK_DIR"
 
 	rm -f "$HEADER_FILES_SCRIPT"
+
+	[ -z "$DRY_RUN" ] || return 0
+
+	case "$RK_KERNEL_KBUILD_ARCH" in
+		host)
+			if [ $(uname -m) = x86_64 ]; then
+				DEBIAN_ARCH=amd64
+			else
+				return 0
+			fi
+			;;
+		*) DEBIAN_ARCH="$RK_KERNEL_KBUILD_ARCH" ;;
+	esac
+
+	# Packing .deb package
+	TEMP_DIR="$(mktemp -d)"
+	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_REAL}-$RK_KERNEL_ARCH"
+	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
+	DEBIAN_KBUILD_DIR="$DEBIAN_DIR/usr/src/$DEBIAN_PKG"
+	DEBIAN_DEB="$DEBIAN_DIR.deb"
+	DEBIAN_CONTROL="$DEBIAN_DIR/DEBIAN/control"
+	mkdir -p "$(dirname "$DEBIAN_CONTROL")" "$DEBIAN_KBUILD_DIR"
+
+	message "Unpacking $OUTPUT_FILE ..."
+	tar xf "$OUTPUT_FILE" -C "$DEBIAN_KBUILD_DIR"
+	cat << EOF > "$DEBIAN_CONTROL"
+Package: $DEBIAN_PKG
+Source: linux-rockchip ($RK_KERNEL_VERSION_REAL)
+Version: $RK_KERNEL_VERSION_REAL-rockchip
+Architecture: $DEBIAN_ARCH
+Section: kernel
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://www.kernel.org/
+Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_REAL $RK_KERNEL_ARCH configuration
+EOF
+
+	message "Debian control file:"
+	cat "$DEBIAN_CONTROL"
+
+	message "Packing $(basename "$DEBIAN_DEB")..."
+	dpkg-deb -b "$DEBIAN_DIR" >/dev/null 2>&1
+	mv "$DEBIAN_DEB" "$(dirname "$OUTPUT_FILE")"
+
+	rm -rf "$TEMP_DIR"
 }
 
 post_build_hook_dry()

@@ -52,6 +52,16 @@ if ! lz4 -h 2>&1 | grep -q favor-decSpeed; then
 	exit 1
 fi
 
+# For packing linux-headers .deb package
+if ! which dpkg >/dev/null 2>&1; then
+	echo -e "\e[35m"
+	echo "Your dpkg is missing"
+	echo "Please install it:"
+	echo "sudo apt-get install dpkg"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 "$RK_SCRIPTS_DIR/check-header.sh" openssl openssl/ssl.h libssl-dev
 "$RK_SCRIPTS_DIR/check-header.sh" gmp gmp.h libgmp-dev
 "$RK_SCRIPTS_DIR/check-header.sh" mpc mpc.h libmpc-dev
