@@ -19,6 +19,7 @@ if [ ! -d debian/ ]; then
 	echo "Tag:"
 	echo "4.4/4.19: debian/4.19.282-1"
 	echo "5.10: debian/5.10.179-1"
+	echo "6.1: debian/6.1.76-1"
 	echo -e "\e[0m"
 	exit 1
 fi
