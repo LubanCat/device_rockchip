@@ -261,7 +261,12 @@ hook_check()
 
 	CMDS="$(sed -n \
 		"s@^RK_${2//-/_}_CMDS[^ ]*\(.*\)\" # $(realpath "$1")\$@\1@ip" \
-		"$RK_PARSED_CMDS") default"
+		"$RK_PARSED_CMDS")"
+
+	if echo "$CMDS" | grep -wq default; then
+		return 0
+	fi
+
 	option_check "$CMDS" "$3"
 }
 
