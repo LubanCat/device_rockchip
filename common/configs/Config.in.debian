@@ -30,7 +30,7 @@ config RK_DEBIAN_VERSION
 
 choice
 	prompt "debian version"
-	default RK_DEBIAN_BOOKWORM if RK_KERNEL_VERSION = "6.1"
+	default RK_DEBIAN_BOOKWORM if RK_CHIP_FAMILY = "rk3576"
 	default RK_DEBIAN_BULLSEYE
 
 config RK_DEBIAN_BUSTER
