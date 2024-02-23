@@ -32,6 +32,7 @@ config RK_WIFIBT_CHIP
 
 source "post/Config.in.disk-helper"
 source "post/Config.in.usb"
+source "post/Config.in.log-guardian"
 
 source "post/Config.in.overlay"
 
