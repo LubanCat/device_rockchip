@@ -368,6 +368,8 @@ main()
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
+	export RK_MAKE_USAGE="$RK_OUTDIR/.make_usage"
+	export RK_MAKE_TARGETS="$RK_OUTDIR/.make_targets"
 	export RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
 	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-part"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
@@ -386,13 +388,26 @@ main()
 	fi
 
 	# For Makefile
+	if [ ! -r "$RK_MAKE_USAGE" ] || \
+		find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE" | \
+		grep -q ""; then
+			run_build_hooks make-usage > "$RK_MAKE_USAGE"
+	fi
+	if [ ! -r "$RK_MAKE_TARGETS" ] || \
+		find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_TARGETS" | \
+		grep -q ""; then
+			run_build_hooks make-targets > "$RK_MAKE_TARGETS"
+	fi
 	case "$@" in
 		make-targets)
 			# Report chip targets as well
 			ls "$RK_CHIPS_DIR"
-			;&
+
+			cat "$RK_MAKE_TARGETS"
+			rm -f "$INITIAL_ENV"
+			exit 0 ;;
 		make-usage)
-			run_build_hooks "$@"
+			cat "$RK_MAKE_USAGE"
 			rm -f "$INITIAL_ENV"
 			exit 0 ;;
 	esac
@@ -654,8 +669,8 @@ main()
 	message "          Final configs"
 	message "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
-		grep -vE "=\"\"$|_DEFAULT=y|^RK_DEFAULT_TARGET|CMDS=" | \
-		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=" | \
+		grep -vE "=\"\"$|_DEFAULT=y|^RK_DEFAULT_TARGET|CMDS=|^RK_MAKE_" | \
+		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=|_DTB=" | \
 		grep -vE "_HELPER=|_SUPPORTS=|_ARM64=|_ARM=|_HOST=" | \
 		grep -vE "^RK_ROOTFS_SYSTEM_|^RK_YOCTO_DISPLAY_PLATFORM_" | sort
 	echo

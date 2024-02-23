@@ -13,6 +13,7 @@ update_kernel()
 	# Update .config
 	KERNEL_CONFIG="RK_KERNEL_VERSION=\"$RK_KERNEL_VERSION\""
 	if ! grep -q "^$KERNEL_CONFIG$" "$RK_CONFIG"; then
+		notice "Updating kernel version config: $RK_KERNEL_VERSION"
 		sed -i "s/^RK_KERNEL_VERSION=.*/$KERNEL_CONFIG/" "$RK_CONFIG"
 		"$RK_SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
 	fi
@@ -21,7 +22,7 @@ update_kernel()
 
 	# Update kernel
 	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
-	notice "switching to $KERNEL_DIR"
+	notice "Switching to $KERNEL_DIR"
 	if [ ! -d "$KERNEL_DIR" ]; then
 		error "$KERNEL_DIR not exist!"
 		exit 1
