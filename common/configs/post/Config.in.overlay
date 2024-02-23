@@ -1,0 +1,64 @@
+#
+
+config RK_ROOTFS_OVERLAY
+	bool "rootfs overlay"
+	default y
+
+if RK_ROOTFS_OVERLAY
+
+choice
+	prompt "extra fonts"
+
+config RK_EXTRA_FONTS_DEFAULT
+	bool "auto"
+	help
+	  Install extra fonts for yocto OS.
+
+config RK_EXTRA_FONTS_ENABLED
+	bool "install"
+
+config RK_EXTRA_FONTS_DISABLED
+	bool "not install"
+
+endchoice # extra fonts
+
+choice
+	prompt "input-event-daemon (power-key handling)"
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_DEFAULT
+	bool "auto"
+	help
+	  Install input-event-daemon (power-key handling) for yocto OS.
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_ENABLED
+	bool "install"
+
+config RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED
+	bool "not install"
+
+endchoice # input-event-daemon
+
+config RK_ROOTFS_BOOTANIM
+	bool "bootanim (Boot-time animation)"
+
+if RK_ROOTFS_BOOTANIM
+
+config RK_ROOTFS_BOOTANIM_TIMEOUT
+	int "timeout"
+	default 3
+
+endif
+
+config RK_ROOTFS_IRQBALANCE
+	bool "irqbalance (Balance hardware IRQs)"
+	default y
+
+source "post/Config.in.frecon"
+
+config RK_ROOTFS_PREBUILT_TOOLS
+	bool "prebuilt tools"
+
+config RK_ROOTFS_EXTRA_OVERLAY_DIRS
+	string "rootfs extra overlay dirs"
+
+endif

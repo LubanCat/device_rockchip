@@ -1,0 +1,38 @@
+#
+
+menu "Post rootfs installs"
+
+source "post/Config.in.hostname"
+source "post/Config.in.locale"
+
+config RK_ROOTFS_STRIP_MODULES
+	bool "strip kernel modules"
+	default y
+	help
+	  Strip any '.ko' kernel modules.
+
+config RK_ROOTFS_ASYNC_COMMIT
+	bool "async-commit DRM driver hack"
+	default y
+
+config RK_ROOTFS_DEBUG_INFO
+	bool "debug information dir (/info/)"
+	default y
+
+config RK_ROOTFS_UDEV_RULES
+	bool "Rockchip udev rules"
+	default y
+
+config RK_WIFIBT_CHIP
+	string "wifi/BT chip"
+	default "ALL_AP"
+	help
+	  ALL_AP for Realtek and AP6XXX, ALL_CY for Realtek and CYWXXX.
+	  Set "" for no WIFI/BT.
+
+source "post/Config.in.disk-helper"
+source "post/Config.in.usb"
+
+source "post/Config.in.overlay"
+
+endmenu # Post-rootfs

@@ -50,7 +50,7 @@ config RK_ROOTFS_TYPE
 config RK_ROOTFS_INITRD
 	bool "init ramfs/ramdisk for rootfs"
 
-source "Config.in.post-rootfs"
+source "post/Config.in.rootfs"
 
 endif
 
