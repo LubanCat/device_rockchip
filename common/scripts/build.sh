@@ -387,6 +387,8 @@ main()
 		export RK_SUDO_ROOT=1
 	fi
 
+	mkdir -p "$RK_OUTDIR"
+
 	# For Makefile
 	if [ ! -r "$RK_MAKE_USAGE" ] || \
 		find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE" | \
