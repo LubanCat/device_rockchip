@@ -33,9 +33,10 @@
 		};
 	};
 
-	share_memory {
+	share {
 		shm_base         = <0x03200000>;
 		shm_size         = <0x00100000>;
+		primary = <0x0>;
 	};
 
 	configurations {
@@ -44,7 +45,6 @@
 			description = "Rockchip AMP images";
 			rollback-index = <0x0>;
 			loadables = "amp3";
-			primary = <0x0>;
 
 			signature {
 				algo = "sha256,rsa2048";

@@ -150,7 +150,6 @@ build_images()
 			CUR_CPU=$((CUR_CPU >> 8))
 		fi
 		CUR_CPU=$(($CUR_CPU))
-		export AMP_PRIMARY_CORE=$(rtos_get_value "$ITS_IMAGE" primary)
 
 		echo Image info: $item
 		for p in FIRMWARE_CPU_BASE DRAM_SIZE SRAM_BASE SRAM_SIZE SHMEM_BASE \
@@ -199,18 +198,20 @@ build_hook()
 	CORE_NUMBERS=$(grep -wcE "amp[0-9]* {" $ITS_FILE)
 	echo "CORE_NUMBERS=$CORE_NUMBERS"
 
-	EXT_MEMORY=$(rtos_get_node "$(cat $ITS_FILE)" share_memory)
-	if [ "$EXT_MEMORY" ]; then
-		SHMEM_BASE=$(rtos_get_value "$EXT_MEMORY" "shm_base")
+	EXT_SHARE=$(rtos_get_node "$(cat $ITS_FILE)" share)
+	if [ "$EXT_SHARE" ]; then
+		SHMEM_BASE=$(rtos_get_value "$EXT_SHARE" "shm_base")
 		if [ "$SHMEM_BASE" ]; then
 			export SHMEM_BASE
-			export SHMEM_SIZE=$(rtos_get_value "$EXT_MEMORY" "shm_size")
+			export SHMEM_SIZE=$(rtos_get_value "$EXT_SHARE" "shm_size")
+			AMP_PRIMARY_CORE=$(rtos_get_value "$EXT_SHARE" primary)
+			[ ! $AMP_PRIMARY_CORE ] || export AMP_PRIMARY_CORE=$(($AMP_PRIMARY_CORE))
 		fi
 
-		LINUX_RPMSG_BASE=$(rtos_get_value "$EXT_MEMORY" "rpmsg_base")
+		LINUX_RPMSG_BASE=$(rtos_get_value "$EXT_SHARE" "rpmsg_base")
 		if [ "$LINUX_RPMSG_BASE" ]; then
 			export LINUX_RPMSG_BASE=$LINUX_RPMSG_BASE
-			export LINUX_RPMSG_SIZE=$(rtos_get_value "$EXT_MEMORY" "rpmsg_size")
+			export LINUX_RPMSG_SIZE=$(rtos_get_value "$EXT_SHARE" "rpmsg_size")
 		fi
 	fi
 
@@ -219,7 +220,7 @@ build_hook()
 
 	cd "$RK_OUTDIR"
 	ln -rsf $ITS_FILE amp.its
-	sed -i '/share_memory {/,/}/d' amp.its
+	sed -i '/share {/,/}/d' amp.its
 	sed -i '/compile {/,/}/d' amp.its
 
 	$RK_RTOS_BSP_DIR/tools/mkimage -f amp.its -E -p 0xe00 $RK_FIRMWARE_DIR/amp.img
