@@ -13,7 +13,7 @@ config RK_ROOTFS_FRECON_SHELL
 
 choice
 	prompt "frecon shell"
-	default RK_ROOTFS_FRECON_SHELL_BASH
+	default RK_ROOTFS_FRECON_SHELL_GETTY
 
 config RK_ROOTFS_FRECON_SHELL_GETTY
 	bool "getty"
@@ -57,6 +57,13 @@ config RK_ROOTFS_FRECON_ROTATE_270
 	bool "270"
 
 endchoice
+
+config RK_ROOTFS_FRECON_OUTPUT_CONFIG
+	string "custom output configs"
+	help
+          <monitor name>=<fit|strech>:<0|90|180|270>
+          For example:
+            DSI-1=fit:90,HDMI-A-2=strech:270
 
 config RK_ROOTFS_FRECON_SCALE
 	int "frecon scale"

@@ -17,6 +17,7 @@ mkdir -p "$TARGET_DIR/etc/profile.d"
 	[ -z "$RK_ROOTFS_FRECON_VT1" ] || echo "export FRECON_VT1=1"
 	echo "export FRECON_FB_ROTATE=$RK_ROOTFS_FRECON_ROTATE"
 	echo "export FRECON_FB_SCALE=$RK_ROOTFS_FRECON_SCALE"
+	echo "export FRECON_OUTPUT_CONFIG=$RK_ROOTFS_FRECON_OUTPUT_CONFIG"
 } > "$TARGET_DIR/etc/profile.d/frecon.sh"
 
 install_sysv_service "$OVERLAY_DIR/S35frecon" 5 4 3 2 K02 0 1 6

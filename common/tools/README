@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-8fa1b225ffa android-adbd: Fix ctrl+c error in systemd
+c565d1b879b frecon: Support multiple monitors
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -15,6 +15,9 @@ BR2_PACKAGE_BUSYBOX_STATIC=y
 BR2_PACKAGE_LIBUNWIND=y
 BR2_PACKAGE_LIBUNWIND_STATIC=y
 BR2_PACKAGE_ELFUTILS=y
+
+BR2_PACKAGE_FRECON=y
+BR2_PACKAGE_FRECON_STATIC=y
 
 BR2_PACKAGE_GDB=y
 BR2_PACKAGE_GDB_STATIC=y
