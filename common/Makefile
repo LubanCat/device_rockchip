@@ -148,7 +148,8 @@ savedefconfig: $(BUILD_DIR)/conf
 	$(Q)$(COMMON_CONFIG_ENV) $< \
 		--savedefconfig=$(if $(DEFCONFIG),$(DEFCONFIG),$(CHIP_DIR)/defconfig) \
 		$(CONFIG_CONFIG_IN)
-	$(Q)sed '/^RK_DEFCONFIG=/d' $(if $(DEFCONFIG),$(DEFCONFIG),$(CHIP_DIR)/defconfig)
+	$(Q)sed -i -e '/^RK_DEFCONFIG=/d' -e '/^RK_KERNEL_VERSION/d' \
+		$(if $(DEFCONFIG),$(DEFCONFIG),$(CHIP_DIR)/defconfig)
 
 .PHONY: savedefconfig
 

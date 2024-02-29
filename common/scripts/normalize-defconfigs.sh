@@ -11,6 +11,5 @@ for chip in ${@:-""}; do
 		-name "rockchip_*_defconfig"); do
 		./build.sh $c
 		make savedefconfig
-		sed -i '/RK_KERNEL_VERSION/d' $c
 	done
 done
