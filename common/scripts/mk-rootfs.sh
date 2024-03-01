@@ -15,10 +15,15 @@ build_buildroot()
 
 	"$RK_SCRIPTS_DIR/mk-buildroot.sh" $RK_BUILDROOT_CFG "$IMAGE_DIR"
 
+	if [ -r "$RK_LOG_DIR/post-rootfs.log" ]; then
+		cat "$RK_LOG_DIR/post-rootfs.log"
+	else
+		warning "Building without post-rootfs stage!"
+	fi
+
 	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" system \
 		$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$RK_ROOTFS_TYPE
 
-	cat "$RK_LOG_DIR/post-rootfs.log"
 	finish_build build_buildroot $@
 }
 
@@ -94,8 +99,12 @@ build_yocto()
 
 	ln -rsf "$PWD/latest/rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
-	touch "$RK_LOG_DIR/post-rootfs.log"
-	cat "$RK_LOG_DIR/post-rootfs.log"
+	if [ -r "$RK_LOG_DIR/post-rootfs.log" ]; then
+		cat "$RK_LOG_DIR/post-rootfs.log"
+	else
+		warning "Building without post-rootfs stage!"
+	fi
+
 	finish_build build_yocto $@
 }
 
@@ -122,6 +131,10 @@ build_debian()
 
 	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
+
+	if ! [ -r "$RK_LOG_DIR/post-rootfs.log" ]; then
+		warning "Building without post-rootfs stage!"
+	fi
 
 	ln -rsf "$PWD/linaro-rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
