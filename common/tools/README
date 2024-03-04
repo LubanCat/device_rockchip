@@ -1,10 +1,13 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-c565d1b879b frecon: Support multiple monitors
+7c115ff17bc audit: Support forcing static build
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
+
+BR2_PACKAGE_AUDIT=y
+BR2_PACKAGE_AUDIT_STATIC=y
 
 BR2_PACKAGE_ANDROID_ADBD=y
 BR2_PACKAGE_ANDROID_ADBD_STATIC=y
@@ -71,11 +74,17 @@ BR2_PACKAGE_STRESSAPPTEST_STATIC=y
 BR2_PACKAGE_EDID_DECODE=y
 BR2_PACKAGE_EDID_DECODE_STATIC=y
 
+BR2_PACKAGE_ZSTD=y
+BR2_PACKAGE_ZSTD_STATIC=y
+
 NOTE:
 For building perf:
-1/ Build dynamic version firstly
-2/ Enable BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC
-3/ Run: make linux-tools-reconfigure
+1/ unset BR2_PACKAGE_RT_TESTS
+2/ Build without BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC firstly
+3/ Enable BR2_PACKAGE_LINUX_TOOLS_PERF_STATIC again
+4/ Run these under buildroot/:
+  rm output/latest/build/linux-custom/tools/perf/perf
+  make linux-tools-reconfigure
 
 For building kmsgrab:
 1/ ./build.sh shell
