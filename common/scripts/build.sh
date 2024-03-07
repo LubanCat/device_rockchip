@@ -483,17 +483,17 @@ main()
 		message "Parsing supported commands...\n"
 		rm -rf "$RK_PARSED_CMDS"
 		run_build_hooks parse-cmds
-        fi
+		fi
 	source "$RK_PARSED_CMDS"
 
 	# Options checking
 	CMDS="$RK_INIT_CMDS $RK_PRE_BUILD_CMDS $RK_BUILD_CMDS \
 		$RK_POST_BUILD_CMDS"
-	for opt in $OPTIONS; do
-		case "$opt" in
-			help | h | -h | --help | usage | \?) usage ;;
-			clean:*)
-				# Check cleanup modules
+			for opt in $OPTIONS; do
+				case "$opt" in
+					help | h | -h | --help | usage | \?) usage ;;
+					clean:*)
+						# Check cleanup modules
 				for m in $(echo ${opt#clean:} | tr ':' ' '); do
 					grep -wq clean_hook \
 						"$RK_SCRIPTS_DIR/mk-$m.sh" \

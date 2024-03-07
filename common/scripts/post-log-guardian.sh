@@ -16,7 +16,7 @@ install -m 0755 external/rkscript/log-guardian "$TARGET_DIR/usr/bin/"
 sed -i -e "s/^\(INTERVAL=\).*/\1\"$RK_ROOTFS_LOG_GUARDIAN_INTERVAL\"/" \
 	-e "s/^\(MIN_AVAIL_SIZE=\).*/\1\"$RK_ROOTFS_LOG_GUARDIAN_MIN_SIZE\"/" \
 	-e "s#^\(LOG_DIRS=\).*#\1\"$RK_ROOTFS_LOG_GUARDIAN_LOG_DIRS\"#" \
-        "$TARGET_DIR/usr/bin/log-guardian"
+	"$TARGET_DIR/usr/bin/log-guardian"
 
 install_sysv_service external/rkscript/S*log-guardian.sh S
 install_busybox_service external/rkscript/S*log-guardian.sh
