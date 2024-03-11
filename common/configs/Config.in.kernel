@@ -52,12 +52,6 @@ endchoice
 
 config RK_KERNEL_CFG_FRAGMENTS
 	string "kernel defconfig fragments"
-	default "rk3126_linux.config" if RK_CHIP = "rk3126c"
-	default "rk3128_linux.config" if RK_CHIP = "rk3128"
-	default "rk3326_linux.config" if RK_CHIP = "rk3326"
-	default "rk3358_linux.config" if RK_CHIP_FAMILY = "rk3358"
-	default "rk3576_linux.config" if RK_CHIP_FAMILY = "rk3576"
-	default "rk3588_linux.config" if RK_CHIP_FAMILY = "rk3588"
 
 config RK_KERNEL_DTS_NAME
 	string "kernel device-tree name"

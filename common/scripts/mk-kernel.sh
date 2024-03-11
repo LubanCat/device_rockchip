@@ -32,6 +32,31 @@ update_kernel()
 	ln -rsf $KERNEL_DIR kernel
 }
 
+make_kernel_config()
+{
+	if [ "$RK_CHIP" = "$RK_CHIP_FAMILY" ]; then
+		POSSIBLE_FRAGMENTS="$RK_CHIP"
+	elif echo "$RK_CHIP" | grep -qE "[0-9][a-z]$"; then
+		POSSIBLE_FRAGMENTS="$RK_CHIP_FAMILY ${RK_CHIP%[a-z]} $RK_CHIP"
+	else
+		POSSIBLE_FRAGMENTS="$RK_CHIP_FAMILY $RK_CHIP"
+	fi
+
+	POSSIBLE_FRAGMENTS="$(echo "$POSSIBLE_FRAGMENTS" | xargs -n 1 | uniq | \
+		sed "s/\(.*\)/\1.config \1_linux.config/")"
+
+	unset BASIC_CFG_FRAGMENTS
+	for cfg in $POSSIBLE_FRAGMENTS; do
+		[ -r "kernel/arch/$RK_KERNEL_ARCH/configs/$cfg" ] || continue
+
+		message "# Found kernel's basic config fragment: $cfg"
+		BASIC_CFG_FRAGMENTS="$BASIC_CFG_FRAGMENTS $cfg"
+	done
+
+	run_command $KMAKE $RK_KERNEL_CFG $BASIC_CFG_FRAGMENTS \
+		$RK_KERNEL_CFG_FRAGMENTS
+}
+
 do_build()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -44,7 +69,7 @@ do_build()
 		message "=========================================="
 	fi
 
-	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+	make_kernel_config
 
 	if [ -z "$DRY_RUN" ]; then
 		"$RK_SCRIPTS_DIR/check-kernel.sh"
@@ -212,8 +237,7 @@ pre_build_hook()
 			fi
 
 			if [ ! -r kernel/.config ]; then
-				run_command $KMAKE $RK_KERNEL_CFG \
-					$RK_KERNEL_CFG_FRAGMENTS
+				make_kernel_config
 			fi
 			run_command $KMAKE $@
 			;;
@@ -283,7 +307,7 @@ post_build_hook()
 	fi
 
 	# Preparing kernel
-	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+	make_kernel_config
 	run_command $KMAKE $RK_KERNEL_IMG_NAME
 
 	# Packing headers
