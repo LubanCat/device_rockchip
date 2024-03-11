@@ -25,6 +25,15 @@ if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	exit 1
 fi
 
+if ! which debootstrap >/dev/null 2>&1; then
+	echo -e "\e[35m"
+	echo "Your debootstrap is missing"
+	echo "Please install it:"
+	echo "sudo apt-get install debootstrap"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 # The debian SDK's e2fsprogs doesn't support new features like
 # metadata_csum_seed and orphan_file
 if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
