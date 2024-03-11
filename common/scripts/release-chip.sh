@@ -48,13 +48,22 @@ rm -f "$RK_CHIP_DIR"
 ln -rsf "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR"
 ln -rsf "$RK_CHIPS_DIR/$CHIP" .
 
-# Create new branch
-git branch -D $CHIP &>/dev/null || true
-git checkout --orphan $CHIP &>/dev/null
-git reset &>/dev/null
+# Checkout branch
+if ! git branch | grep -wq "$CHIP"; then
+	# Create new branch
+	git branch -D $CHIP &>/dev/null || true
+	git checkout --orphan $CHIP &>/dev/null
+	git reset &>/dev/null
+else
+	git checkout $CHIP &>/dev/null
+	git checkout $ORIG_COMMIT . &>/dev/null
+fi
+
+# Commit files
 git add -f .gitignore common "$RK_CHIPS_DIR/$CHIP" "$RK_CHIP_DIR" "$CHIP"
-git commit -s -F $COMMIT_MSG &>/dev/null
+git commit --allow-empty -s -F $COMMIT_MSG &>/dev/null
 rm -f $COMMIT_MSG
+git checkout -B $CHIP &>/dev/null
 
 # Recover
 git add -f .
