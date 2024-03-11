@@ -122,13 +122,12 @@ esac
 case "$TARGET_DIR/" in
 	*/output/*_ramboot/target/*) POST_OS=ramboot ;;
 	*/output/*_recovery/target/*) POST_OS=recovery ;;
-	*/output/*_pcba/target/*) POST_OS=pcba ;;
 esac
 export POST_OS=${POST_OS:-unknown}
 
 # Override OS type
 case "$1" in
-	buildroot|debian|yocto|ramboot|recovery|pcba|unknown)
+	buildroot|debian|yocto|ramboot|recovery|unknown)
 		POST_OS="$1"
 		shift
 		;;

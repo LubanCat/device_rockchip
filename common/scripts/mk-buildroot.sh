@@ -82,7 +82,6 @@ ln -rsf "$LOG_FILE" br.log
 
 case "$BUILDROOT_BOARD" in
 	*_recovery) ln -rsf "$LOG_FILE" br-recovery.log ;;
-	*_pcba) ln -rsf "$LOG_FILE" br-pcba.log ;;
 	*_ramboot)
 		ln -rsf "$LOG_FILE" br-ramboot.log
 		"$RK_SCRIPTS_DIR/check-security.sh" ramboot
