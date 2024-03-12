@@ -31,7 +31,7 @@ config RK_WIFIBT_CHIP
 	  Set "" for no WIFI/BT.
 
 source "post/Config.in.disk-helper"
-source "post/Config.in.usb"
+source "post/Config.in.usb-gadget"
 source "post/Config.in.log-guardian"
 
 source "post/Config.in.overlay"

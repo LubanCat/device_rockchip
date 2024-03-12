@@ -107,7 +107,7 @@ config RK_USB_UMS_FSTYPE
 
 config RK_USB_UMS_MOUNT
 	bool "ums mount"
-	default n
+	default y
 	help
 	  Mount when USB disconnected, umount when connected.
 
@@ -122,7 +122,6 @@ config RK_USB_UMS_MOUNTPOINT
 
 config RK_USB_UMS_RO
 	bool "ums ro"
-	default n
 	help
 	  UMS is read-only.
 
