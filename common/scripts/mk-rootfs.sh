@@ -227,7 +227,7 @@ pre_build_hook()
 			unset BUILDROOT_OUTPUT_DIR
 			make -C "$RK_SDK_DIR/buildroot" O="$TEMP_DIR" \
 				"${BUILDROOT_BOARD}_defconfig" menuconfig
-			"$RK_SDK_DIR/buildroot/build/update_defconfig.sh" \
+			"$RK_SDK_DIR/buildroot/scripts/update_defconfig.sh" \
 				"$BUILDROOT_BOARD" "$TEMP_DIR"
 			rm -rf "$TEMP_DIR"
 
