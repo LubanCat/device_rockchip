@@ -18,95 +18,83 @@ endchoice # USB gadget
 
 if !RK_USB_DISABLED
 
-menu "USB gadget"
+menu "USB gadget configs"
 
-config RK_USB_ADBD
-	bool "adbd"
+menuconfig RK_USB_ADBD
+	bool "Android Debug Bridge Daemon (adbd)"
 	default y
-	help
-	  Android adbd.
 
 if RK_USB_ADBD
 
 config RK_USB_ADBD_TCP_PORT
-	int "adbd tcp port"
+	int "TCP port"
 	default 5555
 
 config RK_USB_ADBD_BASH
-	bool "adbd prefer using bash"
+	bool "prefer using bash"
 	default y
 
-config RK_USB_ADBD_SECURE
-	bool "adbd secure"
+menuconfig RK_USB_ADBD_SECURE
+	bool "access control"
 
 if RK_USB_ADBD_SECURE
 
 config RK_USB_ADBD_PASSWORD
-	string "adbd password"
+	string "password"
 
 config RK_USB_ADBD_KEYS
 	string "Android public keys"
 	default "~/.android/adbkey.pub" if RK_USB_ADBD_PASSWORD = ""
 
-endif
+endif # secure
 
-endif
+endif # adbd
 
 config RK_USB_MTP
-	bool "mtp"
-	help
-	  Media Transfer Protocal (MTP).
+	bool "Media Transfer Protocal (MTP)"
 
 config RK_USB_ACM
-	bool "acm"
+	bool "Abstract Control Model (ACM)"
 
 config RK_USB_NTB
-	bool "ntb"
-	help
-	  Rockchip NTB.
+	bool "Rockchip NPU Transfer Bridge (NTB)"
 
 config RK_USB_UVC
-	bool "uvc"
+	bool "USB Video Class (UVC)"
 
 config RK_USB_UAC1
-	bool "uac1"
+	bool "USB Audio Class (UAC1)"
 
 config RK_USB_UAC2
-	bool "uac2"
+	bool "USB Audio Class (UAC2)"
 
 config RK_USB_HID
-	bool "hid"
+	bool "Human Interface Devices (HID)"
 
 config RK_USB_RNDIS
-	bool "rndis"
+	bool "Remote Network Driver Interface Specification (RNDIS)"
 
-config RK_USB_UMS
-	bool "ums"
-	help
-	  USB mass storage (UMS).
+menuconfig RK_USB_UMS
+	bool "USB mass storage (UMS)"
 
 if RK_USB_UMS
 
 config RK_USB_UMS_FILE
-	string "ums file"
+	string "block device or image file"
 	default "/userdata/ums_shared.img"
 	help
 	  Block device or image file to share through UMS.
 
 config RK_USB_UMS_SIZE
-	string "ums size"
+	string "size of image file"
 	default "256M"
-	help
-	  UMS's size.
 
 config RK_USB_UMS_FSTYPE
-	string "ums fstype"
+	string "filesystem type"
 	default "vfat"
-	help
-	  UMS's filesystem type.
 
-config RK_USB_UMS_MOUNT
-	bool "ums mount"
+menuconfig RK_USB_UMS_MOUNT
+	bool "mount on device"
 	default y
 	help
 	  Mount when USB disconnected, umount when connected.
@@ -115,17 +103,14 @@ config RK_USB_UMS_MOUNT
 	  Umounting UMS may failed if it is still in use.
 
 config RK_USB_UMS_MOUNTPOINT
-	string "ums mountpoint"
+	string "mountpoint"
+	depends on RK_USB_UMS_MOUNT
 	default "/mnt/ums"
-	help
-	  UMS's mountpoint.
 
 config RK_USB_UMS_RO
-	bool "ums ro"
-	help
-	  UMS is read-only.
+	bool "read-only on PC"
 
-endif
+endif # UMS
 
 config RK_USB_EXTRA
 	string "extra USB gadget configs"
@@ -135,4 +120,4 @@ config RK_USB_HOOKS
 
 endmenu # USB gadget
 
-endif
+endif # !USB gadget disabled

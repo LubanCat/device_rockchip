@@ -1,0 +1,34 @@
+#
+
+menuconfig RK_WIFIBT
+	bool "Wi-Fi/BT (Kernel modules, firmwares and scripts)"
+	default y
+
+if RK_WIFIBT
+
+config RK_WIFIBT_MODULES
+	string
+	default "ALL_AP" if RK_WIFIBT_RTK_AP
+	default "ALL_CY" if RK_WIFIBT_RTK_CYW
+	default RK_WIFIBT_CHIP if RK_WIFIBT_CUSTOM
+
+config RK_WIFIBT_CHIP
+	string "onboard module"
+
+choice
+	prompt "supported modules"
+	default RK_WIFIBT_CUSTOM if RK_WIFIBT_CHIP != ""
+	default RK_WIFIBT_RTK_AP
+
+config RK_WIFIBT_RTK_AP
+	bool "Realtek and AP6XXX"
+
+config RK_WIFIBT_RTK_CYW
+	bool "Realtek and CYWXXX"
+
+config RK_WIFIBT_CUSTOM
+	bool "custom (onboard module by default)"
+
+endchoice # modules
+
+endif # Wi-Fi/BT

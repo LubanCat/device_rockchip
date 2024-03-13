@@ -3,12 +3,9 @@
 comment "Linux kernel depends on loader"
 	depends on !RK_LOADER
 
-if RK_LOADER
-
-menu "Kernel"
-
-config RK_KERNEL
-	bool "kernel"
+menuconfig RK_KERNEL
+	bool "Kernel"
+	depends on RK_LOADER
 	default y
 
 if RK_KERNEL
@@ -23,12 +20,9 @@ config RK_KERNEL_CFG
 	default "rk3308_linux_defconfig" if RK_CHIP_FAMILY = "rk3308"
 	default "rockchip_linux_defconfig"
 
-if RK_RECOVERY
-
 config RK_KERNEL_RECOVERY_CFG
 	string "kernel defconfig for recovery"
-
-endif
+	depends on RK_RECOVERY
 
 config RK_KERNEL_VERSION
 	string "kernel version, e.g. 5.10"
@@ -48,7 +42,7 @@ config RK_KERNEL_ARM64
 config RK_KERNEL_ARM32
 	bool "arm"
 
-endchoice
+endchoice # kernel arch
 
 config RK_KERNEL_CFG_FRAGMENTS
 	string "kernel defconfig fragments"
@@ -98,10 +92,6 @@ config RK_KERNEL_KBUILD_ARM64
 config RK_KERNEL_KBUILD_ARM32
 	bool "armhf"
 
-endchoice
+endchoice # kbuild tools arch
 
-endif
-
-endmenu # Kernel
-
-endif
+endif # Kernel

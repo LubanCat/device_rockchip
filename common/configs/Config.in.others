@@ -15,6 +15,6 @@ config RK_SAVE_TRACKED
 config RK_SAVE_ALL
 	bool "save all changes"
 
-endchoice
+endchoice # patches saving
 
 endmenu # Others

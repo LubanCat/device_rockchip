@@ -1,8 +1,10 @@
 #
 
-if RK_KERNEL
+comment "Android style boot image depends on linux kernel"
+	depends on !RK_KERNEL
 
-menu "Boot"
+menu "Boot (Android style boot image)"
+	depends on RK_KERNEL
 
 config RK_BOOT_IMG
 	string
@@ -31,8 +33,6 @@ config RK_BOOT_FIT_ITS
 	string
 	default "$RK_CHIP_DIR/$RK_BOOT_FIT_ITS_NAME"
 
-endif
+endif # FIT image
 
 endmenu # Boot
-
-endif

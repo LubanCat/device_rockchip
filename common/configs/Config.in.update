@@ -1,9 +1,7 @@
 #
 
-menu "Update (Rockchip update image)"
-
-config RK_UPDATE
-	bool "update image"
+menuconfig RK_UPDATE
+	bool "Update (Rockchip update image)"
 	default y if RK_KERNEL
 
 if RK_UPDATE
@@ -12,12 +10,10 @@ config RK_AB_UPDATE
 	bool "A/B update"
 
 choice
-	prompt "package-file"
+	prompt "package-file (Packing description)"
 
 config RK_PACKAGE_FILE_DEFAULT
-	bool "auto"
-	help
-	  Auto-generated.
+	bool "auto generated"
 
 config RK_PACKAGE_FILE_CUSTOM
 	bool "custom"
@@ -26,23 +22,18 @@ config RK_PACKAGE_FILE_CUSTOM
 
 endchoice # package-file
 
-if RK_PACKAGE_FILE_CUSTOM
-
 config RK_PACKAGE_FILE
 	string "custom package-file"
+	depends on RK_PACKAGE_FILE_CUSTOM
 	default "package-file"
 	help
 	  Name of custom package-file under <RK_CHIP_DIR>/.
 
-endif
-
 choice
-	prompt "package-file for OTA"
+	prompt "package-file (Packing description for OTA)"
 
 config RK_OTA_PACKAGE_FILE_DEFAULT
-	bool "auto"
-	help
-	  Auto-generated.
+	bool "auto generated"
 
 config RK_OTA_PACKAGE_FILE_CUSTOM
 	bool "custom"
@@ -51,15 +42,11 @@ config RK_OTA_PACKAGE_FILE_CUSTOM
 
 endchoice # OTA package-file
 
-if RK_OTA_PACKAGE_FILE_CUSTOM
-
 config RK_OTA_PACKAGE_FILE
 	string "custom package-file for OTA"
+	depends on  RK_OTA_PACKAGE_FILE_CUSTOM
 	default "ota-package-file"
 	help
 	  Name of custom package-file for OTA under <RK_CHIP_DIR>/.
 
-endif
-endif
-
-endmenu # Update
+endif # Update

@@ -1,9 +1,7 @@
 #
 
-menu "Loader (u-boot)"
-
-config RK_LOADER
-	bool "loader (u-boot)"
+menuconfig RK_LOADER
+	bool "Loader (U-Boot, SPL, etc.)"
 	default y
 
 if RK_LOADER
@@ -66,8 +64,6 @@ config RK_UBOOT_ARM64
 config RK_UBOOT_ARM32
 	bool "arm"
 
-endchoice
+endchoice # u-boot arch
 
-endif
-
-endmenu # Loader
+endif # Loader

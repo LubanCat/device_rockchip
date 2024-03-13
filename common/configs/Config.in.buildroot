@@ -1,15 +1,13 @@
 #
 
-menu "Buildroot"
-
-config RK_BUILDROOT
-	bool "buildroot"
+menuconfig RK_BUILDROOT
+	bool "Buildroot"
 	default y
 
 if RK_BUILDROOT
 
 config RK_BUILDROOT_BASE_CFG
-	string "buildroot rootfs base cfg (rockchip_<cfg>_defconfig)"
+	string "buildroot base cfg (rockchip_<cfg>_defconfig)"
 	default "px30_64" if RK_CHIP_FAMILY = "px30"
 	default "rk3326_64" if RK_CHIP_FAMILY = "rk3326"
 	default "rk3358_64" if RK_CHIP_FAMILY = "rk3358"
@@ -28,6 +26,4 @@ config RK_BUILDROOT_CFG
 	default "rockchip_${RK_CHIP_FAMILY}" if RK_BUILDROOT_BASE_CFG = ""
 	default "rockchip_${RK_BUILDROOT_BASE_CFG}"
 
-endif
-
-endmenu # Buildroot
+endif # Buildroot

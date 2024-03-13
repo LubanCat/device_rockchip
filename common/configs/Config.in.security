@@ -12,12 +12,12 @@ comment "Security feature depends on buildroot rootfs"
 comment "Security feature would use it's own initrd"
 	depends on RK_ROOTFS_INITRD
 
-if RK_LOADER && RK_KERNEL && RK_ROOTFS_SYSTEM_BUILDROOT && !RK_ROOTFS_INITRD
-
-menu "Security"
-
-config RK_SECURITY
-	bool "security feature"
+menuconfig RK_SECURITY
+	bool "Security feature (secureboot, encryption, verity, etc.)"
+	depends on RK_LOADER
+	depends on RK_KERNEL
+	depends on RK_ROOTFS_SYSTEM_BUILDROOT
+	depends on !RK_ROOTFS_INITRD
 
 if RK_SECURITY
 
@@ -46,7 +46,8 @@ config RK_SECUREBOOT_AVB
 	help
 	  Features follow Android Verified Boot.
 	  For RK3308/RK3399/RK3326/PX30 etc..
-endchoice
+
+endchoice # Secureboot Method
 
 config RK_SECURITY_OPTEE_STORAGE
 	string
@@ -66,7 +67,8 @@ config RK_SECURITY_OPTEE_STORAGE_SECURITY
 	bool "security"
 	help
 	  Logic partitions can be defined by user in any storage.
-endchoice
+
+endchoice # Optee Storage
 
 config RK_SECURITY_CHECK_METHOD
 	string
@@ -96,12 +98,14 @@ config RK_SECURITY_CHECK_SYSTEM_VERITY
 	  Check firmwares include loader,uboot,boot or recovery,system.
 	  And system must be read-only.
 
-endchoice
+endchoice # security check method
 
-if RK_SECURITY_CHECK_SYSTEM_ENCRYPTION || RK_SECURITY_CHECK_SYSTEM_VERITY
+if !RK_SECURITY_CHECK_BASE
+
+menu "Security ramdisk"
 
 config RK_SECURITY_INITRD_BASE_CFG
-	string "buildroot security ramdisk base cfg (rockchip_<cfg>_ramboot_defconfig)"
+	string "buildroot base cfg (rockchip_<cfg>_ramboot_defconfig)"
 	default RK_CHIP_FAMILY
 	help
 	  Base name of buildroot defconfig for security ramdisk.
@@ -111,15 +115,35 @@ config RK_SECURITY_INITRD_CFG
 	default "rockchip_${RK_SECURITY_INITRD_BASE_CFG}_ramboot"
 
 config RK_SECURITY_INITRD_TYPE
-	string "security ramdisk filesystem type (cpio/cpio.gz/romfs)"
-	default "cpio.gz"
+	string
+	default "romfs" if RK_SECURITY_ROMFS
+	default "cpio" if RK_SECURITY_CPIO
+	default "cpio.gz" if RK_SECURITY_CPIO_GZ
+
+choice
+	prompt "ramdisk filesystem type"
+	default RK_SECURITY_CPIO_GZ
+
+config RK_SECURITY_ROMFS
+	bool "romfs"
+
+config RK_SECURITY_CPIO
+	bool "cpio"
+
+config RK_SECURITY_CPIO_GZ
+	bool "cpio.gz"
+
+endchoice # init RD type
 
 config RK_SECURITY_FIT_ITS
-	string "its script for FIT security ramboot image"
+	string "its script for FIT ramboot image"
 	depends on RK_SECUREBOOT_FIT
-	default RK_RECOVERY_FIT_ITS if RK_RECOVERY_FIT_ITS != ""
+	default RK_RECOVERY_FIT_ITS_NAME if RK_RECOVERY_FIT_ITS_NAME != ""
 	default "boot4recovery.its"
-endif
+
+endmenu # Security ramdisk
+
+endif # !base check
 
 comment "Burn security key is dangerous and cannot be reverted!"
 	depends on RK_SECURITY_BURN_KEY
@@ -129,8 +153,4 @@ config RK_SECURITY_BURN_KEY
 	help
 	  Burn security key's hash to non volatile memory.
 
-endif
-
-endmenu # Security
-
-endif
+endif # Security

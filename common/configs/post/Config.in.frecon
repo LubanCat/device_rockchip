@@ -1,6 +1,6 @@
 #
 
-config RK_ROOTFS_FRECON
+menuconfig RK_ROOTFS_FRECON
 	bool "frecon virtual terminal (VT)"
 
 if RK_ROOTFS_FRECON
@@ -12,7 +12,7 @@ config RK_ROOTFS_FRECON_SHELL
 	default "sh"
 
 choice
-	prompt "frecon shell"
+	prompt "shell"
 	default RK_ROOTFS_FRECON_SHELL_GETTY
 
 config RK_ROOTFS_FRECON_SHELL_GETTY
@@ -24,7 +24,7 @@ config RK_ROOTFS_FRECON_SHELL_BASH
 config RK_ROOTFS_FRECON_SHELL_SH
 	bool "sh"
 
-endchoice
+endchoice # shell
 
 config RK_ROOTFS_FRECON_VTS
 	bool "enable vts"
@@ -41,7 +41,7 @@ config RK_ROOTFS_FRECON_ROTATE
 	default 0
 
 choice
-	prompt "frecon rotate"
+	prompt "rotate"
 	default RK_ROOTFS_FRECON_ROTATE_0
 
 config RK_ROOTFS_FRECON_ROTATE_0
@@ -56,7 +56,7 @@ config RK_ROOTFS_FRECON_ROTATE_180
 config RK_ROOTFS_FRECON_ROTATE_270
 	bool "270"
 
-endchoice
+endchoice # rotate
 
 config RK_ROOTFS_FRECON_OUTPUT_CONFIG
 	string "custom output configs"
@@ -66,8 +66,8 @@ config RK_ROOTFS_FRECON_OUTPUT_CONFIG
 	    DSI-1=fit:90,HDMI-A-2=strech:270
 
 config RK_ROOTFS_FRECON_SCALE
-	int "frecon scale"
+	int "scale (1-100)"
 	range 1 100
 	default 1
 
-endif
+endif # Frecon

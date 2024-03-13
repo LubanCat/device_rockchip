@@ -93,7 +93,7 @@ build_uboot()
 
 usage_hook()
 {
-	echo -e "loader[:cmds]                    \tbuild loader (uboot)"
+	echo -e "loader[:cmds]                    \tbuild loader (u-boot)"
 	echo -e "uboot[:cmds]                     \tbuild u-boot"
 	echo -e "u-boot[:cmds]                    \talias of uboot"
 	echo -e "uefi[:cmds]                      \tbuild uefi"

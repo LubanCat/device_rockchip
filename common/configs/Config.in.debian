@@ -1,8 +1,5 @@
 #
 
-comment "Debian is not supported for this chip"
-	depends on !RK_DEBIAN_SUPPORTS
-
 config RK_DEBIAN_SUPPORTS
 	bool
 	default y if RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
@@ -12,12 +9,12 @@ config RK_DEBIAN_SUPPORTS
 		RK_CHIP_FAMILY = "rk3562" || RK_CHIP_FAMILY = "rk3528" || \
 		RK_CHIP_FAMILY = "rk3576"
 
-if RK_DEBIAN_SUPPORTS
+comment "Debian is not supported for this chip"
+	depends on !RK_DEBIAN_SUPPORTS
 
-menu "Debian"
-
-config RK_DEBIAN
-	bool "debian"
+menuconfig RK_DEBIAN
+	bool "Debian"
+	depends on RK_DEBIAN_SUPPORTS
 	default y
 
 if RK_DEBIAN
@@ -42,7 +39,7 @@ config RK_DEBIAN_BULLSEYE
 config RK_DEBIAN_BOOKWORM
 	bool "bookworm"
 
-endchoice
+endchoice # debian version
 
 config RK_DEBIAN_ARCH
 	string
@@ -59,10 +56,6 @@ config RK_DEBIAN_ARM64
 config RK_DEBIAN_ARMHF
 	bool "armhf"
 
-endchoice
+endchoice # debian rootfs arch
 
-endif
-
-endmenu # Debian
-
-endif
+endif # Debian

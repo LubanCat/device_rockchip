@@ -1,6 +1,6 @@
 #
 
-config RK_ROOTFS_OVERLAY
+menuconfig RK_ROOTFS_OVERLAY
 	bool "rootfs overlay"
 	default y
 
@@ -41,13 +41,10 @@ endchoice # input-event-daemon
 config RK_ROOTFS_BOOTANIM
 	bool "bootanim (Boot-time animation)"
 
-if RK_ROOTFS_BOOTANIM
-
 config RK_ROOTFS_BOOTANIM_TIMEOUT
 	int "timeout"
+	depends on RK_ROOTFS_BOOTANIM
 	default 3
-
-endif
 
 config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance (Balance hardware IRQs)"
@@ -61,4 +58,4 @@ config RK_ROOTFS_PREBUILT_TOOLS
 config RK_ROOTFS_EXTRA_OVERLAY_DIRS
 	string "rootfs extra overlay dirs"
 
-endif
+endif # Overlay

@@ -1,5 +1,5 @@
 RK_BUILDROOT_BASE_CFG="px30_robot64"
-RK_ROOTFS_TYPE="squashfs"
+RK_ROOTFS_SQUASHFS=y
 RK_WIFIBT_CHIP="AP6212A1"
 RK_KERNEL_CFG="px30_linux_robot_defconfig"
 RK_KERNEL_DTS_NAME="px30-evb-ddr3-v10-robot-linux"

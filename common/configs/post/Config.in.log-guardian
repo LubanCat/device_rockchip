@@ -1,6 +1,6 @@
 #
 
-config RK_ROOTFS_LOG_GUARDIAN
+menuconfig RK_ROOTFS_LOG_GUARDIAN
 	bool "log guardian (Truncate logs when disk is full)"
 	default y
 	help
@@ -20,4 +20,4 @@ config RK_ROOTFS_LOG_GUARDIAN_LOG_DIRS
 	string "log directories"
 	default "/var/log/,/tmp/"
 
-endif
+endif # log-guardian

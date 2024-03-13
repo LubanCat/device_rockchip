@@ -16,10 +16,7 @@ config RK_ROOTFS_LOCALE_CUSTOM
 
 endchoice # locale
 
-if RK_ROOTFS_LOCALE_CUSTOM
-
 config RK_ROOTFS_LOCALE
 	string "custom locale"
+	depends on RK_ROOTFS_LOCALE_CUSTOM
 	default "en_US.UTF-8"
-
-endif

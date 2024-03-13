@@ -16,10 +16,7 @@ config RK_ROOTFS_HOSTNAME_CUSTOM
 
 endchoice # hostname
 
-if RK_ROOTFS_HOSTNAME_CUSTOM
-
 config RK_ROOTFS_HOSTNAME
 	string "custom hostname"
+	depends on RK_ROOTFS_HOSTNAME_CUSTOM
 	default RK_CHIP
-
-endif

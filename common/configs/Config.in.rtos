@@ -3,12 +3,9 @@
 comment "RTOS depends on loader"
 	depends on !RK_LOADER
 
-if RK_LOADER
-
-menu "RTOS"
-
-config RK_RTOS
+menuconfig RK_RTOS
 	bool "RTOS"
+	depends on RK_LOADER
 	select RK_UBOOT_SPL
 
 if RK_RTOS
@@ -29,7 +26,7 @@ config RK_RTOS_ARM64
 config RK_RTOS_ARM32
 	bool "arm"
 
-endchoice
+endchoice # RTOS arch
 
 config RK_RTOS_HAL_TARGET
 	string "RTOS HAL target"
@@ -45,8 +42,4 @@ config RK_RTOS_CFG
 config RK_RTOS_FIT_ITS
 	string "RTOS FIT ITS file"
 
-endif
-
-endmenu # RTOS
-
-endif
+endif # RTOS
