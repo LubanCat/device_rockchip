@@ -64,3 +64,21 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 fi
 
 "$RK_SCRIPTS_DIR/check-header.sh" libc6 dirent.h libc6-dev
+
+if [ "$(g++ --version | head -n 1 | xargs -n 1 | \
+	tail -n 1 | cut -f1 -d'.')" -lt 8 ]; then
+	echo -e "\e[35m"
+	echo "Your g++ is too old for buildroot: $(g++ --version | head -n 1)"
+	echo "Please upgrade it to at least g++8."
+
+	if grep -iq ubuntu /etc/os-release; then
+		echo "sudo apt install software-properties-common"
+		echo "sudo add-apt-repository ppa:ubuntu-toolchain-r/test"
+		echo "sudo apt install gcc-8 g++-8"
+		echo "sudo ln -sf /usr/bin/gcc-8 /usr/bin/gcc"
+		echo "sudo ln -sf /usr/bin/g++-8 /usr/bin/g++"
+	fi
+
+	echo -e "\e[0m"
+	exit 1
+fi
