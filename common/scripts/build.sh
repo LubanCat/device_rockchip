@@ -387,6 +387,14 @@ main()
 		export RK_SUDO_ROOT=1
 	fi
 
+	if ! echo "$RK_SCRIPTS_DIR" | \
+		grep -q "device/rockchip/common/scripts$"; then
+		fatal "SDK corrupted!"
+		echo "Running $BASH_SOURCE from $RK_SCRIPTS_DIR:"
+		ls --file-type "$RK_SCRIPTS_DIR"
+		exit 1
+	fi
+
 	mkdir -p "$RK_OUTDIR"
 
 	# For Makefile
