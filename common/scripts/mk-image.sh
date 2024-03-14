@@ -126,6 +126,17 @@ mkimage()
                 copy_to_image
             fi
             ;;
+        btrfs)
+            truncate -s ${SIZE_KB}K $TARGET
+
+            mkfs.btrfs ${LABEL:+-L $LABEL} -r $SRC_DIR $TARGET
+            ;;
+        f2fs)
+            truncate -s ${SIZE_KB}K $TARGET
+
+            mkfs.f2fs ${LABEL:+-l $LABEL} $TARGET
+            sload.f2fs -f $SRC_DIR $TARGET
+            ;;
         ubi|ubifs) mk_ubi_image ;;
     esac
 }
@@ -137,7 +148,7 @@ mkimage_auto_sized()
     rm -rf $TEMP
     echo "Making $TARGET from $SRC_DIR (auto sized)"
 
-    MAX_RETRY=10
+    MAX_RETRY=20
     RETRY=0
 
     while true;do
@@ -185,22 +196,30 @@ mk_ubi_image()
 
 rm -rf $TARGET
 case $FS_TYPE in
-    ext[234]|msdos|fat|vfat|ntfs|ubi|ubifs)
+    ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs)
         if [ $SIZE_KB -eq 0 ]; then
-            mkimage_auto_sized
+            mkimage_auto_sized || exit 1
         else
-            mkimage && echo "Generated $TARGET"
+            mkimage || exit 1
         fi
+        ;;
+    erofs)
+        [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
+        mkfs.erofs -zlz4hc $TARGET $SRC_DIR || exit 1
         ;;
     squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mksquashfs $SRC_DIR $TARGET -noappend -comp lz4
+        mksquashfs $SRC_DIR $TARGET -noappend -comp lz4 || exit 1
         ;;
     jffs2)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 --pad=0x400000 -s 0x1000 -n
+        mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 --pad=0x400000 -s 0x1000 -n || \
+            exit 1
         ;;
     *)
         usage "File system: $FS_TYPE not supported."
+        exit 1
         ;;
 esac
+
+echo "Generated $TARGET"
