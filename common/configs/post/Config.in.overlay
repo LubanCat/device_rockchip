@@ -50,6 +50,10 @@ config RK_ROOTFS_IRQBALANCE
 	bool "irqbalance (Balance hardware IRQs)"
 	default y
 
+config RK_ROOTFS_FSTRIM
+	bool "fstrim (Discard unused blocks on all filesystems)"
+	default y
+
 source "post/Config.in.frecon"
 
 config RK_ROOTFS_PREBUILT_TOOLS
