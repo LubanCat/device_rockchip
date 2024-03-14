@@ -127,7 +127,7 @@ prepare_config()
 	fi
 
 	CONFIG_DIR="$(dirname "$RK_CONFIG_IN")"
-	if find "$CONFIG_DIR" -cnewer "$RK_CONFIG" | grep -q ""; then
+	if [ "$(find "$CONFIG_DIR" -cnewer "$RK_CONFIG")" ]; then
 		warning "WARN: $CONFIG_DIR is updated"
 		make $DEFCONFIG
 		return 0

@@ -330,20 +330,8 @@ run_post_hooks()
 	fi
 }
 
-main()
+setup_environments()
 {
-	[ -z "$DEBUG" ] || set -x
-
-	trap 'err_handler' ERR
-	set -eE
-
-	# Save intial envionments
-	unset INITIAL_SESSION
-	INITIAL_ENV=$(mktemp -u)
-	env > "$INITIAL_ENV"
-
-	[ "$RK_SESSION" ] || INITIAL_SESSION=1
-
 	export LC_ALL=C
 
 	export RK_SCRIPTS_DIR="$(dirname "$(realpath "$BASH_SOURCE")")"
@@ -368,8 +356,6 @@ main()
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
-	export RK_MAKE_USAGE="$RK_OUTDIR/.make_usage"
-	export RK_MAKE_TARGETS="$RK_OUTDIR/.make_targets"
 	export RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
 	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-part"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
@@ -382,45 +368,88 @@ main()
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 	export RK_OWNER="$(stat --format %U "$RK_SDK_DIR")"
 	export RK_OWNER_UID="$(stat --format %u "$RK_SDK_DIR")"
-	unset RK_SUDO_ROOT
-	if [ "$RK_OWNER_UID" -ne 0 ] && [ "${USER:-$(id -un)}" = "root" ]; then
-		export RK_SUDO_ROOT=1
-	fi
+}
 
+check_sdk() {
 	if ! echo "$RK_SCRIPTS_DIR" | \
 		grep -q "device/rockchip/common/scripts$"; then
 		fatal "SDK corrupted!"
-		echo "Running $BASH_SOURCE from $RK_SCRIPTS_DIR:"
+		error "Running $BASH_SOURCE from $RK_SCRIPTS_DIR:"
 		ls --file-type "$RK_SCRIPTS_DIR"
 		exit 1
 	fi
 
-	mkdir -p "$RK_OUTDIR"
+	"$RK_SCRIPTS_DIR/check-sdk.sh"
 
-	# For Makefile
-	if [ ! -r "$RK_MAKE_USAGE" ] || \
-		find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE" | \
-		grep -q ""; then
-			run_build_hooks make-usage > "$RK_MAKE_USAGE"
+	# Detect sudo(root)
+	unset RK_SUDO_ROOT
+	if [ "$RK_OWNER_UID" -ne 0 ] && [ "${USER:-$(id -un)}" = "root" ]; then
+		export RK_SUDO_ROOT=1
+		notice "Running within sudo(root) environment!"
+		echo
 	fi
-	if [ ! -r "$RK_MAKE_TARGETS" ] || \
-		find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_TARGETS" | \
-		grep -q ""; then
-			run_build_hooks make-targets > "$RK_MAKE_TARGETS"
+}
+
+makefile_options()
+{
+	unset DEBUG
+
+	setup_environments
+	check_sdk >&2 || exit 1
+
+	local MAKE_USAGE="$RK_OUTDIR/.make_usage"
+	local MAKE_TARGETS="$RK_OUTDIR/.make_targets"
+
+	if [ ! -d "$RK_OUTDIR" ]; then
+		MAKE_USAGE=$(mktemp -u .rksdk.XXX)
+		MAKE_TARGETS=$(mktemp -u .rksdk.XXX)
 	fi
-	case "$@" in
+
+	if [ ! -r "$MAKE_USAGE" ] || \
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$MAKE_USAGE")" ]; then
+		run_build_hooks make-usage > "$MAKE_USAGE"
+	fi
+
+	if [ ! -r "$MAKE_TARGETS" ] || \
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$MAKE_TARGETS")" ]; then
+		run_build_hooks make-targets > "$MAKE_TARGETS"
+	fi
+
+	case "$1" in
 		make-targets)
 			# Report chip targets as well
 			ls "$RK_CHIPS_DIR"
 
-			cat "$RK_MAKE_TARGETS"
-			rm -f "$INITIAL_ENV"
-			exit 0 ;;
-		make-usage)
-			cat "$RK_MAKE_USAGE"
-			rm -f "$INITIAL_ENV"
-			exit 0 ;;
+			cat "$MAKE_TARGETS"
+			;;
+		make-usage) cat "$MAKE_USAGE" ;;
 	esac
+
+	rm -rf /tmp/.rksdk*
+	exit 0
+}
+
+main()
+{
+	# Early handler of Makefile options
+	case "$@" in
+		make-*) makefile_options $@ ;;
+	esac
+
+	[ -z "$DEBUG" ] || set -x
+
+	trap 'err_handler' ERR
+	set -eE
+
+	# Save intial envionments
+	unset INITIAL_SESSION
+	INITIAL_ENV=$(mktemp -u)
+	env > "$INITIAL_ENV"
+
+	[ "$RK_SESSION" ] || INITIAL_SESSION=1
+
+	# Setup basic environments
+	setup_environments
 
 	# Log SDK information
 	MANIFEST="$RK_SDK_DIR/.repo/manifest.xml"
@@ -447,7 +476,8 @@ main()
 	fatal "fatal"
 	echo
 
-	"$RK_SCRIPTS_DIR/check-sdk.sh"
+	# Check SDK requirements
+	check_sdk
 
 	# Check for session validation
 	if [ -z "$INITIAL_SESSION" ] && [ ! -d "$RK_LOG_DIR" ]; then
@@ -486,8 +516,7 @@ main()
 
 	# Parse supported commands
 	if [ ! -r "$RK_PARSED_CMDS" ] || \
-		find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS" | \
-			grep -q ""; then
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
 		message "Parsing supported commands...\n"
 		rm -rf "$RK_PARSED_CMDS"
 		run_build_hooks parse-cmds
@@ -537,14 +566,6 @@ main()
 
 		usage
 	done
-
-	# Check /etc/passwd directly for pseudo environment
-	if ! cut -d':' -f3 /etc/passwd | grep -q "^$RK_OWNER_UID$"; then
-		error "ERROR: Unknown source owner($RK_OWNER_UID)"
-		error "Please create it:"
-		error "sudo useradd rk_compiler -u $RK_OWNER_UID"
-		exit 1
-	fi
 
 	# Prepare log dirs
 	if [ ! -d "$RK_LOG_DIR" ]; then
@@ -679,7 +700,7 @@ main()
 	message "          Final configs"
 	message "=========================================="
 	env | grep -E "^RK_.*=.+" | grep -vE "PARTITION_[0-9]" | \
-		grep -vE "=\"\"$|_DEFAULT=y|^RK_DEFAULT_TARGET|CMDS=|^RK_MAKE_" | \
+		grep -vE "=\"\"$|_DEFAULT=y|^RK_DEFAULT_TARGET|CMDS=" | \
 		grep -vE "^RK_CONFIG|_BASE_CFG=|_LINK=|DIR=|_ENV=|_NAME=|_DTB=" | \
 		grep -vE "_HELPER=|_SUPPORTS=|_ARM64=|_ARM=|_HOST=" | \
 		grep -vE "^RK_ROOTFS_SYSTEM_|^RK_YOCTO_DISPLAY_PLATFORM_" | sort

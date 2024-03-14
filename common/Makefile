@@ -163,7 +163,7 @@ help:
 	@echo '  clean                  - Cleanup'
 	@echo
 	@echo 'from build.sh:'
-	@$(SDK_DIR)/build.sh make-usage
+	@$(SDK_DIR)/build.sh make-usage 2>/dev/null
 
 define script_target
 $(1):
