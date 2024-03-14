@@ -48,7 +48,10 @@ config RK_ROOTFS_TYPE
 	default "ext2" if RK_ROOTFS_EXT2
 	default "ext4" if RK_ROOTFS_EXT4
 	default "squashfs" if RK_ROOTFS_SQUASHFS
+	default "btrfs" if RK_ROOTFS_BTRFS
+	default "f2fs" if RK_ROOTFS_F2FS
 	default "ubi" if RK_ROOTFS_UBI
+	default "erofs" if RK_ROOTFS_EROFS
 	default "romfs" if RK_ROOTFS_ROMFS
 	default "cpio" if RK_ROOTFS_CPIO
 	default "cpio.gz" if RK_ROOTFS_CPIO_GZ
@@ -68,8 +71,17 @@ config RK_ROOTFS_EXT2
 config RK_ROOTFS_SQUASHFS
 	bool "squashfs"
 
+config RK_ROOTFS_BTRFS
+	bool "btrfs"
+
+config RK_ROOTFS_F2FS
+	bool "f2fs"
+
 config RK_ROOTFS_UBI
 	bool "ubi"
+
+config RK_ROOTFS_EROFS
+	bool "erofs"
 
 if RK_ROOTFS_INITRD
 
