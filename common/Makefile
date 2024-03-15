@@ -100,7 +100,7 @@ QUIET := $(if $(findstring s,$(filter-out --%,$(MAKEFLAGS))),-q)
 $(BUILD_DIR)/auto.conf: $(RK_CONFIG)
 	make -j1 $(EXTRAMAKEARGS) HOSTCC="$(HOSTCC)" HOSTCXX="$(HOSTCXX)" syncconfig
 
-$(BUILD_DIR)/%onf:
+$(BUILD_DIR)/%onf: $(shell find $(CONFIG))
 	mkdir -p $(@D)/lxdialog
 	make CC="$(HOSTCC)" HOSTCC="$(HOSTCC)" \
 	    obj=$(@D) -C $(CONFIG) -f Makefile.br $(@F)
