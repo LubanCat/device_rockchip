@@ -484,7 +484,7 @@ rk_extra_part_fakeroot_script()
 
 rk_extra_part_img()
 {
-	echo "$RK_FIRMWARE_DIR/$(rk_extra_part_name $1).img"
+	echo "$RK_EXTRA_PART_OUTDIR/$(rk_extra_part_name $1).img"
 }
 
 # Prepare extra part's files and fakeroot script
@@ -499,7 +499,8 @@ rk_extra_part_prepare()
 
 	notice "Preparing partiton $PART_NAME"
 
-	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT"
+	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT" \
+		"$RK_FIRMWARE_DIR/$(basename "$DST")"
 
 	if rk_extra_part_nopack $1; then
 		notice "Skip preparing $PART_NAME (not packing it)"

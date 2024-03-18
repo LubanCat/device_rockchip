@@ -1,1 +1,0 @@
-../scripts/mk-extra-part.sh

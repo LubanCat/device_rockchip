@@ -24,7 +24,7 @@ build_firmware()
 
 	link_image "$RK_CHIP_DIR/$RK_PARAMETER" "$RK_FIRMWARE_DIR/parameter.txt"
 
-	"$RK_SCRIPTS_DIR/mk-extra-part.sh"
+	"$RK_SCRIPTS_DIR/mk-extra-parts.sh"
 
 	# Make sure that the loader is ready
 	if [ ! -r "$RK_FIRMWARE_DIR/MiniLoaderAll.bin" ]; then

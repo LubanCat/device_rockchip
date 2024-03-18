@@ -4,7 +4,7 @@
 
 usage_hook()
 {
-	echo -e "extra-part                        \tpack extra partition images"
+	echo -e "extra-parts                       \tpack extra partition images"
 }
 
 clean_hook()
@@ -17,7 +17,7 @@ clean_hook()
 	done
 }
 
-POST_BUILD_CMDS="extra-part"
+POST_BUILD_CMDS="extra-parts"
 post_build_hook()
 {
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do
@@ -64,6 +64,8 @@ post_build_hook()
 		cd "$OUTDIR"
 		fakeroot -- "$FAKEROOT_SCRIPT"
 		notice "Done packing $DST"
+
+		ln -rsf "$DST" "$RK_FIRMWARE_DIR/"
 
 		if ! rk_partition_parse_names | grep -qE "\<$PART_NAME\>"; then
 			warning "Packed $DST without having $PART_NAME partition!"

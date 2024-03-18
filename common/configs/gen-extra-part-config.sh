@@ -1,1 +1,0 @@
-../scripts/gen-extra-part-config.sh
