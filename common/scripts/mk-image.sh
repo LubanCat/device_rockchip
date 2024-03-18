@@ -130,7 +130,7 @@ mkimage()
 
     case $FS_TYPE in
         ext[234])
-            mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR ${SIZE_KB}K \
+            mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR -b 4096 ${SIZE_KB}K \
                 ${LABEL:+-L $LABEL} || return 1
 
             # Set max-mount-counts to 0, and disable the time-dependent checking.
