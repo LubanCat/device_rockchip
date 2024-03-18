@@ -17,17 +17,51 @@ fatal()
 
 usage()
 {
-    echo $@
-    fatal "Usage: $0 <src_dir> <target_image> <fs_type> <size(M|K)|auto(0)> [label]"
+    echo ${@:-"Wrong argumants"}
+    echo "Usage: $0 [options] <source directory> <dest image>"
+    echo "Options:"
+    echo "-t, --type <type>    Filesystem type <ext4|msdos|...> (default is: ext4)"
+    echo "-s, --size <size>    Filesystem size <size(M|K)|auto> (default is: auto)"
+    echo "-l, --label <label>  Filesystem label"
+    exit 1
 }
 
-[ ! $# -lt 3 ] || usage "Not enough args${@+: $0 $@}"
+unset SRC_DIR TARGET FS_TYPE SIZE LABEL
+while true; do
+    case "$1" in
+        "")
+            [ "$SRC_DIR" ] || usage "No source directory"
+            [ "$TARGET" ] || usage "No target image"
+            break
+            ;;
+        -t|--type)
+            FS_TYPE=$2
+            shift 2 || usage
+            ;;
+        -s|--size)
+            SIZE=$2
+            shift 2 || usage
+            ;;
+        -l|--label)
+            LABEL=$2
+            shift 2 || usage
+            ;;
+        *)
+            if [ -z "$SRC_DIR" ]; then
+                SRC_DIR=$1
+                shift
+            elif [ -z "$TARGET" ]; then
+                TARGET=$1
+                shift
+            else
+                usage
+            fi
+            ;;
+    esac
+done
 
-export SRC_DIR=$1
-export TARGET=$2
-FS_TYPE=$3
-SIZE=${4:-0}
-LABEL=$5
+[ "$FS_TYPE" ] || FS_TYPE=ext4
+[ "$SIZE" ] || SIZE=auto
 
 case $SIZE in
     auto)
@@ -96,30 +130,24 @@ mkimage()
 
     case $FS_TYPE in
         ext[234])
-            if mke2fs -h 2>&1 | grep -wq "\-d"; then
-                mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR ${SIZE_KB}K \
-                    || return 1
-            else
-                echo "Detected old mke2fs(doesn't support '-d' option)!"
-                mke2fs -t $FS_TYPE $TARGET ${SIZE_KB}K || return 1
-                copy_to_image || return 1
-            fi
+            mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR ${SIZE_KB}K \
+                ${LABEL:+-L $LABEL} || return 1
+
             # Set max-mount-counts to 0, and disable the time-dependent checking.
-            tune2fs -c 0 -i 0 $TARGET ${LABEL:+-L $LABEL}
+            tune2fs -c 0 -i 0 $TARGET
             ;;
         msdos|fat|vfat)
             truncate -s ${SIZE_KB}K $TARGET
 
             # Use fat32 by default
-            mkfs.vfat -F 32 $TARGET ${LABEL:+-n $LABEL} && \
-                MTOOLS_SKIP_CHECK=1 \
+            mkfs.vfat -F 32 ${LABEL:+-n $LABEL} $TARGET && MTOOLS_SKIP_CHECK=1 \
                 mcopy -bspmn -D s -i $TARGET $SRC_DIR/* ::/
             ;;
         ntfs)
             truncate -s ${SIZE_KB}K $TARGET
 
             # Enable compression
-            mkntfs -FCQ $TARGET ${LABEL:+-L $LABEL}
+            mkntfs -FCQ ${LABEL:+-L $LABEL} $TARGET
             if check_host_tool ntfscp; then
                 copy_to_ntfs
             else
@@ -205,7 +233,7 @@ case $FS_TYPE in
         ;;
     erofs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mkfs.erofs -zlz4hc $TARGET $SRC_DIR || exit 1
+        mkfs.erofs -zlz4hc $TARGET $SRC_DIR|| exit 1
         ;;
     squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
@@ -213,8 +241,8 @@ case $FS_TYPE in
         ;;
     jffs2)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 --pad=0x400000 -s 0x1000 -n || \
-            exit 1
+        mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 \
+		--pad=0x400000 -s 0x1000 -n || exit 1
         ;;
     *)
         usage "File system: $FS_TYPE not supported."

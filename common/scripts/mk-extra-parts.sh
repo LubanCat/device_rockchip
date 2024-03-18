@@ -57,8 +57,8 @@ post_build_hook()
 
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
 		echo "\"$RK_SCRIPTS_DIR/mk-image.sh\" \
-			\"$OUTDIR\" \"$DST\" \"$FS_TYPE\" \
-			\"$SIZE\" \"$PART_NAME\"" >> "$FAKEROOT_SCRIPT"
+			-t \"$FS_TYPE\" -s \"$SIZE\" -l \"$PART_NAME\" \
+			\"$OUTDIR\" \"$DST\"" >> "$FAKEROOT_SCRIPT"
 
 		notice "Packing $DST from $FAKEROOT_SCRIPT"
 		cd "$OUTDIR"
