@@ -154,3 +154,4 @@ config RK_SECURITY_BURN_KEY
 	  Burn security key's hash to non volatile memory.
 
 endif # Security
+endmenuconfig # Security

@@ -59,3 +59,4 @@ config RK_DEBIAN_ARMHF
 endchoice # debian rootfs arch
 
 endif # Debian
+endmenuconfig # Debian

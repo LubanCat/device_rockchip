@@ -88,3 +88,4 @@ config RK_YOCTO_USBMOUNT
 	default y
 
 endif # Yocto
+endmenuconfig # Yocto

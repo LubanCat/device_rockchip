@@ -63,3 +63,4 @@ config RK_ROOTFS_EXTRA_OVERLAY_DIRS
 	string "rootfs extra overlay dirs"
 
 endif # Overlay
+endmenuconfig # Overlay

@@ -51,6 +51,7 @@ config RK_MISC_IMG
 	  Name of misc image under <RK_CHIP_DIR>/.
 
 endif # Misc
+endmenuconfig # Misc
 
 config RK_USE_FIT_IMG
 	bool "use FIT (Flattened Image Tree) image"

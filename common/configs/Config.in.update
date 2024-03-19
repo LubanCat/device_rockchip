@@ -50,3 +50,4 @@ config RK_OTA_PACKAGE_FILE
 	  Name of custom package-file for OTA under <RK_CHIP_DIR>/.
 
 endif # Update
+endmenuconfig # Update

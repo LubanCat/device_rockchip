@@ -71,3 +71,4 @@ config RK_ROOTFS_FRECON_SCALE
 	default 1
 
 endif # Frecon
+endmenuconfig # Frecon

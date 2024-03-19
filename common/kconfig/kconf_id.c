@@ -9,6 +9,7 @@ static struct kconf_id kconf_id_array[] = {
 	{ "comment",		T_COMMENT,		TF_COMMAND },
 	{ "config",		T_CONFIG,		TF_COMMAND },
 	{ "menuconfig",		T_MENUCONFIG,		TF_COMMAND },
+	{ "endmenuconfig",	T_ENDMENUCONFIG,	TF_COMMAND },
 	{ "help",		T_HELP,			TF_COMMAND },
 	{ "---help---",		T_HELP,			TF_COMMAND },
 	{ "if",			T_IF,			TF_COMMAND|TF_PARAM },

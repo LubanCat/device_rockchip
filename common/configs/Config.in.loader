@@ -67,3 +67,4 @@ config RK_UBOOT_ARM32
 endchoice # u-boot arch
 
 endif # Loader
+endmenuconfig # Loader

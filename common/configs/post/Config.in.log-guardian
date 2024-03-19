@@ -21,3 +21,4 @@ config RK_ROOTFS_LOG_GUARDIAN_LOG_DIRS
 	default "/var/log/,/tmp/"
 
 endif # log-guardian
+endmenuconfig # log-guardian

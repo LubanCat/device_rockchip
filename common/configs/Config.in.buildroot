@@ -27,3 +27,4 @@ config RK_BUILDROOT_CFG
 	default "rockchip_${RK_BUILDROOT_BASE_CFG}"
 
 endif # Buildroot
+endmenuconfig # Buildroot

@@ -58,3 +58,4 @@ config RK_RECOVERY_FIT_ITS
 endif # FIT image
 
 endif # Recovery
+endmenuconfig # Recovery

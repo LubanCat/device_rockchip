@@ -43,3 +43,4 @@ config RK_RTOS_FIT_ITS
 	string "RTOS FIT ITS file"
 
 endif # RTOS
+endmenuconfig # RTOS

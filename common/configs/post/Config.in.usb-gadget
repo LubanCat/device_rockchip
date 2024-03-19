@@ -47,8 +47,10 @@ config RK_USB_ADBD_KEYS
 	default "~/.android/adbkey.pub" if RK_USB_ADBD_PASSWORD = ""
 
 endif # secure
+endmenuconfig # secure
 
 endif # adbd
+endmenuconfig # adbd
 
 config RK_USB_MTP
 	bool "Media Transfer Protocal (MTP)"
@@ -107,10 +109,13 @@ config RK_USB_UMS_MOUNTPOINT
 	depends on RK_USB_UMS_MOUNT
 	default "/mnt/ums"
 
+endmenuconfig # UMS mount
+
 config RK_USB_UMS_RO
 	bool "read-only on PC"
 
 endif # UMS
+endmenuconfig # UMS
 
 config RK_USB_EXTRA
 	string "extra USB gadget configs"

@@ -25,6 +25,7 @@ static void yyerror(const char *err);
 static void zconfprint(const char *err, ...);
 static void zconf_error(const char *err, ...);
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken);
+static const char *zconf_tokenname(int token);
 
 struct symbol *symbol_hash[SYMBOL_HASHSIZE];
 
@@ -52,6 +53,7 @@ static struct menu *current_menu, *current_entry;
 %token <id>T_COMMENT
 %token <id>T_CONFIG
 %token <id>T_MENUCONFIG
+%token <id>T_ENDMENUCONFIG
 %token <id>T_HELP
 %token <string> T_HELPTEXT
 %token <id>T_IF
@@ -155,6 +157,7 @@ common_stmt:
 	| comment_stmt
 	| config_stmt
 	| menuconfig_stmt
+	| endmenuconfig_stmt
 	| source_stmt
 ;
 
@@ -266,6 +269,24 @@ symbol_option_list:
 symbol_option_arg:
 	  /* empty */		{ $$ = NULL; }
 	| T_EQUAL prompt	{ $$ = $2; }
+;
+
+/* endmenuconfig entry */
+
+endmenuconfig: T_ENDMENUCONFIG T_EOL
+{
+	if ($1->token != T_ENDMENUCONFIG) {
+		zconf_error("unexpected '%s' within %s block",
+			$1->name, zconf_tokenname(T_MENUCONFIG));
+		yynerrs++;
+	} else {
+		/* HACK: Use empty entry to quit menuconfig */
+		menu_add_entry(NULL);
+		printd(DEBUG_PARSE, "%s:%d:endmenuconfig\n", zconf_curname(), zconf_lineno());
+	}
+};
+
+endmenuconfig_stmt: endmenuconfig
 ;
 
 /* choice entry */
@@ -567,6 +588,8 @@ static const char *zconf_tokenname(int token)
 	case T_ENDMENU:		return "endmenu";
 	case T_CHOICE:		return "choice";
 	case T_ENDCHOICE:	return "endchoice";
+	case T_MENUCONFIG:	return "menuconfig";
+	case T_ENDMENUCONFIG:	return "endmenuconfig";
 	case T_IF:		return "if";
 	case T_ENDIF:		return "endif";
 	case T_DEPENDS:		return "depends";

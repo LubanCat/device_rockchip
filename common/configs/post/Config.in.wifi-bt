@@ -32,3 +32,4 @@ config RK_WIFIBT_CUSTOM
 endchoice # modules
 
 endif # Wi-Fi/BT
+endmenuconfig # Wi-Fi/BT

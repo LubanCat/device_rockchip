@@ -452,6 +452,12 @@ void menu_finalize(struct menu *parent)
 		/* Examine consecutive elements after sym */
 		last_menu = NULL;
 		for (menu = parent->next; menu; menu = menu->next) {
+			/* HACK: Use empty entry to quit menuconfig */
+			if (parent->prompt && parent->prompt->type == P_MENU) {
+				if (!menu->prompt && !menu->sym && !menu->dep)
+					break;
+			}
+
 			dep = menu->prompt ? menu->prompt->visible.expr : menu->dep;
 			if (!expr_contains_symbol(dep, sym))
 				/* No dependency, quit */

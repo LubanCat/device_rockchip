@@ -95,3 +95,4 @@ config RK_KERNEL_KBUILD_ARM32
 endchoice # kbuild tools arch
 
 endif # Kernel
+endmenuconfig # Kernel

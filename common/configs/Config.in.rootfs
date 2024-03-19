@@ -103,3 +103,4 @@ endchoice # fstype
 source "post/Config.in.rootfs"
 
 endif # Rootfs
+endmenuconfig # Rootfs
