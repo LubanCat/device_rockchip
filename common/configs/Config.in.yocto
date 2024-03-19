@@ -20,7 +20,7 @@ menuconfig RK_YOCTO
 if RK_YOCTO
 
 choice
-	prompt "yocto local config"
+	prompt "local config"
 
 config RK_YOCTO_CFG_DEFAULT
 	bool "auto generated"
@@ -33,7 +33,7 @@ config RK_YOCTO_CFG_CUSTOM
 endchoice # yocto local config
 
 config RK_YOCTO_CFG
-	string "yocto custom local config"
+	string "custom local config"
 	depends on RK_YOCTO_CFG_CUSTOM
 	default "local.conf"
 	help
@@ -42,7 +42,7 @@ config RK_YOCTO_CFG
 if RK_YOCTO_CFG_DEFAULT
 
 config RK_YOCTO_MACHINE
-	string "yocto machine name"
+	string "machine name"
 	default "rockchip-px3se-evb" if RK_CHIP_FAMILY = "px3se"
 	default "rockchip-rk3288w-evb" if RK_CHIP = "rk3288w"
 	default "rockchip-rk3288-evb" if RK_CHIP_FAMILY = "rk3288"
@@ -71,7 +71,7 @@ config RK_YOCTO_DISPLAY_PLATFORM
 	default "x11" if RK_YOCTO_DISPLAY_PLATFORM_X11
 
 choice
-	prompt "yocto rootfs display platform"
+	prompt "display platform"
 
 config RK_YOCTO_DISPLAY_PLATFORM_WAYLAND
 	bool "wayland (weston)"

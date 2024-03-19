@@ -26,7 +26,7 @@ config RK_DEBIAN_VERSION
 	default "bookworm" if RK_DEBIAN_BOOKWORM
 
 choice
-	prompt "debian version"
+	prompt "distro"
 	default RK_DEBIAN_BOOKWORM if RK_CHIP_FAMILY = "rk3576"
 	default RK_DEBIAN_BULLSEYE
 
@@ -39,7 +39,7 @@ config RK_DEBIAN_BULLSEYE
 config RK_DEBIAN_BOOKWORM
 	bool "bookworm"
 
-endchoice # debian version
+endchoice # distro
 
 config RK_DEBIAN_ARCH
 	string
@@ -47,7 +47,7 @@ config RK_DEBIAN_ARCH
 	default "arm64" if RK_DEBIAN_ARM64
 
 choice
-	prompt "debian rootfs arch"
+	prompt "rootfs arch"
 
 config RK_DEBIAN_ARM64
 	bool "arm64"
@@ -56,7 +56,7 @@ config RK_DEBIAN_ARM64
 config RK_DEBIAN_ARMHF
 	bool "armhf"
 
-endchoice # debian rootfs arch
+endchoice # rootfs arch
 
 endif # Debian
 endmenuconfig # Debian

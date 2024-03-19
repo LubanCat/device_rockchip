@@ -1,9 +1,9 @@
 #
 
-comment "Android style boot image depends on linux kernel"
+comment "Android-style boot image depends on linux kernel"
 	depends on !RK_KERNEL
 
-menu "Boot (Android style boot image)"
+menu "Boot (Android-style boot image)"
 	depends on RK_KERNEL
 
 config RK_BOOT_IMG
