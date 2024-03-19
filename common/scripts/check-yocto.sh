@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
+RK_SDK_DIR="${RK_SDK_DIR:-$(realpath "$RK_SCRIPTS_DIR/../../../..")}"
 
 if ! ping google.com -c 1 -W 1 &>/dev/null; then
 	echo -e "\e[35m"
@@ -39,3 +40,15 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	echo -e "\e[0m"
 	exit 1
 fi
+
+for dir in "$RK_SDK_DIR"/*/.git "$RK_SDK_DIR"/external/*/.git; do
+	PROJ="$(dirname "$dir")"
+	[ -f "$PROJ/.git/gc.pid" ] || continue
+
+	echo -e "\e[35m"
+	echo "GIT is automatically packing loose objects in $PROJ/"
+	echo "Please wait for it:"
+	echo "while [ -f \"$PROJ/.git/gc.pid\" ]; do sleep 1; done"
+	echo -e "\e[0m"
+	exit 1
+done
