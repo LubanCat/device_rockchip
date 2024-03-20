@@ -8,5 +8,4 @@ busybox-reboot: Wrapper for busybox reboot commands
 
 kmsgrab.c: Tool for grabbing display buffer from DRM
 
-qemu-*-static:
-Qemu tools extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb
+qemu/: Qemu tools extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb

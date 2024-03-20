@@ -68,7 +68,7 @@ if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
 		echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --disable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
-		echo "sudo cp $RK_DATA_DIR/qemu-$QEMU_ARCH-static /usr/bin/"
+		echo "sudo cp $RK_DATA_DIR/qemu/qemu-$QEMU_ARCH-static /usr/bin/"
 		echo "sudo update-binfmts --enable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --import qemu-$QEMU_ARCH 2>/dev/null"
 	else
