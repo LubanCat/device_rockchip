@@ -378,6 +378,7 @@ Architecture: $DEBIAN_ARCH
 Section: kernel
 Priority: optional
 Multi-Arch: foreign
+Maintainer: Tao Huang <huangtao@rock-chips.com>
 Homepage: https://www.kernel.org/
 Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_REAL $RK_KERNEL_ARCH configuration
 EOF
