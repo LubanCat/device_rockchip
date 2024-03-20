@@ -52,3 +52,11 @@ for dir in "$RK_SDK_DIR"/*/.git "$RK_SDK_DIR"/external/*/.git; do
 	echo -e "\e[0m"
 	exit 1
 done
+
+if ! [ "$(git config --global gc.autoDetach)" = false ]; then
+	echo -e "\e[35m"
+	echo "Please disable the auto-detaching feature of git gc:"
+	echo "git config --global gc.autoDetach false"
+	echo -e "\e[0m"
+	exit 1
+fi
