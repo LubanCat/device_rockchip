@@ -9,3 +9,10 @@ busybox-reboot: Wrapper for busybox reboot commands
 kmsgrab.c: Tool for grabbing display buffer from DRM
 
 qemu/: Qemu tools extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb
+
+ldconfig/:
+Prebuilt from Yocto's ldconfig-native_2.12.1 with
+1/ Port glibc upstream's fix
+("58e8f5fd2b ldconfig: handle .dynstr located in separate segment (bug 25087)")
+2/ Static linked for x86
+gcc ldconfig.c -std=gnu99 chroot_canon.c xmalloc.c xstrdup.c cache.c readlib.c -I. -o ldconfig -static

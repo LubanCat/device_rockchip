@@ -2,6 +2,10 @@
 
 menu "Post rootfs installs"
 
+config RK_ROOTFS_LD_CACHE
+	bool "create /etc/ld.so.cache"
+	default y
+
 source "post/Config.in.hostname"
 source "post/Config.in.locale"
 
