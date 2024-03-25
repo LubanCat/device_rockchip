@@ -36,7 +36,8 @@ if [ -d /etc/generate_logs.d ]; then
 	done
 fi
 
-tar chf "$LOG_TARBALL" .
+# Avoid packing DRM crc
+tar chf "$LOG_TARBALL" --exclude "*/crc" .
 gzip "$LOG_TARBALL"
 
 cd /

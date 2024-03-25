@@ -37,6 +37,6 @@ EXTRA_FILES=" \
 ln -sf $EXTRA_FILES "$INFO_DIR/"
 
 mkdir -p "$TARGET_DIR/etc/generate_logs.d"
-echo -e '#!/bin/sh\ncp -rL /info/* . 2>/dev/null || true' > \
+echo -e '#!/bin/sh\ncp -rl /info/* . 2>/dev/null || true' > \
 	"$TARGET_DIR/etc/generate_logs.d/10-info.sh"
 chmod 755 "$TARGET_DIR/etc/generate_logs.d/10-info.sh"
