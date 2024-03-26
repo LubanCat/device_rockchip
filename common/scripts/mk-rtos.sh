@@ -112,8 +112,13 @@ build_rtthread()
 		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA
 		RTT_ROOTFS_SECTOR_SIZE=$(($(printf "%d" $ROOT_PART_SIZE) / 8)) # covert to 4096B
 
+		ROOT_SECTOR_SIZE=$(grep -r "CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE" "$2" | cut -d '=' -f 2)
+		if [ -z $ROOT_SECTOR_SIZE ];then
+			ROOT_SECTOR_SIZE=512
+		fi
+
 		dd of=root.img bs=4K seek=$RTT_ROOTFS_SECTOR_SIZE count=0 2>&1 || fatal "Failed to dd image!"
-		mkfs.fat -S 4096 root.img
+		mkfs.fat -S $ROOT_SECTOR_SIZE root.img
 		MTOOLS_SKIP_CHECK=1 $RTT_TOOLS_PATH/mcopy -bspmn -D s -i root.img $RTT_ROOTFS_USERDAT/* ::/
 
 		mv root.img Image/
