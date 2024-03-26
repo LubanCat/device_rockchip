@@ -59,7 +59,7 @@ build_yocto()
 			echo "include include/multimedia.conf"
 			echo "include include/audio.conf"
 
-			if [ "$RK_WIFIBT_CHIP" ]; then
+			if [ "$RK_WIFIBT" ]; then
 				echo "include include/wifibt.conf"
 			fi
 

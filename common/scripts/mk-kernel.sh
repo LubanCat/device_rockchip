@@ -113,7 +113,7 @@ do_build()
 			"$RK_SCRIPTS_DIR/check-power-domain.sh"
 			"$RK_SCRIPTS_DIR/check-security.sh" kernel dts
 
-			if [ "$RK_WIFIBT_CHIP" ] && \
+			if [ "$RK_WIFIBT" ] && \
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
 				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
 			fi
