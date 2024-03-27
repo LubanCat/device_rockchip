@@ -4,7 +4,7 @@
 if [ -n "$RK_BUILDROOT_CFG" ]; then
     HOST_DIR="$RK_SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/host"
     export PATH=$HOST_DIR/usr/sbin:$HOST_DIR/usr/bin:$HOST_DIR/sbin:$HOST_DIR/bin:$PATH
-    echo "Using host tools in $HOST_DIR"
+    echo "Using host tools in $HOST_DIR (except for mke2fs)"
 else
     "$(dirname "$(realpath "$0")")/check-mkimage.sh"
 fi
@@ -130,7 +130,7 @@ mkimage()
 
     case $FS_TYPE in
         ext[234])
-            mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR -b 4096 ${SIZE_KB}K \
+            /sbin/mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR -b 4096 ${SIZE_KB}K \
                 ${LABEL:+-L $LABEL} || return 1
 
             # Set max-mount-counts to 0, and disable the time-dependent checking.
