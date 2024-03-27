@@ -41,6 +41,17 @@ if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
 	exit 1
 fi
 
+cd "$RK_SDK_DIR/yocto/poky/"
+if ! git log --oneline bitbake/lib/bb/fetch2/git.py | \
+	grep -q -m 1 "Fix local clone url to make it work with repo"; then
+	echo -e "\e[35m"
+	echo "Your yocto poky layer is too old for local clone."
+	echo "Please upgrade it to:"
+	echo "https://github.com/yoctoproject/poky/commit/ac3eb241"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 for dir in "$RK_SDK_DIR"/*/.git "$RK_SDK_DIR"/external/*/.git; do
 	PROJ="$(dirname "$dir")"
 	[ -f "$PROJ/.git/gc.pid" ] || continue
