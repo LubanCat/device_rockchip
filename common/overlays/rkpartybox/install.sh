@@ -5,7 +5,7 @@ TARGET_DIR="$1"
 
 OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
-message "OVERLAY_DIR= $OVERLAY_DIR,TARGET_DIR=$TARGET_DIR"
+message "Installing rkpartybox overlay to $TARGET_DIR..."
 
 $RK_RSYNC "$OVERLAY_DIR/usr" "$TARGET_DIR/"
 
@@ -17,11 +17,9 @@ rm $TARGET_DIR/etc/init.d/S80dnsmasq -rf
 rm $TARGET_DIR/etc/init.d/S50dropbear -rf
 rm $TARGET_DIR/etc/init.d/S49chrony -rf
 
-
 if [ -x "$TARGET_DIR/etc/init.d/S30dbus" ]; then
        mv $TARGET_DIR/etc/init.d/S30dbus $TARGET_DIR/etc/init.d/S03dbus
 fi
-
 
 if [ -x "$TARGET_DIR/etc/init.d/S36wifibt-init.sh" ]; then
        mv $TARGET_DIR/etc/init.d/S36wifibt-init.sh $TARGET_DIR/etc/init.d/S03wifibt-init.sh
