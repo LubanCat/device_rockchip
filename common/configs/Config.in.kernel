@@ -24,8 +24,8 @@ config RK_KERNEL_RECOVERY_CFG
 	string "defconfig for recovery"
 	depends on RK_RECOVERY
 
-config RK_KERNEL_VERSION
-	string "version, e.g. 5.10"
+config RK_KERNEL_PREFERRED
+	string "preferred version, e.g. 5.10"
 
 config RK_KERNEL_ARCH
 	string

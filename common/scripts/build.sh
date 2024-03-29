@@ -105,7 +105,7 @@ check_config()
 	return 1
 }
 
-kernel_version_real()
+kernel_version_raw()
 {
 	[ -d kernel ] || return 0
 
@@ -131,7 +131,7 @@ kernel_version()
 			;;
 	esac
 
-	kernel_version_real
+	kernel_version_raw
 }
 
 start_log()
@@ -604,6 +604,7 @@ main()
 	# Load config environments
 	source "$RK_CONFIG"
 	cp "$RK_CONFIG" "$RK_LOG_DIR"
+	export RK_KERNEL_VERSION="$(kernel_version)"
 
 	if [ -z "$INITIAL_SESSION" ]; then
 		# Inherit session environments
@@ -634,7 +635,6 @@ main()
 
 			if grep -q "^RK_KERNEL_VERSION=" "$RK_CUSTOM_ENV"; then
 				warning "Custom RK_KERNEL_VERSION ignored!"
-				load_config RK_KERNEL_VERSION
 			fi
 
 			if grep -q "^RK_ROOTFS_SYSTEM=" "$RK_CUSTOM_ENV"; then
@@ -651,7 +651,8 @@ main()
 	set +a
 
 	# The real kernel version: 4.4/4.19/5.10/6.1, etc.
-	export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
+	export RK_KERNEL_VERSION_RAW=$(kernel_version_raw)
+	export RK_KERNEL_VERSION="$(kernel_version)"
 
 	# Handle special commands
 	case "$OPTIONS" in

@@ -64,7 +64,7 @@ build_wifibt()
 				CONFIG_BCMDHD_PCIE=y CONFIG_BCMDHD_SDIO=
 		fi
 
-		if ! [[ "$RK_KERNEL_VERSION" = "6.1" ]];then
+		if ! [[ "$RK_KERNEL_VERSION_RAW" = "6.1" ]];then
 			if [ -n "$WIFI_USB" ]; then
 				echo "building rtl8188fu usb"
 				$KMAKE M=$RKWIFIBT_DIR/drivers/rtl8188fu modules
@@ -124,7 +124,7 @@ build_wifibt()
 			$RKWIFIBT_DIR/drivers/infineon/Makefile
 		$KMAKE M=$RKWIFIBT_DIR/drivers/infineon
 
-		if ! [[ "$RK_KERNEL_VERSION" = "6.1" ]];then
+		if ! [[ "$RK_KERNEL_VERSION_RAW" = "6.1" ]];then
 			if [ -n "$WIFI_USB" ]; then
 				echo "building rtl8188fu usb"
 				$KMAKE M=$RKWIFIBT_DIR/drivers/rtl8188fu modules
@@ -246,7 +246,7 @@ build_wifibt()
 		$KMAKE M=$RKWIFIBT_DIR/drivers/rtl8852be modules
 	fi
 
-	if ! [[ "$RK_KERNEL_VERSION" = "6.1" ]];then
+	if ! [[ "$RK_KERNEL_VERSION_RAW" = "6.1" ]];then
 		echo "building realtek bt drivers"
 		$KMAKE M=$RKWIFIBT_DIR/drivers/bluetooth_uart_driver
 		if [ -n "$WIFI_USB" ]; then
@@ -284,7 +284,7 @@ build_wifibt()
 			$TARGET_DIR/lib/firmware/ || true
 
 		#reatek
-		if ! [[ "$RK_KERNEL_VERSION" = "6.1" ]];then
+		if ! [[ "$RK_KERNEL_VERSION_RAW" = "6.1" ]];then
 			cp $RKWIFIBT_DIR/firmware/realtek/*/* $TARGET_DIR/lib/firmware/
 			cp $RKWIFIBT_DIR/firmware/realtek/*/* \
 				$TARGET_DIR/lib/firmware/rtlbt/
@@ -306,7 +306,7 @@ build_wifibt()
 			$TARGET_DIR/lib/firmware/ || true
 
 		#reatek
-		if ! [[ "$RK_KERNEL_VERSION" = "6.1" ]];then
+		if ! [[ "$RK_KERNEL_VERSION_RAW" = "6.1" ]];then
 			echo "copy realtek firmware/nvram to rootfs"
 			cp $RKWIFIBT_DIR/drivers/rtl*/*.ko $TARGET_DIR/lib/modules/
 			cp -rf $RKWIFIBT_DIR/firmware/realtek/*/* $TARGET_DIR/lib/firmware/

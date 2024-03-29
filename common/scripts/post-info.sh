@@ -21,8 +21,8 @@ yes | python3 .repo/repo/repo manifest -r \
 cat "$RK_CONFIG" | sed "s/\(PASSWORD=\)\".*\"/\1\"********\"/" > \
 	"$INFO_DIR/rockchip_config"
 
-cp kernel/.config "$INFO_DIR/config-$RK_KERNEL_VERSION"
-cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION"
+cp kernel/.config "$INFO_DIR/config-$RK_KERNEL_VERSION_RAW"
+cp kernel/System.map "$INFO_DIR/System.map-$RK_KERNEL_VERSION_RAW"
 
 EXTRA_FILES=" \
 	/etc/os-release /etc/fstab /proc/config.gz \

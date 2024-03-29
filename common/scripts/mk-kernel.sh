@@ -2,36 +2,6 @@
 
 KERNELS=$(ls | grep kernel- || true)
 
-update_kernel()
-{
-	# Fallback to current kernel
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$(kernel_version)}
-
-	# Fallback to 5.10 kernel
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
-
-	# Update .config
-	KERNEL_CONFIG="RK_KERNEL_VERSION=\"$RK_KERNEL_VERSION\""
-	if ! grep -q "^$KERNEL_CONFIG$" "$RK_CONFIG"; then
-		notice "Updating kernel version config: $RK_KERNEL_VERSION"
-		sed -i "s/^RK_KERNEL_VERSION=.*/$KERNEL_CONFIG/" "$RK_CONFIG"
-		"$RK_SCRIPTS_DIR/mk-config.sh" olddefconfig &>/dev/null
-	fi
-
-	[ "$(kernel_version)" != "$RK_KERNEL_VERSION" ] || return 0
-
-	# Update kernel
-	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
-	notice "Switching to $KERNEL_DIR"
-	if [ ! -d "$KERNEL_DIR" ]; then
-		error "$KERNEL_DIR not exist!"
-		exit 1
-	fi
-
-	rm -rf kernel
-	ln -rsf $KERNEL_DIR kernel
-}
-
 make_kernel_config()
 {
 	if [ "$RK_CHIP" = "$RK_CHIP_FAMILY" ]; then
@@ -199,18 +169,47 @@ init_hook()
 	load_config RK_KERNEL_CFG
 	check_config RK_KERNEL_CFG &>/dev/null || return 0
 
-	# Priority: cmdline > custom env > .config > current kernel/ symlink
+	# Priority: cmdline > env > last selected > preferred > current symlink
 	if echo $1 | grep -q "^kernel-"; then
 		export RK_KERNEL_VERSION=${1#kernel-}
 		notice "Using kernel version($RK_KERNEL_VERSION) from cmdline"
 	elif [ "$RK_KERNEL_VERSION" ]; then
 		export RK_KERNEL_VERSION=${RK_KERNEL_VERSION//\"/}
 		notice "Using kernel version($RK_KERNEL_VERSION) from environment"
-	else
-		load_config RK_KERNEL_VERSION
 	fi
 
-	update_kernel
+	load_config RK_KERNEL_PREFERRED
+
+	local KERNEL_LAST="$(cat "$RK_OUTDIR/.kernel" 2>/dev/null || true)"
+	local KERNEL_CURRENT="$(kernel_version)"
+
+	# Fallback to last
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$KERNEL_LAST}
+
+	# Fallback to preferred
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$RK_KERNEL_PREFERRED}
+
+	# Fallback to current
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$KERNEL_CURRENT}
+
+	# Fallback to 5.10
+	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
+
+	# Save the selected version
+	echo "$RK_KERNEL_VERSION" > "$RK_OUTDIR/.kernel"
+
+	[ "$RK_KERNEL_VERSION" != "$KERNEL_CURRENT" ] || return 0
+
+	# Update kernel
+	KERNEL_DIR=kernel-$RK_KERNEL_VERSION
+	notice "\nSwitching to $KERNEL_DIR"
+	if [ ! -d "$KERNEL_DIR" ]; then
+		error "$KERNEL_DIR not exist!"
+		exit 1
+	fi
+
+	rm -rf kernel
+	ln -rsf $KERNEL_DIR kernel
 }
 
 PRE_BUILD_CMDS="kernel-config kconfig kernel-make kmake"
@@ -270,8 +269,7 @@ build_hook()
 		recovery-kernel) build_recovery_kernel $@ ;;
 		kernel-*)
 			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
-				notice "Kernel version overrided: " \
-					"$RK_KERNEL_VERSION -> ${1#kernel-}"
+				warning "Kernel version ${1#kernel-} ignored"
 			fi
 			;&
 		*) do_build $@ ;;
@@ -337,7 +335,7 @@ EOF
 		host) run_command tar -uf "$OUTPUT_FILE" scripts tools ;;
 		*)
 			run_command cd "$RK_KBUILD_DIR/$RK_KERNEL_KBUILD_ARCH"
-			run_command cd "linux-kbuild-$RK_KERNEL_VERSION_REAL"
+			run_command cd "linux-kbuild-$RK_KERNEL_VERSION_RAW"
 			run_command tar -uf "$OUTPUT_FILE" .
 			;;
 	esac
@@ -361,7 +359,7 @@ EOF
 
 	# Packing .deb package
 	TEMP_DIR="$(mktemp -d)"
-	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_REAL}-$RK_KERNEL_ARCH"
+	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_RAW}-$RK_KERNEL_ARCH"
 	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
 	DEBIAN_KBUILD_DIR="$DEBIAN_DIR/usr/src/$DEBIAN_PKG"
 	DEBIAN_DEB="$DEBIAN_DIR.deb"
@@ -372,15 +370,15 @@ EOF
 	tar xf "$OUTPUT_FILE" -C "$DEBIAN_KBUILD_DIR"
 	cat << EOF > "$DEBIAN_CONTROL"
 Package: $DEBIAN_PKG
-Source: linux-rockchip ($RK_KERNEL_VERSION_REAL)
-Version: $RK_KERNEL_VERSION_REAL-rockchip
+Source: linux-rockchip ($RK_KERNEL_VERSION_RAW)
+Version: $RK_KERNEL_VERSION_RAW-rockchip
 Architecture: $DEBIAN_ARCH
 Section: kernel
 Priority: optional
 Multi-Arch: foreign
 Maintainer: Tao Huang <huangtao@rock-chips.com>
 Homepage: https://www.kernel.org/
-Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_REAL $RK_KERNEL_ARCH configuration
+Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_RAW $RK_KERNEL_ARCH configuration
 EOF
 
 	message "Debian control file:"
