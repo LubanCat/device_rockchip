@@ -36,7 +36,9 @@
 	share {
 		shm_base         = <0x03200000>;
 		shm_size         = <0x00100000>;
-		primary = <0x0>;
+		rpmsg_base       = <0x07c00000>;
+		rpmsg_size       = <0x00500000>;
+		primary = <0x3>;
 	};
 
 	configurations {
