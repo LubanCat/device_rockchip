@@ -24,9 +24,10 @@ rk_partition_size_sector_to_readable()
 	SIZE=$(( $1 * 512 ))
 	if [ "$SIZE" -lt 1024 ]; then
 		echo $SIZE
-	elif [ "$SIZE" -ge $(( 1024 * 1024 * 1024 )) ]; then
-		echo "$(echo "scale=1; $SIZE / 1024 / 1024 / 1024" | bc | \
-			sed 's/\.0$//')G"
+	## Not use GB to show part size
+	# elif [ "$SIZE" -ge $(( 1024 * 1024 * 1024 )) ]; then
+	# 	echo "$(echo "scale=1; $SIZE / 1024 / 1024 / 1024" | bc | \
+	# 		sed 's/\.0$//')G"
 	elif [ "$SIZE" -ge $(( 1024 * 1024 )) ]; then
 		echo "$(echo "scale=1; $SIZE / 1024 / 1024" | bc | \
 			sed 's/\.0$//')M"
