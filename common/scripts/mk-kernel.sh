@@ -31,6 +31,64 @@ update_kernel()
 	ln -rsf $KERNEL_DIR kernel
 }
 
+do_build_kerneldeb()
+{
+	rm -f linux-*.buildinfo linux-*.changes
+	rm -f linux-headers-*.deb linux-image-*.deb linux-libc-dev*.deb
+	run_command $KMAKE bindeb-pkg
+}
+
+do_build_extboot()
+{
+	run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
+	run_command $KMAKE dtbs
+
+	KERNEL_VERSION=$(cat $RK_SDK_DIR/kernel/include/config/kernel.release)
+	EXTBOOT_IMG=${RK_SDK_DIR}/kernel/extboot.img
+	EXTBOOT_DIR=${RK_SDK_DIR}/kernel/extboot
+	EXTBOOT_DTB_DIR=${EXTBOOT_DIR}/dtb/
+
+	rm -rf $EXTBOOT_DIR
+	mkdir -p $EXTBOOT_DTB_DIR/overlay 
+	mkdir -p $EXTBOOT_DIR/{uEnv,kerneldeb,extlinux}
+
+	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
+
+
+	echo -e "label kernel-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tkernel /Image-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tdevicetreedir /" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tappend  root=/dev/mmcblk0p3 earlyprintk console=ttyFIQ0 console=tty1 consoleblank=0 loglevel=7 rootwait rw rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 switolb=1 coherent_pool=1m" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/*.dtb $EXTBOOT_DTB_DIR
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/overlay/*.dtbo $EXTBOOT_DTB_DIR/overlay
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
+	cp -f $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
+
+	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION ]]; then
+		cp ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION $EXTBOOT_DIR/initrd-$KERNEL_VERSION
+	fi
+
+	if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
+		mkimage -T script -C none -d $EXTBOOT_DIR/boot.cmd $EXTBOOT_DIR/boot.scr
+	fi
+
+	cp ${RK_SDK_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
+	cp ${RK_SDK_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
+	cp ${RK_SDK_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/
+	cp ${RK_SDK_DIR}/kernel/logo_boot.bmp $EXTBOOT_DIR/logo.bmp
+
+	cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
+	cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
+
+	rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
+	fakeroot mkfs.ext2 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
+
+	run_command ln -rsf "$RK_SDK_DIR/kernel/extboot.img" \
+		"$RK_FIRMWARE_DIR/boot.img"
+}
+
 do_build()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -57,7 +115,18 @@ do_build()
 			run_command mv kernel/defconfig \
 				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
 			;;
+		kerneldeb)
+			do_build_kerneldeb
+			;;
+		extboot)
+			do_build_extboot
+			;;
 		kernel*)
+		if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
+			notice "build kerneldeb and extboot"
+			do_build_kerneldeb
+			do_build_extboot
+		else
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
 			# The FIT image for initrd would be packed in rootfs stage
@@ -91,6 +160,7 @@ do_build()
 				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
 				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
 			fi
+		fi
 			;;
 		modules) run_command $KMAKE modules ;;
 	esac
@@ -149,6 +219,8 @@ usage_hook()
 	done
 
 	echo -e "kernel[:cmds]                    \tbuild kernel"
+	echo -e "kerneldeb                        \tbuild kernel debian package"
+	echo -e "extboot                          \tbuild kernel extboot image"
 	echo -e "recovery-kernel[:cmds]           \tbuild kernel for recovery"
 	echo -e "modules[:cmds]                   \tbuild kernel modules"
 	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
@@ -231,7 +303,7 @@ pre_build_hook_dry()
 	DRY_RUN=1 pre_build_hook $@
 }
 
-BUILD_CMDS="$KERNELS kernel recovery-kernel modules"
+BUILD_CMDS="$KERNELS kernel recovery-kernel modules kerneldeb extboot"
 build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -243,6 +315,8 @@ build_hook()
 
 	case "$1" in
 		recovery-kernel) build_recovery_kernel $@ ;;
+		kerneldeb) do_build_kerneldeb $@ ;;
+		extboot) do_build_extboot $@ ;;
 		kernel-*)
 			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
 				notice "Kernel version overrided: " \
@@ -328,7 +402,7 @@ source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-he
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;
-	kernel* | recovery-kernel | modules)
+	kernel* | recovery-kernel | modules | kerneldeb | extboot)
 		init_hook $@
 		build_hook ${@:-kernel}
 		;;

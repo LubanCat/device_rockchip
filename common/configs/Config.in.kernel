@@ -107,6 +107,10 @@ endchoice
 
 endif
 
+config RK_KERNEL_EXTBOOT
+	bool "kernel extboot image"
+	default n
+
 endmenu # Kernel
 
 endif
