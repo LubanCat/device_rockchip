@@ -42,6 +42,59 @@ config RK_ROOTFS_SYSTEM_YOCTO
 
 endchoice
 
+if RK_ROOTFS_SYSTEM_DEBIAN
+
+config RK_ROOTFS_TARGET
+	string
+	default "gnome" if RK_ROOTFS_TARGET_GNOME
+	default "xfce" if RK_ROOTFS_TARGET_XFCE
+	default "lxde" if RK_ROOTFS_TARGET_LXDE
+	default "lite" if RK_ROOTFS_TARGET_LITE
+
+choice
+	prompt "rootfs desktop environment"
+	help
+	  Choose the version of the desktop environment.
+
+config RK_ROOTFS_TARGET_GNOME
+	bool "gnome"
+
+config RK_ROOTFS_TARGET_XFCE
+	bool "xfce"
+
+config RK_ROOTFS_TARGET_LXDE
+	bool "lxde"
+
+config RK_ROOTFS_TARGET_LITE
+	bool "lite"
+
+endchoice
+
+config RK_ROOTFS_DEBUG
+	string
+	default "debug" if RK_ROOTFS_DEBUG_YES
+	default "none" if RK_ROOTFS_DEBUG_NO
+
+choice
+	prompt "rootfs debug mode"
+	help
+	  Choose add overlay-debug to rootfs.
+
+config RK_ROOTFS_DEBUG_YES
+	bool "debug"
+
+config RK_ROOTFS_DEBUG_NO
+	bool "none"
+
+endchoice
+
+config RK_ROOTFS_IMAGE
+	string "rootfs image name"
+	default "linaro-${RK_CHIP}-${RK_ROOTFS_TARGET}-rootfs.img" if RK_ROOTFS_SYSTEM_DEBIAN
+	default ""
+
+endif
+
 config RK_ROOTFS_TYPE
 	string "rootfs filesystem type"
 	default "cpio.gz" if RK_ROOTFS_INITRD

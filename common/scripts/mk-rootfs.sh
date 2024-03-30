@@ -113,17 +113,31 @@ build_debian()
 	message "=========================================="
 
 	cd debian
-	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
-		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH \
-			./mk-base-debian.sh
-		ln -sf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz \
-			linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
+
+	## Not always using full build
+	if [ -f $RK_ROOTFS_IMAGE ]; then
+	# image build with SDK
+		notice "[    Already Exists IMG,  Skip Make Debian Scripts    ]"
+		notice "[ Delate $RK_ROOTFS_IMAGE To Rebuild Debian IMG ]"
+		ln -rsf "$PWD/$RK_ROOTFS_IMAGE" "$IMAGE_DIR/rootfs.ext4"
+	elif [ -f linaro-$RK_ROOTFS_TARGET-rootfs.img  ]; then
+	# image build with debian scripts
+		notice Use linaro-$RK_ROOTFS_TARGET-rootfs.img to build update.img
+		ln -rsf "$PWD/linaro-$RK_ROOTFS_TARGET-rootfs.img" \
+			"$IMAGE_DIR/rootfs.ext4"
+	else
+	# building iamge
+		notice "No $RK_ROOTFS_IMAGE, Run Make Debian Scripts"
+			if [ ! -f linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-alip-*.tar.gz ]; then
+				notice "build linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-alip-*.tar.gz"
+				RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH \
+					./mk-base-debian.sh
+			fi
+		RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET VERSION=$RK_ROOTFS_DEBUG \
+		RK_ROOTFS_IMAGE=$RK_ROOTFS_IMAGE SOC=$RK_CHIP ARCH=$ARCH \
+			./mk-rootfs.sh
+		ln -rsf "$PWD/$RK_ROOTFS_IMAGE" "$IMAGE_DIR/rootfs.ext4"
 	fi
-
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
-	./mk-image.sh
-
-	ln -rsf "$PWD/linaro-rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
 	finish_build build_debian $@
 }
