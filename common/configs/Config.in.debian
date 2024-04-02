@@ -27,6 +27,12 @@ config RK_DEBIAN_VERSION
 	default "bullseye" if RK_DEBIAN_BULLSEYE
 	default "bookworm" if RK_DEBIAN_BOOKWORM
 
+config RK_DEBIAN_NUMBER
+	string
+	default "debian10" if RK_DEBIAN_BUSTER
+	default "debian11" if RK_DEBIAN_BULLSEYE
+	default "debian12" if RK_DEBIAN_BOOKWORM
+
 choice
 	prompt "debian version"
 	default RK_DEBIAN_BOOKWORM if RK_KERNEL_VERSION = "6.1"

@@ -385,7 +385,7 @@ main()
 		TAG="$(grep -o "linux-.*-gen-rkr[^.\"]*" "$MANIFEST" | \
 			head -n 1 || true)"
 		MANIFEST="$(basename "$(realpath "$MANIFEST")")"
-		notice "\n############### Rockchip Linux SDK ###############\n"
+		notice "\n############### LubanCat Linux SDK ###############\n"
 		notice "Manifest: $MANIFEST"
 		if [ "$TAG" ]; then
 			notice "Version: $TAG"

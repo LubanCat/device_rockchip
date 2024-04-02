@@ -89,6 +89,17 @@ do_build_updateimg()
 
 	# Prepare images
 	ln -rsf "$RK_FIRMWARE_DIR"/* .
+
+	if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
+		mkdir -p mount-tmp
+		echo mount and write build info
+		sudo mount rootfs.img mount-tmp/
+		sudo sh -c "echo ' * $RK_PACKAGE_NAME' > mount-tmp/etc/build-release"
+		sudo sync 
+		sudo umount mount-tmp/
+		rm -rf mount-tmp/
+	fi
+
 	rm -f update.img
 
 	# Prepare package-file

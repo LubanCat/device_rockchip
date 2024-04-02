@@ -60,6 +60,15 @@ config RK_OTA_PACKAGE_FILE
 	  Name of custom package-file for OTA under <RK_CHIP_DIR>/.
 
 endif
+
+if RK_ROOTFS_SYSTEM_DEBIAN
+
+config RK_PACKAGE_NAME
+	string "update image package name"
+	default "lubancat-${RK_CHIP}-${RK_DEBIAN_NUMBER}-${RK_ROOTFS_TARGET}-$(date +%Y%m%d)" if RK_ROOTFS_SYSTEM_DEBIAN
+
+endif
+
 endif
 
 endmenu # Update

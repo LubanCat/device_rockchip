@@ -64,7 +64,7 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/overlay/*.dtbo $EXTBOOT_DTB_DIR/overlay
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
-	cp -f $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
+	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
 	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION ]]; then
 		cp ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION $EXTBOOT_DIR/initrd-$KERNEL_VERSION
@@ -315,8 +315,6 @@ build_hook()
 
 	case "$1" in
 		recovery-kernel) build_recovery_kernel $@ ;;
-		kerneldeb) do_build_kerneldeb $@ ;;
-		extboot) do_build_extboot $@ ;;
 		kernel-*)
 			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
 				notice "Kernel version overrided: " \
