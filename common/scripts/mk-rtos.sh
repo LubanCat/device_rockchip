@@ -17,7 +17,7 @@ rtos_get_value()
 
 rtos_get_string()
 {
-	echo "$1" | grep -owP "$2\s*=\s*\"([^>]+)\"" | awk -F'"' '{print $2}'
+	echo "$1" | grep -owP "$2\s*=.*\"([^>]+)\"" | awk -F'"' '{print $2}'
 }
 
 rtos_get_node()
@@ -45,34 +45,34 @@ rtos_get_node()
 
 build_hal()
 {
-	check_config RK_RTOS_HAL_TARGET || return 0
+	check_config "$1" || return 0
 
 	message "=========================================="
-	message "  Building CPU$1: HAL-->$RK_RTOS_HAL_TARGET"
+	message "  Building CPU $2: HAL-->${!1}"
 	message "=========================================="
 
-	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
+	cd "$RK_RTOS_BSP_DIR/common/hal/project/"${!1}"/GCC"
 
 	make clean > /dev/null
-	rm -rf hal$1.elf hal$1.bin
+	rm -rf $3.elf $3.bin
 	make -j$(nproc) > ${RK_SDK_DIR}/hal.log 2>&1
-	cp TestDemo.elf hal$1.elf
-	mv TestDemo.bin hal$1.bin
-	ln -rsf hal$1.bin $RK_OUTDIR/cpu$1.bin
+	cp TestDemo.elf $3.elf
+	mv TestDemo.bin $3.bin
+	ln -rsf $3.bin $RK_OUTDIR/$3.bin
 
 	finish_build build_hal $@
 }
 
 build_rtthread()
 {
-	check_config RK_RTOS_RTT_TARGET || return 0
+	check_config "$1" || return 0
 
 	message "=========================================="
-	message "  Building CPU$1: RT-Thread-->$RK_RTOS_RTT_TARGET"
-	message "                  Config-->$2"
+	message "  Building CPU $2: RT-Thread-->${!1}"
+	message "                  Config-->$4"
 	message "=========================================="
 
-	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
+	cd "$RK_RTOS_BSP_DIR/${!1}"
 
 	export RTT_ROOT=$RK_RTOS_BSP_DIR/../../
 	export RTT_PRMEM_BASE=$FIRMWARE_CPU_BASE
@@ -92,19 +92,19 @@ build_rtthread()
 		export ROOT_PART_SIZE=$ROOT_PART_SIZE
 	fi
 
-	if [ -f "$2" ] ;then
-		scons --useconfig="$2"
+	if [ -f "$4" ] ;then
+		scons --useconfig="$4"
 	else
-		warning "Warning: Config $2 not exit!\n"
+		warning "Warning: Config $4 not exit!\n"
 		warning "Default config(.config) will be used!\n"
 	fi
 
 	scons -c > /dev/null
-	rm -rf gcc_arm.ld Image/rtt$1.elf Image/rtt$1.bin
+	rm -rf gcc_arm.ld Image/rtt$2.elf Image/rtt$2.bin
 	scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
-	cp rtthread.elf Image/rtt$1.elf
-	mv rtthread.bin Image/rtt$1.bin
-	ln -rsf Image/rtt$1.bin $RK_OUTDIR/cpu$1.bin
+	cp rtthread.elf Image/rtt$2.elf
+	mv rtthread.bin Image/rtt$2.bin
+	ln -rsf Image/rtt$2.bin $RK_OUTDIR/$3.bin
 
 	if [ -n "$RK_RTOS_RTT_ROOTFS_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
 
@@ -112,7 +112,7 @@ build_rtthread()
 		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA
 		RTT_ROOTFS_SECTOR_SIZE=$(($(printf "%d" $ROOT_PART_SIZE) / 8)) # covert to 4096B
 
-		ROOT_SECTOR_SIZE=$(grep -r "CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE" "$2" | cut -d '=' -f 2)
+		ROOT_SECTOR_SIZE=$(grep -r "CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE" "$4" | cut -d '=' -f 2)
 		if [ -z $ROOT_SECTOR_SIZE ];then
 			ROOT_SECTOR_SIZE=512
 		fi
@@ -151,6 +151,7 @@ build_images()
 		export SRAM_BASE=$(rtos_get_value "$ITS_IMAGE" srambase)
 		export SRAM_SIZE=$(rtos_get_value "$ITS_IMAGE" sramsize)
 		export CUR_CPU=$(rtos_get_value "$ITS_IMAGE" cpu)
+		CPU_BIN=$(rtos_get_string "$ITS_IMAGE" data)
 		if (( $CUR_CPU > 0xff )); then
 			CUR_CPU=$((CUR_CPU >> 8))
 		fi
@@ -164,13 +165,27 @@ build_images()
 		done
 
 		SYS=$(rtos_get_string "$ITS_IMAGE" sys)
+		CORE=$(rtos_get_string "$ITS_IMAGE" core)
+		SYS="${SYS}${CORE:+_$CORE}"
 
 		case $SYS in
-			hal)
-				build_hal $CUR_CPU
+			hal_mcu)
+				build_hal RK_RTOS_MCU_HAL_TARGET mcu \
+					  "$(basename -s .bin $CPU_BIN)"
 				;;
-			rtt)
-				build_rtthread $CUR_CPU "$(rtos_get_string "$ITS_IMAGE" rtt_config)"
+			hal|hal_ap)
+				build_hal RK_RTOS_HAL_TARGET $CUR_CPU \
+					  "$(basename -s .bin $CPU_BIN)"
+				;;
+			rtt_mcu)
+				build_rtthread RK_RTOS_MCU_RTT_TARGET mcu \
+					       "$(basename -s .bin $CPU_BIN)" \
+					       "$(rtos_get_string "$ITS_IMAGE" rtt_config)"
+				;;
+			rtt|rtt_ap)
+				build_rtthread RK_RTOS_RTT_TARGET $CUR_CPU \
+					       "$(basename -s .bin $CPU_BIN)" \
+					       "$(rtos_get_string "$ITS_IMAGE" rtt_config)" \
 				;;
 			*)
 				break;;

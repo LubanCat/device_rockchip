@@ -34,7 +34,15 @@ config RK_RTOS_HAL_TARGET
 
 config RK_RTOS_RTT_TARGET
 	string "RT-Thread target"
-	default "rk3308-32"
+	default "${RK_CHIP_FAMILY}-32"
+
+config RK_RTOS_MCU_HAL_TARGET
+	string "MCU HAL target"
+	default "${RK_CHIP_FAMILY}-mcu"
+
+config RK_RTOS_MCU_RTT_TARGET
+	string "MCU RT-Thread target"
+	default "${RK_CHIP_FAMILY}-mcu"
 
 config RK_RTOS_CFG
 	string "config file"
