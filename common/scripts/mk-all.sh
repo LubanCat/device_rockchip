@@ -27,7 +27,7 @@ build_all()
 
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 
-	[[ -z "$RK_KERNEL" || "$RK_KERNEL_EXTBOOT" != "y" ]] || \
+	[ -z "$RK_KERNEL" ] || [ -n "$RK_KERNEL_EXTBOOT" ] || \
 		"$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_FIRMWARE_DIR"
 
 	finish_build
