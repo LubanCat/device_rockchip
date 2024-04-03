@@ -7,6 +7,8 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up pcba ..."
+
 	rm -rf buildroot/output/$RK_PCBA_CFG
 	rm -rf "$RK_OUTDIR/pcba"
 

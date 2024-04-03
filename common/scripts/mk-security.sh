@@ -396,6 +396,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up security ..."
 	rm -rf $RK_OUTDIR/security*
 }
 

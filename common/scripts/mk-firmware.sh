@@ -74,6 +74,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up firmware ..."
 	rm -rf "$RK_FIRMWARE_DIR" "$RK_ROCKDEV_DIR"
 }
 

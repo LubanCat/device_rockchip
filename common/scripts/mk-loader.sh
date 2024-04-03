@@ -101,6 +101,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up loader ..."
 	make -C u-boot distclean
 
 	rm -rf "$RK_FIRMWARE_DIR/uboot.img"

@@ -232,8 +232,15 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up kernel ..."
+
 	[ ! -d kernel ] || make -C kernel distclean
 
+	rm -f $RK_SDK_DIR/{linux-*.buildinfo,linux-*.changes}
+	rm -f $RK_SDK_DIR/{linux-headers-*.deb,linux-image-*.deb,linux-libc-dev*.deb}
+	rm -rf $RK_SDK_DIR/kernel/{extboot.img,extboot}
+
+	rm -rf  $KERNEL_DIR/linux-*.deb
 	rm -rf "$RK_OUTDIR/recovery-*"
 	rm -f "$RK_FIRMWARE_DIR/linux-headers.tar"
 	rm -rf "$RK_FIRMWARE_DIR/boot.img"

@@ -9,6 +9,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up misc ..."
 	rm -rf "$RK_FIRMWARE_DIR/misc.img" "$RK_OUTDIR/misc.img"
 }
 

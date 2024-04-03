@@ -163,6 +163,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up config ..."
 	rm -rf "$RK_OUTDIR"/*config* "$RK_OUTDIR/kconf"
 }
 

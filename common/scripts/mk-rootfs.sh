@@ -158,8 +158,10 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up rootfs ..."
+
 	rm -rf yocto/build/tmp yocto/build/*cache
-	rm -rf debian/binary
+	sudo rm -rf debian/binary
 
 	if check_config RK_BUILDROOT &>/dev/null; then
 		rm -rf buildroot/output/$RK_BUILDROOT_CFG

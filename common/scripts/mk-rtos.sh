@@ -129,6 +129,7 @@ build_rtthread()
 clean_hook()
 {
 	[ "$RK_RTOS" ] || return 0
+	message "Clean up rtos ..."
 
 	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
 	scons -c >/dev/null || true

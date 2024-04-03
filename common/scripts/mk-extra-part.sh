@@ -9,6 +9,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up extra part ..."
 	rm -rf "$RK_EXTRA_PART_OUTDIR"
 
 	for idx in $(seq 1 "$(rk_extra_part_num)"); do

@@ -7,6 +7,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up recovery ..."
 	rm -rf buildroot/output/$RK_RECOVERY_CFG
 	rm -rf "$RK_OUTDIR/recovery"
 

@@ -182,6 +182,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up updateimg ..."
 	rm -rf "$RK_OUTDIR/*update*"
 	rm -rf "$RK_FIRMWARE_DIR/*update.img"
 }

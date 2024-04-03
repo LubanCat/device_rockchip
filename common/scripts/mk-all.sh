@@ -142,6 +142,7 @@ usage_hook()
 
 clean_hook()
 {
+	message "Clean up $RK_OUTDIR ..."
 	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/$BOARD*
 }
 
