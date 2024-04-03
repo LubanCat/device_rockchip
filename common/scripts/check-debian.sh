@@ -12,6 +12,16 @@ if findmnt -fnu -o OPTIONS -T "$RK_SCRIPTS_DIR" | grep -qE "nodev"; then
 	exit 1
 fi
 
+# The -d option is required to pack Debian rootfs
+if ! mke2fs -h 2>&1 | grep -wq "\-d"; then
+	echo -e "\e[35m"
+	echo "Your mke2fs is too old: $(mke2fs -V 2>&1 | head -n 1)"
+	echo "Please update it:"
+	"$RK_SCRIPTS_DIR/install-e2fsprogs.sh"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	echo -e "\e[35m"
 	echo "Your live-build doesn't support $RK_DEBIAN_VERSION"
