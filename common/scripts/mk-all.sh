@@ -42,20 +42,19 @@ build_release()
 if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
 	shift
 
-	RELEASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}/$RK_PACKAGE_NAME"
+	RELEASE_DIR="$RK_SDK_DIR/output-release/$BOARD${1:+/$1}/$RK_PACKAGE_NAME"
 
 	message "Saving into $RELEASE_DIR...\n"
 	rm -rf "$RELEASE_DIR"
 	mkdir -p "$RELEASE_DIR" "$RELEASE_DIR/IMAGES"
 
 	message "Saving images..."
-	# cp -rvL "$RK_FIRMWARE_DIR" "$RELEASE_DIR/IMAGES"
 	cp -rvL "$RK_FIRMWARE_DIR/update.img" "$RELEASE_DIR/IMAGES/"
 
 	cd "$RELEASE_DIR/IMAGES"
 	mv update.img  ${RK_PACKAGE_NAME}_update.img
-	md5sum ${RK_PACKAGE_NAME}_update.img > md5sum.txt
 	message "Saving md5sum and ${RK_PACKAGE_NAME}_update.7z ..."
+	md5sum ${RK_PACKAGE_NAME}_update.img > md5sum.txt
 	7z a ../${RK_PACKAGE_NAME}_update.7z ${RK_PACKAGE_NAME}_update.img md5sum.txt
 	cd -
 
