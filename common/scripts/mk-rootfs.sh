@@ -86,6 +86,7 @@ build_yocto()
 		echo "PREFERRED_VERSION_linux-rockchip :=" \
 			"\"$RK_KERNEL_VERSION_RAW%\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
+		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
 		case "$RK_CHIP_FAMILY" in
 			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;
