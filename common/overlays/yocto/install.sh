@@ -7,7 +7,7 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 # Login root on serial console
 if [ -r "$TARGET_DIR/etc/inittab" ]; then
-	sed -i 's~\(respawn:\)/bin/start_getty.*~\1/bin/login -p root~' \
+	sed -i 's~\(respawn:.*\)/bin/start_getty.*~\1/bin/login -p root~' \
 		"$TARGET_DIR/etc/inittab"
 fi
 
