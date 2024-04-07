@@ -43,7 +43,7 @@ do_build_extboot()
 	run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 	run_command $KMAKE dtbs
 
-	KERNEL_VERSION=$(cat $RK_SDK_DIR/kernel/include/config/kernel.release)
+	KERNEL_VER=$(cat $RK_SDK_DIR/kernel/include/config/kernel.release)
 	EXTBOOT_IMG=${RK_SDK_DIR}/kernel/extboot.img
 	EXTBOOT_DIR=${RK_SDK_DIR}/kernel/extboot
 	EXTBOOT_DTB_DIR=${EXTBOOT_DIR}/dtb/
@@ -52,11 +52,11 @@ do_build_extboot()
 	mkdir -p $EXTBOOT_DTB_DIR/overlay 
 	mkdir -p $EXTBOOT_DIR/{uEnv,kerneldeb,extlinux}
 
-	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VERSION
+	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VER
 
 
-	echo -e "label kernel-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
-	echo -e "\tkernel /Image-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "label kernel-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tkernel /Image-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 	echo -e "\tdevicetreedir /" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 	echo -e "\tappend  root=/dev/mmcblk0p3 earlyprintk console=ttyFIQ0 console=tty1 consoleblank=0 loglevel=7 rootwait rw rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 switolb=1 coherent_pool=1m" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 
@@ -66,21 +66,21 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
 	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
-	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION ]]; then
-		cp ${RK_SDK_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION $EXTBOOT_DIR/initrd-$KERNEL_VERSION
+	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_VER ]]; then
+		cp ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_VER $EXTBOOT_DIR/initrd-$KERNEL_VER
 	fi
 
 	if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
 		mkimage -T script -C none -d $EXTBOOT_DIR/boot.cmd $EXTBOOT_DIR/boot.scr
 	fi
 
-	cp ${RK_SDK_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VERSION
-	cp ${RK_SDK_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VERSION
+	cp ${RK_SDK_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VER
+	cp ${RK_SDK_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VER
 	cp ${RK_SDK_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/
 	cp ${RK_SDK_DIR}/kernel/logo_boot.bmp $EXTBOOT_DIR/logo.bmp
 
-	cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
-	cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VERSION"_"$KERNEL_VERSION"-*.deb $EXTBOOT_DIR/kerneldeb
+	cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+	cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
 
 	rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
 	fakeroot mkfs.ext2 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
