@@ -6,7 +6,7 @@ comment "Rootfs system depends on linux kernel"
 menuconfig RK_ROOTFS
 	bool "Rootfs (Buildroot|Debian|Yocto)"
 	depends on RK_KERNEL
-	default y if !RK_RTOS
+	default y if !RK_AMP
 
 if RK_ROOTFS
 

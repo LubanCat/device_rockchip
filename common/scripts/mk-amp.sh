@@ -1,26 +1,26 @@
 #!/bin/bash -e
 
 RK_RTOS_BSP_DIR=$RK_SDK_DIR/rtos/bsp/rockchip
-ITS_FILE="$RK_CHIP_DIR/$RK_RTOS_FIT_ITS"
+ITS_FILE="$RK_CHIP_DIR/$RK_AMP_FIT_ITS"
 
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 
 usage_hook()
 {
-	echo -e "rtos                             \tbuild and pack RTOS"
+	echo -e "amp                              \tbuild and pack amp system"
 }
 
-rtos_get_value()
+amp_get_value()
 {
 	echo "$1" | grep -owP "$2\s*=\s*<([^>]+)>" | awk -F'<|>' '{print $2}'
 }
 
-rtos_get_string()
+amp_get_string()
 {
 	echo "$1" | grep -owP "$2\s*=.*\"([^>]+)\"" | awk -F'"' '{print $2}'
 }
 
-rtos_get_node()
+amp_get_node()
 {
 	echo "$1" | \
 	awk -v node="$2" \
@@ -106,10 +106,10 @@ build_rtthread()
 	mv rtthread.bin Image/rtt$2.bin
 	ln -rsf Image/rtt$2.bin $RK_OUTDIR/$3.bin
 
-	if [ -n "$RK_RTOS_RTT_ROOTFS_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
+	if [ -n "$RK_AMP_RTT_ROOTFS_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
 
-		RTT_TOOLS_PATH=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/../tools
-		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET/$RK_RTOS_RTT_ROOTFS_DATA
+		RTT_TOOLS_PATH=$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET/../tools
+		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET/$RK_AMP_RTT_ROOTFS_DATA
 		RTT_ROOTFS_SECTOR_SIZE=$(($(printf "%d" $ROOT_PART_SIZE) / 8)) # covert to 4096B
 
 		ROOT_SECTOR_SIZE=$(grep -r "CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE" "$4" | cut -d '=' -f 2)
@@ -130,13 +130,17 @@ build_rtthread()
 
 clean_hook()
 {
-	[ "$RK_RTOS" ] || return 0
+	[ "$RK_AMP" ] || return 0
 
-	cd "$RK_RTOS_BSP_DIR/$RK_RTOS_RTT_TARGET"
-	scons -c >/dev/null || true
+	if [ "$RK_AMP_RTT_TARGET" ]; then
+		cd "$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET"
+		scons -c >/dev/null || true
+	fi
 
-	cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_RTOS_HAL_TARGET/GCC"
-	make clean >/dev/null || true
+	if [ "$RK_AMP_HAL_TARGET" ]; then
+		cd "$RK_RTOS_BSP_DIR/common/hal/project/$RK_AMP_HAL_TARGET/GCC"
+		make clean >/dev/null || true
+	fi
 
 	rm -rf "$RK_FIRMWARE_DIR/amp.img"
 }
@@ -145,13 +149,13 @@ build_images()
 {
 	for item in $1
 	do
-		ITS_IMAGE=$(rtos_get_node "$(cat $ITS_FILE)" $item)
-		export FIRMWARE_CPU_BASE=$(rtos_get_value "$ITS_IMAGE" load)
-		export DRAM_SIZE=$(rtos_get_value "$ITS_IMAGE" size)
-		export SRAM_BASE=$(rtos_get_value "$ITS_IMAGE" srambase)
-		export SRAM_SIZE=$(rtos_get_value "$ITS_IMAGE" sramsize)
-		export CUR_CPU=$(rtos_get_value "$ITS_IMAGE" cpu)
-		CPU_BIN=$(rtos_get_string "$ITS_IMAGE" data)
+		ITS_IMAGE=$(amp_get_node "$(cat $ITS_FILE)" $item)
+		export FIRMWARE_CPU_BASE=$(amp_get_value "$ITS_IMAGE" load)
+		export DRAM_SIZE=$(amp_get_value "$ITS_IMAGE" size)
+		export SRAM_BASE=$(amp_get_value "$ITS_IMAGE" srambase)
+		export SRAM_SIZE=$(amp_get_value "$ITS_IMAGE" sramsize)
+		export CUR_CPU=$(amp_get_value "$ITS_IMAGE" cpu)
+		CPU_BIN=$(amp_get_string "$ITS_IMAGE" data)
 		if (( $CUR_CPU > 0xff )); then
 			CUR_CPU=$((CUR_CPU >> 8))
 		fi
@@ -164,28 +168,28 @@ build_images()
 			echo $(env | grep -w $p && true)
 		done
 
-		SYS=$(rtos_get_string "$ITS_IMAGE" sys)
-		CORE=$(rtos_get_string "$ITS_IMAGE" core)
+		SYS=$(amp_get_string "$ITS_IMAGE" sys)
+		CORE=$(amp_get_string "$ITS_IMAGE" core)
 		SYS="${SYS}${CORE:+_$CORE}"
 
 		case $SYS in
 			hal_mcu)
-				build_hal RK_RTOS_MCU_HAL_TARGET mcu \
+				build_hal RK_AMP_MCU_HAL_TARGET mcu \
 					  "$(basename -s .bin $CPU_BIN)"
 				;;
 			hal|hal_ap)
-				build_hal RK_RTOS_HAL_TARGET $CUR_CPU \
+				build_hal RK_AMP_HAL_TARGET $CUR_CPU \
 					  "$(basename -s .bin $CPU_BIN)"
 				;;
 			rtt_mcu)
-				build_rtthread RK_RTOS_MCU_RTT_TARGET mcu \
+				build_rtthread RK_AMP_MCU_RTT_TARGET mcu \
 					       "$(basename -s .bin $CPU_BIN)" \
-					       "$(rtos_get_string "$ITS_IMAGE" rtt_config)"
+					       "$(amp_get_string "$ITS_IMAGE" rtt_config)"
 				;;
 			rtt|rtt_ap)
-				build_rtthread RK_RTOS_RTT_TARGET $CUR_CPU \
+				build_rtthread RK_AMP_RTT_TARGET $CUR_CPU \
 					       "$(basename -s .bin $CPU_BIN)" \
-					       "$(rtos_get_string "$ITS_IMAGE" rtt_config)" \
+					       "$(amp_get_string "$ITS_IMAGE" rtt_config)" \
 				;;
 			*)
 				break;;
@@ -193,45 +197,45 @@ build_images()
 	done
 }
 
-BUILD_CMDS="rtos"
+BUILD_CMDS="amp"
 build_hook()
 {
 	local i
 
-	check_config RK_RTOS || false
+	check_config RK_AMP || false
 
 	message "=========================================="
-	message "          Start building RTOS"
+	message "          Start building AMP"
 	message "=========================================="
 
-	"$RK_SCRIPTS_DIR/check-rtos.sh"
+	"$RK_SCRIPTS_DIR/check-amp.sh"
 
-	export CROSS_COMPILE=$(get_toolchain RTOS "$RK_RTOS_ARCH" "" none)
+	export CROSS_COMPILE=$(get_toolchain AMP "$RK_AMP_ARCH" "" none)
 	[ "$CROSS_COMPILE" ] || exit 1
 
-	if [ -f "$RK_CHIP_DIR/$RK_RTOS_CFG" ]; then
+	if [ -f "$RK_CHIP_DIR/$RK_AMP_CFG" ]; then
 		set -a
-		source $RK_CHIP_DIR/$RK_RTOS_CFG
+		source $RK_CHIP_DIR/$RK_AMP_CFG
 		set +a
 	fi
 
 	CORE_NUMBERS=$(grep -wcE "amp[0-9]* {" $ITS_FILE)
 	echo "CORE_NUMBERS=$CORE_NUMBERS"
 
-	EXT_SHARE=$(rtos_get_node "$(cat $ITS_FILE)" share)
+	EXT_SHARE=$(amp_get_node "$(cat $ITS_FILE)" share)
 	if [ "$EXT_SHARE" ]; then
-		SHMEM_BASE=$(rtos_get_value "$EXT_SHARE" "shm_base")
+		SHMEM_BASE=$(amp_get_value "$EXT_SHARE" "shm_base")
 		if [ "$SHMEM_BASE" ]; then
 			export SHMEM_BASE
-			export SHMEM_SIZE=$(rtos_get_value "$EXT_SHARE" "shm_size")
-			AMP_PRIMARY_CORE=$(rtos_get_value "$EXT_SHARE" primary)
+			export SHMEM_SIZE=$(amp_get_value "$EXT_SHARE" "shm_size")
+			AMP_PRIMARY_CORE=$(amp_get_value "$EXT_SHARE" primary)
 			[ ! $AMP_PRIMARY_CORE ] || export AMP_PRIMARY_CORE=$(($AMP_PRIMARY_CORE))
 		fi
 
-		LINUX_RPMSG_BASE=$(rtos_get_value "$EXT_SHARE" "rpmsg_base")
+		LINUX_RPMSG_BASE=$(amp_get_value "$EXT_SHARE" "rpmsg_base")
 		if [ "$LINUX_RPMSG_BASE" ]; then
 			export LINUX_RPMSG_BASE=$LINUX_RPMSG_BASE
-			export LINUX_RPMSG_SIZE=$(rtos_get_value "$EXT_SHARE" "rpmsg_size")
+			export LINUX_RPMSG_SIZE=$(amp_get_value "$EXT_SHARE" "rpmsg_size")
 		fi
 	fi
 
@@ -245,7 +249,7 @@ build_hook()
 
 	$RK_RTOS_BSP_DIR/tools/mkimage -f amp.its -E -p 0xe00 $RK_FIRMWARE_DIR/amp.img
 
-	finish_build rtos $@
+	finish_build amp $@
 }
 
 source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"

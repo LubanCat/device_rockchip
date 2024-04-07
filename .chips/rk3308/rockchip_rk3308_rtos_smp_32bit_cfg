@@ -1,2 +1,2 @@
 # RT-Thread config
-RK_RTOS_RTT_ROOTFS_DATA="userdata"
+RK_AMP_RTT_ROOTFS_DATA="userdata"

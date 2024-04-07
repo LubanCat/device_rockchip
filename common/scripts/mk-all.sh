@@ -23,7 +23,7 @@ build_all()
 		"$RK_SCRIPTS_DIR/mk-security.sh" security-ramboot
 	[ -z "$RK_RECOVERY" ] || "$RK_SCRIPTS_DIR/mk-recovery.sh"
 
-	[ -z "$RK_RTOS" ] || "$RK_SCRIPTS_DIR/mk-rtos.sh"
+	[ -z "$RK_AMP" ] || "$RK_SCRIPTS_DIR/mk-amp.sh"
 
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 

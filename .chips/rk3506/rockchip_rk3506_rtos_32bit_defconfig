@@ -1,2 +1,2 @@
-RK_RTOS=y
+RK_AMP=y
 # RK_KERNEL is not set
