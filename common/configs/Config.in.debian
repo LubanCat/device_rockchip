@@ -5,7 +5,8 @@ comment "Debian is not supported for this chip"
 
 config RK_DEBIAN_SUPPORTS
 	bool
-	default y if RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
+	default y if RK_CHIP_FAMILY = "rk312x" || \
+		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
 		RK_CHIP_FAMILY = "rk3399" || RK_CHIP_FAMILY = "rk3399pro" || \
 		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
