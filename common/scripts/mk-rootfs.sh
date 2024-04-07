@@ -128,8 +128,8 @@ build_debian()
 	else
 	# building iamge
 		notice "No $RK_ROOTFS_IMAGE, Run Make Debian Scripts"
-			if [ ! -f linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-alip-*.tar.gz ]; then
-				notice "build linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-alip-*.tar.gz"
+			if [ ! -f linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-$ARCH-alip-*.tar.gz ]; then
+				notice "build linaro-$RK_DEBIAN_VERSION-$RK_ROOTFS_TARGET-$ARCH-alip-*.tar.gz"
 				RELEASE=$RK_DEBIAN_VERSION TARGET=$RK_ROOTFS_TARGET ARCH=$ARCH \
 					./mk-base-debian.sh
 			fi
