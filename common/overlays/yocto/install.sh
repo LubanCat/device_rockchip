@@ -11,6 +11,11 @@ if [ -r "$TARGET_DIR/etc/inittab" ]; then
 		"$TARGET_DIR/etc/inittab"
 fi
 
+# Drop Poky warnings in motd
+if [ -r "$TARGET_DIR/etc/motd" ]; then
+	sed -i '/^WARNING: Poky/,+2d' "$TARGET_DIR/etc/motd"
+fi
+
 # Use uid to detect root user
 if [ -r "$TARGET_DIR/etc/profile" ]; then
 	sed -i 's~"$HOME" != "/home/root"~$(id -u) -ne 0~' \
