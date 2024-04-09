@@ -27,8 +27,7 @@ config RK_DEBIAN_VERSION
 
 choice
 	prompt "distro"
-	default RK_DEBIAN_BOOKWORM if RK_CHIP_FAMILY = "rk3576"
-	default RK_DEBIAN_BULLSEYE
+	default RK_DEBIAN_BOOKWORM
 
 config RK_DEBIAN_BUSTER
 	bool "buster"
