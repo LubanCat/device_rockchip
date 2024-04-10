@@ -1,13 +1,16 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-7c115ff17bc audit: Support forcing static build
+7b5f90e0f3 android-adb: New package
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
 
 BR2_PACKAGE_AUDIT=y
 BR2_PACKAGE_AUDIT_STATIC=y
+
+BR2_PACKAGE_ANDROID_ADB=y
+BR2_PACKAGE_ANDROID_ADB_STATIC=y
 
 BR2_PACKAGE_ANDROID_ADBD=y
 BR2_PACKAGE_ANDROID_ADBD_STATIC=y
