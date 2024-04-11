@@ -106,13 +106,14 @@ $(BUILD_DIR)/%onf: $(shell find $(CONFIG))
 	    obj=$(@D) -C $(CONFIG) -f Makefile.br $(@F)
 
 TARGET_DEFCONFIG := $(filter %_defconfig,$(MAKECMDGOALS))
-ifneq ($(TARGET_DEFCONFIG),)
-RK_DEFCONFIG := $(realpath $(CHIP_DIR)/$(TARGET_DEFCONFIG))
-else
-RK_DEFCONFIG := $(shell [ -e ${RK_CONFIG} ] && \
+ifeq ($(TARGET_DEFCONFIG),)
+TARGET_DEFCONFIG := $(shell [ -e ${RK_CONFIG} ] && \
 	grep RK_DEFCONFIG ${RK_CONFIG} | cut -d'=' -f2)
+ifeq ($(TARGET_DEFCONFIG),)
+TARGET_DEFCONFIG := rockchip_defconfig
 endif
-DEFCONFIG := $(call qstrip,$(RK_DEFCONFIG))
+endif
+DEFCONFIG := $(realpath $(CHIP_DIR)/$(call qstrip,$(TARGET_DEFCONFIG)))
 DEFCONFIG_NAME := $(notdir $(DEFCONFIG))
 
 # Setup some default values
@@ -121,7 +122,7 @@ RK_CHIP := $(shell echo ${DEFCONFIG_NAME} | \
 	cut -d'_' -f2 | grep -E "^(px|rk|rv)")
 
 COMMON_CONFIG_ENV = \
-	RK_DEFCONFIG='$(call qstrip,$(RK_DEFCONFIG))' \
+	RK_DEFCONFIG='$(call qstrip,$(DEFCONFIG_NAME))' \
 	RK_CHIP_FAMILY='$(call qstrip,$(RK_CHIP_FAMILY))' \
 	RK_CHIP='$(call qstrip,$(RK_CHIP))' \
 	KCONFIG_AUTOCONFIG=$(BUILD_DIR)/auto.conf \
@@ -159,7 +160,7 @@ help:
 	@echo '  oldconfig              - resolve any unresolved symbols in .config'
 	@echo '  syncconfig             - Same as oldconfig, but quietly, additionally update deps'
 	@echo '  olddefconfig           - Same as syncconfig but sets new symbols to their default value'
-	@echo '  savedefconfig          - Save current config to RK_DEFCONFIG (minimal config)'
+	@echo '  savedefconfig          - Save current config to $$RK_CHIP_DIR/$$RK_DEFCONFIG (minimal config)'
 	@echo '  clean                  - Cleanup'
 	@echo
 	@echo 'from build.sh:'

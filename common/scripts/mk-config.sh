@@ -133,7 +133,7 @@ prepare_config()
 		return 0
 	fi
 
-	CFG="RK_DEFCONFIG=\"$(realpath "$RK_DEFCONFIG_LINK")\""
+	CFG="RK_DEFCONFIG=\"$DEFCONFIG\""
 	if ! grep -wq "$CFG" "$RK_CONFIG"; then
 		warning "WARN: $RK_CONFIG is invalid"
 		make $DEFCONFIG
