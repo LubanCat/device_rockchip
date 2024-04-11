@@ -630,6 +630,9 @@ static void build_conf(struct menu *menu)
 			  (sym_has_value(sym) || !sym_is_changable(sym)) ?
 			  "" : _(" (NEW)"));
 		if (menu->prompt->type == P_MENU) {
+			if (sym_is_optional(sym) && val != yes)
+				return;
+
 			item_add_str("  %s", menu_is_empty(menu) ? "----" : "--->");
 			return;
 		}
@@ -695,7 +698,9 @@ static void conf(struct menu *menu, struct menu *active_menu)
 			case 't':
 				if (sym_is_choice(sym) && sym_get_tristate_value(sym) == yes)
 					conf_choice(submenu);
-				else if (submenu->prompt->type == P_MENU)
+				else if (submenu->prompt->type == P_MENU &&
+					 (!sym_is_optional(sym) ||
+					  sym_get_tristate_value(sym) == yes))
 					conf(submenu, NULL);
 				break;
 			case 's':
