@@ -15,5 +15,10 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 message "Installing fstrim service to $TARGET_DIR..."
 
-install_sysv_service "$OVERLAY_DIR/S99fstrim" 5 4 3 2 K01 0 1 6
-install_busybox_service "$OVERLAY_DIR/S99fstrim"
+cp -f "$OVERLAY_DIR/S99fstrim" "$RK_OUTDIR/"
+sed -i "s/\(INTERVAL=\).*/\1$RK_ROOTFS_FSTRIM_INTERVAL/" "$RK_OUTDIR/S99fstrim"
+
+install_sysv_service "$RK_OUTDIR/S99fstrim" 5 4 3 2 K01 0 1 6
+install_busybox_service "$RK_OUTDIR/S99fstrim"
+
+rm -f "$RK_OUTDIR/S99fstrim"

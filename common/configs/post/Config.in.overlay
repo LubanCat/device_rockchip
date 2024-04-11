@@ -54,6 +54,11 @@ config RK_ROOTFS_FSTRIM
 	bool "fstrim (Discard unused blocks on all filesystems)"
 	default y
 
+config RK_ROOTFS_FSTRIM_INTERVAL
+	int "interval (seconds)"
+	depends on RK_ROOTFS_FSTRIM
+	default 3600
+
 source "post/Config.in.frecon"
 
 config RK_ROOTFS_PREBUILT_TOOLS
