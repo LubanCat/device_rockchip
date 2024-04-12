@@ -28,7 +28,7 @@ config RK_YOCTO_CFG_DEFAULT
 config RK_YOCTO_CFG_CUSTOM
 	bool "custom"
 	help
-	  Use custom local config file under yocto/build/conf.
+	  Use custom local config file.
 
 endchoice # yocto local config
 
@@ -37,7 +37,8 @@ config RK_YOCTO_CFG
 	depends on RK_YOCTO_CFG_CUSTOM
 	default "local.conf"
 	help
-	  Name of yocto custom local config file under yocto/build/conf/.
+	  Name of yocto custom local config file under $RK_CHIP_DIR or
+	  yocto/build/conf/.
 
 if RK_YOCTO_CFG_DEFAULT
 

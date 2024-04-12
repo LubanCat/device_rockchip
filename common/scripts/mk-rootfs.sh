@@ -39,13 +39,16 @@ build_yocto()
 	rm -f build/conf/local.conf
 
 	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
-		if [ ! -r "build/conf/$RK_YOCTO_CFG" ]; then
+		if [ -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
+			ln -rsf "$RK_CHIP_DIR/$RK_YOCTO_CFG" \
+				build/conf/local.conf
+		elif [ -r "build/conf/$RK_YOCTO_CFG" ]; then
+			if [ "$RK_YOCTO_CFG" != local.conf ]; then
+				ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
+			fi
+		else
 			error "yocto/build/conf/$RK_YOCTO_CFG not exist!"
 			return 1
-		fi
-
-		if [ "$RK_YOCTO_CFG" != local.conf ]; then
-			ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
 		fi
 
 		message "=========================================="
