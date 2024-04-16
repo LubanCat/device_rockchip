@@ -257,7 +257,7 @@ build_wifibt()
 	mkdir -p $TARGET_DIR/etc/ $TARGET_DIR/usr/bin/ \
 		$TARGET_DIR/lib/modules/ $TARGET_DIR/lib/firmware/rtlbt/
 
-	echo "create Android stype dirs"
+	echo "create Android style dirs"
 	rm -rf "$TARGET_DIR/system"
 	rm -rf "$TARGET_DIR/vendor"
 	mkdir -p "$TARGET_DIR/system/etc"
@@ -271,6 +271,7 @@ build_wifibt()
 	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
 	install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"
 	install -m 0755 $RKWIFIBT_DIR/scripts/* "$TARGET_DIR/usr/bin/"
+	rm -f "$TARGET_DIR/usr/bin/wifibt-sleep-hook.sh"
 	for b in bt-tty wifibt-info wifibt-vendor wifibt-id wifibt-bus \
 		wifibt-chip wifibt-module; do
 		ln -sf wifibt-util.sh "$TARGET_DIR/usr/bin/$b"
@@ -359,6 +360,13 @@ build_wifibt()
 	install_sysv_service $RKWIFIBT_DIR/S36wifibt-init.sh S
 	install_busybox_service $RKWIFIBT_DIR/S36wifibt-init.sh
 	install_systemd_service $RKWIFIBT_DIR/wifibt-init.service
+
+	# Install suspend hook
+	for hook_dir in /usr/lib/pm-utils/sleep.d /lib/systemd/system-sleep; do
+		[ -d "$TARGET_DIR/$hook_dir" ] || continue
+		install -m 0755 $RKWIFIBT_DIR/scripts/wifibt-sleep-hook.sh \
+			"$TARGET_DIR/$hook_dir/03wifibt"
+	done
 
 	# Log collection
 	mkdir -p "$TARGET_DIR/etc/generate_logs.d"
