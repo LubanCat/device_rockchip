@@ -31,7 +31,7 @@ fstrim_start()
 
 		logger -s -t fstrim "Starting fstrim process ($$)..."
 		while true; do
-			/sbin/fstrim -av | logger -s -t fstrim
+			/sbin/fstrim -av | logger -t fstrim
 			sleep $INTERVAL
 		done
 	}&
