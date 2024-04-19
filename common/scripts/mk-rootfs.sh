@@ -82,6 +82,12 @@ build_yocto()
 		message "=========================================="
 	fi
 
+	if [ "$RK_YOCTO_EXTRA_CFG" ]; then
+		message "=========================================="
+		message "          With extra config:($RK_YOCTO_EXTRA_CFG)"
+		message "=========================================="
+	fi
+
 	{
 		echo "include include/rksdk.conf"
 		echo
@@ -97,9 +103,13 @@ build_yocto()
 	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
+
+	set -x
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -C rootfs \
-		-R conf/rksdk_override.conf
+		-R conf/rksdk_override.conf \
+		${RK_YOCTO_EXTRA_CFG:+-R $RK_CHIP_DIR/$RK_YOCTO_EXTRA_CFG}
+	set x
 
 	ln -rsf "$PWD/latest/rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 

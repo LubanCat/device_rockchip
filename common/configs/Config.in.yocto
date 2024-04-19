@@ -84,6 +84,11 @@ endchoice # yocto display platform
 
 endif # yocto cfg default
 
+config RK_YOCTO_EXTRA_CFG
+	string "extra custom local config"
+	help
+	  Name of yocto extra custom local config file under $RK_CHIP_DIR.
+
 config RK_YOCTO_USBMOUNT
 	bool "usbmount (Mount Udisk and SDcard)"
 	default y
