@@ -35,7 +35,6 @@ fstrim_start()
 			sleep $INTERVAL
 		done
 	}&
-	disown
 }
 
 case "$1" in
