@@ -16,11 +16,13 @@ if RK_ROOTFS
 source "Config.in.buildroot"
 source "Config.in.yocto"
 source "Config.in.debian"
+source "Config.in.ubuntu"
 
 config RK_ROOTFS_SYSTEM
 	string
 	default "buildroot" if RK_ROOTFS_SYSTEM_BUILDROOT
 	default "debian" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "ubuntu" if RK_ROOTFS_SYSTEM_UBUNTU
 	default "yocto" if RK_ROOTFS_SYSTEM_YOCTO
 
 choice
@@ -36,19 +38,22 @@ config RK_ROOTFS_SYSTEM_DEBIAN
 	bool "debian"
 	depends on RK_DEBIAN
 
+config RK_ROOTFS_SYSTEM_UBUNTU
+	bool "ubuntu"
+	depends on RK_UBUNTU
+
 config RK_ROOTFS_SYSTEM_YOCTO
 	bool "yocto"
 	depends on RK_YOCTO
 
 endchoice
 
-if RK_ROOTFS_SYSTEM_DEBIAN
+if RK_ROOTFS_SYSTEM="debian" || RK_ROOTFS_SYSTEM="ubuntu"
 
 config RK_ROOTFS_TARGET
 	string
 	default "gnome" if RK_ROOTFS_TARGET_GNOME
 	default "xfce" if RK_ROOTFS_TARGET_XFCE
-	default "lxde" if RK_ROOTFS_TARGET_LXDE
 	default "lite" if RK_ROOTFS_TARGET_LITE
 
 choice
@@ -61,9 +66,6 @@ config RK_ROOTFS_TARGET_GNOME
 
 config RK_ROOTFS_TARGET_XFCE
 	bool "xfce"
-
-config RK_ROOTFS_TARGET_LXDE
-	bool "lxde"
 
 config RK_ROOTFS_TARGET_LITE
 	bool "lite"
@@ -91,6 +93,7 @@ endchoice
 config RK_ROOTFS_IMAGE
 	string "rootfs image name"
 	default "linaro-${RK_CHIP}-${RK_ROOTFS_TARGET}-rootfs.img" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "ubuntu-${RK_CHIP}-${RK_ROOTFS_TARGET}-rootfs.img" if RK_ROOTFS_SYSTEM_UBUNTU
 	default ""
 
 endif

@@ -1,0 +1,68 @@
+#
+
+comment "Ubuntu is not supported for this chip"
+	depends on !RK_UBUNTU_SUPPORTS
+
+config RK_UBUNTU_SUPPORTS
+	bool
+	default y if \
+		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
+		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
+		RK_CHIP_FAMILY = "rk3399" || RK_CHIP_FAMILY = "rk3399pro" || \
+		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
+		RK_CHIP_FAMILY = "rk3562" || RK_CHIP_FAMILY = "rk3528"
+
+if RK_UBUNTU_SUPPORTS
+
+menu "Ubuntu"
+
+config RK_UBUNTU
+	bool "ubuntu"
+	default y
+
+if RK_UBUNTU
+
+config RK_UBUNTU_VERSION
+	string
+	default "focal" if RK_UBUNTU_FOCAL
+	default "jammy" if RK_UBUNTU_JAMMY
+
+config RK_UBUNTU_NUMBER
+	string
+	default "ubuntu20.04" if RK_UBUNTU_FOCAL
+	default "ubuntu22.04" if RK_UBUNTU_JAMMY
+
+choice
+	prompt "ubuntu version"
+	default RK_UBUNTU_JAMMY
+
+config RK_UBUNTU_FOCAL
+	bool "focal"
+
+config RK_UBUNTU_JAMMY
+	bool "jammy"
+
+endchoice
+
+config RK_UBUNTU_ARCH
+	string
+	default "armhf" if RK_UBUNTU_ARMHF
+	default "arm64" if RK_UBUNTU_ARM64
+
+choice
+	prompt "ubuntu rootfs arch"
+
+config RK_UBUNTU_ARM64
+	bool "arm64"
+	depends on !RK_CHIP_ARM32
+
+config RK_UBUNTU_ARMHF
+	bool "armhf"
+
+endchoice
+
+endif
+
+endmenu # Ubuntu
+
+endif

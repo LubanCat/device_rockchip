@@ -61,11 +61,12 @@ config RK_OTA_PACKAGE_FILE
 
 endif
 
-if RK_ROOTFS_SYSTEM_DEBIAN
+if RK_ROOTFS_SYSTEM_DEBIAN || RK_ROOTFS_SYSTEM_UBUNTU
 
 config RK_PACKAGE_NAME
 	string "update image package name"
 	default "lubancat-${RK_CHIP}-${RK_DEBIAN_NUMBER}-${RK_ROOTFS_TARGET}-$(date +%Y%m%d)" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "lubancat-${RK_CHIP}-${RK_UBUNTU_NUMBER}-${RK_ROOTFS_TARGET}-$(date +%Y%m%d)" if RK_ROOTFS_SYSTEM_UBUNTU
 
 endif
 
