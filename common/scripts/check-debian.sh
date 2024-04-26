@@ -70,6 +70,15 @@ if ! which qemu-$QEMU_ARCH-static >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! update-binfmts --display qemu-$QEMU_ARCH >/dev/null 2>&1; then
+	echo -e "\e[35m"
+	echo "Your qemu-$QEMU_ARCH-static(qemu-user-static) is broken"
+	echo "Please reinstall it:"
+	echo "sudo apt-get install binfmt-support qemu-user-static --reinstall"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
 	echo -e "\e[35m"
 	echo "Your qemu-$QEMU_ARCH-static is too old: $QEMU_VERSION"
@@ -78,6 +87,7 @@ if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
 		echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --disable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
+		echo "# Extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb"
 		echo "sudo cp $RK_DATA_DIR/qemu/qemu-$QEMU_ARCH-static /usr/bin/"
 		echo "sudo update-binfmts --enable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --import qemu-$QEMU_ARCH 2>/dev/null"
