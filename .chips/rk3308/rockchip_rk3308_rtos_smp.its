@@ -25,7 +25,7 @@
 				srambase     = <0xfff88000>;
 				sramsize     = <0x00038000>;
 				sys          = "rtt";
-				rtt_config   = "board/rk3308_ddr2_v10/defconfig"
+				rtt_config   = "board/rk3308_ddr2_v10/smp_defconfig"
 			};
 			udelay       = <10000>;
 			hash {
