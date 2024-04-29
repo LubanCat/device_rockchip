@@ -44,6 +44,18 @@ if ! which debootstrap >/dev/null 2>&1; then
 	exit 1
 fi
 
+if [ ! -e "/usr/share/debootstrap/scripts/$RK_DEBIAN_VERSION" ]; then
+	echo -e "\e[35m"
+	echo "Your debootstrap doesn't support $RK_DEBIAN_VERSION"
+	echo "Please replace it:"
+	echo "sudo apt-get remove debootstrap"
+	echo "git clone https://salsa.debian.org/installer-team/debootstrap.git --depth 1 -b debian/1.0.123+deb11u2"
+	echo "cd debootstrap"
+	echo "sudo make install -j8"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 # The debian SDK's e2fsprogs doesn't support new features like
 # metadata_csum_seed and orphan_file
 if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
