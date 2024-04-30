@@ -265,7 +265,7 @@ build_wifibt()
 
 	echo "copy prebuilt tools/scripts to rootfs"
 	for b in brcm_patchram_plus1 dhd_priv rtk_hciattach; do
-		install -m 0755 "$RK_TOOL_DIR/armhf/$b" "$TARGET_DIR/usr/bin"
+		install -m 0755 "$RK_TOOLS_DIR/armhf/$b" "$TARGET_DIR/usr/bin"
 	done
 	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
 	install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"

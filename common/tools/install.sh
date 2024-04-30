@@ -18,4 +18,4 @@ else
 	TARGET_ARCH=aarch64
 fi
 
-$RK_RSYNC --exclude=adbd "$OVERLAY_DIR/$TARGET_ARCH/" "$DEST_DIR/"
+$RK_RSYNC --exclude=adbd --exclude=README "$OVERLAY_DIR/$TARGET_ARCH/" "$DEST_DIR/"

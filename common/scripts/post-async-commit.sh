@@ -17,7 +17,7 @@ cd "$RK_SDK_DIR"
 mkdir -p "$TARGET_DIR/usr/bin"
 install -m 0755 external/rkscript/async-commit "$TARGET_DIR/usr/bin/"
 
-install -m 0755 "$RK_TOOL_DIR/armhf/modetest" "$TARGET_DIR/usr/bin/"
+install -m 0755 "$RK_TOOLS_DIR/armhf/modetest" "$TARGET_DIR/usr/bin/"
 
 install_sysv_service external/rkscript/S*async-commit.sh S
 install_busybox_service external/rkscript/S*async-commit.sh

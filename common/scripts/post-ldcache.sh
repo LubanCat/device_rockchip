@@ -16,4 +16,4 @@ fi
 
 message "Creating ld.so.cache for $TARGET ..."
 
-"$RK_DATA_DIR/ldconfig/ldconfig" -r "$TARGET_DIR/"
+"$RK_TOOLS_DIR/x86_64/ldconfig" -r "$TARGET_DIR/"

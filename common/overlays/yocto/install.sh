@@ -50,9 +50,9 @@ fi
 # Install usbmount
 if [ "$RK_YOCTO_USBMOUNT" ]; then
 	mkdir -p "$TARGET_DIR/usr/bin/"
-	install -m 0755 "$RK_TOOL_DIR/armhf/lockfile-create" \
+	install -m 0755 "$RK_TOOLS_DIR/armhf/lockfile-create" \
 		"$TARGET_DIR/usr/bin/"
-	install -m 0755 "$RK_TOOL_DIR/armhf/lockfile-remove" \
+	install -m 0755 "$RK_TOOLS_DIR/armhf/lockfile-remove" \
 		"$TARGET_DIR/usr/bin/"
 
 	tar xvf "$OVERLAY_DIR/usbmount.tar" -C "$TARGET_DIR"

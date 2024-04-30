@@ -2,7 +2,7 @@
 
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
-RK_DATA_DIR="${RK_DATA_DIR:-"$RK_SCRIPTS_DIR/../data/"}"
+RK_TOOLS_DIR="${RK_TOOLS_DIR:-$(realpath "$RK_SCRIPTS_DIR/../tools")}"
 
 if findmnt -fnu -o OPTIONS -T "$RK_SCRIPTS_DIR" | grep -qE "nodev"; then
 	echo -e "\e[35m"
@@ -100,7 +100,7 @@ if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
 		echo "sudo update-binfmts --disable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
 		echo "# Extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb"
-		echo "sudo cp $RK_DATA_DIR/qemu/qemu-$QEMU_ARCH-static /usr/bin/"
+		echo "sudo cp $RK_TOOLS_DIR/x86_64/qemu-$QEMU_ARCH-static /usr/bin/"
 		echo "sudo update-binfmts --enable qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --import qemu-$QEMU_ARCH 2>/dev/null"
 	else

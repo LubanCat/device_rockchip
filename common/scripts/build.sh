@@ -343,7 +343,7 @@ setup_environments()
 
 	export RK_DEFAULT_TARGET="all"
 	export RK_DATA_DIR="$RK_COMMON_DIR/data"
-	export RK_TOOL_DIR="$RK_COMMON_DIR/tools"
+	export RK_TOOLS_DIR="$RK_COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$RK_COMMON_DIR/images"
 	export RK_KBUILD_DIR="$RK_COMMON_DIR/linux-kbuild"
 	export RK_CONFIG_IN="$RK_COMMON_DIR/configs/Config.in"
