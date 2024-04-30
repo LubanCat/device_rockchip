@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-7b5f90e0f3 android-adb: New package
+e22ecfef98 busybox: Bump to buildroot upstream's 1.36.1
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -17,6 +17,7 @@ BR2_PACKAGE_ANDROID_ADBD_STATIC=y
 
 BR2_PACKAGE_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_STATIC=y
+BR2_PACKAGE_BUSYBOX_CONFIG="package/busybox/busybox-full.config"
 
 BR2_PACKAGE_LIBUNWIND=y
 BR2_PACKAGE_LIBUNWIND_STATIC=y
