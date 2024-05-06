@@ -169,6 +169,11 @@ init_hook()
 	load_config RK_KERNEL_CFG
 	check_config RK_KERNEL_CFG &>/dev/null || return 0
 
+	local KERNEL_LAST="$(cat "$RK_OUTDIR/.kernel" 2>/dev/null || true)"
+	local KERNEL_CURRENT="$(kernel_version)"
+
+	load_config RK_KERNEL_PREFERRED
+
 	# Priority: cmdline > env > last selected > preferred > current symlink
 	if echo $1 | grep -q "^kernel-"; then
 		export RK_KERNEL_VERSION=${1#kernel-}
@@ -176,24 +181,19 @@ init_hook()
 	elif [ "$RK_KERNEL_VERSION" ]; then
 		export RK_KERNEL_VERSION=${RK_KERNEL_VERSION//\"/}
 		notice "Using kernel version($RK_KERNEL_VERSION) from environment"
+	elif [ "$KERNEL_LAST" ]; then
+		export RK_KERNEL_VERSION=$KERNEL_LAST
+		notice "Using last kernel version($RK_KERNEL_VERSION)"
+	elif [ "$RK_KERNEL_PREFERRED" ]; then
+		export RK_KERNEL_VERSION=$RK_KERNEL_PREFERRED
+		notice "Using preferred kernel version($RK_KERNEL_VERSION)"
+	elif [ "$KERNEL_CURRENT" ]; then
+		RK_KERNEL_VERSION=$KERNEL_CURRENT
+		notice "Using current kernel version($RK_KERNEL_VERSION)"
+	else
+		RK_KERNEL_VERSION=5.10
+		notice "Fallback to kernel version($RK_KERNEL_VERSION)"
 	fi
-
-	load_config RK_KERNEL_PREFERRED
-
-	local KERNEL_LAST="$(cat "$RK_OUTDIR/.kernel" 2>/dev/null || true)"
-	local KERNEL_CURRENT="$(kernel_version)"
-
-	# Fallback to last
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$KERNEL_LAST}
-
-	# Fallback to preferred
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$RK_KERNEL_PREFERRED}
-
-	# Fallback to current
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-$KERNEL_CURRENT}
-
-	# Fallback to 5.10
-	RK_KERNEL_VERSION=${RK_KERNEL_VERSION:-5.10}
 
 	# Save the selected version
 	echo "$RK_KERNEL_VERSION" > "$RK_OUTDIR/.kernel"
