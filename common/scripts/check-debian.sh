@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
-RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
 RK_TOOLS_DIR="${RK_TOOLS_DIR:-$(realpath "$RK_SCRIPTS_DIR/../tools")}"
+RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
+RK_DEBIAN_VERSION="${RK_DEBIAN_VERSION:-bookworm}"
 
 if findmnt -fnu -o OPTIONS -T "$RK_SCRIPTS_DIR" | grep -qE "nodev"; then
 	echo -e "\e[35m"
@@ -52,17 +53,6 @@ if [ ! -e "/usr/share/debootstrap/scripts/$RK_DEBIAN_VERSION" ]; then
 	echo "git clone https://salsa.debian.org/installer-team/debootstrap.git --depth 1 -b debian/1.0.123+deb11u2"
 	echo "cd debootstrap"
 	echo "sudo make install -j8"
-	echo -e "\e[0m"
-	exit 1
-fi
-
-# The debian SDK's e2fsprogs doesn't support new features like
-# metadata_csum_seed and orphan_file
-if grep -wq metadata_csum_seed /etc/mke2fs.conf; then
-	echo -e "\e[35m"
-	echo "Your mke2fs is too new: $(mke2fs -V 2>&1 | head -n 1)"
-	echo "Please downgrade it:"
-	"$RK_SCRIPTS_DIR/install-e2fsprogs.sh"
 	echo -e "\e[0m"
 	exit 1
 fi
