@@ -130,6 +130,7 @@ build_recovery_kernel()
 		fi
 
 		run_command cd "$RECOVERY_KERNEL_DIR"
+		run_command ln -rsf "$KERNEL_DIR/.git" .
 		run_command ln -rsf \
 			"$KERNEL_DIR/${RK_KERNEL_RECOVERY_LOGO:-logo.bmp}" \
 			logo.bmp
