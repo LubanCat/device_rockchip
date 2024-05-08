@@ -135,11 +135,15 @@ config RK_SECURITY_CPIO_GZ
 
 endchoice # init RD type
 
-config RK_SECURITY_FIT_ITS
+config RK_SECURITY_FIT_ITS_NAME
 	string "its script for FIT ramboot image"
 	depends on RK_SECUREBOOT_FIT
 	default RK_RECOVERY_FIT_ITS_NAME if RK_RECOVERY_FIT_ITS_NAME != ""
 	default "boot4recovery.its"
+
+config RK_SECURITY_FIT_ITS
+	string
+	default "$RK_CHIP_DIR/$RK_SECURITY_FIT_ITS_NAME"
 
 endmenu # Security ramdisk
 
