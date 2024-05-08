@@ -41,10 +41,10 @@ build_release()
 
 	shift
 	RELEASE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
-	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
-		ID=buildroot) RELEASE_DIR="$RELEASE_BASE_DIR/BUILDROOT" ;;
-		ID=debian) RELEASE_DIR="$RELEASE_BASE_DIR/DEBIAN" ;;
-		ID=poky) RELEASE_DIR="$RELEASE_BASE_DIR/YOCTO" ;;
+	case "$(readlink "$RK_OUTDIR/rootfs")" in
+		buildroot) RELEASE_DIR="$RELEASE_BASE_DIR/BUILDROOT" ;;
+		debian) RELEASE_DIR="$RELEASE_BASE_DIR/DEBIAN" ;;
+		yocto) RELEASE_DIR="$RELEASE_BASE_DIR/YOCTO" ;;
 		*) RELEASE_DIR="$RELEASE_BASE_DIR" ;;
 	esac
 	[ "$1" ] || RELEASE_DIR="$RELEASE_DIR/$(date  +%Y%m%d_%H%M%S)"
@@ -89,7 +89,10 @@ build_release()
 	ln -vsf .config "$RELEASE_DIR/build_info"
 
 	message "Saving build logs..."
-	cp -rvp "$RK_LOG_BASE_DIR" "$RELEASE_DIR/"
+	cp -rvp "$RK_LOG_BASE_DIR/" "$RELEASE_DIR/"
+
+	rm -rf "$RK_OUTDIR/release"
+	ln -vsf "$RELEASE_DIR" "$RK_OUTDIR/release"
 
 	finish_build
 }

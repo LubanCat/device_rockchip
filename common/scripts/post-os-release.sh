@@ -26,7 +26,3 @@ esac
 
 fixup_os_release ID_LIKE "$POST_OS"
 fixup_os_release RK_BUILD_INFO "$BUILD_INFO"
-
-if [ "$POST_ROOTFS" ]; then
-	cp -f "$OS_RELEASE" "$RK_OUTDIR"
-fi
