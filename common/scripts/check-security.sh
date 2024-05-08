@@ -67,8 +67,10 @@ rk_security_check_keys()
 BOOT_FIXED_CONFIGS=" \
 	CONFIG_BLK_DEV_DM \
 	CONFIG_DM_CRYPT \
-	CONFIG_BLK_DEV_CRYPTOLOOP \
 	CONFIG_DM_VERITY"
+
+BOOT_FIXED_UNDER_6_1_CONFIG="
+	CONFIG_BLK_DEV_CRYPTOLOOP"
 
 BOOT_OPTEE_FIXED_CONFIGS=" \
 	CONFIG_TEE \
@@ -114,6 +116,10 @@ rk_security_check_system()
 
 rk_security_check_kernel_config()
 {
+	if [ $(echo "$RK_KERNEL_VERSION_RAW < 6.1" | bc) -eq 1 ]; then
+		BOOT_FIXED_CONFIGS="$BOOT_FIXED_CONFIGS $BOOT_FIXED_UNDER_6_1_CONFIG"
+	fi
+
 	case $1 in
 		system-encryption) BOOT_FIXED_CONFIGS="$BOOT_FIXED_CONFIGS $BOOT_OPTEE_FIXED_CONFIGS" ;& # fallthrough
 		system-verity) config_check $2 "$BOOT_FIXED_CONFIGS" ;;
