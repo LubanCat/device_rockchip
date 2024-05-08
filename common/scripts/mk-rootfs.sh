@@ -143,7 +143,14 @@ build_debian()
 			linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
+	DEBIAN_SCRIPT=mk-rootfs-$RK_DEBIAN_VERSION.sh
+
+	if [ "$RK_DEBIAN_MIRROR" ]; then
+		notice "Using mirror source $RK_DEBIAN_MIRROR in $DEBIAN_SCRIPT..."
+		sed -i "s#\(http://\)[^/]*#\1$RK_DEBIAN_MIRROR#" "$DEBIAN_SCRIPT"
+	fi
+
+	VERSION=debug ARCH=$ARCH ./$DEBIAN_SCRIPT
 	./mk-image.sh
 
 	if ! [ -r "$RK_LOG_DIR/post-rootfs.log" ]; then
