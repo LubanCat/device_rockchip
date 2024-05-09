@@ -1234,6 +1234,31 @@ function build_updateimg(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	PACK_TOOL_DIR=$TOP_DIR/tools/linux/Linux_Pack_Firmware
 
+	DATE=$(date  +%Y%m%d)
+ 	TARGET=$(echo $RK_ROOTFS_TARGET | sed -e "s/\b\(.\)/\u\1/g")
+
+	if [ "${RK_ROOTFS_SYSTEM}" != "buildroot" ];then
+		if [ "${RK_ROOTFS_SYSTEM}" != "debian" ];then
+			Version="ubuntu"$RK_UBUNTU_VERSION"-"$RK_ROOTFS_TARGET"-"$DATE
+		else
+			Version="debian"$RK_DEBIAN_VERSION"-"$RK_ROOTFS_TARGET"-"$DATE
+		fi
+	else
+		Version="$RK_ROOTFS_SYSTEM"-"$DATE"
+	fi
+
+	Device_Name=$RK_PKG_NAME
+	ZIP_NAME=$Device_Name"-"$Version
+
+	cd $IMAGE_PATH
+	mkdir -p mount-tmp
+	echo mount and write build info
+	sudo mount rootfs.img mount-tmp/
+	sudo sh -c "echo ' * $ZIP_NAME' > mount-tmp/etc/build-release"
+	sudo sync 
+	sudo umount mount-tmp/
+	rm -rf mount-tmp/
+
 	cd $PACK_TOOL_DIR/rockdev
 
 	if [ -f "$RK_PACKAGE_FILE_AB" ]; then
@@ -1368,7 +1393,7 @@ function build_save(){
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
-	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
+	cp $IMAGE_PATH/update.img $STUB_PATH/IMAGES/
 
 	cd $STUB_PATH/IMAGES/
 	mv update.img  ${ZIP_NAME}_update.img
