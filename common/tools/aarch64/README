@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-e22ecfef98 busybox: Bump to buildroot upstream's 1.36.1
+d3403320cc umtprd: Support device icon
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -80,6 +80,9 @@ BR2_PACKAGE_EDID_DECODE_STATIC=y
 
 BR2_PACKAGE_ZSTD=y
 BR2_PACKAGE_ZSTD_STATIC=y
+
+BR2_PACKAGE_UMTPRD=y
+BR2_PACKAGE_UMTPRD_STATIC=y
 
 NOTE:
 For building perf:
