@@ -101,6 +101,7 @@ endif # buildroot
 endchoice # fstype
 
 source "post/Config.in.rootfs"
+source "post/Config.in.overlay"
 
 endif # Rootfs
 endmenuconfig # Rootfs

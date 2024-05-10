@@ -1,23 +1,25 @@
 #!/bin/bash -e
 
-POST_ROOTFS_ONLY=1
+TARGET_DIR="$1"
+[ "$TARGET_DIR" ] || exit 1
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
-remove_usb()
-{
-	find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr" \
-		-name "*usbdevice*" -print0 -o -name ".usb_config" -print0 \
-		2>/dev/null | xargs -0 rm -rf
-}
+find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
+	-name "*usbdevice*" -print0 -o -name ".usb_config" -o \
+	-name "*adbd*" -o -name "*umtprd*" -print0 \
+	2>/dev/null | xargs -0 rm -rf
+
+if [ ! "$RK_USB_GADGET" ]; then
+	notice "USB gadget disabled..."
+	exit 0
+fi
 
 install_adbd()
 {
 	[ -n "$RK_USB_ADBD" ] || return 0
 
 	message "Installing adbd..."
-
-	find "$TARGET_DIR" -name "*adbd*" -print0 | xargs -0 rm -rf
 
 	install -m 0755 "$RK_TOOLS_DIR/armhf/adbd" "$TARGET_DIR/usr/bin/adbd"
 
@@ -53,6 +55,29 @@ install_adbd()
 		"$TARGET_DIR/adb_keys"
 }
 
+install_mtp()
+{
+	[ -n "$RK_USB_MTP" ] || return 0
+
+	message "Installing MTP..."
+
+	install -m 0755 "$RK_TOOLS_DIR/armhf/umtprd" "$TARGET_DIR/usr/bin/umtprd"
+
+	mkdir -p "$TARGET_DIR/etc/umtprd"
+
+	MTP_ICON="$RK_CHIP_DIR/$RK_USB_MTP_ICON"
+	if [ ! -r "$MTP_ICON" ]; then
+		MTP_ICON="$OVERLAY_DIR/$RK_USB_MTP_ICON"
+	fi
+	install -m 0644 "$MTP_ICON" "$TARGET_DIR/etc/umtprd/devicon.ico"
+
+	MTP_CONF="$RK_CHIP_DIR/$RK_USB_MTP_CONF"
+	if [ ! -r "$MTP_CONF" ]; then
+		MTP_CONF="$OVERLAY_DIR/$RK_USB_MTP_CONF"
+	fi
+	install -m 0644 "$MTP_CONF" "$TARGET_DIR/etc/umtprd/umtprd.conf"
+}
+
 install_ums()
 {
 	[ -n "$RK_USB_UMS" ] || return 0
@@ -86,29 +111,26 @@ usb_funcs()
 	} | xargs
 }
 
-if [ "$RK_USB_DISABLED" ]; then
-	notice "Disabling USB gadget..."
-	remove_usb
-	exit 0
-fi
-
-if [ "$RK_USB_DEFAULT" -a "$POST_OS" = buildroot ]; then
-	notice "Keep original USB gadget for buildroot by default"
-	exit 0
-fi
+message "Installing USB gadget to $TARGET_DIR..."
 
 cd "$RK_SDK_DIR"
 
 mkdir -p "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
 	"$TARGET_DIR/usr/lib"
 
-remove_usb
-
 message "USB gadget functions: $(usb_funcs)"
 mkdir -p "$TARGET_DIR/etc/profile.d"
-echo "export USB_FUNCS=\"$(usb_funcs)\"" > "$TARGET_DIR/etc/profile.d/usbdevice.sh"
+{
+	echo "export USB_FUNCS=\"$(usb_funcs)\""
+	echo "export USB_VENDOR_ID=\"$RK_USB_VID\""
+	echo "export USB_FW_VERSION=\"$RK_USB_FW_VER\""
+	echo "export USB_VERSION=\"$RK_USB_VERSION\""
+	echo "export USB_MANUFACTURER=\"$RK_USB_MANUFACTURER\""
+	echo "export USB_PRODUCT=\"$RK_USB_PRODUCT\""
+} > "$TARGET_DIR/etc/profile.d/usbdevice.sh"
 
 install_adbd
+install_mtp
 install_ums
 
 mkdir -p "$TARGET_DIR/lib/udev/rules.d"

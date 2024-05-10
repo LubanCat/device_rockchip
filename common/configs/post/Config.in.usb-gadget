@@ -1,24 +1,30 @@
 #
 
-choice
-	prompt "USB gadget"
+menuconfig RK_USB_GADGET
+	bool "USB gadget"
+	default y
 
-config RK_USB_DEFAULT
-	bool "auto"
-	help
-	  Install USB gadget on non-buildroot OS.
+if RK_USB_GADGET
 
-config RK_USB_ENABLED
-	bool "install"
+config RK_USB_VID
+	hex "vendor id"
+	default 2207
 
-config RK_USB_DISABLED
-	bool "not install"
+config RK_USB_FW_VER
+	hex "firmware version"
+	default 0310
 
-endchoice # USB gadget
+config RK_USB_VERSION
+	hex "USB version"
+	default 0200
 
-if !RK_USB_DISABLED
+config RK_USB_MANUFACTURER
+	string "manufacturer"
+	default "Rockchip"
 
-menu "USB gadget configs"
+config RK_USB_PRODUCT
+	string "product"
+	default "rk3xxx"
 
 menuconfig RK_USB_ADBD
 	bool "Android Debug Bridge Daemon (adbd)"
@@ -52,8 +58,25 @@ endmenuconfig # secure
 endif # adbd
 endmenuconfig # adbd
 
-config RK_USB_MTP
+menuconfig RK_USB_MTP
 	bool "Media Transfer Protocal (MTP)"
+
+if RK_USB_MTP
+
+config RK_USB_MTP_ICON
+	string "device icon"
+	default "devicon.ico"
+	help
+	  Name of custom icon file under $RK_CHIP_DIR or USB gadget overlay dir.
+
+config RK_USB_MTP_CONF
+	string "umtprd config file"
+	default "umtprd.conf"
+	help
+	  Name of config file under $RK_CHIP_DIR or USB gadget overlay dir.
+
+endif # MTP
+endmenuconfig # MTP
 
 config RK_USB_ACM
 	bool "Abstract Control Model (ACM)"
@@ -123,6 +146,5 @@ config RK_USB_EXTRA
 config RK_USB_HOOKS
 	string "hook scripts"
 
-endmenu # USB gadget
-
-endif # !USB gadget disabled
+endif # USB gadget
+endmenuconfig # USB gadget
