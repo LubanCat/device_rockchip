@@ -31,7 +31,9 @@ fstrim_start()
 
 		logger -s -t fstrim "Starting fstrim process ($$)..."
 		while true; do
-			/sbin/fstrim -av | logger -t fstrim
+			cut -d' ' -f2 /proc/mounts | \
+				xargs -n 1 /sbin/fstrim -v 2>/dev/null | \
+				logger -t fstrim || true
 			sleep $INTERVAL
 		done
 	}&
