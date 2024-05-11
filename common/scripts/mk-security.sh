@@ -261,7 +261,7 @@ rk_security_setup_sign()
 	assert_var_in_list $1 "boot recovery"
 
 	STAGE=$1
-	SRC=$2
+	SRC=$(realpath $2)
 	DST_DIR=$3
 
 	IMAGE_DIR="${RK_OUTDIR:-$UBOOT}/security"
