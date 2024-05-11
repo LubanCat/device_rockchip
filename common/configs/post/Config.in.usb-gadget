@@ -8,15 +8,11 @@ if RK_USB_GADGET
 
 config RK_USB_VID
 	hex "vendor id"
-	default 2207
+	default 0x2207
 
 config RK_USB_FW_VER
 	hex "firmware version"
-	default 0310
-
-config RK_USB_VERSION
-	hex "USB version"
-	default 0200
+	default 0x0310
 
 config RK_USB_MANUFACTURER
 	string "manufacturer"
