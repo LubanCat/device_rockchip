@@ -8,6 +8,26 @@ cd "$RK_SDK_DIR"
 
 "$RK_SCRIPTS_DIR/check-grow-align.sh"
 
+check_usb_gadget()
+{
+	FUNC="$1"
+	shift
+	CONFIGS="$@"
+
+	for cfg in $CONFIGS; do
+		if grep -wq "$cfg=y" kernel/.config; then
+			continue
+		fi
+
+		echo -e "\e[35m"
+		echo "Your kernel doesn't support USB gadget: $FUNC"
+		echo "Please enable:"
+		echo "$CONFIGS"
+		echo -e "\e[0m"
+		exit 1
+	done
+}
+
 if [ -r "kernel/.config" ]; then
 	EXT4_CONFIGS=$(export | grep -oE "\<RK_.*=\"ext4\"$" || true)
 
@@ -30,6 +50,23 @@ if [ -r "kernel/.config" ]; then
 	fi
 
 	"$RK_SCRIPTS_DIR/check-security.sh" kernel config
+
+	[ -z "$RK_USB_ADBD" ] || check_usb_gadget adb CONFIG_USB_CONFIGFS_F_FS
+	[ -z "$RK_USB_MTP" ] || check_usb_gadget mtp CONFIG_USB_CONFIGFS_F_FS
+	[ -z "$RK_USB_NTB" ] || check_usb_gadget ntb CONFIG_USB_CONFIGFS_F_FS
+	[ -z "$RK_USB_ACM" ] || check_usb_gadget acm CONFIG_USB_CONFIGFS_ACM
+	[ -z "$RK_USB_UVC" ] || check_usb_gadget uvc CONFIG_USB_CONFIGFS_F_UVC
+	[ -z "$RK_USB_UAC1" ] || check_usb_gadget uac1 CONFIG_USB_CONFIGFS_F_UAC1
+	[ -z "$RK_USB_UAC2" ] || check_usb_gadget uac2 CONFIG_USB_CONFIGFS_F_UAC2
+	[ -z "$RK_USB_MIDI" ] || check_usb_gadget midi CONFIG_USB_CONFIGFS_F_MIDI
+	[ -z "$RK_USB_HID" ] || check_usb_gadget hid CONFIG_USB_CONFIGFS_F_HID
+	[ -z "$RK_USB_ECM" ] || check_usb_gadget ecm CONFIG_USB_CONFIGFS_ECM
+	[ -z "$RK_USB_EEM" ] || check_usb_gadget eem CONFIG_USB_CONFIGFS_EEM
+	[ -z "$RK_USB_NCM" ] || check_usb_gadget ncm CONFIG_USB_CONFIGFS_NCM
+	[ -z "$RK_USB_RNDIS" ] || check_usb_gadget rndis CONFIG_USB_CONFIGFS_RNDIS
+	[ -z "$RK_USB_UMS" ] || \
+		check_usb_gadget ums CONFIG_USB_CONFIGFS_MASS_STORAGE
+	[ -z "$RK_USB_SERIAL" ] || check_usb_gadget gser CONFIG_USB_CONFIGFS_SERIAL
 fi
 
 if ! kernel/scripts/mkbootimg &>/dev/null; then
