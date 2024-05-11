@@ -98,15 +98,20 @@ usb_funcs()
 {
 	{
 		echo "${RK_USB_ADBD:+adb}"
-		echo "${RK_USB_MTP:+mtp}"
 		echo "${RK_USB_ACM:+acm}"
-		echo "${RK_USB_NTB:+ntb}"
 		echo "${RK_USB_UVC:+uvc}"
 		echo "${RK_USB_UAC1:+uac1}"
 		echo "${RK_USB_UAC2:+uac2}"
+		echo "${RK_USB_MIDI:+midi}"
 		echo "${RK_USB_HID:+hid}"
+		echo "${RK_USB_ECM:+ecm}"
+		echo "${RK_USB_EEM:+eem}"
+		echo "${RK_USB_NCM:+ncm}"
 		echo "${RK_USB_RNDIS:+rndis}"
+		echo "${RK_USB_NTB:+ntb}"
+		echo "${RK_USB_MTP:+mtp}"
 		echo "${RK_USB_UMS:+ums}"
+		echo "${RK_USB_SERIAL:+gser}"
 		echo "$RK_USB_EXTRA"
 	} | xargs
 }

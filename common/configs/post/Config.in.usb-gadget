@@ -84,10 +84,10 @@ config RK_USB_UVC
 	bool "USB Video Class (UVC)"
 
 config RK_USB_UAC1
-	bool "USB Audio Class (UAC1)"
+	bool "USB Audio Class 1.0 (UAC1)"
 
 config RK_USB_UAC2
-	bool "USB Audio Class (UAC2)"
+	bool "USB Audio Class 2.0 (UAC2)"
 
 config RK_USB_HID
 	bool "Human Interface Devices (HID)"
@@ -135,6 +135,21 @@ config RK_USB_UMS_RO
 
 endif # UMS
 endmenuconfig # UMS
+
+config RK_USB_ECM
+	bool "Ethernet Control Model (ECM)"
+
+config RK_USB_EEM
+	bool "Ethernet Emulation Model (EEM)"
+
+config RK_USB_NCM
+	bool "Network Control Model (NCM)"
+
+config RK_USB_MIDI
+	bool "Musical Instrument Digital Interface (MIDI)"
+
+config RK_USB_SERIAL
+	bool "USB Gadget Serial (GSER)"
 
 config RK_USB_EXTRA
 	string "extra USB gadget configs"
