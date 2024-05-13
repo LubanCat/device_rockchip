@@ -67,6 +67,10 @@ endmenuconfig # Fstrim
 
 source "post/Config.in.frecon"
 
+config RK_ROOTFS_GENERATE_LOGS
+	bool "generate-logs (Dump and pack Logs)"
+	default y
+
 config RK_ROOTFS_PREBUILT_TOOLS
 	bool "prebuilt tools"
 
