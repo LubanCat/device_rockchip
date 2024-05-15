@@ -32,9 +32,9 @@ config RK_USB_ADBD_TCP_PORT
 	int "TCP port"
 	default 5555
 
-config RK_USB_ADBD_BASH
-	bool "prefer using bash"
-	default y
+config RK_USB_ADBD_SHELL
+	string "login shell"
+	default "/bin/bash"
 
 menuconfig RK_USB_ADBD_SECURE
 	bool "access control"

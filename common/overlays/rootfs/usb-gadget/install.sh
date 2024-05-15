@@ -28,8 +28,8 @@ install_adbd()
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 	fi
 
-	if [ -n "$RK_USB_ADBD_BASH" -a -x "$TARGET_DIR/bin/bash" ]; then
-		echo "export ADBD_SHELL=/bin/bash" >> \
+	if [ -n "$RK_USB_ADBD_SHELL" ]; then
+		echo "export ADBD_SHELL=$RK_USB_ADBD_SHELL" >> \
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 	fi
 
