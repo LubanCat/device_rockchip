@@ -85,15 +85,16 @@ try_hook()
 	type $FUNC >/dev/null 2>/dev/null || return 0
 
 	for opt in $OPTS; do
-		IS_DRY_RUN=$(echo $opt | grep -E ":cmds(:|$)" || true)
 		for cmd in $CMDS; do
 			# NOTE: There might be patterns in commands
-			ARGS="$(echo $opt | grep -E "^$cmd(:|$)" | \
-				tr ':' ' ' || true)"
+			ARGS="$(echo $opt | grep -E "^$cmd(:|$)" | tr ':' ' ')"
 			[ "$ARGS" ] || continue
 
-			DRY_RUN=${DRY_RUN:-${IS_DRY_RUN:+1}} \
+			if echo $ARGS | grep -wq "dry-run"; then
+				DRY_RUN=1 try_func $FUNC ${ARGS//dry-run/}
+			else
 				try_func $FUNC $ARGS
+			fi
 		done
 	done
 }
@@ -103,7 +104,7 @@ make_usage()
 	usage_hook | grep "^[a-z]" | grep -v "^[a-z0-9_.-]*:" | \
 		sed 's/\(^[a-z0-9_.-]*\).*\t\(.*$\)/\1@\2/' | \
 	while read LINE; do
-		TARGET=$(echo $LINE | grep -o "^[a-z0-9_.-]*")
+		TARGET=$(echo $LINE | grep -o "^[a-z0-9_.-]*" || true)
 		USAGE=$(echo $LINE | grep -oE "[^@]*$" || true)
 		printf "  %-22s - %s\n" "$TARGET" "$USAGE"
 	done
@@ -187,6 +188,7 @@ if [ "$DRY_RUN" ]; then
 	unset DRY_RUN
 fi
 
-if [ "$2" = cmds ]; then
+if [ "$2" = "dry-run" ]; then
 	export DRY_RUN=1
+	set -- "$1" "${@:3}"
 fi

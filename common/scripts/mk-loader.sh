@@ -93,10 +93,10 @@ build_uboot()
 
 usage_hook()
 {
-	echo -e "loader[:cmds]                    \tbuild loader (u-boot)"
-	echo -e "uboot[:cmds]                     \tbuild u-boot"
-	echo -e "u-boot[:cmds]                    \talias of uboot"
-	echo -e "uefi[:cmds]                      \tbuild uefi"
+	echo -e "loader[:dry-run]                 \tbuild loader (u-boot)"
+	echo -e "uboot[:dry-run]                  \tbuild u-boot"
+	echo -e "u-boot[:dry-run]                 \talias of uboot"
+	echo -e "uefi[:dry-run]                   \tbuild uefi"
 }
 
 clean_hook()
@@ -136,7 +136,6 @@ build_hook()
 
 	TARGET="$1"
 	shift
-	[ "$1" != cmds ] || shift
 
 	case "$TARGET" in
 		uboot | u-boot | loader) build_uboot $@ ;;

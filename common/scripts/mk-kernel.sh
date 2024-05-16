@@ -169,15 +169,15 @@ build_recovery_kernel()
 usage_hook()
 {
 	for k in $KERNELS; do
-		echo -e "$k[:cmds]               \tbuild kernel ${k#kernel-}"
+		echo -e "$k[:dry-run]             \tbuild kernel ${k#kernel-}"
 	done
 
-	echo -e "kernel[:cmds]                    \tbuild kernel"
-	echo -e "recovery-kernel[:cmds]           \tbuild kernel for recovery"
-	echo -e "modules[:cmds]                   \tbuild kernel modules"
-	echo -e "linux-headers[:cmds]             \tbuild linux-headers"
-	echo -e "kernel-config[:cmds]             \tmodify kernel defconfig"
-	echo -e "kconfig[:cmds]                   \talias of kernel-config"
+	echo -e "kernel[:dry-run]                 \tbuild kernel"
+	echo -e "recovery-kernel[:dry-run]        \tbuild kernel for recovery"
+	echo -e "modules[:dry-run]                \tbuild kernel modules"
+	echo -e "linux-headers[:dry-run]          \tbuild linux-headers"
+	echo -e "kernel-config[:dry-run]          \tmodify kernel defconfig"
+	echo -e "kconfig[:dry-run]                \talias of kernel-config"
 	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make"
 	echo -e "kmake[:<arg1>:<arg2>]            \talias of kernel-make"
 }
@@ -252,9 +252,6 @@ pre_build_hook()
 
 	case "$1" in
 		kernel-make | kmake)
-			shift
-			[ "$1" != cmds ] || shift
-
 			if [ "$DRY_RUN" ]; then
 				notice "Commands of building ${@:-stuff}:"
 			else
@@ -262,6 +259,8 @@ pre_build_hook()
 				message "          Start building $@"
 				message "=========================================="
 			fi
+
+			shift
 
 			if [ ! -r kernel/.config ]; then
 				make_kernel_config
@@ -320,7 +319,6 @@ post_build_hook()
 	[ "$1" = "linux-headers" ] || return 0
 	shift
 
-	[ "$1" != cmds ] || shift
 	OUTPUT_FILE="${1:-"$RK_OUTDIR"}/linux-headers.tar"
 	mkdir -p "$(dirname "$OUTPUT_FILE")"
 
