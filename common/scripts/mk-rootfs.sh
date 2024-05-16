@@ -92,8 +92,7 @@ build_yocto()
 		echo "include include/rksdk.conf"
 		echo
 
-		echo "PREFERRED_VERSION_linux-rockchip :=" \
-			"\"$RK_KERNEL_VERSION_RAW%\""
+		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
 		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
 		case "$RK_CHIP_FAMILY" in
