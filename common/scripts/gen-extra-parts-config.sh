@@ -72,24 +72,26 @@ EOF
 
 config RK_EXTRA_PARTITION_${i}_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_${i}_NAME_STR
 	string
 	default "\${RK_EXTRA_PARTITION_${i}_DEV##*[/=]}" \\
-		if RK_EXTRA_PARTITION_${i}_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_${i}_NAME = "auto"
 	default RK_EXTRA_PARTITION_${i}_NAME
 
 config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR
 	string
 	default "/\$RK_EXTRA_PARTITION_${i}_NAME_STR" \\
-		if RK_EXTRA_PARTITION_${i}_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_${i}_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_${i}_FSTYPE

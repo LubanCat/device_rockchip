@@ -42,24 +42,26 @@ config RK_EXTRA_PARTITION_1_DEV
 
 config RK_EXTRA_PARTITION_1_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_1_NAME_STR
 	string
 	default "${RK_EXTRA_PARTITION_1_DEV##*[/=]}" \
-		if RK_EXTRA_PARTITION_1_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_1_NAME = "auto"
 	default RK_EXTRA_PARTITION_1_NAME
 
 config RK_EXTRA_PARTITION_1_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_1_MOUNTPOINT_STR
 	string
 	default "/$RK_EXTRA_PARTITION_1_NAME_STR" \
-		if RK_EXTRA_PARTITION_1_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_1_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_1_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_1_FSTYPE
@@ -118,24 +120,26 @@ config RK_EXTRA_PARTITION_2_DEV
 
 config RK_EXTRA_PARTITION_2_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_2_NAME_STR
 	string
 	default "${RK_EXTRA_PARTITION_2_DEV##*[/=]}" \
-		if RK_EXTRA_PARTITION_2_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_2_NAME = "auto"
 	default RK_EXTRA_PARTITION_2_NAME
 
 config RK_EXTRA_PARTITION_2_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_2_MOUNTPOINT_STR
 	string
 	default "/$RK_EXTRA_PARTITION_2_NAME_STR" \
-		if RK_EXTRA_PARTITION_2_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_2_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_2_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_2_FSTYPE
@@ -193,24 +197,26 @@ config RK_EXTRA_PARTITION_3_DEV
 
 config RK_EXTRA_PARTITION_3_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_3_NAME_STR
 	string
 	default "${RK_EXTRA_PARTITION_3_DEV##*[/=]}" \
-		if RK_EXTRA_PARTITION_3_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_3_NAME = "auto"
 	default RK_EXTRA_PARTITION_3_NAME
 
 config RK_EXTRA_PARTITION_3_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_3_MOUNTPOINT_STR
 	string
 	default "/$RK_EXTRA_PARTITION_3_NAME_STR" \
-		if RK_EXTRA_PARTITION_3_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_3_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_3_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_3_FSTYPE
@@ -263,24 +269,26 @@ config RK_EXTRA_PARTITION_4_DEV
 
 config RK_EXTRA_PARTITION_4_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_4_NAME_STR
 	string
 	default "${RK_EXTRA_PARTITION_4_DEV##*[/=]}" \
-		if RK_EXTRA_PARTITION_4_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_4_NAME = "auto"
 	default RK_EXTRA_PARTITION_4_NAME
 
 config RK_EXTRA_PARTITION_4_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_4_MOUNTPOINT_STR
 	string
 	default "/$RK_EXTRA_PARTITION_4_NAME_STR" \
-		if RK_EXTRA_PARTITION_4_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_4_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_4_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_4_FSTYPE
@@ -333,24 +341,26 @@ config RK_EXTRA_PARTITION_5_DEV
 
 config RK_EXTRA_PARTITION_5_NAME
 	string "partition name"
-	default "<dev>"
+	default "auto"
 	help
-	  Partition name, set "<dev>" to detect from device identifier.
+	  Partition name, set "auto" to detect from device identifier.
 
 config RK_EXTRA_PARTITION_5_NAME_STR
 	string
 	default "${RK_EXTRA_PARTITION_5_DEV##*[/=]}" \
-		if RK_EXTRA_PARTITION_5_NAME = "<dev>"
+		if RK_EXTRA_PARTITION_5_NAME = "auto"
 	default RK_EXTRA_PARTITION_5_NAME
 
 config RK_EXTRA_PARTITION_5_MOUNTPOINT
 	string "mountpoint"
-	default "/<name>"
+	default "auto"
+	help
+	  Mountpoint, set "auto" for "/<name>".
 
 config RK_EXTRA_PARTITION_5_MOUNTPOINT_STR
 	string
 	default "/$RK_EXTRA_PARTITION_5_NAME_STR" \
-		if RK_EXTRA_PARTITION_5_MOUNTPOINT = "/<name>"
+		if RK_EXTRA_PARTITION_5_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_5_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_5_FSTYPE
