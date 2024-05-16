@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-ce3f685512 umtprd: Support creation time
+059cd86c95 libdrm: Fix modetest setprop crash
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
