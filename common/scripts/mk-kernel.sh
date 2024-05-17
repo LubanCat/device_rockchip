@@ -164,6 +164,110 @@ build_recovery_kernel()
 	run_command ln -rsf resource.img "$RK_OUTDIR/recovery-resource.img"
 }
 
+pack_linux_headers()
+{
+	case "${1:-host}" in
+		host)
+			case "$(uname -m)" in
+				x86_64) KBUILD_ARCH=amd64 ;;
+				i686|i386) KBUILD_ARCH=i386 ;;
+				arm64|aarch64) KBUILD_ARCH=aarch64 ;;
+				arm32|armhf) KBUILD_ARCH=armhf ;;
+				*)
+					warning "Unknown host arch: $(uname -m)!"
+					return 0 ;;
+			esac
+
+			KBUILD_DIR="$RK_SDK_DIR/kernel"
+			;;
+		aarch64|armhf)
+			KBUILD_ARCH=$1
+			KBUILD_DIR="$RK_KBUILD_DIR/$KBUILD_ARCH/linux-kbuild-$RK_KERNEL_VERSION_RAW"
+			;;
+		*) return 0 ;;
+	esac
+	HEADERS_OUTDIR="$RK_OUTDIR/linux-headers"
+	HEADERS_TAR="$HEADERS_OUTDIR/linux-headers-$KBUILD_ARCH.tar"
+	HEADERS_KBUILD_DIR="$HEADERS_OUTDIR/linux-kbuild-$KBUILD_ARCH"
+	HEADERS_PACK_SCRIPT="$(mktemp)"
+
+	if [ "$DRY_RUN" ]; then
+		notice "Commands of packing linux-headers-$KBUILD_ARCH:"
+	else
+		message "=========================================="
+		message "          Start packing linux-headers-$KBUILD_ARCH"
+		message "=========================================="
+	fi
+
+	run_command mkdir -p "$HEADERS_OUTDIR"
+	run_command rm -rf "$HEADERS_KBUILD_DIR"
+	run_command ln -rsf "$KBUILD_DIR" "$HEADERS_KBUILD_DIR"
+
+	cat << EOF > "$HEADERS_PACK_SCRIPT"
+{
+	# Based on kernel/scripts/package/builddeb
+	find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
+	find include -type f -o -type l
+	find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
+	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
+	find arch/$RK_KERNEL_ARCH/include Module.symvers -type f
+	echo .config
+} | tar --no-recursion --ignore-failed-read -T - \
+	-cf "$HEADERS_TAR"
+
+	# Pack kbuild
+	tar -uf "$HEADERS_TAR" -C "$HEADERS_KBUILD_DIR" scripts/ tools/
+EOF
+
+	run_command cd "$RK_SDK_DIR/kernel"
+	cat "$HEADERS_PACK_SCRIPT"
+	if [ -z "$DRY_RUN" ]; then
+		. "$HEADERS_PACK_SCRIPT"
+	fi
+	run_command cd "$RK_SDK_DIR"
+	rm -f "$HEADERS_PACK_SCRIPT"
+
+	[ -z "$DRY_RUN" ] || return 0
+
+	# Packing .deb package
+	TEMP_DIR="$(mktemp -d)"
+	DEBIAN_ARCH="$KBUILD_ARCH"
+	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_RAW}-$RK_KERNEL_ARCH"
+	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
+	DEBIAN_KBUILD_DIR="$DEBIAN_DIR/usr/src/$DEBIAN_PKG"
+	DEBIAN_DEB="$DEBIAN_DIR.deb"
+	DEBIAN_CONTROL="$DEBIAN_DIR/DEBIAN/control"
+	mkdir -p "$(dirname "$DEBIAN_CONTROL")" "$DEBIAN_KBUILD_DIR"
+
+	message "Unpacking $HEADERS_TAR ..."
+	tar xf "$HEADERS_TAR" -C "$DEBIAN_KBUILD_DIR"
+	cat << EOF > "$DEBIAN_CONTROL"
+Package: $DEBIAN_PKG
+Source: linux-rockchip ($RK_KERNEL_VERSION_RAW)
+Version: $RK_KERNEL_VERSION_RAW-rockchip
+Architecture: $DEBIAN_ARCH
+Section: kernel
+Priority: optional
+Multi-Arch: foreign
+Maintainer: Tao Huang <huangtao@rock-chips.com>
+Homepage: https://www.kernel.org/
+Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_RAW $RK_KERNEL_ARCH configuration
+EOF
+
+	message "Debian control file:"
+	cat "$DEBIAN_CONTROL"
+
+	message "Packing $(basename "$DEBIAN_DEB")..."
+	dpkg-deb -b "$DEBIAN_DIR" >/dev/null 2>&1
+	mv "$DEBIAN_DEB" "$HEADERS_OUTDIR"
+
+	rm -rf "$TEMP_DIR"
+
+	gzip "$HEADERS_TAR"
+
+	finish_build linux-headers-$KBUILD_ARCH
+}
+
 # Hooks
 
 usage_hook()
@@ -313,108 +417,33 @@ build_hook_dry()
 POST_BUILD_CMDS="linux-headers"
 post_build_hook()
 {
-	check_config RK_KERNEL RK_KERNEL_CFG || false
-	source "$RK_SCRIPTS_DIR/kernel-helper"
-
 	[ "$1" = "linux-headers" ] || return 0
 	shift
 
-	OUTPUT_FILE="${1:-"$RK_OUTDIR"}/linux-headers.tar"
-	mkdir -p "$(dirname "$OUTPUT_FILE")"
-
-	HEADER_FILES_SCRIPT=$(mktemp)
+	check_config RK_KERNEL RK_KERNEL_CFG || false
+	source "$RK_SCRIPTS_DIR/kernel-helper"
 
 	if [ "$DRY_RUN" ]; then
 		notice "Commands of building linux-headers:"
 	else
-		notice "Saving linux-headers to $OUTPUT_FILE"
+		message "=========================================="
+		message "          Start building linux-headers"
+		message "=========================================="
 	fi
 
-	# Preparing kernel
+	# Preparing kernel for linux-headers
 	make_kernel_config
-	run_command $KMAKE $RK_KERNEL_IMG_NAME
+	run_command $KMAKE Image
 
-	# Packing headers
-	cat << EOF > "$HEADER_FILES_SCRIPT"
-{
-	# Based on kernel/scripts/package/builddeb
-	find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
-	find include -type f -o -type l
-	find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
-	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
-	find arch/$RK_KERNEL_ARCH/include Module.symvers -type f
-	echo .config
-} | tar --no-recursion --ignore-failed-read -T - \
-	-cf "$OUTPUT_FILE"
-EOF
-
-	run_command cd "$RK_SDK_DIR/kernel"
-
-	cat "$HEADER_FILES_SCRIPT"
-
-	if [ -z "$DRY_RUN" ]; then
-		. "$HEADER_FILES_SCRIPT"
+	if [ "$1" ]; then
+		pack_linux_headers "$1"
+	else
+		pack_linux_headers host
+		pack_linux_headers armhf
+		[ "$RK_CHIP_ARM32" ] || pack_linux_headers aarch64
 	fi
 
-	# Packing kbuild
-	case "$RK_KERNEL_KBUILD_ARCH" in
-		host) run_command tar -uf "$OUTPUT_FILE" scripts tools ;;
-		*)
-			run_command cd "$RK_KBUILD_DIR/$RK_KERNEL_KBUILD_ARCH"
-			run_command cd "linux-kbuild-$RK_KERNEL_VERSION_RAW"
-			run_command tar -uf "$OUTPUT_FILE" .
-			;;
-	esac
-
-	run_command cd "$RK_SDK_DIR"
-
-	rm -f "$HEADER_FILES_SCRIPT"
-
-	[ -z "$DRY_RUN" ] || return 0
-
-	case "$RK_KERNEL_KBUILD_ARCH" in
-		host)
-			if [ $(uname -m) = x86_64 ]; then
-				DEBIAN_ARCH=amd64
-			else
-				return 0
-			fi
-			;;
-		*) DEBIAN_ARCH="$RK_KERNEL_KBUILD_ARCH" ;;
-	esac
-
-	# Packing .deb package
-	TEMP_DIR="$(mktemp -d)"
-	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_RAW}-$RK_KERNEL_ARCH"
-	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
-	DEBIAN_KBUILD_DIR="$DEBIAN_DIR/usr/src/$DEBIAN_PKG"
-	DEBIAN_DEB="$DEBIAN_DIR.deb"
-	DEBIAN_CONTROL="$DEBIAN_DIR/DEBIAN/control"
-	mkdir -p "$(dirname "$DEBIAN_CONTROL")" "$DEBIAN_KBUILD_DIR"
-
-	message "Unpacking $OUTPUT_FILE ..."
-	tar xf "$OUTPUT_FILE" -C "$DEBIAN_KBUILD_DIR"
-	cat << EOF > "$DEBIAN_CONTROL"
-Package: $DEBIAN_PKG
-Source: linux-rockchip ($RK_KERNEL_VERSION_RAW)
-Version: $RK_KERNEL_VERSION_RAW-rockchip
-Architecture: $DEBIAN_ARCH
-Section: kernel
-Priority: optional
-Multi-Arch: foreign
-Maintainer: Tao Huang <huangtao@rock-chips.com>
-Homepage: https://www.kernel.org/
-Description: Kbuild and headers for Rockchip Linux $RK_KERNEL_VERSION_RAW $RK_KERNEL_ARCH configuration
-EOF
-
-	message "Debian control file:"
-	cat "$DEBIAN_CONTROL"
-
-	message "Packing $(basename "$DEBIAN_DEB")..."
-	dpkg-deb -b "$DEBIAN_DIR" >/dev/null 2>&1
-	mv "$DEBIAN_DEB" "$(dirname "$OUTPUT_FILE")"
-
-	rm -rf "$TEMP_DIR"
+	finish_build linux-headers
 }
 
 post_build_hook_dry()

@@ -27,8 +27,7 @@ build_all()
 
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 
-	[ -z "$RK_KERNEL" ] || \
-		"$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers "$RK_FIRMWARE_DIR"
+	[ -z "$RK_KERNEL" ] || "$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers
 
 	finish_build
 }
@@ -63,8 +62,7 @@ build_release()
 		mkdir -p "$RELEASE_DIR/kernel"
 
 		message "Saving linux-headers..."
-		ln -rvsf "$RELEASE_DIR/IMAGES/linux-headers.tar" \
-			"$RELEASE_DIR/kernel/"
+		cp -rv "$RK_OUTDIR/linux-headers" "$RELEASE_DIR/kernel/"
 
 		message "Saving kernel files..."
 		cp -v kernel/.config kernel/System.map kernel/vmlinux \

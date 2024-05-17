@@ -85,26 +85,5 @@ config RK_KERNEL_RECOVERY_LOGO_KERNEL
 
 endif # RK_RECOVERY
 
-config RK_KERNEL_KBUILD_ARCH
-	string
-	default "host" if RK_KERNEL_KBUILD_HOST
-	default "armhf" if RK_KERNEL_KBUILD_ARM32
-	default "aarch64" if RK_KERNEL_KBUILD_ARM64
-
-choice
-	prompt "kbuild tools arch"
-
-config RK_KERNEL_KBUILD_HOST
-	bool "host arch"
-
-config RK_KERNEL_KBUILD_ARM64
-	bool "aarch64"
-	depends on !RK_CHIP_ARM32
-
-config RK_KERNEL_KBUILD_ARM32
-	bool "armhf"
-
-endchoice # kbuild tools arch
-
 endif # Kernel
 endmenuconfig # Kernel
