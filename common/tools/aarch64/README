@@ -1,7 +1,7 @@
 Rockchip prebuilt tools (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-059cd86c95 libdrm: Fix modetest setprop crash
+ce5707cda9 gdb: Fix static build error
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -28,6 +28,7 @@ BR2_PACKAGE_FRECON_STATIC=y
 
 BR2_PACKAGE_GDB=y
 BR2_PACKAGE_GDB_STATIC=y
+BR2_PACKAGE_GDB_SERVER=y
 BR2_PACKAGE_GDB_DEBUGGER=y
 
 BR2_PACKAGE_LIBDRM=y
