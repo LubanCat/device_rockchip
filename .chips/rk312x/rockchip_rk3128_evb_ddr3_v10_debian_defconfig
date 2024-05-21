@@ -1,4 +1,0 @@
-RK_WIFIBT_CHIP="AP6212A1"
-RK_UBOOT_TRUST_INI="RK3128TOS.ini"
-RK_KERNEL_DTS_NAME="rk3128-evb-ddr3-v10-linux"
-RK_PARAMETER="parameter-debian-rk3128.txt"
