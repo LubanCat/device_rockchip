@@ -43,8 +43,21 @@ amp_get_node()
 		}'
 }
 
+amp_touch_export()
+{
+	if [ -n "$2" ]; then
+		DST=$2
+	else
+		DST=$1
+	fi
+
+	[ -n "${!1}" ] && export "$DST"="${!1}" || true
+}
+
 build_hal()
 {
+	local append=
+
 	check_config "$1" || return 0
 
 	message "=========================================="
@@ -53,9 +66,19 @@ build_hal()
 
 	cd "$RK_RTOS_BSP_DIR/common/hal/project/"${!1}"/GCC"
 
-	make clean > /dev/null
-	rm -rf $3.elf $3.bin
-	make -j$(nproc) > ${RK_SDK_DIR}/hal.log 2>&1
+	[ ! -n "$CC" ] || append=$CC
+	(
+		amp_touch_export FIRMWARE_CPU_BASE
+		amp_touch_export DRAM_SIZE
+		amp_touch_export SRAM_BASE
+		amp_touch_export SRAM_SIZE
+		amp_touch_export CUR_CPU
+
+		make clean > /dev/null
+		rm -rf $3.elf $3.bin
+		make $append -j$(nproc) > ${RK_SDK_DIR}/hal.log 2>&1
+	)
+
 	cp TestDemo.elf $3.elf
 	mv TestDemo.bin $3.bin
 	ln -rsf $3.bin $RK_OUTDIR/$3.bin
@@ -65,6 +88,8 @@ build_hal()
 
 build_rtthread()
 {
+	local append=
+
 	check_config "$1" || return 0
 
 	message "=========================================="
@@ -75,33 +100,32 @@ build_rtthread()
 	cd "$RK_RTOS_BSP_DIR/${!1}"
 
 	export RTT_ROOT=$RK_RTOS_BSP_DIR/../../
-	export RTT_PRMEM_BASE=$FIRMWARE_CPU_BASE
-	export RTT_PRMEM_SIZE=$DRAM_SIZE
-	export RTT_SRAM_BASE=$SRAM_BASE
-	export RTT_SRAM_SIZE=$SRAM_SIZE
-	export RTT_SHMEM_BASE=$SHMEM_BASE
-	export RTT_SHMEM_SIZE=$SHMEM_SIZE
+	(
+		amp_touch_export FIRMWARE_CPU_BASE RTT_PRMEM_BASE
+		amp_touch_export DRAM_SIZE RTT_PRMEM_SIZE
+		amp_touch_export SRAM_BASE RTT_SRAM_BASE
+		amp_touch_export SRAM_SIZE RTT_SRAM_SIZE
+		amp_touch_export SHMEM_BASE RTT_SHMEM_BASE
+		amp_touch_export SHMEM_SIZE RTT_SHMEM_SIZE
+		amp_touch_export CC RTT_EXEC_PATH
 
-	ROOT_PART_OFFSET=$(rk_partition_start rootfs)
-	if [ -n $ROOT_PART_OFFSET ];then
-		export ROOT_PART_OFFSET=$ROOT_PART_OFFSET
-	fi
+		ROOT_PART_OFFSET=$(rk_partition_start rootfs)
+		amp_touch_export ROOT_PART_OFFSET
 
-	ROOT_PART_SIZE=$(rk_partition_size rootfs)
-	if [ -n $ROOT_PART_SIZE ];then
-		export ROOT_PART_SIZE=$ROOT_PART_SIZE
-	fi
+		ROOT_PART_SIZE=$(rk_partition_size rootfs)
+		amp_touch_export ROOT_PART_SIZE
 
-	if [ -f "$4" ] ;then
-		scons --useconfig="$4"
-	else
-		warning "Warning: Config $4 not exit!\n"
-		warning "Default config(.config) will be used!\n"
-	fi
+		if [ -f "$4" ] ;then
+			scons --useconfig="$4"
+		else
+			warning "Warning: Config $4 not exit!\n"
+			warning "Default config(.config) will be used!\n"
+		fi
 
-	scons -c > /dev/null
-	rm -rf gcc_arm.ld Image/rtt$2.elf Image/rtt$2.bin
-	scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
+		scons -c > /dev/null
+		rm -rf gcc_arm.ld Image/rtt$2.elf Image/rtt$2.bin
+		scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
+	)
 	cp rtthread.elf Image/rtt$2.elf
 	mv rtthread.bin Image/rtt$2.bin
 	ln -rsf Image/rtt$2.bin $RK_OUTDIR/$3.bin
@@ -150,11 +174,13 @@ build_images()
 	for item in $1
 	do
 		ITS_IMAGE=$(amp_get_node "$(cat $ITS_FILE)" $item)
-		export FIRMWARE_CPU_BASE=$(amp_get_value "$ITS_IMAGE" load)
-		export DRAM_SIZE=$(amp_get_value "$ITS_IMAGE" size)
-		export SRAM_BASE=$(amp_get_value "$ITS_IMAGE" srambase)
-		export SRAM_SIZE=$(amp_get_value "$ITS_IMAGE" sramsize)
-		export CUR_CPU=$(amp_get_value "$ITS_IMAGE" cpu)
+
+		# update all parameters
+		FIRMWARE_CPU_BASE=$(amp_get_value "$ITS_IMAGE" load)
+		DRAM_SIZE=$(amp_get_value "$ITS_IMAGE" size)
+		SRAM_BASE=$(amp_get_value "$ITS_IMAGE" srambase)
+		SRAM_SIZE=$(amp_get_value "$ITS_IMAGE" sramsize)
+		CUR_CPU=$(amp_get_value "$ITS_IMAGE" cpu)
 		CPU_BIN=$(amp_get_string "$ITS_IMAGE" data)
 		if (( $CUR_CPU > 0xff )); then
 			CUR_CPU=$((CUR_CPU >> 8))
@@ -170,6 +196,12 @@ build_images()
 
 		SYS=$(amp_get_string "$ITS_IMAGE" sys)
 		CORE=$(amp_get_string "$ITS_IMAGE" core)
+
+		# In RTT: 'CC' means the directory where the GCC tools are located.
+		# In HAL: 'CC' means the directory and the prefix of GCC.
+		CC=$(amp_get_string "$ITS_IMAGE" cc)
+		[ ! -n "$CC" ] || CC="${RK_SDK_DIR}/${CC}"
+
 		SYS="${SYS}${CORE:+_$CORE}"
 
 		case $SYS in
