@@ -443,10 +443,10 @@ rk_extra_part_src()
 			return 0
 		elif echo "$src" | grep -q "^/"; then
 			echo "$src"
-		elif [ -d "$RK_IMAGE_DIR/$PART_NAME/$src" ]; then
-			echo "$RK_IMAGE_DIR/$PART_NAME/$src"
+		elif [ -d "$RK_EXTRA_PARTS_DIR/$PART_NAME/$src" ]; then
+			echo "$RK_EXTRA_PARTS_DIR/$PART_NAME/$src"
 		else
-			echo "$RK_IMAGE_DIR/$src"
+			echo "$RK_EXTRA_PARTS_DIR/$src"
 		fi
 	done
 }
