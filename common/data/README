@@ -1,4 +1,5 @@
-Misc files for Rockchip Linux SDK
+Misc files
+==========
 
 adbd-auth: Auth script for adbd service
 
