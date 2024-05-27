@@ -36,7 +36,6 @@ build_yocto()
 	"$RK_SCRIPTS_DIR/check-yocto.sh"
 
 	cd yocto
-	rm -f build/conf/local.conf
 
 	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
 		if [ -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
@@ -44,6 +43,7 @@ build_yocto()
 				build/conf/local.conf
 		elif [ -r "build/conf/$RK_YOCTO_CFG" ]; then
 			if [ "$RK_YOCTO_CFG" != local.conf ]; then
+				rm -f build/conf/local.conf
 				ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
 			fi
 		else
@@ -55,6 +55,7 @@ build_yocto()
 		message "          Start building for $RK_YOCTO_CFG"
 		message "=========================================="
 	else
+		rm -f build/conf/local.conf
 		{
 			echo "include include/common.conf"
 			echo "include include/debug.conf"
