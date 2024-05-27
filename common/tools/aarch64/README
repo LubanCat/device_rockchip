@@ -2,7 +2,7 @@ Prebuilt tools (static linked)
 ==============================
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-ce5707cda9 gdb: Fix static build error
+6634c04d31 coremark: Support forcing static build
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -19,6 +19,9 @@ BR2_PACKAGE_ANDROID_ADBD_STATIC=y
 BR2_PACKAGE_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_STATIC=y
 BR2_PACKAGE_BUSYBOX_CONFIG="package/busybox/busybox-full.config"
+
+BR2_PACKAGE_COREMARK=y
+BR2_PACKAGE_COREMARK_STATIC=y
 
 BR2_PACKAGE_LIBUNWIND=y
 BR2_PACKAGE_LIBUNWIND_STATIC=y
