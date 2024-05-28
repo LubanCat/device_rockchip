@@ -200,7 +200,7 @@ pack_linux_headers()
 	fi
 
 	run_command mkdir -p "$HEADERS_OUTDIR"
-	run_command rm -rf "$HEADERS_KBUILD_DIR" "$HEADERS_TAR"
+	run_command rm -rf "$HEADERS_KBUILD_DIR" "$HEADERS_TAR"*
 	run_command ln -rsf "$KBUILD_DIR" "$HEADERS_KBUILD_DIR"
 
 	cat << EOF > "$HEADERS_PACK_SCRIPT"
