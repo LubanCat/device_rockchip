@@ -110,6 +110,7 @@ build_recovery_kernel()
 	RECOVERY_KERNEL_DIR="$RK_OUTDIR/recovery-kernel"
 	RECOVERY_KERNEL_IMG="${RK_KERNEL_IMG#kernel/}"
 	RECOVERY_KERNEL_DTB="${RK_KERNEL_DTS_DIR#kernel/}/${RK_KERNEL_RECOVERY_DTS_NAME:-$RK_KERNEL_DTS_NAME}.dtb"
+	RECOVERY_KERNEL_DTB_TARGET="${RECOVERY_KERNEL_DTB##*/boot/dts/}"
 
 	if [ -z "$RK_KERNEL_RECOVERY_CFG" ] && \
 		[ -z "$RK_KERNEL_RECOVERY_DTS_NAME" ] && \
@@ -121,7 +122,7 @@ build_recovery_kernel()
 
 		make_kernel_config "$RK_KERNEL_CFG"
 		run_command $KMAKE "$(basename "$RECOVERY_KERNEL_IMG")"
-		run_command $KMAKE "rockchip/$(basename "$RECOVERY_KERNEL_DTB")"
+		run_command $KMAKE "$RECOVERY_KERNEL_DTB_TARGET"
 	else
 		if [ ! -d "$RECOVERY_KERNEL_DIR" ] || \
 			[ -L "$RECOVERY_KERNEL_DIR" ]; then
@@ -149,7 +150,7 @@ build_recovery_kernel()
 		KMAKE="$KMAKE O=$RECOVERY_KERNEL_DIR"
 		make_kernel_config "$RK_KERNEL_RECOVERY_CFG"
 		run_command $KMAKE "$(basename "$RECOVERY_KERNEL_IMG")"
-		run_command $KMAKE "rockchip/$(basename "$RECOVERY_KERNEL_DTB")"
+		run_command $KMAKE "$RECOVERY_KERNEL_DTB_TARGET"
 
 		run_command tar xf "$RK_OUTDIR/kernel.tar" -C /
 		run_command rm -f "$RK_OUTDIR/kernel.tar"
