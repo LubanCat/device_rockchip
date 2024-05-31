@@ -32,6 +32,12 @@ if [ -r "$TARGET_DIR/etc/ntp.conf" ] && \
 	echo "server 3.pool.ntp.org iburst" >> "$TARGET_DIR/etc/ntp.conf"
 fi
 
+# Switch from the compat to the files module
+# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=880846
+if [ -r "$TARGET_DIR/etc/nsswitch.conf" ]; then
+	sed -i 's/\<compat$/files/' "$TARGET_DIR/etc/nsswitch.conf"
+fi
+
 # Install weston overlays
 if [ -x "$TARGET_DIR/usr/bin/weston" ]; then
 	sed -i 's/\(WESTON_USER=\)weston/\1root/' \
