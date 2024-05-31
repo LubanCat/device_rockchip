@@ -3,7 +3,12 @@
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 RK_SDK_DIR="${RK_SDK_DIR:-$(realpath "$RK_SCRIPTS_DIR/../../../..")}"
 
-if ! ping google.com -c 1 -W 1 &>/dev/null; then
+# Verify the google.com and retry a few times for a bad network
+if ! ping google.com -c 1 -W 1 &>/dev/null && \
+	! ping google.com -c 1 -W 1 &>/dev/null && \
+	! ping google.com -c 1 -W 1 &>/dev/null && \
+	! ping google.com -c 1 -W 1 &>/dev/null && \
+	! ping google.com -c 1 -W 1 &>/dev/null; then
 	echo -e "\e[35m"
 	echo "Your network is not able to access google.com"
 	echo "Please setup a VPN to bypass the GFW."
