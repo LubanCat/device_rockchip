@@ -14,10 +14,12 @@ ln -sf /var/log .
 dmesg -c > dmesg.txt
 
 if [ -w /proc/sysrq-trigger ]; then
+	echo 0 > /proc/sys/kernel/printk
 	for s in l m q t w; do
 		echo $s > /proc/sysrq-trigger
 	done
 	dmesg > sysrq.txt
+	echo 7 > /proc/sys/kernel/printk
 fi
 
 if type lsof >/dev/null 2>/dev/null; then
