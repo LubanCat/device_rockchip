@@ -171,22 +171,25 @@ mkimage()
 
 mkimage_auto_sized()
 {
-    tar cf $TEMP $SRC_DIR &>/dev/null
-    SIZE_KB=$(du -k $TEMP|grep -o "^[0-9]*")
-    rm -rf $TEMP
     echo "Making $TARGET from $SRC_DIR (auto sized)"
 
+    # Apparent size and maxium alignment(file_count * block_size)
+    SIZE_KB="$(($(du --apparent-size -sk $SRC_DIR | cut -f 1) + \
+        $(find $SRC_DIR | wc -l) * 4))"
+    SIZE_KB="$((SIZE_KB + $SIZE_KB * 10 / 100))" # Start with extra 10%
     MAX_RETRY=20
     RETRY=0
 
     while true;do
-        EXTRA_SIZE=$(($SIZE_KB / 50))
-        SIZE_KB=$(($SIZE_KB + ($EXTRA_SIZE > 4096 ? $EXTRA_SIZE : 4096)))
         mkimage && break
 
         RETRY=$[RETRY+1]
         [ $RETRY -gt $MAX_RETRY ] && fatal "Failed to make image!"
+
         echo "Retring with increased size....($RETRY/$MAX_RETRY)"
+
+        EXTRA_SIZE=$(($SIZE_KB / 50)) # Retry with extra 2%
+        SIZE_KB=$(($SIZE_KB + ($EXTRA_SIZE > 4096 ? $EXTRA_SIZE : 4096)))
     done
 }
 
@@ -242,7 +245,7 @@ case $FS_TYPE in
     jffs2)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
         mkfs.jffs2 -r $SRC_DIR -o $TARGET 0x10000 \
-		--pad=0x400000 -s 0x1000 -n || exit 1
+            --pad=0x400000 -s 0x1000 -n || exit 1
         ;;
     *)
         usage "File system: $FS_TYPE not supported."
