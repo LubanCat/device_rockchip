@@ -23,6 +23,7 @@
 				size     = <0x00800000>;
 				sys      = "rtt";
 				core     = "ap";
+				rtt_config = "board/rk3562_evb1_lp4x/amp_defconfig";
 			};
 			udelay       = <10000>;
 			hash {
