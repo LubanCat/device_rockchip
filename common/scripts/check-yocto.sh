@@ -16,16 +16,9 @@ if ! ping google.com -c 1 -W 1 &>/dev/null && \
 	exit 1
 fi
 
-if ! which zstd >/dev/null 2>&1; then
-	echo -e "\e[35m"
-	echo "Your zstd is missing"
-	echo "Please install it:"
-	echo "sudo apt-get install zstd"
-	echo -e "\e[0m"
-	exit 1
-fi
+"$RK_SCRIPTS_DIR/check-package.sh" zstd
 
-PYTHON3_MIN_VER=$(python3 --version | cut -d'.' -f2)
+PYTHON3_MIN_VER=$(python3 --version | cut -d'.' -f2 2>/dev/null)
 if [ "${PYTHON3_MIN_VER:-0}" -lt 6 ]; then
 	echo -e "\e[35m"
 	echo "Your python3 is too old for yocto: $(python3 --version)"

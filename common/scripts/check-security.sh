@@ -116,6 +116,8 @@ rk_security_check_system()
 
 rk_security_check_kernel_config()
 {
+	[ ! -z "$RK_SECURITY" ] || return 0
+
 	if [ $(echo "$RK_KERNEL_VERSION_RAW < 6.1" | bc) -eq 1 ]; then
 		BOOT_FIXED_CONFIGS="$BOOT_FIXED_CONFIGS $BOOT_FIXED_UNDER_6_1_CONFIG"
 	fi

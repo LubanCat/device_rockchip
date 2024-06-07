@@ -45,14 +45,7 @@ if [ ! -e "/usr/share/live/build/data/debian-cd/$RK_DEBIAN_VERSION" ]; then
 	exit 1
 fi
 
-if ! which debootstrap >/dev/null 2>&1; then
-	echo -e "\e[35m"
-	echo "Your debootstrap is missing"
-	echo "Please install it:"
-	echo "sudo apt-get install debootstrap"
-	echo -e "\e[0m"
-	exit 1
-fi
+"$RK_SCRIPTS_DIR/check-package.sh" debootstrap
 
 if [ ! -e "/usr/share/debootstrap/scripts/$RK_DEBIAN_VERSION" ]; then
 	echo -e "\e[35m"
@@ -72,14 +65,8 @@ case "$RK_DEBIAN_ARCH" in
 esac
 QEMU_VERSION=$(qemu-$QEMU_ARCH-static --version | head -n 1 | cut -d' ' -f3)
 
-if ! which qemu-$QEMU_ARCH-static >/dev/null 2>&1; then
-	echo -e "\e[35m"
-	echo "Your qemu-$QEMU_ARCH-static(qemu-user-static) is missing"
-	echo "Please install it:"
-	echo "sudo apt-get install qemu-user-static"
-	echo -e "\e[0m"
-	exit 1
-fi
+"$RK_SCRIPTS_DIR/check-package.sh" "qemu-$QEMU_ARCH-static(qemu-user-static)" \
+	qemu-$QEMU_ARCH-static qemu-user-static
 
 if ! update-binfmts --display qemu-$QEMU_ARCH >/dev/null 2>&1; then
 	echo -e "\e[35m"

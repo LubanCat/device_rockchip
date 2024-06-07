@@ -9,10 +9,7 @@ link_image() {
 
 build_firmware()
 {
-	if ! which fakeroot &>/dev/null; then
-		error "fakeroot not found! (sudo apt-get install fakeroot)"
-		exit 1
-	fi
+	"$RK_SCRIPTS_DIR/check-package.sh" fakeroot
 
 	mkdir -p "$RK_FIRMWARE_DIR"
 

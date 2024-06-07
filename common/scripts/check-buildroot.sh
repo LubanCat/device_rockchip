@@ -16,16 +16,6 @@ if [ "$LINUX_VER_MAJOR" -lt 4 ] ||
 	exit 1
 fi
 
-# Buildroot brmake needs unbuffer
-if ! which unbuffer >/dev/null 2>&1; then
-	echo -e "\e[35m"
-	echo "Your unbuffer is missing"
-	echo "Please install it:"
-	echo "sudo apt-get install expect expect-dev"
-	echo -e "\e[0m"
-	exit 1
-fi
-
 # The new buildroot Makefile needs make (>= 4.0)
 if ! "$BUILDROOT_DIR/support/dependencies/check-host-make.sh" 4.0 make \
 	> /dev/null; then
@@ -43,3 +33,6 @@ if ! "$BUILDROOT_DIR/support/dependencies/check-host-make.sh" 4.0 make \
 fi
 
 "$RK_SCRIPTS_DIR/check-header.sh" libc6 dirent.h libc6-dev
+
+# Buildroot brmake needs unbuffer
+"$RK_SCRIPTS_DIR/check-package.sh" unbuffer unbuffer "expect expect-dev"
