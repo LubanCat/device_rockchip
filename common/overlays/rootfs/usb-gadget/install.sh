@@ -7,7 +7,9 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
 	-name "*usbdevice*" -print0 -o -name ".usb_config" -print0 \
-	-o -name "*adbd*" -print0 -o -name "*umtprd*" -print0 \
+	-o -name "android-tools-adbd*" -print0 \
+	-o -name "android-gadget*" -print0 -o -name "adbd" -print0 \
+	-o -name "adbd.sh" -print0 -o -name "*umtprd*" -print0 \
 	2>/dev/null | xargs -0 rm -rf
 
 if [ ! "$RK_USB_GADGET" ]; then
