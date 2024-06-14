@@ -2,7 +2,7 @@ Prebuilt tools (static linked)
 ==============================
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-90d5de2961 inotify-tools: Support forcing static build
+6274f6b4bc inotify-tools: Support forcing static build for binaries
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
