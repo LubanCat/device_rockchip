@@ -4,38 +4,27 @@ EVENT=${1:-short-press}
 
 LONG_PRESS_TIMEOUT=3 # s
 DEBOUNCE=2 # s
-PIDFILE="/tmp/$(basename $0).pid"
-LOCKFILE=/tmp/.power_key
+PID_FILE=/var/run/power_key.pid
+LOCK_FILE=/var/run/.power_key.lock
 
 log()
 {
 	logger -t $(basename $0) "[$$]: $@"
 }
 
-parse_wake_time()
+# HACK: Monitoring power state changes and update the modified time
+while ! pgrep -x inotifywait >/dev/null; do
+	inotifywait -e modify /sys/power/state >/dev/null 2>&1
+	touch /sys/power/state
+done&
+
+parse_wakeup_time()
 {
-	RK_SUSPEND_STATE=/sys/kernel/wakeup_reasons/last_suspend_time
-	if ! [ -f "$RK_SUSPEND_STATE" ]; then
-		return -1
-	fi
-
-	SLEEP_TIME=$(sed 's/ /+/' "$RK_SUSPEND_STATE" | bc)
-	if [ "$SLEEP_TIME" = "0" ]; then
-		log "We have not slept before..."
-		return -1
-	fi
-
-	LAST_SUSPEND="$(stat -c "%Y" /sys/power/state)"
-	LAST_RESUME="$(echo "$LAST_SUSPEND+$SLEEP_TIME" | bc | cut -d'.' -f1)"
+	LAST_MODIFY="$(stat -c "%Y" /sys/power/state)"
 	NOW="$(date "+%s")"
-	WAKE_TIME="$(( "$NOW" - "$LAST_RESUME" ))"
+	WAKE_TIME="$(echo "$NOW" - "$LAST_MODIFY" | bc)"
 
-	if [ "$WAKE_TIME" -lt 0 ]; then
-		log "Something is wrong, time changed?"
-		return -1
-	fi
-
-	log "Last resume: $(date -d "@$LAST_RESUME" "+%D %T")..."
+	log "Last state changed: $(date -d "@$LAST_MODIFY" "+%D %T")..."
 }
 
 short_press()
@@ -51,23 +40,23 @@ short_press()
 	fi
 
 	# Debounce
-	if [ -f $LOCKFILE ]; then
+	if [ -f $LOCK_FILE ]; then
 		log "Too close to the latest request..."
 		return 0
 	fi
 
-	if parse_wake_time; then
+	if parse_wakeup_time; then
 		if [ "$WAKE_TIME" -le $DEBOUNCE ]; then
-			log "We are just resumed!"
+			log "We might just resumed!"
 			return 0
 		fi
 	fi
 
 	log "Prepare to suspend..."
 
-	touch $LOCKFILE
+	touch $LOCK_FILE
 	sh -c "$SUSPEND_CMD"
-	{ sleep $DEBOUNCE && rm $LOCKFILE; }&
+	{ sleep $DEBOUNCE && rm $LOCK_FILE; }&
 }
 
 long_press()
@@ -87,8 +76,8 @@ case "$EVENT" in
 		exec 3<$0
 		flock -x 3
 
-		start-stop-daemon -K -q -p $PIDFILE || true
-		start-stop-daemon -S -q -b -m -p $PIDFILE -x /bin/sh -- \
+		start-stop-daemon -K -q -p $PID_FILE || true
+		start-stop-daemon -S -q -b -m -p $PID_FILE -x /bin/sh -- \
 			-c "sleep $LONG_PRESS_TIMEOUT; $0 long-press"
 
 		# Unlock
@@ -98,7 +87,7 @@ case "$EVENT" in
 		# Avoid race with press event
 		sleep .5
 
-		start-stop-daemon -K -q -p $PIDFILE && short_press
+		start-stop-daemon -K -q -p $PID_FILE && short_press
 		;;
 	short-press)
 		short_press

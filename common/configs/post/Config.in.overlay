@@ -24,21 +24,11 @@ config RK_EXTRA_FONTS_DISABLED
 
 endchoice # extra fonts
 
-choice
-	prompt "input-event-daemon (power-key handling)"
-
-config RK_ROOTFS_INPUT_EVENT_DAEMON_DEFAULT
-	bool "auto"
+config RK_ROOTFS_INPUT_EVENT_DAEMON
+	bool "input-event-daemon (power-key handling)"
+	default y
 	help
-	  Install input-event-daemon (power-key handling) for yocto OS.
-
-config RK_ROOTFS_INPUT_EVENT_DAEMON_ENABLED
-	bool "install"
-
-config RK_ROOTFS_INPUT_EVENT_DAEMON_DISABLED
-	bool "not install"
-
-endchoice # input-event-daemon
+	  Short-press to suspend and long-press to shutdown.
 
 menuconfig RK_ROOTFS_BOOTANIM
 	bool "bootanim (Boot-time animation)"
