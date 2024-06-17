@@ -1,6 +1,5 @@
 RK_YOCTO_MACHINE="rockchip-rk3576-evb"
 RK_YOCTO_EXTRA_CFG="rockchip-rk3576-vehicle-evb.conf"
-RK_ROOTFS_PREBUILT_TOOLS=y
 RK_UBOOT_CFG_FRAGMENTS="rk3576-car"
 RK_UBOOT_SPL=y
 RK_KERNEL_CFG_FRAGMENTS="rk3576_vehicle.config"
