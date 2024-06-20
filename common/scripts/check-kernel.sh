@@ -89,6 +89,8 @@ if ! lz4 -h 2>&1 | grep -q favor-decSpeed; then
 	exit 1
 fi
 
+"$RK_SCRIPTS_DIR/check-package.sh" flex
+
 # For packing linux-headers .deb package
 "$RK_SCRIPTS_DIR/check-package.sh" dpkg
 
