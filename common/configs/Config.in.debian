@@ -58,7 +58,7 @@ config RK_DEBIAN_ARMHF
 endchoice # rootfs arch
 
 config RK_DEBIAN_MIRROR
-	string "mirror source"
+	string "mirror source for APT"
 	default "mirrors.ustc.edu.cn"
 
 endif # Debian

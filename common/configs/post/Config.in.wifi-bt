@@ -10,24 +10,32 @@ config RK_WIFIBT_MODULES
 	string
 	default "ALL_AP" if RK_WIFIBT_RTK_AP
 	default "ALL_CY" if RK_WIFIBT_RTK_CYW
-	default RK_WIFIBT_CHIP if RK_WIFIBT_CUSTOM
+	default RK_WIFIBT_CHIP if RK_WIFIBT_ON_BOARD
 
 config RK_WIFIBT_CHIP
 	string "onboard module"
+	help
+	  Onboard Wi-Fi/BT module.
 
 choice
 	prompt "supported modules"
-	default RK_WIFIBT_CUSTOM if RK_WIFIBT_CHIP != ""
+	default RK_WIFIBT_ON_BOARD if RK_WIFIBT_CHIP != ""
 	default RK_WIFIBT_RTK_AP
 
 config RK_WIFIBT_RTK_AP
-	bool "Realtek and AP6XXX"
+	bool "Realtek and Broadcom(AP6XXX)"
+	help
+	  All Realtek and Broadcom(AP6XXX) modules.
 
 config RK_WIFIBT_RTK_CYW
-	bool "Realtek and CYWXXX"
+	bool "Realtek and Infineon(CYWXXX)"
+	help
+	  All Realtek and Infineon(CYWXXX) modules.
 
-config RK_WIFIBT_CUSTOM
-	bool "custom (onboard module by default)"
+config RK_WIFIBT_ON_BOARD
+	bool "onboard module"
+	help
+	  Onboard module only.
 
 endchoice # modules
 
