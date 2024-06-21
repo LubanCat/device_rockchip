@@ -96,6 +96,16 @@ install_ums()
 	} >> "$TARGET_DIR/etc/profile.d/usbdevice.sh"
 }
 
+install_uvc()
+{
+	[ -n "$RK_USB_UVC" ] || return 0
+
+	message "Installing UVC..."
+
+	install -m 0755 "$RK_TOOLS_DIR/armhf/uvc-gadget" \
+		"$TARGET_DIR/usr/bin/uvc-gadget"
+}
+
 usb_funcs()
 {
 	{
@@ -138,6 +148,7 @@ mkdir -p "$TARGET_DIR/etc/profile.d"
 install_adbd
 install_mtp
 install_ums
+install_uvc
 
 mkdir -p "$TARGET_DIR/lib/udev/rules.d"
 install -m 0644 external/rkscript/61-usbdevice.rules \
