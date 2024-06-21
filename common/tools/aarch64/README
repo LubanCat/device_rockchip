@@ -1,8 +1,8 @@
 Prebuilt tools (static linked)
 ==============================
 
-Prebuilt from Rockchip buildroot 2021 SDK:
-135a1fc6f3 ncurses: Fix terminfo install error
+Prebuilt from Rockchip buildroot 2021 SDK with kernel 6.1:
+70a3141b2c uvc-gadget: New package
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -32,6 +32,9 @@ BR2_PACKAGE_ELFUTILS=y
 
 BR2_PACKAGE_FRECON=y
 BR2_PACKAGE_FRECON_STATIC=y
+
+BR2_PACKAGE_JPEG_TURBO=y
+BR2_PACKAGE_JPEG_TURBO_STATIC=y
 
 BR2_PACKAGE_GDB=y
 BR2_PACKAGE_GDB_STATIC=y
@@ -94,6 +97,9 @@ BR2_PACKAGE_ZSTD_STATIC=y
 
 BR2_PACKAGE_UMTPRD=y
 BR2_PACKAGE_UMTPRD_STATIC=y
+
+BR2_PACKAGE_UVC_GADGET=y
+BR2_PACKAGE_UVC_GADGET_STATIC=y
 
 NOTE:
 For building perf:
