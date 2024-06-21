@@ -2,7 +2,7 @@ Prebuilt tools (static linked)
 ==============================
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-23b5c709a9 ncurses: Use the same terminfo dirs as Debian
+135a1fc6f3 ncurses: Fix terminfo install error
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
