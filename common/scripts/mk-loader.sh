@@ -27,6 +27,8 @@ build_uboot()
 
 	if [ -z "$DRY_RUN" ]; then
 		rm -f u-boot/*.bin u-boot/*.img
+
+		"$RK_SCRIPTS_DIR/check-loader.sh"
 	fi
 
 	UARGS_COMMON="$RK_UBOOT_OPTS \
