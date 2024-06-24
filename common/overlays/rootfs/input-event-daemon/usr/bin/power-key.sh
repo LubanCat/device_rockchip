@@ -15,6 +15,8 @@ log()
 # HACK: Monitoring power state changes and update the modified time
 while ! pgrep -x inotifywait >/dev/null; do
 	inotifywait -e modify /sys/power/state >/dev/null 2>&1
+	# Avoid race with freezing processes
+	sleep .2
 	touch /sys/power/state
 done&
 
