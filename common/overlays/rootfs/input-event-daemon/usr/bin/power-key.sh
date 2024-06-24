@@ -24,7 +24,7 @@ parse_wakeup_time()
 {
 	LAST_MODIFY="$(stat -c "%Y" /sys/power/state)"
 	NOW="$(date "+%s")"
-	WAKE_TIME="$(echo "$NOW" - "$LAST_MODIFY" | bc)"
+	WAKE_TIME="$(expr "$NOW" - "$LAST_MODIFY")"
 
 	log "Last state changed: $(date -d "@$LAST_MODIFY" "+%D %T")..."
 }
