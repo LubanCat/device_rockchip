@@ -112,8 +112,8 @@ EOF
 	default "normal"
 	help
 	  Source dirs, each of them can be either of absolute path(/<dir>) or
-	  relative to <RK_EXTRA_PARTS_DIR> or relative to
-	  <RK_EXTRA_PARTS_DIR>/<part name>.
+	  relative to <RK_CHIP_DIR>|<RK_EXTRA_PARTS_DIR> or relative to
+	  (<RK_CHIP_DIR>|<RK_EXTRA_PARTS_DIR>)/<part name>.
 EOF
 	fi
 
