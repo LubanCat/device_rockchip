@@ -96,6 +96,7 @@ build_yocto()
 		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
 		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
 		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
+		echo "USE_DEPMOD := \"0\""
 		case "$RK_CHIP_FAMILY" in
 			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
 				echo "MALI_VERSION := \"g13p0\"" ;;

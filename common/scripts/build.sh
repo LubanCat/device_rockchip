@@ -519,7 +519,8 @@ main()
 		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
 		message "Parsing supported commands...\n"
 		rm -rf "$RK_PARSED_CMDS"
-		run_build_hooks parse-cmds
+		run_build_hooks parse-cmds > /tmp/.parsed_cmds
+		mv /tmp/.parsed_cmds "$RK_PARSED_CMDS"
 	fi
 	source "$RK_PARSED_CMDS"
 

@@ -140,8 +140,6 @@ case "$1" in
 	usage) usage_hook; exit 0 ;;
 	parse-cmds)
 		shift
-		source "$RK_PARSED_CMDS" 2>/dev/null || true
-
 		{
 			SCRIPT="$(realpath "$0")"
 			echo "# Parsed from $SCRIPT."
@@ -154,7 +152,7 @@ case "$1" in
 				echo "RK_BUILD_CMDS=\"\$RK_BUILD_CMDS $(echo $BUILD_CMDS | sort)\" # $SCRIPT"
 			[ -z "$POST_BUILD_CMDS" ] || \
 				echo "RK_POST_BUILD_CMDS=\"\$RK_POST_BUILD_CMDS $(echo $POST_BUILD_CMDS | sort)\" # $SCRIPT"
-		} >> "$RK_PARSED_CMDS"
+		}
 		exit 0
 		;;
 	clean)
