@@ -1,0 +1,12 @@
+# RK_BUILDROOT is not set
+# RK_YOCTO is not set
+RK_ROOTFS_TARGET_XFCE=y
+RK_ROOTFS_IMAGE="linaro-rk356x-${RK_ROOTFS_TARGET}-rootfs.img"
+RK_KERNEL_CFG="lubancat_linux_rk356x_defconfig"
+RK_KERNEL_VERSION="5.10"
+RK_KERNEL_DTS_NAME="rk356x-lubancat-generic"
+RK_KERNEL_EXTBOOT=y
+# RK_RECOVERY is not set
+RK_EXTRA_PARTITION_NUM=0
+RK_USE_FIT_IMG=y
+RK_PACKAGE_FILE_CUSTOM=y
