@@ -26,7 +26,7 @@
             type = "kernel";
             arch = "arm";
             os = "linux";
-            compression = "lz4";
+            compression = "none";
             entry = <0xffffff01>;
             load = <0xffffff01>;
 
