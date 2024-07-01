@@ -12,26 +12,37 @@ log()
 	logger -t $(basename $0) "[$$]: $@"
 }
 
-# HACK: Monitoring power state changes and update the modified time
-while ! pgrep -x inotifywait >/dev/null; do
-	inotifywait -e modify /sys/power/state >/dev/null 2>&1
-	# Avoid race with freezing processes
-	sleep .2
-	touch /sys/power/state
-done&
-
-parse_wakeup_time()
+check_suspend_state()
 {
 	LAST_MODIFY="$(stat -c "%Y" /sys/power/state)"
 	NOW="$(date "+%s")"
 	WAKE_TIME="$(expr "$NOW" - "$LAST_MODIFY")"
 
 	log "Last state changed: $(date -d "@$LAST_MODIFY" "+%D %T")..."
+
+	if [ "$WAKE_TIME" -le $DEBOUNCE ]; then
+		log "Too close to the latest suspending request..."
+		return 1
+	fi
 }
+
+# HACK: Monitoring power state changes and update the suspended state
+while ! pgrep -x inotifywait >/dev/null; do
+	inotifywait -e modify /sys/power/state >/dev/null 2>&1
+
+	# Avoid race with freezing processes
+	sleep .2
+	touch /sys/power/state
+done&
 
 short_press()
 {
 	log "Power key short press..."
+
+	if ! check_suspend_state; then
+		log "Do nothing!"
+		return 0
+	fi
 
 	if which systemctl >/dev/null; then
 		SUSPEND_CMD="systemctl suspend"
@@ -41,24 +52,10 @@ short_press()
 		SUSPEND_CMD="echo -n mem > /sys/power/state"
 	fi
 
-	# Debounce
-	if [ -f $LOCK_FILE ]; then
-		log "Too close to the latest request..."
-		return 0
-	fi
-
-	if parse_wakeup_time; then
-		if [ "$WAKE_TIME" -le $DEBOUNCE ]; then
-			log "We might just resumed!"
-			return 0
-		fi
-	fi
-
 	log "Prepare to suspend..."
-
-	touch $LOCK_FILE
+	touch /sys/power/state
 	sh -c "$SUSPEND_CMD"
-	{ sleep $DEBOUNCE && rm $LOCK_FILE; }&
+	touch /sys/power/state
 }
 
 long_press()
@@ -75,7 +72,8 @@ log "Received power key event: $@..."
 case "$EVENT" in
 	press)
 		# Lock it
-		exec 3<$0
+		touch $LOCK_FILE
+		exec 3<$LOCK_FILE
 		flock -x 3
 
 		start-stop-daemon -K -q -p $PID_FILE || true
