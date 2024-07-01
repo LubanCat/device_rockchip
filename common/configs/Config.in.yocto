@@ -44,19 +44,9 @@ if RK_YOCTO_CFG_DEFAULT
 
 config RK_YOCTO_MACHINE
 	string "machine name"
-	default "rockchip-px3se-evb" if RK_CHIP_FAMILY = "px3se"
-	default "rockchip-rk3288w-evb" if RK_CHIP = "rk3288w"
-	default "rockchip-rk3288-evb" if RK_CHIP_FAMILY = "rk3288"
 	default "rockchip-rk3308-evb" if RK_CHIP_FAMILY = "rk3308"
-	default "rockchip-px30-evb" if RK_CHIP_FAMILY = "px30"
-	default "rockchip-rk3326-evb" if RK_CHIP_FAMILY = "rk3326"
-	default "rockchip-rk3328-evb" if RK_CHIP_FAMILY = "rk3328"
 	default "rockchip-rk3399-sapphire-excavator" \
 		if RK_CHIP_FAMILY = "rk3399"
-	default "rockchip-rk3399pro-evb" if RK_CHIP_FAMILY = "rk3399pro"
-	default "rockchip-rk3566-evb" if RK_CHIP = "rk3566"
-	default "rockchip-rk3568-evb" if RK_CHIP = "rk3568"
-	default "rockchip-rk3562-evb" if RK_CHIP_FAMILY = "rk3562"
 	default "rockchip-rk3588-evb" if RK_CHIP_FAMILY = "rk3588"
 	default "rockchip-${RK_CHIP}-evb"
 	help
