@@ -41,6 +41,7 @@ if [ -r "kernel/.config" ]; then
 		exit 1
 	fi
 
+	# For bypassing DRM permision checks.
 	if grep -q "CONFIG_DRM=y" kernel/.config &&
 		! grep -q "CONFIG_DRM_IGNORE_IOTCL_PERMIT=y" kernel/.config; then
 		echo -e "\e[35m"
@@ -50,6 +51,15 @@ if [ -r "kernel/.config" ]; then
 	fi
 
 	"$RK_SCRIPTS_DIR/check-security.sh" kernel config
+
+	# For using flock.
+	if [ "$RK_USB_GADGET" -o "$RK_ROOTFS_INPUT_EVENT_DAEMON" ] && \
+		! grep -q "CONFIG_FILE_LOCKING=y" kernel/.config; then
+		echo -e "\e[35m"
+		echo "Please enable CONFIG_FILE_LOCKING in kernel."
+		echo -e "\e[0m"
+		exit 1
+	fi
 
 	[ -z "$RK_USB_ADBD" ] || check_usb_gadget adb CONFIG_USB_CONFIGFS_F_FS
 	[ -z "$RK_USB_MTP" ] || check_usb_gadget mtp CONFIG_USB_CONFIGFS_F_FS
