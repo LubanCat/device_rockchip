@@ -2,7 +2,7 @@ Prebuilt tools (static linked)
 ==============================
 
 Prebuilt from Rockchip buildroot 2021 SDK with kernel 6.1:
-70a3141b2c uvc-gadget: New package
+56539fde4a libtelnet: Support forcing static build
 
 Using rockchip_{rk3036,rk3326_64}_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
@@ -79,6 +79,9 @@ BR2_PACKAGE_LIBLOCKFILE=y
 BR2_PACKAGE_LIBLOCKFILE_STATIC=y
 BR2_PACKAGE_LOCKFILE_PROGS=y
 BR2_PACKAGE_LOCKFILE_PROGS_STATIC=y
+
+BR2_PACKAGE_LIBTELNET=y
+BR2_PACKAGE_LIBTELNET_STATIC=y
 
 BR2_PACKAGE_INOTIFY_TOOLS=y
 BR2_PACKAGE_INOTIFY_TOOLS_STATIC=y
