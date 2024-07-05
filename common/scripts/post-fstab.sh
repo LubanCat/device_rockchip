@@ -59,9 +59,7 @@ fixup_device_part()
 
 	DEV="$1"
 
-	# Dev is either <name> or /dev/.../<name> or <UUID|LABEL|PARTLABEL>=xxx
 	[ "$DEV" ] || return 0
-	echo $DEV | grep -qE "^/|=" || DEV="PARTLABEL=$DEV"
 
 	MOUNTPOINT="${2:-/${DEV##*[/=]}}"
 	FS_TYPE="${3:-ext4}"

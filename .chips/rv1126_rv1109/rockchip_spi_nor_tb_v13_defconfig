@@ -10,5 +10,6 @@ RK_KERNEL_DTS_NAME="rv1126-evb-ddr3-v12-tb-spi-nor"
 RK_KERNEL_IMG_NAME="Image"
 RK_BOOT_FIT_ITS_NAME="boot-tb.its"
 RK_RECOVERY_FIT_ITS_NAME="boot-tb.its"
+RK_EXTRA_PARTITION_NUM=0
 RK_PARAMETER="parameter-spi-nor-tb-32M.txt"
 RK_USE_FIT_IMG=y

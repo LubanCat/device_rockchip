@@ -58,29 +58,23 @@ for i in $(seq 1 $RK_EXTRA_PARTITION_MAX_NUM); do
 menu "Extra partition $i"
 	depends on RK_EXTRA_PARTITION_NUM > $(( $i - 1 ))
 
-config RK_EXTRA_PARTITION_${i}_DEV
-	string "device identifier"
-EOF
-	case $i in
-		1) echo -e "\tdefault \"oem\"" ;;
-		2) echo -e "\tdefault \"userdata\"" ;;
-	esac
-
-	cat <<EOF
-	help
-	  Device identifier, like oem or /dev/mmcblk0p7 or PARTLABEL=oem.
-
 config RK_EXTRA_PARTITION_${i}_NAME
 	string "partition name"
+EOF
+	case $i in
+		1)
+			echo -e "\tdefault \"userdata\" if RK_EXTRA_PARTITION_NUM = 1"
+			echo -e "\tdefault \"oem\"" ;;
+		2) echo -e "\tdefault \"userdata\"" ;;
+	esac
+	cat <<EOF
+
+config RK_EXTRA_PARTITION_${i}_DEV
+	string "device identifier"
 	default "auto"
 	help
-	  Partition name, set "auto" to detect from device identifier.
-
-config RK_EXTRA_PARTITION_${i}_NAME_STR
-	string
-	default "\${RK_EXTRA_PARTITION_${i}_DEV##*[/=]}" \\
-		if RK_EXTRA_PARTITION_${i}_NAME = "auto"
-	default RK_EXTRA_PARTITION_${i}_NAME
+	  Device identifier, like <device node> or PARTLABEL=<partition name>
+	  or <partition name> or "auto".
 
 config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 	string "mountpoint"
@@ -90,7 +84,7 @@ config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 
 config RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR
 	string
-	default "/\$RK_EXTRA_PARTITION_${i}_NAME_STR" \\
+	default "/\$RK_EXTRA_PARTITION_${i}_NAME" \\
 		if RK_EXTRA_PARTITION_${i}_MOUNTPOINT = "auto"
 	default RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 
@@ -113,7 +107,7 @@ EOF
 	help
 	  Source dirs, each of them can be either of absolute path(/<dir>) or
 	  relative to <RK_CHIP_DIR>|<RK_EXTRA_PARTS_DIR> or relative to
-	  (<RK_CHIP_DIR>|<RK_EXTRA_PARTS_DIR>)/<part name>.
+	  (<RK_CHIP_DIR>|<RK_EXTRA_PARTS_DIR>)/<partition name>.
 EOF
 	fi
 
@@ -143,8 +137,7 @@ config RK_EXTRA_PARTITION_${i}_FEATURES
 
 config RK_EXTRA_PARTITION_${i}_STR
 	string
-	depends on RK_EXTRA_PARTITION_${i}_DEV != ""
-	default "\$RK_EXTRA_PARTITION_${i}_DEV:\$RK_EXTRA_PARTITION_${i}_NAME_STR:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
+	default "\${RK_EXTRA_PARTITION_${i}_DEV:-auto}:\$RK_EXTRA_PARTITION_${i}_NAME:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
 
 endmenu # Extra partition $i
 EOF

@@ -412,7 +412,12 @@ rk_extra_part_arg()
 
 rk_extra_part_dev()
 {
-	rk_extra_part_arg ${1:-1} 1
+	DEV=$(rk_extra_part_arg ${1:-1} 1)
+	case "${DEV:-auto}" in
+		/*|*=*) echo $DEV ;;
+		auto) echo PARTLABEL=$(rk_extra_part_name $@) ;;
+		*) echo PARTLABEL=$DEV ;;
+	esac
 }
 
 rk_extra_part_name()
