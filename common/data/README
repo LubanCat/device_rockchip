@@ -1,7 +1,7 @@
 Misc files
 ==========
 
-adbd-auth: Auth script for adbd service
+adbd-auth.sh: Auth script for adbd service
 
 apply-all.sh: Script to apply all saved SDK patches
 
