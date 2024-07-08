@@ -55,6 +55,11 @@ do_build()
 			run_command mv kernel/defconfig \
 				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
 			;;
+		kernel-modules | modules)
+			run_command $KMAKE modules
+			run_command $KMAKE modules_install \
+				INSTALL_MOD_PATH="$RK_OUTDIR/kernel-modules"
+			;;
 		kernel*)
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
@@ -90,7 +95,6 @@ do_build()
 				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
 			fi
 			;;
-		modules) run_command $KMAKE modules ;;
 	esac
 }
 
@@ -279,7 +283,8 @@ usage_hook()
 
 	echo -e "kernel[:dry-run]                 \tbuild kernel"
 	echo -e "recovery-kernel[:dry-run]        \tbuild kernel for recovery"
-	echo -e "modules[:dry-run]                \tbuild kernel modules"
+	echo -e "kernel-modules[:dry-run]         \tbuild kernel modules"
+	echo -e "modules[:dry-run]                \talias of kernel-modules"
 	echo -e "linux-headers[:dry-run]          \tbuild linux-headers"
 	echo -e "kernel-config[:dry-run]          \tmodify kernel defconfig"
 	echo -e "kconfig[:dry-run]                \talias of kernel-config"
@@ -387,7 +392,7 @@ pre_build_hook_dry()
 	DRY_RUN=1 pre_build_hook $@
 }
 
-BUILD_CMDS="$KERNELS kernel recovery-kernel modules"
+BUILD_CMDS="$KERNELS kernel recovery-kernel kernel-modules modules"
 build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -400,7 +405,8 @@ build_hook()
 	case "$1" in
 		recovery-kernel) build_recovery_kernel $@ ;;
 		kernel-*)
-			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
+			if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ] &&
+				echo $KERNELS | grep -wq "$1"; then
 				warning "Kernel version ${1#kernel-} ignored"
 			fi
 			;&
@@ -456,7 +462,7 @@ source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-he
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;
-	kernel* | recovery-kernel | modules)
+	kernel* | recovery-kernel | kernel-modules | modules)
 		init_hook $@
 		build_hook ${@:-kernel}
 		;;

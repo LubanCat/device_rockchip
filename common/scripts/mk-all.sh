@@ -65,8 +65,13 @@ build_release()
 		cp -rv "$RK_OUTDIR/linux-headers" "$RELEASE_DIR/kernel/"
 
 		message "Saving kernel files..."
-		cp -v kernel/.config kernel/System.map kernel/vmlinux \
-			$RK_KERNEL_DTB "$RELEASE_DIR/kernel"
+		cp -rv kernel/.config kernel/System.map kernel/vmlinux \
+			$RK_KERNEL_DTB "$RELEASE_DIR/kernel/"
+
+		if [ -d "$RK_OUTDIR/kernel-modules" ]; then
+			cp -rv $RK_KERNEL_DTB "$RK_OUTDIR/kernel-modules" \
+				"$RELEASE_DIR/kernel/"
+		fi
 	fi
 
 	message "Saving build info..."
