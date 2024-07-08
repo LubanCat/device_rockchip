@@ -108,3 +108,4 @@ fi
 "$RK_SCRIPTS_DIR/check-header.sh" openssl openssl/ssl.h libssl-dev
 "$RK_SCRIPTS_DIR/check-header.sh" gmp gmp.h libgmp-dev
 "$RK_SCRIPTS_DIR/check-header.sh" mpc mpc.h libmpc-dev
+"$RK_SCRIPTS_DIR/check-header.sh" ncurses ncurses.h libncurses-dev
