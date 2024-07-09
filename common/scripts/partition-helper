@@ -427,7 +427,11 @@ rk_extra_part_name()
 
 rk_extra_part_mountpoint()
 {
-	rk_extra_part_arg ${1:-1} 3 "/$(rk_extra_part_name $1)"
+	MOUNTPOINT="$(rk_extra_part_arg ${1:-1} 3)"
+	case "${MOUNTPOINT:-auto}" in
+		auto) echo "/$(rk_extra_part_name $@)" ;;
+		*) echo "$MOUNTPOINT" ;;
+	esac
 }
 
 rk_extra_part_fstype()
@@ -470,11 +474,6 @@ rk_extra_part_builtin()
 	rk_extra_part_arg ${1:-1} 8 | grep -wq builtin
 }
 
-rk_extra_part_nopack()
-{
-	rk_extra_part_arg ${1:-1} 8 | grep -wq nopack
-}
-
 rk_extra_part_outdir()
 {
 	echo "$RK_EXTRA_PART_OUTDIR/$(rk_extra_part_name $1)"
@@ -510,11 +509,6 @@ rk_extra_part_prepare()
 
 	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT" \
 		"$RK_FIRMWARE_DIR/$(basename "$DST")"
-
-	if rk_extra_part_nopack $1; then
-		notice "Skip preparing $PART_NAME (not packing it)"
-		return 0
-	fi
 
 	mkdir -p "$OUTDIR"
 

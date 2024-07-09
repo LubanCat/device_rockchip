@@ -41,6 +41,7 @@ config RK_EXTRA_PARTITION_1_NAME
 
 config RK_EXTRA_PARTITION_1_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_1_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -52,18 +53,14 @@ config RK_EXTRA_PARTITION_1_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_1_MOUNTPOINT_STR
-	string
-	default "/$RK_EXTRA_PARTITION_1_NAME" \
-		if RK_EXTRA_PARTITION_1_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_1_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_1_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_1_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_1_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_1_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_1_SRC
@@ -77,6 +74,7 @@ config RK_EXTRA_PARTITION_1_SRC
 
 config RK_EXTRA_PARTITION_1_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_1_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -89,17 +87,13 @@ config RK_EXTRA_PARTITION_1_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_1_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_1_BUILTIN
-
 config RK_EXTRA_PARTITION_1_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_1_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_1_NOPACK:+nopack,}"
+	default "${RK_EXTRA_PARTITION_1_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_1_STR
 	string
-	default "${RK_EXTRA_PARTITION_1_DEV:-auto}:$RK_EXTRA_PARTITION_1_NAME:$RK_EXTRA_PARTITION_1_MOUNTPOINT_STR:$RK_EXTRA_PARTITION_1_FSTYPE:$RK_EXTRA_PARTITION_1_OPTIONS:${RK_EXTRA_PARTITION_1_SRC// /,}:$RK_EXTRA_PARTITION_1_SIZE:$RK_EXTRA_PARTITION_1_FEATURES"
+	default "${RK_EXTRA_PARTITION_1_DEV:-auto}:$RK_EXTRA_PARTITION_1_NAME:$RK_EXTRA_PARTITION_1_MOUNTPOINT:$RK_EXTRA_PARTITION_1_FSTYPE:$RK_EXTRA_PARTITION_1_OPTIONS:${RK_EXTRA_PARTITION_1_SRC// /,}:$RK_EXTRA_PARTITION_1_SIZE:$RK_EXTRA_PARTITION_1_FEATURES"
 
 endmenu # Extra partition 1
 
@@ -112,6 +106,7 @@ config RK_EXTRA_PARTITION_2_NAME
 
 config RK_EXTRA_PARTITION_2_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_2_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -123,18 +118,14 @@ config RK_EXTRA_PARTITION_2_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_2_MOUNTPOINT_STR
-	string
-	default "/$RK_EXTRA_PARTITION_2_NAME" \
-		if RK_EXTRA_PARTITION_2_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_2_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_2_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_2_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_2_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_2_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_2_SRC
@@ -148,6 +139,7 @@ config RK_EXTRA_PARTITION_2_SRC
 
 config RK_EXTRA_PARTITION_2_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_2_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -160,17 +152,13 @@ config RK_EXTRA_PARTITION_2_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_2_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_2_BUILTIN
-
 config RK_EXTRA_PARTITION_2_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_2_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_2_NOPACK:+nopack,}"
+	default "${RK_EXTRA_PARTITION_2_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_2_STR
 	string
-	default "${RK_EXTRA_PARTITION_2_DEV:-auto}:$RK_EXTRA_PARTITION_2_NAME:$RK_EXTRA_PARTITION_2_MOUNTPOINT_STR:$RK_EXTRA_PARTITION_2_FSTYPE:$RK_EXTRA_PARTITION_2_OPTIONS:${RK_EXTRA_PARTITION_2_SRC// /,}:$RK_EXTRA_PARTITION_2_SIZE:$RK_EXTRA_PARTITION_2_FEATURES"
+	default "${RK_EXTRA_PARTITION_2_DEV:-auto}:$RK_EXTRA_PARTITION_2_NAME:$RK_EXTRA_PARTITION_2_MOUNTPOINT:$RK_EXTRA_PARTITION_2_FSTYPE:$RK_EXTRA_PARTITION_2_OPTIONS:${RK_EXTRA_PARTITION_2_SRC// /,}:$RK_EXTRA_PARTITION_2_SIZE:$RK_EXTRA_PARTITION_2_FEATURES"
 
 endmenu # Extra partition 2
 
@@ -182,6 +170,7 @@ config RK_EXTRA_PARTITION_3_NAME
 
 config RK_EXTRA_PARTITION_3_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_3_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -193,18 +182,14 @@ config RK_EXTRA_PARTITION_3_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_3_MOUNTPOINT_STR
-	string
-	default "/$RK_EXTRA_PARTITION_3_NAME" \
-		if RK_EXTRA_PARTITION_3_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_3_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_3_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_3_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_3_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_3_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_3_SRC
@@ -212,6 +197,7 @@ config RK_EXTRA_PARTITION_3_SRC
 
 config RK_EXTRA_PARTITION_3_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_3_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -224,17 +210,13 @@ config RK_EXTRA_PARTITION_3_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_3_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_3_BUILTIN
-
 config RK_EXTRA_PARTITION_3_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_3_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_3_NOPACK:+nopack,}"
+	default "${RK_EXTRA_PARTITION_3_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_3_STR
 	string
-	default "${RK_EXTRA_PARTITION_3_DEV:-auto}:$RK_EXTRA_PARTITION_3_NAME:$RK_EXTRA_PARTITION_3_MOUNTPOINT_STR:$RK_EXTRA_PARTITION_3_FSTYPE:$RK_EXTRA_PARTITION_3_OPTIONS:${RK_EXTRA_PARTITION_3_SRC// /,}:$RK_EXTRA_PARTITION_3_SIZE:$RK_EXTRA_PARTITION_3_FEATURES"
+	default "${RK_EXTRA_PARTITION_3_DEV:-auto}:$RK_EXTRA_PARTITION_3_NAME:$RK_EXTRA_PARTITION_3_MOUNTPOINT:$RK_EXTRA_PARTITION_3_FSTYPE:$RK_EXTRA_PARTITION_3_OPTIONS:${RK_EXTRA_PARTITION_3_SRC// /,}:$RK_EXTRA_PARTITION_3_SIZE:$RK_EXTRA_PARTITION_3_FEATURES"
 
 endmenu # Extra partition 3
 
@@ -246,6 +228,7 @@ config RK_EXTRA_PARTITION_4_NAME
 
 config RK_EXTRA_PARTITION_4_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_4_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -257,18 +240,14 @@ config RK_EXTRA_PARTITION_4_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_4_MOUNTPOINT_STR
-	string
-	default "/$RK_EXTRA_PARTITION_4_NAME" \
-		if RK_EXTRA_PARTITION_4_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_4_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_4_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_4_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_4_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_4_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_4_SRC
@@ -276,6 +255,7 @@ config RK_EXTRA_PARTITION_4_SRC
 
 config RK_EXTRA_PARTITION_4_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_4_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -288,17 +268,13 @@ config RK_EXTRA_PARTITION_4_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_4_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_4_BUILTIN
-
 config RK_EXTRA_PARTITION_4_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_4_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_4_NOPACK:+nopack,}"
+	default "${RK_EXTRA_PARTITION_4_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_4_STR
 	string
-	default "${RK_EXTRA_PARTITION_4_DEV:-auto}:$RK_EXTRA_PARTITION_4_NAME:$RK_EXTRA_PARTITION_4_MOUNTPOINT_STR:$RK_EXTRA_PARTITION_4_FSTYPE:$RK_EXTRA_PARTITION_4_OPTIONS:${RK_EXTRA_PARTITION_4_SRC// /,}:$RK_EXTRA_PARTITION_4_SIZE:$RK_EXTRA_PARTITION_4_FEATURES"
+	default "${RK_EXTRA_PARTITION_4_DEV:-auto}:$RK_EXTRA_PARTITION_4_NAME:$RK_EXTRA_PARTITION_4_MOUNTPOINT:$RK_EXTRA_PARTITION_4_FSTYPE:$RK_EXTRA_PARTITION_4_OPTIONS:${RK_EXTRA_PARTITION_4_SRC// /,}:$RK_EXTRA_PARTITION_4_SIZE:$RK_EXTRA_PARTITION_4_FEATURES"
 
 endmenu # Extra partition 4
 
@@ -310,6 +286,7 @@ config RK_EXTRA_PARTITION_5_NAME
 
 config RK_EXTRA_PARTITION_5_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_5_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -321,18 +298,14 @@ config RK_EXTRA_PARTITION_5_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_5_MOUNTPOINT_STR
-	string
-	default "/$RK_EXTRA_PARTITION_5_NAME" \
-		if RK_EXTRA_PARTITION_5_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_5_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_5_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_5_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_5_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_5_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_5_SRC
@@ -340,6 +313,7 @@ config RK_EXTRA_PARTITION_5_SRC
 
 config RK_EXTRA_PARTITION_5_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_5_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -352,17 +326,13 @@ config RK_EXTRA_PARTITION_5_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_5_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_5_BUILTIN
-
 config RK_EXTRA_PARTITION_5_FEATURES
 	string
-	default "${RK_EXTRA_PARTITION_5_BUILTIN:+builtin,}${RK_EXTRA_PARTITION_5_NOPACK:+nopack,}"
+	default "${RK_EXTRA_PARTITION_5_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_5_STR
 	string
-	default "${RK_EXTRA_PARTITION_5_DEV:-auto}:$RK_EXTRA_PARTITION_5_NAME:$RK_EXTRA_PARTITION_5_MOUNTPOINT_STR:$RK_EXTRA_PARTITION_5_FSTYPE:$RK_EXTRA_PARTITION_5_OPTIONS:${RK_EXTRA_PARTITION_5_SRC// /,}:$RK_EXTRA_PARTITION_5_SIZE:$RK_EXTRA_PARTITION_5_FEATURES"
+	default "${RK_EXTRA_PARTITION_5_DEV:-auto}:$RK_EXTRA_PARTITION_5_NAME:$RK_EXTRA_PARTITION_5_MOUNTPOINT:$RK_EXTRA_PARTITION_5_FSTYPE:$RK_EXTRA_PARTITION_5_OPTIONS:${RK_EXTRA_PARTITION_5_SRC// /,}:$RK_EXTRA_PARTITION_5_SIZE:$RK_EXTRA_PARTITION_5_FEATURES"
 
 endmenu # Extra partition 5
 

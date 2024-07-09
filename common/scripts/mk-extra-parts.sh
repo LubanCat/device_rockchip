@@ -35,11 +35,6 @@ post_build_hook()
 			continue
 		fi
 
-		if rk_extra_part_nopack $idx; then
-			notice "Skip packing $PART_NAME (not packing)"
-			continue
-		fi
-
 		if [ "$SIZE" = max ]; then
 			SIZE="$(rk_partition_size_kb "$PART_NAME")K"
 			if [ "$SIZE" = 0K ]; then

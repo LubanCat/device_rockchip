@@ -71,6 +71,7 @@ EOF
 
 config RK_EXTRA_PARTITION_${i}_DEV
 	string "device identifier"
+	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 	default "auto"
 	help
 	  Device identifier, like <device node> or PARTLABEL=<partition name>
@@ -82,18 +83,14 @@ config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
-config RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR
-	string
-	default "/\$RK_EXTRA_PARTITION_${i}_NAME" \\
-		if RK_EXTRA_PARTITION_${i}_MOUNTPOINT = "auto"
-	default RK_EXTRA_PARTITION_${i}_MOUNTPOINT
-
 config RK_EXTRA_PARTITION_${i}_FSTYPE
 	string "filesystem type"
+	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 	default "ext4"
 
 config RK_EXTRA_PARTITION_${i}_OPTIONS
 	string "mount options"
+	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 	default "defaults"
 
 config RK_EXTRA_PARTITION_${i}_SRC
@@ -115,6 +112,7 @@ EOF
 
 config RK_EXTRA_PARTITION_${i}_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
+	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
@@ -127,17 +125,13 @@ config RK_EXTRA_PARTITION_${i}_BUILTIN
 	help
 	  Virtual parition that merged into rootfs.
 
-config RK_EXTRA_PARTITION_${i}_NOPACK
-	bool "skip packing image"
-	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
-
 config RK_EXTRA_PARTITION_${i}_FEATURES
 	string
-	default "\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin,}\${RK_EXTRA_PARTITION_${i}_NOPACK:+nopack,}"
+	default "\${RK_EXTRA_PARTITION_${i}_BUILTIN:+builtin}"
 
 config RK_EXTRA_PARTITION_${i}_STR
 	string
-	default "\${RK_EXTRA_PARTITION_${i}_DEV:-auto}:\$RK_EXTRA_PARTITION_${i}_NAME:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT_STR:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
+	default "\${RK_EXTRA_PARTITION_${i}_DEV:-auto}:\$RK_EXTRA_PARTITION_${i}_NAME:\$RK_EXTRA_PARTITION_${i}_MOUNTPOINT:\$RK_EXTRA_PARTITION_${i}_FSTYPE:\$RK_EXTRA_PARTITION_${i}_OPTIONS:\${RK_EXTRA_PARTITION_${i}_SRC// /,}:\$RK_EXTRA_PARTITION_${i}_SIZE:\$RK_EXTRA_PARTITION_${i}_FEATURES"
 
 endmenu # Extra partition $i
 EOF
