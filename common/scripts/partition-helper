@@ -231,9 +231,19 @@ rk_partition_save()
 # Edit raw partition table
 rk_partition_edit()
 {
-	sed -i '1i # name size' "$PART_TABLE"
-	eval ${EDITOR:-vi} "$PART_TABLE"
-	sed -i '/#/d' "$PART_TABLE"
+	TEMP_FILE="$(mktemp)"
+
+	echo "# name size" > "$TEMP_FILE"
+	while read NAME SIZE; do
+		SIZE_STR=$(rk_partition_size_sector_to_readable $SIZE)
+		echo "$NAME $SIZE # $SIZE_STR" >> "$TEMP_FILE"
+	done < "$PART_TABLE"
+
+	eval ${EDITOR:-vi} "$TEMP_FILE"
+
+	sed -i -e "/^#/d" -e "s/[ ]*#.*//" "$TEMP_FILE"
+	mv "$TEMP_FILE" "$PART_TABLE"
+
 	rk_partition_save
 }
 
