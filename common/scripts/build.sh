@@ -538,7 +538,7 @@ main()
 						2>/dev/null || usage
 				done
 				;&
-			shell | cleanall)
+			shell | buildroot-shell | bshell | cleanall)
 				# Check single options
 				if [ "$opt" = "$OPTIONS" ]; then
 					break
