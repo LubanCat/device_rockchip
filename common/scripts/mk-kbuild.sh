@@ -91,7 +91,7 @@ if [ "$KVER2" = 4.4 ]; then
 
 	make_subdir scripts
 	make_subdir scripts install
-else # 4.19/5.10
+else # 4.19/5.10/6.1
 	make_subdir scripts
 	make_subdir tools/objtool
 	make_subdir scripts install
