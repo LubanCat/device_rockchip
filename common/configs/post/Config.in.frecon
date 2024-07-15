@@ -61,9 +61,9 @@ endchoice # rotate
 config RK_ROOTFS_FRECON_OUTPUT_CONFIG
 	string "custom output configs"
 	help
-	  <monitor name>=<fit|strech>:<0|90|180|270>
+	  <monitor name>=<fit|strech>:<0|90|180|270>:<width>x<height>
 	  For example:
-	    DSI-1=fit:90,HDMI-A-2=strech:270
+	    DSI-1=fit:90,HDMI-A-2=strech:270:1280x800
 
 config RK_ROOTFS_FRECON_SCALE
 	int "scale (1-100)"

@@ -1,7 +1,7 @@
 frecon (static linked)
 
 Prebuilt from Rockchip buildroot 2021 SDK:
-c565d1b879b frecon: Support multiple monitors
+62b414915b frecon: Support setting preferred mode
 
 Using rockchip_rk3036_defconfig with addition configs:
 BR2_GCC_VERSION_11_X=y
