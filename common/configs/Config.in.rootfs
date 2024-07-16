@@ -41,7 +41,9 @@ endchoice # default rootfs
 
 config RK_ROOTFS_INITRD
 	bool "init ramfs/ramdisk"
-	depends on RK_ROOTFS_SYSTEM_BUILDROOT
+	# Based on kernel/init/do_mounts_rd.c identify_ramdisk_image()
+	depends on RK_ROOTFS_EXT2 || RK_ROOTFS_SQUASHFS || RK_ROOTFS_ROMFS || \
+		RK_ROOTFS_CPIO || RK_ROOTFS_CPIO_GZ
 
 config RK_ROOTFS_TYPE
 	string
@@ -83,18 +85,17 @@ config RK_ROOTFS_UBI
 config RK_ROOTFS_EROFS
 	bool "erofs"
 
-if RK_ROOTFS_INITRD
-
 config RK_ROOTFS_ROMFS
 	bool "romfs"
+	select RK_ROOTFS_INITRD
 
 config RK_ROOTFS_CPIO
 	bool "cpio"
+	select RK_ROOTFS_INITRD
 
 config RK_ROOTFS_CPIO_GZ
 	bool "cpio.gz"
-
-endif # init RD
+	select RK_ROOTFS_INITRD
 
 endif # buildroot
 
