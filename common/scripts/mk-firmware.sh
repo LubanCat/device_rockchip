@@ -9,8 +9,6 @@ link_image() {
 
 build_firmware()
 {
-	"$RK_SCRIPTS_DIR/check-package.sh" fakeroot
-
 	mkdir -p "$RK_FIRMWARE_DIR"
 
 	# Legacy rockdev/
