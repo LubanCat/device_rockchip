@@ -7,6 +7,11 @@ config RK_OVERLAY
 	depends on RK_KERNEL
 	default y
 
+config RK_NETWORK_CHECK
+	bool "check network"
+	depends on RK_ROOTFS
+	default y
+
 choice
 	prompt "patches saving"
 	default RK_SAVE_TRACKED
