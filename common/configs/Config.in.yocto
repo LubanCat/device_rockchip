@@ -7,7 +7,8 @@ config RK_YOCTO_SUPPORTS
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
 		RK_CHIP_FAMILY = "rk3399" || RK_CHIP_FAMILY = "rk3399pro" || \
 		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3562" || \
-		RK_CHIP_FAMILY = "rk3588" || RK_CHIP_FAMILY = "rk3576"
+		RK_CHIP_FAMILY = "rk3588" || RK_CHIP_FAMILY = "rk3576" || \
+		RK_CHIP_FAMILY = "rk3506"
 
 comment "Yocto is not supported for this chip"
 	depends on !RK_YOCTO_SUPPORTS
@@ -54,6 +55,7 @@ config RK_YOCTO_MACHINE
 
 config RK_YOCTO_CHROMIUM
 	bool "chromium browser"
+	depends on RK_CHIP_HAS_GPU
 	default y
 
 config RK_YOCTO_DISPLAY_PLATFORM

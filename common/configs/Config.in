@@ -41,7 +41,15 @@ config RK_CHIP_ARM32
 	depends on RK_CHIP_FAMILY = "px3se" || RK_CHIP_FAMILY = "rk3036" || \
 		RK_CHIP_FAMILY = "rk3128h" || RK_CHIP_FAMILY = "rk312x" || \
 		RK_CHIP_FAMILY = "rk3229" || RK_CHIP_FAMILY = "rk3288" || \
-		RK_CHIP_FAMILY = "rv1126_rv1109"
+		RK_CHIP_FAMILY = "rv1126_rv1109" || RK_CHIP_FAMILY = "rk3506"
+	default y
+
+config RK_CHIP_HAS_GPU
+	bool
+	default n if RK_CHIP_FAMILY = "rk1806" || RK_CHIP_FAMILY = "rk1808" || \
+		RK_CHIP_FAMILY = "rk3229" || RK_CHIP_FAMILY = "rk3308" || \
+		RK_CHIP_FAMILY = "rk3358" || RK_CHIP_FAMILY = "rv1126_rv1109" || \
+		RK_CHIP_FAMILY = "rk3506"
 	default y
 
 source "Config.in.rootfs"

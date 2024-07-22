@@ -67,8 +67,12 @@ build_yocto()
 				echo "include include/wifibt.conf"
 			fi
 
-			if [ "$RK_YOCTO_CHROMIUM" ]; then
-				echo "include include/browser.conf"
+			if [ "$RK_CHIP_HAS_GPU" ]; then
+				if [ "$RK_YOCTO_CHROMIUM" ]; then
+					echo "include include/browser.conf"
+				fi
+			elif [ "$RK_YOCTO_DISPLAY_PLATFORM" = wayland ]; then
+				echo "PACKAGECONFIG:append:pn-weston-init = \" use-pixman\""
 			fi
 
 			echo
