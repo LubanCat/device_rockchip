@@ -259,8 +259,9 @@ hook_check()
 		*) return 0 ;;
 	esac
 
+	SCRIPT="$(realpath "$1" --relative-to "$RK_SDK_DIR")"
 	CMDS="$(sed -n \
-		"s@^RK_${2//-/_}_CMDS[^ ]*\(.*\)\" # $(realpath "$1")\$@\1@ip" \
+		"s@^RK_${2//-/_}_CMDS[^ ]*\(.*\)\" # $SCRIPT\$@\1@ip" \
 		"$RK_PARSED_CMDS")"
 
 	if echo "$CMDS" | grep -wq default; then
@@ -519,7 +520,10 @@ main()
 		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
 		message "Parsing supported commands...\n"
 		rm -rf "$RK_PARSED_CMDS"
-		run_build_hooks parse-cmds > /tmp/.parsed_cmds
+		{
+			echo "#!/bin/bash"
+			run_build_hooks parse-cmds
+		} > /tmp/.parsed_cmds
 		mv /tmp/.parsed_cmds "$RK_PARSED_CMDS"
 	fi
 	source "$RK_PARSED_CMDS"

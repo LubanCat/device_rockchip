@@ -141,8 +141,8 @@ case "$1" in
 	parse-cmds)
 		shift
 		{
-			SCRIPT="$(realpath "$0")"
-			echo "# Parsed from $SCRIPT."
+			SCRIPT="$(realpath "$0" --relative-to "$RK_SDK_DIR")"
+			echo -e "\n# Parsed from $SCRIPT."
 
 			[ -z "$INIT_CMDS" ] || \
 				echo "RK_INIT_CMDS=\"\$RK_INIT_CMDS $(echo $INIT_CMDS | sort)\" # $SCRIPT"
