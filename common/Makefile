@@ -168,7 +168,7 @@ help:
 
 define script_target
 $(1):
-	$(Q)$(SDK_DIR)/build.sh $(1):$(shell echo $(ARGS) | tr ' ' ':')
+	$(Q)$(SDK_DIR)/build.sh $(1):$(subst $(empty) $(empty),:,$(ARGS))
 endef
 $(eval $(foreach t,$(SCRIPT_TARGETS),$(call script_target,$(t))$(sep)))
 

@@ -357,7 +357,6 @@ setup_environments()
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
-	export RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
 	export RK_EXTRA_PART_OUTDIR="$RK_OUTDIR/extra-parts"
 	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
@@ -369,6 +368,10 @@ setup_environments()
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 	export RK_OWNER="$(stat --format %U "$RK_SDK_DIR")"
 	export RK_OWNER_UID="$(stat --format %u "$RK_SDK_DIR")"
+
+	RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
+	RK_MAKE_USAGE="$RK_OUTDIR/.make_usage"
+	RK_MAKE_TARGETS="$RK_OUTDIR/.make_targets"
 }
 
 check_sdk() {
@@ -391,6 +394,43 @@ check_sdk() {
 	fi
 }
 
+parse_scripts()
+{
+	mkdir -p "$RK_OUTDIR"
+
+	if [ ! -r "$RK_MAKE_USAGE" ] || \
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE")" ]; then
+		{
+			TEMP_FILE=$(mktemp -u)
+			run_build_hooks make-usage > $TEMP_FILE
+			mv $TEMP_FILE "$RK_MAKE_USAGE"
+		}&
+	fi
+
+	if [ ! -r "$RK_MAKE_TARGETS" ] || \
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_TARGETS")" ]; then
+		{
+			TEMP_FILE=$(mktemp -u)
+			run_build_hooks make-targets > $TEMP_FILE
+			mv $TEMP_FILE "$RK_MAKE_TARGETS"
+		}&
+	fi
+
+	if [ ! -r "$RK_PARSED_CMDS" ] || \
+		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
+		{
+			TEMP_FILE=$(mktemp -u)
+			{
+				echo "#!/bin/bash"
+				run_build_hooks parse-cmds
+			} > $TEMP_FILE
+			mv $TEMP_FILE "$RK_PARSED_CMDS"
+		}&
+	fi
+
+	wait
+}
+
 makefile_options()
 {
 	unset DEBUG
@@ -398,35 +438,18 @@ makefile_options()
 	setup_environments
 	check_sdk >&2 || exit 1
 
-	local MAKE_USAGE="$RK_OUTDIR/.make_usage"
-	local MAKE_TARGETS="$RK_OUTDIR/.make_targets"
-
-	if [ ! -d "$RK_OUTDIR" ]; then
-		MAKE_USAGE=$(mktemp -u .rksdk.XXX)
-		MAKE_TARGETS=$(mktemp -u .rksdk.XXX)
-	fi
-
-	if [ ! -r "$MAKE_USAGE" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$MAKE_USAGE")" ]; then
-		run_build_hooks make-usage > "$MAKE_USAGE"
-	fi
-
-	if [ ! -r "$MAKE_TARGETS" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$MAKE_TARGETS")" ]; then
-		run_build_hooks make-targets > "$MAKE_TARGETS"
-	fi
+	parse_scripts
 
 	case "$1" in
 		make-targets)
 			# Report chip targets as well
 			ls "$RK_CHIPS_DIR"
 
-			cat "$MAKE_TARGETS"
+			cat "$RK_MAKE_TARGETS"
 			;;
-		make-usage) cat "$MAKE_USAGE" ;;
+		make-usage) cat "$RK_MAKE_USAGE" ;;
 	esac
 
-	rm -rf /tmp/.rksdk*
 	exit 0
 }
 
@@ -516,16 +539,7 @@ main()
 	done
 
 	# Parse supported commands
-	if [ ! -r "$RK_PARSED_CMDS" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
-		message "Parsing supported commands...\n"
-		rm -rf "$RK_PARSED_CMDS"
-		{
-			echo "#!/bin/bash"
-			run_build_hooks parse-cmds
-		} > /tmp/.parsed_cmds
-		mv /tmp/.parsed_cmds "$RK_PARSED_CMDS"
-	fi
+	parse_scripts
 	source "$RK_PARSED_CMDS"
 
 	# Options checking
