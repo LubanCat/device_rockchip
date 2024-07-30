@@ -27,7 +27,7 @@ check_suspend_state()
 }
 
 # HACK: Monitoring power state changes and update the suspended state
-while ! pgrep -x inotifywait >/dev/null; do
+while ! ls -l /proc/*/exe 2>/dev/null | grep -wq inotifywait; do
 	inotifywait -e modify /sys/power/state >/dev/null 2>&1
 
 	# Avoid race with freezing processes
