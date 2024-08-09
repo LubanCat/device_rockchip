@@ -4,9 +4,9 @@ SITE="${1:-www.baidu.com}"
 SITE_NAME="${2:-$SITE}"
 EXTRA_MSG="$3"
 
-if [ $(curl -I -s -m 1 -w "%{http_code}" -o /dev/null $SITE) -eq 200 ]; then
-	exit 0
-fi
+case "$(curl -I -s -m 1 -w "%{http_code}" -o /dev/null $SITE)" in
+	1*|2*|3*) exit 0;;
+esac
 
 echo -e "\e[35m"
 echo -e "Your network is not able to access $SITE_NAME!"
