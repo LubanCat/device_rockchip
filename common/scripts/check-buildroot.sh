@@ -6,7 +6,7 @@ BUILDROOT_DIR="$RK_SDK_DIR/buildroot"
 
 # Check access to buildroot mirror
 "$RK_SCRIPTS_DIR/check-network.sh" sources.buildroot.net sources.buildroot.net \
-	"Please setup a VPN to bypass the GFW."
+	"Please retry later (it could be down for a while) or setup a VPN to bypass the GFW."
 
 # Check for host linux version
 LINUX_VER_MAJOR=$(uname -r | cut -d'.' -f1)
