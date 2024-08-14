@@ -1,8 +1,6 @@
 Misc files
 ==========
 
-adbd-auth.sh: Auth script for adbd service
-
 apply-all.sh: Script to apply all saved SDK patches
 
 busybox-reboot: Wrapper for busybox reboot commands

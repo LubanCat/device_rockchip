@@ -47,7 +47,7 @@ install_adbd()
 		echo "export ADBD_AUTH_COMMAND=/usr/bin/adbd-auth.sh" >> \
 			"$TARGET_DIR/etc/profile.d/adbd.sh"
 		ADBD_PASSWORD_MD5="$(echo $RK_USB_ADBD_PASSWORD | md5sum)"
-		install -m 0755 "$RK_DATA_DIR/adbd-auth.sh" \
+		install -m 0755 "$OVERLAY_DIR/adbd-auth.sh" \
 			"$TARGET_DIR/usr/bin/adbd-auth.sh"
 		sed -i "s/ADBD_PASSWORD_MD5/$ADBD_PASSWORD_MD5/g" \
 			"$TARGET_DIR/usr/bin/adbd-auth.sh"
