@@ -44,11 +44,15 @@ if [ "$DISK_HELPER_TYPE" = mount ]; then
 	if [ "$RK_DISK_AUTO_FORMAT" ]; then
 		message "Enabling auto formatting..."
 		touch "$TARGET_DIR/.auto_mkfs"
+	else
+		rm -f "$TARGET_DIR/.auto_mkfs"
 	fi
 
 	if [ "$RK_DISK_SKIP_FSCK" ]; then
 		message "Disabling boot time fsck..."
 		touch "$TARGET_DIR/.skip_fsck"
+	else
+		rm -f "$TARGET_DIR/.skip_fsck"
 	fi
 	exit 0
 fi
