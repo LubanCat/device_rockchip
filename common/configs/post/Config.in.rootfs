@@ -9,6 +9,11 @@ config RK_ROOTFS_LD_CACHE
 source "post/Config.in.hostname"
 source "post/Config.in.locale"
 
+config RK_ROOTFS_INSTALL_MODULES
+	bool "install kernel modules"
+	help
+	  Install '.ko' kernel modules.
+
 config RK_ROOTFS_STRIP_MODULES
 	bool "strip kernel modules"
 	default y

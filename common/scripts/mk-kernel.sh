@@ -56,9 +56,11 @@ do_build()
 				"$KERNEL_CONFIG_DIR/$RK_KERNEL_CFG"
 			;;
 		kernel-modules | modules)
+			MOD_DIR="${2:-$RK_OUTDIR/kernel-modules}"
 			run_command $KMAKE modules
 			run_command $KMAKE modules_install \
-				INSTALL_MOD_PATH="$RK_OUTDIR/kernel-modules"
+				INSTALL_MOD_PATH="$MOD_DIR"
+			run_command find "$MOD_DIR/lib/modules/" -type l -delete
 			;;
 		kernel*)
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
@@ -283,8 +285,8 @@ usage_hook()
 
 	echo -e "kernel[:dry-run]                 \tbuild kernel"
 	echo -e "recovery-kernel[:dry-run]        \tbuild kernel for recovery"
-	echo -e "kernel-modules[:dry-run]         \tbuild kernel modules"
-	echo -e "modules[:dry-run]                \talias of kernel-modules"
+	echo -e "kernel-modules[:<dst dir>:dry-run]\tbuild kernel modules"
+	echo -e "modules[:<dst dir>:dry-run]      \talias of kernel-modules"
 	echo -e "linux-headers[:dry-run]          \tbuild linux-headers"
 	echo -e "kernel-config[:dry-run]          \tmodify kernel defconfig"
 	echo -e "kconfig[:dry-run]                \talias of kernel-config"
@@ -461,11 +463,11 @@ post_build_hook_dry()
 source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-kernel}" in
-	kernel-config | kconfig | kernel-make | kmake) pre_build_hook $@ ;;
+	kernel-config | kconfig | kernel-make | kmake) pre_build_hook "$@" ;;
 	kernel* | recovery-kernel | kernel-modules | modules)
-		init_hook $@
-		build_hook ${@:-kernel}
+		init_hook "$@"
+		build_hook "${@:-kernel}"
 		;;
-	linux-headers) post_build_hook $@ ;;
+	linux-headers) post_build_hook "$@" ;;
 	*) usage ;;
 esac
