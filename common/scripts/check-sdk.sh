@@ -18,6 +18,16 @@ if [ "$(id -u)" -ne 0 ] && [ "$RK_OWNER_UID" -ne "$(id -u)" ]; then
 	exit 1
 fi
 
+case "$(findmnt -fnu -o FSTYPE -T "$RK_SCRIPTS_DIR")" in
+	ext* | f2fs | btrfs) ;;
+	*)
+		echo -e "\e[35m"
+		echo "Please move SDK source code into an ext4 partition."
+		echo -e "\e[0m"
+		exit 1
+		;;
+esac
+
 if ! which python3 >/dev/null 2>&1; then
 	echo -e "\e[35m"
 	echo "Your python3 is missing"
