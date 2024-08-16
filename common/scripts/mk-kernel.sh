@@ -223,7 +223,7 @@ pack_linux_headers()
 	-cf "$HEADERS_TAR"
 
 	# Pack kbuild
-	tar -uf "$HEADERS_TAR" -C "$HEADERS_KBUILD_DIR" scripts/ tools/
+	tar -rf "$HEADERS_TAR" -C "$HEADERS_KBUILD_DIR" scripts/ tools/
 EOF
 
 	run_command cd "$RK_SDK_DIR/kernel"
