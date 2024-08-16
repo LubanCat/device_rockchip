@@ -240,14 +240,26 @@ EOF
 	TEMP_DIR="$(mktemp -d)"
 	DEBIAN_ARCH="${KBUILD_ARCH/aarch64/arm64}"
 	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_RAW}-$RK_KERNEL_ARCH"
+	KERNEL_HEADERS_DIR="/usr/src/$DEBIAN_PKG"
 	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
-	DEBIAN_KBUILD_DIR="$DEBIAN_DIR/usr/src/$DEBIAN_PKG"
+	DEBIAN_HEADERS_DIR="$DEBIAN_DIR/$KERNEL_HEADERS_DIR"
 	DEBIAN_DEB="$DEBIAN_DIR.deb"
 	DEBIAN_CONTROL="$DEBIAN_DIR/DEBIAN/control"
-	mkdir -p "$(dirname "$DEBIAN_CONTROL")" "$DEBIAN_KBUILD_DIR"
 
 	message "Unpacking $HEADERS_TAR ..."
-	tar xf "$HEADERS_TAR" -C "$DEBIAN_KBUILD_DIR"
+
+	mkdir -p "$DEBIAN_HEADERS_DIR"
+	tar xf "$HEADERS_TAR" -C "$DEBIAN_HEADERS_DIR"
+
+	KERNELRELEASE="$(grep -o '".*"' \
+		"$DEBIAN_HEADERS_DIR/include/generated/utsrelease.h" | tr -d '"')"
+	KERNEL_MODULES_DIR="/lib/modules/$KERNELRELEASE"
+
+	mkdir -p "$DEBIAN_DIR/$KERNEL_MODULES_DIR"
+	ln -sf "$KERNEL_HEADERS_DIR" "$DEBIAN_DIR/$KERNEL_MODULES_DIR/build"
+	ln -sf "$KERNEL_HEADERS_DIR" "$DEBIAN_DIR/$KERNEL_MODULES_DIR/source"
+
+	mkdir -p "$(dirname "$DEBIAN_CONTROL")"
 	cat << EOF > "$DEBIAN_CONTROL"
 Package: $DEBIAN_PKG
 Source: linux-rockchip ($RK_KERNEL_VERSION_RAW)
@@ -287,7 +299,7 @@ usage_hook()
 	echo -e "recovery-kernel[:dry-run]        \tbuild kernel for recovery"
 	echo -e "kernel-modules[:<dst dir>:dry-run]\tbuild kernel modules"
 	echo -e "modules[:<dst dir>:dry-run]      \talias of kernel-modules"
-	echo -e "linux-headers[:dry-run]          \tbuild linux-headers"
+	echo -e "linux-headers[:<arch>:dry-run]   \tbuild linux-headers"
 	echo -e "kernel-config[:dry-run]          \tmodify kernel defconfig"
 	echo -e "kconfig[:dry-run]                \talias of kernel-config"
 	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make"
