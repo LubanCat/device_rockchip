@@ -63,7 +63,6 @@ case "$RK_DEBIAN_ARCH" in
 	arm64) QEMU_ARCH=aarch64 ;;
 	armhf) QEMU_ARCH=arm ;;
 esac
-QEMU_VERSION=$(qemu-$QEMU_ARCH-static --version | head -n 1 | cut -d' ' -f3)
 
 "$RK_SCRIPTS_DIR/check-package.sh" "qemu-$QEMU_ARCH-static(qemu-user-static)" \
 	qemu-$QEMU_ARCH-static qemu-user-static
@@ -77,10 +76,11 @@ if ! update-binfmts --display qemu-$QEMU_ARCH >/dev/null 2>&1; then
 	exit 1
 fi
 
-if [ ${QEMU_VERSION%%.*} -lt 5 ]; then
+LDCONFIG="$RK_TOOLS_DIR/../tests/debian/$RK_DEBIAN_VERSION/$QEMU_ARCH/ldconfig"
+if [ -e "$LDCONFIG" ] && ! "$LDCONFIG" --version >/dev/null 2>&1; then
 	echo -e "\e[35m"
-	echo "Your qemu-$QEMU_ARCH-static is too old: $QEMU_VERSION"
-	echo "Please upgrade it:"
+	echo "Your qemu-$QEMU_ARCH-static doesn't support $RK_DEBIAN_VERSION!"
+	echo "Please replace it:"
 	if [ "$(uname -m)" = x86_64 ]; then
 		echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo update-binfmts --disable qemu-$QEMU_ARCH 2>/dev/null"
