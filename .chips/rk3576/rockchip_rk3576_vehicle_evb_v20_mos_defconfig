@@ -1,0 +1,6 @@
+# RK_WIFIBT is not set
+RK_ROOTFS_PREBUILT_TOOLS=y
+RK_UBOOT_CFG_FRAGMENTS="rk3576-mos-secondary rk3576-mos-car-secondary"
+RK_UBOOT_SPL=y
+RK_KERNEL_CFG_FRAGMENTS="rk3576_vehicle.config rockchip_amp_remote.config"
+RK_KERNEL_DTS_NAME="rk3576-vehicle-evb-v20-mos-linux"
