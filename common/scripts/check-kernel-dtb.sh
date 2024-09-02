@@ -14,7 +14,8 @@ if [ "$RK_WIFIBT" ] && ! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
 	exit 1
 fi
 
-if [ "$RK_ROOTFS_TYPE" ] && grep -q "rootfstype=" "$RK_KERNEL_DTB"; then
+if [ "$RK_ROOTFS_TYPE" ] && [ "$RK_ROOTFS_TYPE" != ubi ] && \
+	grep -q "rootfstype=" "$RK_KERNEL_DTB"; then
 	ROOTFS_TYPE="$(strings "$RK_KERNEL_DTB" | grep -o "rootfstype=[^ ]*")"
 	if [ "$ROOTFS_TYPE" != "rootfstype=$RK_ROOTFS_TYPE" ]; then
 		echo -e "\e[35m"
