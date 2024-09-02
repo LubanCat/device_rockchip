@@ -173,6 +173,11 @@ build_wifibt()
 		$KMAKE M=$RKWIFIBT_DIR/drivers/infineon
 	fi
 
+	if [[ "$RK_WIFIBT_MODULES" = "RK960" ]];then
+		echo "building RK960"
+		$KMAKE M=$RKWIFIBT_DIR/drivers/rk960
+	fi
+
 	if [[ "$RK_WIFIBT_MODULES" = "CYW43438" ]];then
 		echo "building CYW43438"
 		ln -sf chips/CYW43438_Makefile \
@@ -335,6 +340,16 @@ build_wifibt()
 		WIFI_KO_DIR=$(echo $RK_WIFIBT_MODULES | tr '[A-Z]' '[a-z]')
 
 		cp $RKWIFIBT_DIR/drivers/$WIFI_KO_DIR/*.ko \
+			$TARGET_DIR/lib/modules/
+	fi
+
+	if [[ "$RK_WIFIBT_MODULES" =~ "RK" ]];then
+		echo "Copy Rockchip file to rootfs"
+		cp $RKWIFIBT_DIR/firmware/rockchip/$RK_WIFIBT_MODULES/wifi/* \
+			$TARGET_DIR/lib/firmware/
+		cp $RKWIFIBT_DIR/firmware/rockchip/$RK_WIFIBT_MODULES/bt/* \
+			$TARGET_DIR/lib/firmware/
+		cp $RKWIFIBT_DIR/drivers/rk960/*.ko \
 			$TARGET_DIR/lib/modules/
 	fi
 
