@@ -89,13 +89,9 @@ do_build()
 
 			[ -z "$DRY_RUN" ] || return 0
 
+			"$RK_SCRIPTS_DIR/check-kernel-dtb.sh"
 			"$RK_SCRIPTS_DIR/check-power-domain.sh"
 			"$RK_SCRIPTS_DIR/check-security.sh" kernel dts
-
-			if [ "$RK_WIFIBT" ] && \
-				! grep -wq wireless-bluetooth "$RK_KERNEL_DTB"; then
-				error "Missing wireless-bluetooth in $RK_KERNEL_DTS!"
-			fi
 			;;
 	esac
 }
