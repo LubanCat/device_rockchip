@@ -1,3 +1,4 @@
+RK_BUILDROOT_BASE_CFG="rk3576_cluster"
 # RK_WIFIBT is not set
 RK_ROOTFS_PREBUILT_TOOLS=y
 RK_UBOOT_CFG_FRAGMENTS="rk3576-mos-secondary rk3576-mos-car-secondary"
