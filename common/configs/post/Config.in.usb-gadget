@@ -10,6 +10,9 @@ config RK_USB_VID
 	hex "vendor id"
 	default 0x2207
 
+config RK_USB_PID
+	hex "product id"
+
 config RK_USB_FW_VER
 	hex "firmware version"
 	default 0x0310

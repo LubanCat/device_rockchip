@@ -142,6 +142,9 @@ mkdir -p "$TARGET_DIR/etc/profile.d"
 {
 	echo "export USB_FUNCS=\"$(usb_funcs)\""
 	echo "export USB_VENDOR_ID=\"$RK_USB_VID\""
+	if [ "$RK_USB_PID" ]; then
+		echo "export USB_PRODUCT_ID=\"$RK_USB_PID\""
+	fi
 	echo "export USB_FW_VERSION=\"$RK_USB_FW_VER\""
 	echo "export USB_MANUFACTURER=\"$RK_USB_MANUFACTURER\""
 	echo "export USB_PRODUCT=\"$RK_USB_PRODUCT\""
