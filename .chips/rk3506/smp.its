@@ -22,8 +22,9 @@
 			cpu          = <0xf00>;  // mpidr
 			thumb        = <0>;      // 0: arm or thumb2; 1: thumb
 			hyp          = <0>;      // 0: el1/svc; 1: el2/hyp
-			load         = <0x03900000>;
+			load         = <0x00100000>;
 			compile {
+				size     = <0x07f00000>;
 				sys      = "rtt";
 				core     = "ap";
 				rtt_config = "board/evb1/smp_defconfig";
