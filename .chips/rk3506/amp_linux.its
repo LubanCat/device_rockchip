@@ -34,6 +34,11 @@
 		};
 	};
 
+	share {
+		rpmsg_base       = <0x03c00000>;
+		rpmsg_size       = <0x00200000>;
+	};
+
 	configurations {
 		default = "conf";
 		conf {
