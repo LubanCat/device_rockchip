@@ -82,14 +82,17 @@ case "$RK_ROOTFS_TYPE" in
 		;;
 esac
 
-fixup_basic_part proc /proc
-fixup_basic_part devtmpfs /dev
-fixup_basic_part devpts /dev/pts mode=0620,ptmxmode=0000,gid=5 # tty group
-fixup_basic_part tmpfs /dev/shm nosuid,nodev,noexec
-fixup_basic_part sysfs /sys nosuid,nodev,noexec
-fixup_basic_part configfs /sys/kernel/config
-fixup_basic_part debugfs /sys/kernel/debug
-fixup_basic_part pstore /sys/fs/pstore nosuid,nodev,noexec
+if [ "$(readlink "$TARGET_DIR/sbin/init")" != /lib/systemd/systemd ]; then
+	message "Fixup basic partitions for non-systemd init..."
+	fixup_basic_part proc /proc
+	fixup_basic_part devtmpfs /dev
+	fixup_basic_part devpts /dev/pts mode=0620,ptmxmode=0000,gid=5 # tty group
+	fixup_basic_part tmpfs /dev/shm nosuid,nodev,noexec
+	fixup_basic_part sysfs /sys nosuid,nodev,noexec
+	fixup_basic_part configfs /sys/kernel/config
+	fixup_basic_part debugfs /sys/kernel/debug
+	fixup_basic_part pstore /sys/fs/pstore nosuid,nodev,noexec
+fi
 
 if [ "$POST_OS" = recovery ]; then
 	fixup_device_part /dev/sda1 /mnt/udisk auto
