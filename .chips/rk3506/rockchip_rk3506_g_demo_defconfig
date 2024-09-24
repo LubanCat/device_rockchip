@@ -6,6 +6,7 @@ RK_UBOOT_CFG_FRAGMENTS="rk3506 rk3506_tb"
 RK_UBOOT_SPL=y
 RK_KERNEL_ARM32=y
 RK_KERNEL_CFG="rk3506_defconfig"
+RK_KERNEL_CFG_FRAGMENTS="rk3506-display.config"
 RK_KERNEL_DTS_NAME="rk3506g-demo-display-control"
 RK_BOOT_COMPRESSED=y
 RK_BOOT_FIT_ITS_NAME="thunderboot.its"
