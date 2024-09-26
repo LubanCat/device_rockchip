@@ -27,8 +27,6 @@ build_all()
 
 	"$RK_SCRIPTS_DIR/mk-firmware.sh"
 
-	[ -z "$RK_KERNEL" ] || "$RK_SCRIPTS_DIR/mk-kernel.sh" linux-headers
-
 	finish_build
 }
 
