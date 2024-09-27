@@ -7,8 +7,7 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 message "Installing full-busybox..."
 mkdir -p "$TARGET_DIR/bin/"
-rm -rf "$TARGET_DIR/bin/busybox"*
-install -v -m 0755 "$RK_TOOLS_DIR/armhf/busybox" "$TARGET_DIR/bin/busybox"
+cp "$RK_TOOLS_DIR/armhf/busybox" "$TARGET_DIR/bin/busybox"
 
 # Login root on serial console
 if [ -r "$TARGET_DIR/etc/inittab" ]; then
