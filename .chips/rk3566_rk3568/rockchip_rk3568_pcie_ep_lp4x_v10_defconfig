@@ -1,3 +1,4 @@
+# RK_WIFIBT is not set
 RK_UBOOT_CFG="rk3568-pcie-ep"
 RK_UBOOT_SPL=y
 RK_KERNEL_CFG_FRAGMENTS="rockchip_linux_pcie_ep.config"
