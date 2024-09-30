@@ -56,7 +56,7 @@ config RK_YOCTO_MACHINE
 config RK_YOCTO_CHROMIUM
 	bool "chromium browser"
 	depends on RK_CHIP_HAS_GPU
-	default y
+	default y if !RK_CHIP_ARM32
 
 config RK_YOCTO_DISPLAY_PLATFORM
 	string
