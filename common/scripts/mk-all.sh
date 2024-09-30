@@ -59,8 +59,11 @@ build_release()
 	if [ "$RK_KERNEL" ]; then
 		mkdir -p "$RELEASE_DIR/kernel"
 
-		message "Saving linux-headers..."
-		cp -rv "$RK_OUTDIR/linux-headers" "$RELEASE_DIR/kernel/"
+		if [ -d "$RK_OUTDIR/linux-headers" ]; then
+			message "Saving linux-headers..."
+			cp -rv "$RK_OUTDIR/linux-headers" \
+				"$RELEASE_DIR/kernel/"
+		fi
 
 		message "Saving kernel files..."
 		cp -rv kernel/.config kernel/System.map kernel/vmlinux \
