@@ -71,19 +71,26 @@ config RK_KERNEL_IMG
 
 if RK_RECOVERY
 
+menu "Overloaded configs for Recovery"
+
 config RK_KERNEL_RECOVERY_CFG
-	string "defconfig for recovery"
+	string "defconfig"
+
+config RK_KERNEL_RECOVERY_CFG_FRAGMENTS
+	string "defconfig fragments"
 
 config RK_KERNEL_RECOVERY_DTS_NAME
-	string "device-tree script name for recovery"
+	string "device-tree script name"
 
 config RK_KERNEL_RECOVERY_LOGO
-	string "loader logo name for recovery"
+	string "loader logo name"
 
 config RK_KERNEL_RECOVERY_LOGO_KERNEL
-	string "kernel logo name for recovery"
+	string "kernel logo name"
 
-endif # RK_RECOVERY
+endmenu # Recovery
+
+endif # Recovery
 
 endif # Kernel
 endmenuconfig # Kernel
