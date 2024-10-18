@@ -268,18 +268,22 @@ build_wifibt()
 	ln -rsf "$TARGET_DIR/lib/firmware" "$TARGET_DIR/system/etc/firmware"
 	ln -rsf "$TARGET_DIR/system" "$TARGET_DIR/vendor"
 
-	echo "copy prebuilt tools/scripts to rootfs"
+	echo "installing tools and scripts"
 	for b in brcm_patchram_plus1 dhd_priv rtk_hciattach; do
 		install -m 0755 "$RK_TOOLS_DIR/armhf/$b" "$TARGET_DIR/usr/bin"
 	done
 	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
-	install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"
 	install -m 0755 $RKWIFIBT_DIR/scripts/* "$TARGET_DIR/usr/bin/"
 	rm -f "$TARGET_DIR/usr/bin/wifibt-sleep-hook.sh"
 	for b in bt-tty wifibt-info wifibt-vendor wifibt-id wifibt-bus \
 		wifibt-chip wifibt-module; do
 		ln -sf wifibt-util.sh "$TARGET_DIR/usr/bin/$b"
 	done
+
+	if [ "$RK_ROOTFS_PREBUILT_TOOLS" ]; then
+		echo "installing prebuilt debug tools"
+		install -m 0755 $RKWIFIBT_DIR/bin/arm/* "$TARGET_DIR/usr/bin/"
+	fi
 
 	if [[ "$RK_WIFIBT_MODULES" = "ALL_CY" ]];then
 		echo "copy infineon/realtek firmware/nvram to rootfs"
