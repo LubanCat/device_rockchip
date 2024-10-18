@@ -117,9 +117,9 @@ build_all_release()
 
 usage_hook()
 {
-	echo -e "all                               \tbuild images"
-	echo -e "release                           \trelease images and build info"
-	echo -e "all-release                       \tbuild and release images"
+	usage_oneline "all" "build images"
+	usage_oneline "release" "release images and build info"
+	usage_oneline "all-release" "build and release images"
 }
 
 clean_hook()

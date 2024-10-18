@@ -173,14 +173,14 @@ build_debian()
 
 usage_hook()
 {
-	echo -e "buildroot-config[:<config>]       \tmodify buildroot defconfig"
-	echo -e "bconfig[:<config>]                \talias of buildroot-config"
-	echo -e "buildroot-make[:<arg1>:<arg2>]    \trun buildroot make"
-	echo -e "bmake[:<arg1>:<arg2>]             \talias of buildroot-make"
-	echo -e "rootfs[:<rootfs type>]            \tbuild default rootfs"
-	echo -e "buildroot                         \tbuild buildroot rootfs"
-	echo -e "yocto                             \tbuild yocto rootfs"
-	echo -e "debian                            \tbuild debian rootfs"
+	usage_oneline "buildroot-config[:<config>]" "modify buildroot defconfig"
+	usage_oneline "bconfig[:<config>]" "alias of buildroot-config"
+	usage_oneline "buildroot-make[:<arg1>:<arg2>]" "run buildroot make"
+	usage_oneline "bmake[:<arg1>:<arg2>]" "alias of buildroot-make"
+	usage_oneline "rootfs[:<rootfs type>]" "build default rootfs"
+	usage_oneline "buildroot" "build buildroot rootfs"
+	usage_oneline "yocto" "build yocto rootfs"
+	usage_oneline "debian" "build debian rootfs"
 }
 
 clean_hook()

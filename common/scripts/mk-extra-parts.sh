@@ -4,7 +4,7 @@
 
 usage_hook()
 {
-	echo -e "extra-parts                       \tpack extra partition images"
+	usage_oneline "extra-parts" "pack extra partition images"
 }
 
 clean_hook()

@@ -75,7 +75,7 @@ build_firmware()
 
 usage_hook()
 {
-	echo -e "firmware                          \tpack and check firmwares"
+	usage_oneline "firmware" "pack and check firmwares"
 }
 
 clean_hook()

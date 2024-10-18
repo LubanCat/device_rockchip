@@ -4,9 +4,9 @@
 
 usage_hook()
 {
-	echo -e "shell                             \tsetup a shell for developing"
-	echo -e "buildroot-shell                   \tsetup a shell for buildroot developing"
-	echo -e "bshell                            \talias of buildroot-shell"
+	usage_oneline "shell" "setup a shell for developing"
+	usage_oneline "buildroot-shell" "setup a shell for buildroot developing"
+	usage_oneline "bshell" "alias of buildroot-shell"
 }
 
 PRE_BUILD_CMDS="shell buildroot-shell bshell"

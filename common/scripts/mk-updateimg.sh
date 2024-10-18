@@ -163,10 +163,10 @@ build_ota_updateimg()
 
 usage_hook()
 {
-	echo -e "edit-package-file                 \tedit package-file"
-	echo -e "edit-ota-package-file             \tedit package-file for OTA"
-	echo -e "updateimg                         \tbuild update image"
-	echo -e "ota-updateimg                     \tbuild update image for OTA"
+	usage_oneline "edit-package-file" "edit package-file"
+	usage_oneline "edit-ota-package-file" "edit package-file for OTA"
+	usage_oneline "updateimg" "build update image"
+	usage_oneline "ota-updateimg" "build update image for OTA"
 }
 
 clean_hook()

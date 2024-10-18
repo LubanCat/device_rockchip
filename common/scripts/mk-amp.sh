@@ -7,7 +7,7 @@ RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 
 usage_hook()
 {
-	echo -e "amp                              \tbuild and pack amp system"
+	usage_oneline "amp" "build and pack amp system"
 }
 
 amp_get_value()

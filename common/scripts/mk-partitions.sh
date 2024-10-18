@@ -3,7 +3,7 @@
 print_usage()
 {
 	normalized_usage | grep -v "^mod-parts"
-	echo -e "done                               \tdone modifying and quit"
+	usage_oneline "done" "done modifying and quit"
 }
 
 modify_partitions()
@@ -53,16 +53,16 @@ modify_partitions()
 
 usage_hook()
 {
-	echo -e "print-parts                        \tprint partitions"
-	echo -e "list-parts                         \talias of print-parts"
-	echo -e "mod-parts                          \tinteractive partition table modify"
-	echo -e "edit-parts                         \tedit raw partitions"
-	echo -e "new-parts:<offset>:<name>:<size>...\tre-create partitions"
-	echo -e "insert-part:<idx>:<name>[:<size>]  \tinsert partition"
-	echo -e "del-part:(<idx>|<name>)            \tdelete partition"
-	echo -e "move-part:(<idx>|<name>):<idx>     \tmove partition"
-	echo -e "rename-part:(<idx>|<name>):<name>  \trename partition"
-	echo -e "resize-part:(<idx>|<name>):<size>  \tresize partition"
+	usage_oneline "print-parts" "print partitions"
+	usage_oneline "list-parts" "alias of print-parts"
+	usage_oneline "mod-parts" "interactive partition table modify"
+	usage_oneline "edit-parts" "edit raw partitions"
+	usage_oneline "new-parts:<offset>:<name>:<size>..." "re-create partitions"
+	usage_oneline "insert-part:<idx>:<name>[:<size>]" "insert partition"
+	usage_oneline "del-part:(<idx>|<name>)" "delete partition"
+	usage_oneline "move-part:(<idx>|<name>):<idx>" "move partition"
+	usage_oneline "rename-part:(<idx>|<name>):<name>" "rename partition"
+	usage_oneline "resize-part:(<idx>|<name>):<size>" "resize partition"
 }
 
 PRE_BUILD_CMDS="print-parts list-parts mod-parts edit-parts new-parts insert-part del-part move-part rename-part resize-part"

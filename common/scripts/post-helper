@@ -30,9 +30,10 @@ set -eE
 usage()
 {
 	echo "Usage: $0 [OPTIONS]"
-	echo -e "<rootfs dir> [<default os> [<default init>]] \tprocess target dir"
+	usage_oneline "<rootfs dir> [<default os> [<default init>]]" \
+		"process target dir"
 	echo "    available init: sysv busybox systemd"
-	echo -e "help                                         \tusage"
+	usage_oneline "help" "display this information"
 	exit 1
 }
 

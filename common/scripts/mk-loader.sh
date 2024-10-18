@@ -95,10 +95,10 @@ build_uboot()
 
 usage_hook()
 {
-	echo -e "loader[:dry-run]                 \tbuild loader (u-boot)"
-	echo -e "uboot[:dry-run]                  \tbuild u-boot"
-	echo -e "u-boot[:dry-run]                 \talias of uboot"
-	echo -e "uefi[:dry-run]                   \tbuild uefi"
+	usage_oneline "loader[:dry-run]" "build loader (u-boot)"
+	usage_oneline "uboot[:dry-run]" "build u-boot"
+	usage_oneline "u-boot[:dry-run]" "alias of uboot"
+	usage_oneline "uefi[:dry-run]" "build uefi"
 }
 
 clean_hook()

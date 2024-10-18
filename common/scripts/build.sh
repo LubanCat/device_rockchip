@@ -11,6 +11,15 @@ if [ -z "$BASH_SOURCE" ]; then
 	esac
 fi
 
+usage_clean()
+{
+	usage_oneline "cleanall" "cleanup all"
+	for s in $(grep -wl clean_hook "$RK_SCRIPTS_DIR"/mk-*.sh | \
+		sed "s/^.*mk-\(.*\).sh/\1/" | grep -v "^all$"); do
+		usage_oneline "clean-$s" "cleanup $s"
+	done
+}
+
 usage()
 {
 	echo "Usage: $(basename $BASH_SOURCE) [OPTIONS]"
@@ -19,13 +28,9 @@ usage()
 	run_build_hooks usage
 
 	# Global options
-	echo -e "cleanall                          \tcleanup"
-	echo -e "clean[:module[:module]]...        \tcleanup modules"
-	echo "    available modules:"
-	grep -wl clean_hook "$RK_SCRIPTS_DIR"/mk-*.sh | \
-		sed "s/^.*mk-\(.*\).sh/\t\1/"
-	echo -e "post-rootfs <rootfs dir>          \ttrigger post-rootfs hook scripts"
-	echo -e "help                              \tusage"
+	usage_clean
+	usage_oneline "post-rootfs <rootfs dir>" "trigger post-rootfs hook scripts"
+	usage_oneline "help" "display this information"
 	echo ""
 	echo "Default option is '$RK_DEFAULT_TARGET'."
 
@@ -72,6 +77,16 @@ error()
 fatal()
 {
 	rk_log 31 "$@" # dark red
+}
+
+usage_oneline()
+{
+	printf "%-40s%s\n" "$1" "${*:2}"
+}
+
+usage_makefile_oneline()
+{
+	printf "  %-22s - %s\n" "$(echo "$1" | grep -o "^[^[^:^ ]*")" "${*:2}"
 }
 
 finish_build()
@@ -243,9 +258,11 @@ option_check()
 
 	for opt in $@; do
 		for cmd in $CMDS; do
-			if [ "$cmd" = "${opt%%:*}" ]; then
+			# NOTE: There might be patterns in commands
+			if echo "${opt%%:*}" | grep -qE "^$cmd$"; then
 				return 0
 			fi
+
 		done
 	done
 	return 1
@@ -371,7 +388,6 @@ setup_environments()
 
 	RK_PARSED_CMDS="$RK_OUTDIR/.parsed_cmds"
 	RK_MAKE_USAGE="$RK_OUTDIR/.make_usage"
-	RK_MAKE_TARGETS="$RK_OUTDIR/.make_targets"
 }
 
 check_sdk() {
@@ -402,17 +418,18 @@ parse_scripts()
 		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE")" ]; then
 		{
 			TEMP_FILE=$(mktemp -u)
-			run_build_hooks make-usage > $TEMP_FILE
-			mv $TEMP_FILE "$RK_MAKE_USAGE"
-		}&
-	fi
 
-	if [ ! -r "$RK_MAKE_TARGETS" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_TARGETS")" ]; then
-		{
-			TEMP_FILE=$(mktemp -u)
-			run_build_hooks make-targets > $TEMP_FILE
-			mv $TEMP_FILE "$RK_MAKE_TARGETS"
+			for c in $(ls "$RK_CHIPS_DIR"); do
+				usage_makefile_oneline "$c" "choose $c"
+			done > $TEMP_FILE
+
+			run_build_hooks make-usage >> $TEMP_FILE
+
+			usage_clean | \
+				while read LINE; do
+					usage_makefile_oneline $LINE
+				done >> $TEMP_FILE
+			mv $TEMP_FILE "$RK_MAKE_USAGE"
 		}&
 	fi
 
@@ -441,13 +458,8 @@ makefile_options()
 	parse_scripts
 
 	case "$1" in
-		make-targets)
-			# Report chip targets as well
-			ls "$RK_CHIPS_DIR"
-
-			cat "$RK_MAKE_TARGETS"
-			;;
 		make-usage) cat "$RK_MAKE_USAGE" ;;
+		make-targets) cat "$RK_MAKE_USAGE" | awk '{print $1}' ;;
 	esac
 
 	exit 0
@@ -548,9 +560,9 @@ main()
 	for opt in $OPTIONS; do
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
-			clean:*)
+			clean-*)
 				# Check cleanup modules
-				for m in $(echo ${opt#clean:} | tr ':' ' '); do
+				for m in $(echo ${opt#clean-} | tr '-' ' '); do
 					grep -wq clean_hook \
 						"$RK_SCRIPTS_DIR/mk-$m.sh" \
 						2>/dev/null || usage
@@ -614,7 +626,7 @@ main()
 
 	# No need to go further
 	CMDS="$RK_PRE_BUILD_CMDS $RK_BUILD_CMDS $RK_POST_BUILD_CMDS \
-		cleanall clean post-rootfs"
+		cleanall clean-.* post-rootfs"
 	option_check "$CMDS" $OPTIONS || return 0
 
 	# Force exporting config environments
@@ -680,8 +692,8 @@ main()
 			rm -rf "$RK_OUTDIR" "$RK_SDK_DIR/rockdev"
 			finish_build cleanall
 			exit 0 ;;
-		clean:*)
-			MODULES="$(echo ${OPTIONS#clean:} | tr ':' ' ')"
+		clean-*)
+			MODULES="$(echo ${OPTIONS#clean-} | tr '-' ' ')"
 			for m in $MODULES; do
 				"$RK_SCRIPTS_DIR/mk-$m.sh" clean
 			done
@@ -741,5 +753,5 @@ if [ "$0" != "$BASH_SOURCE" ]; then
 	"$BASH_SOURCE" ${@:-shell}
 elif [ "$0" == "$BASH_SOURCE" ]; then
 	# Executed directly
-	main $@
+	main "${@%%:}"
 fi

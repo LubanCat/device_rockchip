@@ -305,18 +305,18 @@ EOF
 usage_hook()
 {
 	for k in $KERNELS; do
-		echo -e "$k[:dry-run]             \tbuild kernel ${k#kernel-}"
+		usage_oneline "$k[:dry-run]" "build kernel ${k#kernel-}"
 	done
 
-	echo -e "kernel[:dry-run]                 \tbuild kernel"
-	echo -e "recovery-kernel[:dry-run]        \tbuild kernel for recovery"
-	echo -e "kernel-modules[:<dst dir>:dry-run]\tbuild kernel modules"
-	echo -e "modules[:<dst dir>:dry-run]      \talias of kernel-modules"
-	echo -e "linux-headers[:<arch>:dry-run]   \tbuild linux-headers"
-	echo -e "kernel-config[:dry-run]          \tmodify kernel defconfig"
-	echo -e "kconfig[:dry-run]                \talias of kernel-config"
-	echo -e "kernel-make[:<arg1>:<arg2>]      \trun kernel make"
-	echo -e "kmake[:<arg1>:<arg2>]            \talias of kernel-make"
+	usage_oneline "kernel[:dry-run]" "build kernel"
+	usage_oneline "recovery-kernel[:dry-run]" "build kernel for recovery"
+	usage_oneline "kernel-modules[:<dst dir>:dry-run]" "build kernel modules"
+	usage_oneline "modules[:<dst dir>:dry-run]" "alias of kernel-modules"
+	usage_oneline "linux-headers[:<arch>:dry-run]" "build linux-headers"
+	usage_oneline "kernel-config[:dry-run]" "modify kernel defconfig"
+	usage_oneline "kconfig[:dry-run]" "alias of kernel-config"
+	usage_oneline "kernel-make[:<arg1>:<arg2>]" "run kernel make"
+	usage_oneline "kmake[:<arg1>:<arg2>]" "alias of kernel-make"
 }
 
 clean_hook()

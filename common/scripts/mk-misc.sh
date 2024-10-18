@@ -4,7 +4,7 @@
 
 usage_hook()
 {
-	echo -e "misc                              \tpack misc image"
+	usage_oneline "misc" "pack misc image"
 }
 
 clean_hook()

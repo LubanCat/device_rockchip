@@ -388,10 +388,10 @@ build_hook()
 
 usage_hook()
 {
-	echo -e "security-createkeys               \tcreate keys for security"
-	echo -e "security-misc                     \tbuild misc with system encryption key"
-	echo -e "security-ramboot                  \tbuild security ramboot"
-	echo -e "security-system                   \tbuild security system"
+	usage_oneline "security-createkeys" "create keys for security"
+	usage_oneline "security-misc" "build misc with system encryption key"
+	usage_oneline "security-ramboot" "build security ramboot"
+	usage_oneline "security-system" "build security system"
 }
 
 clean_hook()

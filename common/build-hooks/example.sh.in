@@ -6,10 +6,10 @@ NAME=${NAME%.sh}
 # Print available options for this module
 usage_hook()
 {
-	echo -e "dummy                            \tbuild dummy"
-	echo -e "A                                \tbuild dummy A"
-	echo -e "B                                \tbuild dummy B"
-	echo -e "C                                \tbuild dummy C"
+	usage_oneline "dummy" "build dummy"
+	usage_oneline "A" "build dummy A"
+	usage_oneline "B" "build dummy B"
+	usage_oneline "C" "build dummy C"
 
 # Test:
 # ./build.sh shell
