@@ -8,9 +8,8 @@ OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 find "$TARGET_DIR/etc" "$TARGET_DIR/lib" "$TARGET_DIR/usr/bin" \
 	-name "*usbdevice*" -print0 -o -name ".usb_config" -print0 \
 	-o -name "android-tools-adbd*" -print0 \
-	-o -name "android-gadget*" -print0 -o -name "adbd" -print0 \
-	-o -name "adbd.sh" -print0 -o -name "*umtprd*" -print0 \
-	2>/dev/null | xargs -0 rm -rf
+	-o -name "android-gadget*" -print0 \
+	-o -name "adbd.sh" -print0 2>/dev/null | xargs -0 rm -rf
 
 if [ ! "$RK_USB_GADGET" ]; then
 	notice "USB gadget disabled..."
@@ -23,7 +22,13 @@ install_adbd()
 
 	message "Installing adbd..."
 
-	install -m 0755 "$RK_TOOLS_DIR/armhf/adbd" "$TARGET_DIR/usr/bin/adbd"
+	if [ -e "$TARGET_DIR/usr/bin/adbd" ] && \
+		! grep -q ADBD_SHELL "$TARGET_DIR/usr/bin/adbd"; then
+		message "Found incompatible adbd, removing it..."
+		rm -f "$TARGET_DIR/usr/bin/adbd"
+	fi
+
+	ensure_tools "$TARGET_DIR/usr/bin/adbd"
 
 	if [ "$RK_USB_ADBD_TCP_PORT" -ne 0 ]; then
 		echo "export ADB_TCP_PORT=$RK_USB_ADBD_TCP_PORT" >> \
@@ -65,7 +70,7 @@ install_mtp()
 
 	message "Installing MTP..."
 
-	install -m 0755 "$RK_TOOLS_DIR/armhf/umtprd" "$TARGET_DIR/usr/bin/umtprd"
+	ensure_tools "$TARGET_DIR/usr/bin/umtprd"
 
 	mkdir -p "$TARGET_DIR/etc/umtprd"
 
@@ -104,8 +109,7 @@ install_uvc()
 
 	message "Installing UVC..."
 
-	install -m 0755 "$RK_TOOLS_DIR/armhf/uvc-gadget" \
-		"$TARGET_DIR/usr/bin/uvc-gadget"
+	ensure_tools "$TARGET_DIR/usr/bin/uvc-gadget"
 }
 
 usb_funcs()

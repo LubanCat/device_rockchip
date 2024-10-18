@@ -201,6 +201,22 @@ get_toolchain()
 	echo ${GCC%gcc}
 }
 
+ensure_tools()
+{
+	for t in "$@"; do
+		if [ "$RK_ROOTFS_PREFER_PREBUILT_TOOLS" ] || \
+			[ "$RK_ROOTFS_PREBUILT_TOOLS" ] || \
+			[ ! -e "$t" ]; then
+			install -v -D -m 0755 "$RK_TOOLS_DIR/armhf/${t##*/}" "$t"
+			continue
+		fi
+
+		if [ ! -e "$t" ]; then
+			warning "Unable to install $t!"
+		fi
+	done
+}
+
 # For developing shell only
 
 rroot()
@@ -262,7 +278,6 @@ option_check()
 			if echo "${opt%%:*}" | grep -qE "^$cmd$"; then
 				return 0
 			fi
-
 		done
 	done
 	return 1

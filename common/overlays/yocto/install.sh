@@ -6,8 +6,7 @@ TARGET_DIR="$1"
 OVERLAY_DIR="$(dirname "$(realpath "$0")")"
 
 message "Installing full-busybox..."
-mkdir -p "$TARGET_DIR/bin/"
-cp "$RK_TOOLS_DIR/armhf/busybox" "$TARGET_DIR/bin/busybox"
+RK_ROOTFS_PREFER_PREBUILT_TOOLS=y ensure_tools "$TARGET_DIR/bin/busybox"
 
 # Login root on serial console
 if [ -r "$TARGET_DIR/etc/inittab" ]; then

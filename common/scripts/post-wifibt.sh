@@ -269,9 +269,10 @@ build_wifibt()
 	ln -rsf "$TARGET_DIR/system" "$TARGET_DIR/vendor"
 
 	echo "installing tools and scripts"
-	for b in brcm_patchram_plus1 dhd_priv rtk_hciattach; do
-		install -m 0755 "$RK_TOOLS_DIR/armhf/$b" "$TARGET_DIR/usr/bin"
-	done
+	ensure_tools "$TARGET_DIR/usr/bin/brcm_patchram_plus1" \
+		"$TARGET_DIR/usr/bin/dhd_priv" \
+		"$TARGET_DIR/usr/bin/rtk_hciattach"
+
 	install -m 0655 $RKWIFIBT_DIR/conf/* "$TARGET_DIR/etc/"
 	install -m 0755 $RKWIFIBT_DIR/scripts/* "$TARGET_DIR/usr/bin/"
 	rm -f "$TARGET_DIR/usr/bin/wifibt-sleep-hook.sh"
