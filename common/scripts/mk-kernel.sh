@@ -224,16 +224,15 @@ pack_linux_headers()
 	run_command ln -rsf "$KBUILD_DIR" "$HEADERS_KBUILD_DIR"
 
 	cat << EOF > "$HEADERS_PACK_SCRIPT"
-{
-	# Based on kernel/scripts/package/builddeb (6.1)
-	find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
-	find include scripts -type f -o -type l
-	find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
-	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
-	find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
-	echo .config
-} | tar --no-recursion --ignore-failed-read -T - \
-	-cf "$HEADERS_TAR"
+	{
+		# Based on kernel/scripts/package/builddeb (6.1)
+		find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
+		find include scripts -type f -o -type l
+		find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
+		find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
+		find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
+		echo .config
+	} | tar --no-recursion --ignore-failed-read -T - -cf "$HEADERS_TAR"
 
 	# Pack kbuild
 	tar -rf "$HEADERS_TAR" -C "$HEADERS_KBUILD_DIR" scripts/ tools/
@@ -250,10 +249,11 @@ EOF
 	[ -z "$DRY_RUN" ] || return 0
 
 	# Packing .deb package
+	KERNELRELEASE="$($KMAKE --no-print-directory kernelrelease)"
 	TEMP_DIR="$(mktemp -d)"
 	DEBIAN_ARCH="${KBUILD_ARCH/aarch64/arm64}"
 	DEBIAN_PKG="linux-headers-${RK_KERNEL_VERSION_RAW}-$RK_KERNEL_ARCH"
-	KERNEL_HEADERS_DIR="/usr/src/$DEBIAN_PKG"
+	KERNEL_HEADERS_DIR="/usr/src/linux-headers-$KERNELRELEASE"
 	DEBIAN_DIR="$TEMP_DIR/${DEBIAN_PKG}_$DEBIAN_ARCH"
 	DEBIAN_HEADERS_DIR="$DEBIAN_DIR/$KERNEL_HEADERS_DIR"
 	DEBIAN_DEB="$DEBIAN_DIR.deb"
@@ -264,8 +264,6 @@ EOF
 	mkdir -p "$DEBIAN_HEADERS_DIR"
 	tar xf "$HEADERS_TAR" -C "$DEBIAN_HEADERS_DIR"
 
-	KERNELRELEASE="$(grep -o '".*"' \
-		"$DEBIAN_HEADERS_DIR/include/generated/utsrelease.h" | tr -d '"')"
 	KERNEL_MODULES_DIR="/lib/modules/$KERNELRELEASE"
 
 	mkdir -p "$DEBIAN_DIR/$KERNEL_MODULES_DIR"
@@ -290,7 +288,7 @@ EOF
 	cat "$DEBIAN_CONTROL"
 
 	message "Packing $(basename "$DEBIAN_DEB")..."
-	dpkg-deb -b "$DEBIAN_DIR" >/dev/null 2>&1
+	dpkg-deb -b "$DEBIAN_DIR"
 	mv "$DEBIAN_DEB" "$HEADERS_OUTDIR"
 
 	rm -rf "$TEMP_DIR"
