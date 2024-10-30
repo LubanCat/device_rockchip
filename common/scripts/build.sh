@@ -178,7 +178,7 @@ get_toolchain()
 
 	# RV1126 uses custom toolchain
 	if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-		TC_VENDOR=rockchip
+		TC_VENDOR=rockchip830
 	fi
 
 	TC_DIR="$RK_SDK_DIR/prebuilts/gcc/linux-x86/$TC_ARCH"
