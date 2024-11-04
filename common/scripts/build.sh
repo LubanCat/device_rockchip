@@ -430,7 +430,8 @@ parse_scripts()
 	mkdir -p "$RK_OUTDIR"
 
 	if [ ! -r "$RK_MAKE_USAGE" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_MAKE_USAGE")" ]; then
+		[ "$(find "$RK_SCRIPTS_DIR" "$RK_CHIP_DIR" "$RK_CHIP_DIR/" \
+			-cnewer "$RK_MAKE_USAGE")" ]; then
 		{
 			TEMP_FILE=$(mktemp -u)
 
@@ -449,7 +450,8 @@ parse_scripts()
 	fi
 
 	if [ ! -r "$RK_PARSED_CMDS" ] || \
-		[ "$(find "$RK_SCRIPTS_DIR" -cnewer "$RK_PARSED_CMDS")" ]; then
+		[ "$(find "$RK_SCRIPTS_DIR" "$RK_CHIP_DIR" "$RK_CHIP_DIR/" \
+			-cnewer "$RK_PARSED_CMDS")" ]; then
 		{
 			TEMP_FILE=$(mktemp -u)
 			{
