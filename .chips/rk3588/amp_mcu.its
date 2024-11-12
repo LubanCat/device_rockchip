@@ -21,6 +21,7 @@
 			compile {
 				size         = <0x00800000>;
 				sys          = "rtt";    // "hal" or "rtt"
+				rtt_config   = "board/evb/defconfig"
 				core         = "mcu";    // "mcu" or "ap"
 			};
 
