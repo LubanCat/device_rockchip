@@ -120,6 +120,6 @@ For building kmsgrab:
 
 External sources:
 1/ rkwifibt:
-fe32b48 rkwifibt: bt: update bt firmware for ap chips
+ee9539a wifibt-init.sh: Fix error when wlan0 been renamed
 2/ rktoolkit:
 bc1d85d vendor_storage: fixed hex string begin with 00, get wrong string length when read
