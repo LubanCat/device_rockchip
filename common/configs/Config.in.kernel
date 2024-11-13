@@ -59,15 +59,13 @@ config RK_KERNEL_DTB
 	string
 	default "$RK_KERNEL_DTS_DIR/$RK_KERNEL_DTS_NAME.dtb"
 
-config RK_KERNEL_IMG_NAME
-	string "raw image"
-	default "zImage" if RK_KERNEL_ARM32 && RK_BOOT_COMPRESSED
-	default "Image.lz4" if RK_KERNEL_ARM64 && RK_BOOT_COMPRESSED
-	default "Image"
-
 config RK_KERNEL_IMG
 	string
-	default "kernel/arch/$RK_KERNEL_ARCH/boot/$RK_KERNEL_IMG_NAME"
+	default "kernel/arch/$RK_KERNEL_ARCH/boot/zImage" \
+		if RK_KERNEL_ARM32 && RK_BOOT_COMPRESSED
+	default "kernel/arch/$RK_KERNEL_ARCH/boot/Image.lz4" \
+		if RK_KERNEL_ARM64 && RK_BOOT_COMPRESSED
+	default "kernel/arch/$RK_KERNEL_ARCH/boot/Image"
 
 if RK_RECOVERY
 
