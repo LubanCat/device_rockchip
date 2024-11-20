@@ -19,7 +19,7 @@ if [ "$(id -u)" -ne 0 ] && [ "$RK_OWNER_UID" -ne "$(id -u)" ]; then
 fi
 
 case "$(findmnt -fnu -o FSTYPE -T "$RK_SCRIPTS_DIR")" in
-	ext* | f2fs | btrfs) ;;
+	ext* | f2fs | btrfs | xfs) ;;
 	*)
 		echo -e "\e[35m"
 		echo "Please move SDK source code into an ext4 partition."
