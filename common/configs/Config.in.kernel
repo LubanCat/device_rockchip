@@ -90,5 +90,9 @@ endmenu # Recovery
 
 endif # Recovery
 
+config RK_KERNEL_EXTBOOT
+	bool "kernel extboot image"
+	default n
+
 endif # Kernel
 endmenuconfig # Kernel

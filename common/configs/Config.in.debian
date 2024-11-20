@@ -2,7 +2,8 @@
 
 config RK_DEBIAN_SUPPORTS
 	bool
-	default y if RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
+	default y if RK_CHIP_FAMILY = "rk312x" || \
+		RK_CHIP_FAMILY = "rk3288" || RK_CHIP_FAMILY = "px30" || \
 		RK_CHIP_FAMILY = "rk3326" || RK_CHIP_FAMILY = "rk3328" || \
 		RK_CHIP_FAMILY = "rk3399" || RK_CHIP_FAMILY = "rk3399pro" || \
 		RK_CHIP_FAMILY = "rk3566_rk3568" || RK_CHIP_FAMILY = "rk3588" || \
@@ -24,6 +25,12 @@ config RK_DEBIAN_VERSION
 	default "buster" if RK_DEBIAN_BUSTER
 	default "bullseye" if RK_DEBIAN_BULLSEYE
 	default "bookworm" if RK_DEBIAN_BOOKWORM
+
+config RK_DEBIAN_NUMBER
+	string
+	default "debian10" if RK_DEBIAN_BUSTER
+	default "debian11" if RK_DEBIAN_BULLSEYE
+	default "debian12" if RK_DEBIAN_BOOKWORM
 
 choice
 	prompt "distro"

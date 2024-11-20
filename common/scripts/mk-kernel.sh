@@ -42,6 +42,66 @@ make_recovery_kernel_config()
 		"${RK_KERNEL_RECOVERY_CFG_FRAGMENTS:-$RK_KERNEL_CFG_FRAGMENTS}"
 }
 
+do_build_kerneldeb()
+{
+	rm -f linux-*.buildinfo linux-*.changes
+	rm -f linux-headers-*.deb linux-image-*.deb linux-libc-dev*.deb
+	run_command $KMAKE bindeb-pkg
+}
+
+do_build_extboot()
+{
+	run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
+	run_command $KMAKE dtbs
+
+	KERNEL_VER=$(cat $RK_SDK_DIR/kernel/include/config/kernel.release)
+	EXTBOOT_IMG=${RK_SDK_DIR}/kernel/extboot.img
+	EXTBOOT_DIR=${RK_SDK_DIR}/kernel/extboot
+	EXTBOOT_DTB_DIR=${EXTBOOT_DIR}/dtb/
+
+	rm -rf $EXTBOOT_DIR
+	mkdir -p $EXTBOOT_DTB_DIR/overlay 
+	mkdir -p $EXTBOOT_DIR/{uEnv,kerneldeb,extlinux}
+
+	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VER
+
+
+	echo -e "label kernel-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tkernel /Image-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tdevicetreedir /" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+	echo -e "\tappend  root=/dev/mmcblk0p3 earlyprintk console=ttyFIQ0 console=tty1 consoleblank=0 loglevel=7 rootwait rw rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 switolb=1 coherent_pool=1m" >> $EXTBOOT_DIR/extlinux/extlinux.conf
+
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/*.dtb $EXTBOOT_DTB_DIR
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/overlay/*.dtbo $EXTBOOT_DTB_DIR/overlay
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
+	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnv.txt
+	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnvLubanCat.txt
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
+	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
+
+	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-${KERNEL_VER%%-*} ]]; then
+		cp -v ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-${KERNEL_VER%%-*} $EXTBOOT_DIR/initrd-$KERNEL_VER
+	fi
+
+	if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
+		mkimage -T script -C none -d $EXTBOOT_DIR/boot.cmd $EXTBOOT_DIR/boot.scr
+	fi
+
+	cp ${RK_SDK_DIR}/kernel/.config $EXTBOOT_DIR/config-$KERNEL_VER
+	cp ${RK_SDK_DIR}/kernel/System.map $EXTBOOT_DIR/System.map-$KERNEL_VER
+	cp ${RK_SDK_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/
+	cp ${RK_SDK_DIR}/kernel/logo_boot.bmp $EXTBOOT_DIR/logo.bmp
+
+	cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+	cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+
+	rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
+	fakeroot mkfs.ext2 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
+
+	run_command ln -rsf "$RK_SDK_DIR/kernel/extboot.img" \
+		"$RK_FIRMWARE_DIR/boot.img"
+}
+
 do_build()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -75,7 +135,18 @@ do_build()
 				INSTALL_MOD_PATH="$MOD_DIR"
 			run_command find "$MOD_DIR/lib/modules/" -type l -delete
 			;;
+		kerneldeb)
+			do_build_kerneldeb
+			;;
+		extboot)
+			do_build_extboot
+			;;
 		kernel*)
+		if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
+			notice "build kerneldeb and extboot"
+			do_build_kerneldeb
+			do_build_extboot
+		else
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
 
 			# The FIT image for initrd would be packed in rootfs stage
@@ -105,6 +176,7 @@ do_build()
 			"$RK_SCRIPTS_DIR/check-kernel-dtb.sh"
 			"$RK_SCRIPTS_DIR/check-power-domain.sh"
 			"$RK_SCRIPTS_DIR/check-security.sh" kernel dts
+		fi
 			;;
 	esac
 }
@@ -307,6 +379,8 @@ usage_hook()
 	done
 
 	usage_oneline "kernel[:dry-run]" "build kernel"
+	usage_oneline "kerneldeb" "tbuild kernel debian package"
+	usage_oneline "extboot" "tbuild kernel extboot image"
 	usage_oneline "recovery-kernel[:dry-run]" "build kernel for recovery"
 	usage_oneline "kernel-modules[:<dst dir>:dry-run]" "build kernel modules"
 	usage_oneline "modules[:<dst dir>:dry-run]" "alias of kernel-modules"
@@ -321,6 +395,11 @@ clean_hook()
 {
 	[ ! -d kernel ] || make -C kernel distclean
 
+	rm -f $RK_SDK_DIR/{linux-*.buildinfo,linux-*.changes}
+	rm -f $RK_SDK_DIR/{linux-headers-*.deb,linux-image-*.deb,linux-libc-dev*.deb}
+	rm -rf $RK_SDK_DIR/kernel/{extboot.img,extboot}
+
+	rm -rf  $KERNEL_DIR/linux-*.deb
 	rm -rf "$RK_OUTDIR/recovery-*"
 	rm -f "$RK_FIRMWARE_DIR/linux-headers.tar"
 	rm -rf "$RK_FIRMWARE_DIR/boot.img"
@@ -417,7 +496,7 @@ pre_build_hook_dry()
 	DRY_RUN=1 pre_build_hook $@
 }
 
-BUILD_CMDS="$KERNELS kernel recovery-kernel kernel-modules modules"
+BUILD_CMDS="$KERNELS kernel recovery-kernel kernel-modules modules kerneldeb extboot"
 build_hook()
 {
 	check_config RK_KERNEL RK_KERNEL_CFG || false
@@ -487,7 +566,7 @@ source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-he
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook "$@" ;;
-	kernel* | recovery-kernel | kernel-modules | modules)
+	kernel* | recovery-kernel | kernel-modules | modules | kerneldeb | extboot)
 		init_hook "$@"
 		build_hook "${@:-kernel}"
 		;;

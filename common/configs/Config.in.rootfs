@@ -4,7 +4,7 @@ comment "Rootfs system depends on linux kernel"
 	depends on !RK_KERNEL
 
 menuconfig RK_ROOTFS
-	bool "Rootfs (Buildroot|Debian|Yocto)"
+	bool "Rootfs (Buildroot|Debian|Ubuntu|Yocto)"
 	depends on RK_KERNEL
 	default y if !RK_AMP
 
@@ -13,11 +13,13 @@ if RK_ROOTFS
 source "Config.in.buildroot"
 source "Config.in.yocto"
 source "Config.in.debian"
+source "Config.in.ubuntu"
 
 config RK_ROOTFS_SYSTEM
 	string
 	default "buildroot" if RK_ROOTFS_SYSTEM_BUILDROOT
 	default "debian" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "ubuntu" if RK_ROOTFS_SYSTEM_UBUNTU
 	default "yocto" if RK_ROOTFS_SYSTEM_YOCTO
 
 choice
@@ -33,6 +35,10 @@ config RK_ROOTFS_SYSTEM_DEBIAN
 	bool "Debian"
 	depends on RK_DEBIAN
 
+config RK_ROOTFS_SYSTEM_UBUNTU
+	bool "Ubuntu"
+	depends on RK_UBUNTU
+
 config RK_ROOTFS_SYSTEM_YOCTO
 	bool "Yocto"
 	depends on RK_YOCTO
@@ -44,6 +50,56 @@ config RK_ROOTFS_INITRD
 	# Based on kernel/init/do_mounts_rd.c identify_ramdisk_image()
 	depends on RK_ROOTFS_EXT2 || RK_ROOTFS_SQUASHFS || RK_ROOTFS_ROMFS || \
 		RK_ROOTFS_CPIO || RK_ROOTFS_CPIO_GZ
+
+if RK_ROOTFS_SYSTEM="debian" || RK_ROOTFS_SYSTEM="ubuntu"
+
+config RK_ROOTFS_TARGET
+	string
+	default "gnome" if RK_ROOTFS_TARGET_GNOME
+	default "xfce" if RK_ROOTFS_TARGET_XFCE
+	default "lite" if RK_ROOTFS_TARGET_LITE
+
+choice
+	prompt "rootfs desktop environment"
+	help
+	  Choose the version of the desktop environment.
+
+config RK_ROOTFS_TARGET_GNOME
+	bool "gnome"
+
+config RK_ROOTFS_TARGET_XFCE
+	bool "xfce"
+
+config RK_ROOTFS_TARGET_LITE
+	bool "lite"
+
+endchoice
+
+config RK_ROOTFS_DEBUG
+	string
+	default "debug" if RK_ROOTFS_DEBUG_YES
+	default "none" if RK_ROOTFS_DEBUG_NO
+
+choice
+	prompt "rootfs debug mode"
+	help
+	  Choose add overlay-debug to rootfs.
+
+config RK_ROOTFS_DEBUG_YES
+	bool "debug"
+
+config RK_ROOTFS_DEBUG_NO
+	bool "none"
+
+endchoice
+
+config RK_ROOTFS_IMAGE
+	string "rootfs image name"
+	default "linaro-${RK_CHIP}-${RK_ROOTFS_TARGET}-rootfs.img" if RK_ROOTFS_SYSTEM_DEBIAN
+	default "ubuntu-${RK_CHIP}-${RK_ROOTFS_TARGET}-rootfs.img" if RK_ROOTFS_SYSTEM_UBUNTU
+	default ""
+
+endif
 
 config RK_ROOTFS_TYPE
 	string
