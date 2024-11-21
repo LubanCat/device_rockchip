@@ -50,5 +50,8 @@ config RK_AMP_CFG
 config RK_AMP_FIT_ITS
 	string "FIT ITS file"
 
+config RK_AMP_RTT_ROOT_DATA
+	string "root resource path"
+
 endif # AMP
 endmenuconfig # AMP

@@ -100,53 +100,43 @@ build_rtthread()
 	cd "$RK_RTOS_BSP_DIR/${!1}"
 
 	export RTT_ROOT=$RK_RTOS_BSP_DIR/../../
-	(
-		amp_touch_export FIRMWARE_CPU_BASE RTT_PRMEM_BASE
-		amp_touch_export DRAM_SIZE RTT_PRMEM_SIZE
-		amp_touch_export SRAM_BASE RTT_SRAM_BASE
-		amp_touch_export SRAM_SIZE RTT_SRAM_SIZE
-		amp_touch_export SHMEM_BASE RTT_SHMEM_BASE
-		amp_touch_export SHMEM_SIZE RTT_SHMEM_SIZE
-		amp_touch_export CC RTT_EXEC_PATH
 
-		ROOT_PART_OFFSET=$(rk_partition_start rootfs)
-		amp_touch_export ROOT_PART_OFFSET
+	amp_touch_export FIRMWARE_CPU_BASE RTT_PRMEM_BASE
+	amp_touch_export DRAM_SIZE RTT_PRMEM_SIZE
+	amp_touch_export SRAM_BASE RTT_SRAM_BASE
+	amp_touch_export SRAM_SIZE RTT_SRAM_SIZE
+	amp_touch_export SHMEM_BASE RTT_SHMEM_BASE
+	amp_touch_export SHMEM_SIZE RTT_SHMEM_SIZE
+	amp_touch_export CC RTT_EXEC_PATH
 
-		ROOT_PART_SIZE=$(rk_partition_size rootfs)
-		amp_touch_export ROOT_PART_SIZE
+	ROOT_PART_OFFSET=$(rk_partition_start root)
+	ROOT_PART_SIZE=$(rk_partition_size root)
 
-		if [ -f "$4" ] ;then
-			scons --useconfig="$4"
-		else
-			warning "Warning: Config $4 not exit!\n"
-			warning "Default config(.config) will be used!\n"
-		fi
+	if [ -f "$4" ] ;then
+		scons --useconfig="$4"
+	else
+		warning "Warning: Config $4 not exit!\n"
+		warning "Default config(.config) will be used!\n"
+	fi
 
-		scons -c > /dev/null
-		rm -rf gcc_arm.ld Image/rtt$2.elf Image/rtt$2.bin
-		scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
-	)
+	scons -c > /dev/null
+	rm -rf gcc_arm.ld Image/rtt$2.elf Image/rtt$2.bin
+	scons -j$(nproc) > ${RK_SDK_DIR}/rtt.log 2>&1
+
 	cp rtthread.elf Image/rtt$2.elf
 	mv rtthread.bin Image/rtt$2.bin
 	ln -rsf Image/rtt$2.bin $RK_OUTDIR/$3.bin
 
-	if [ -n "$RK_AMP_RTT_ROOTFS_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
+	if [ -n "$RK_AMP_RTT_ROOT_DATA" ] && [ -n "$ROOT_PART_SIZE" ] ;then
 
-		RTT_TOOLS_PATH=$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET/../tools
-		RTT_ROOTFS_USERDAT=$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET/$RK_AMP_RTT_ROOTFS_DATA
-		RTT_ROOTFS_SECTOR_SIZE=$(($(printf "%d" $ROOT_PART_SIZE) / 8)) # covert to 4096B
+		RTT_ROOT_USERDAT=$RK_RTOS_BSP_DIR/$RK_AMP_RTT_TARGET/$RK_AMP_RTT_ROOT_DATA
 
 		ROOT_SECTOR_SIZE=$(grep -r "CONFIG_RT_DFS_ELM_MAX_SECTOR_SIZE" "$4" | cut -d '=' -f 2)
 		if [ -z $ROOT_SECTOR_SIZE ];then
-			ROOT_SECTOR_SIZE=512
+			ROOT_SECTOR_SIZE=4096
 		fi
 
-		dd of=root.img bs=4K seek=$RTT_ROOTFS_SECTOR_SIZE count=0 2>&1 || fatal "Failed to dd image!"
-		mkfs.fat -S $ROOT_SECTOR_SIZE root.img
-		MTOOLS_SKIP_CHECK=1 $RTT_TOOLS_PATH/mcopy -bspmn -D s -i root.img $RTT_ROOTFS_USERDAT/* ::/
-
-		mv root.img Image/
-		ln -rsf Image/root.img $RK_FIRMWARE_DIR/rootfs.img
+		./mkroot.sh root $RTT_ROOT_USERDAT $RK_CHIP_DIR/$RK_PARAMETER $ROOT_SECTOR_SIZE $RK_FIRMWARE_DIR/root.img
 	fi
 
 	finish_build build_rtthread $@
