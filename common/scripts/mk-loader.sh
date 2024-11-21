@@ -49,12 +49,13 @@ build_uboot()
 			error "\"security\" partition not found in parameter"
 			return 1
 		fi
+	fi
 
+	if [ "$RK_SECUREBOOT_AVB" ]; then
 		if [ -z "$(rk_partition_size vbmeta)" ]; then
 			error "\"vbmeta\" partition not found in parameter"
 			return 1
 		fi
-
 	fi
 
 	if [ "$RK_UBOOT_SPL" ]; then
