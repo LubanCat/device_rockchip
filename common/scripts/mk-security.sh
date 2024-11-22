@@ -187,7 +187,7 @@ rk_security_setup_ramboot_prebuild()
 	else
 		source "$security_file"
 		sed -i "s/ENC_EN=/ENC_EN=false/" "$init_file"
-		sed -i "s/OFFSET=/OFFSET=$hash_offset/" "$init_file"
+		sed -i "s/^OFFSET=/OFFSET=$hash_offset/" "$init_file"
 		sed -i "s/HASH=/HASH=$root_hash/" "$init_file"
 	fi
 
