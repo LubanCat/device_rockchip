@@ -5,5 +5,5 @@ RK_UBOOT_SPL=y
 RK_USE_FIT_IMG=y
 # RK_KERNEL is not set
 RK_PARAMETER="parameter-128M-smp.txt"
-RK_AMP_RTT_ROOT_DATA="resource/root"
+RK_AMP_RTT_ROOT_DATA="../../../applications/lvgl_demo/rk_demo/resource"
 RK_UPDATE=y
