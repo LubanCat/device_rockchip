@@ -21,8 +21,37 @@ build_buildroot()
 		warning "Building without post-rootfs stage!"
 	fi
 
-	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" system \
-		$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$RK_ROOTFS_TYPE
+	if [ "$RK_SECURITY" ]; then
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			# UBIFS DOES NOT support R/W block device,
+			# so it only support RO encrypted image.
+			SUFFIX=squashfs
+		else
+			SUFFIX=$RK_ROOTFS_TYPE
+		fi
+
+		"$RK_SCRIPTS_DIR/mk-security.sh" system \
+			$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$SUFFIX
+
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			# Force to using dynamic to faster bootup.
+			sed -e "s;BR2_ROOTFS_UBI_PATH;${IMAGE_DIR}/security_system.img;" \
+			    -e "s;UBI_VOL_TYPE;dynamic;" \
+			    ${RK_SDK_DIR}/buildroot/fs/ubi/ubinize.cfg > \
+				${RK_OUTDIR}/security/ubinize.cfg
+
+			# Repack ubifs, source variables from buildroot configuration
+			(
+				eval $(cat "$RK_SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/.config" | \
+				       grep ^BR2_TARGET_ROOTFS_UBI_)
+				ubinize -o ${RK_OUTDIR}/security/security-system.ubi \
+					-m ${BR2_TARGET_ROOTFS_UBI_MINIOSIZE} \
+					-p ${BR2_TARGET_ROOTFS_UBI_PEBSIZE} \
+					-s ${BR2_TARGET_ROOTFS_UBI_SUBSIZE} \
+					${RK_OUTDIR}/security/ubinize.cfg
+			)
+		fi
+	fi
 
 	finish_build build_buildroot $@
 }
@@ -336,8 +365,16 @@ build_hook()
 		ln -rsf "$ROOTFS_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
 	elif [ "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" -o \
 		"$RK_SECURITY_CHECK_SYSTEM_VERITY" ]; then
-		ln -rsf "$IMAGE_DIR/security_system.img" \
-			"$RK_FIRMWARE_DIR/rootfs.img"
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			ln -rsf "${RK_OUTDIR}/security/security-system.ubi" \
+				"$RK_FIRMWARE_DIR/rootfs.img"
+		else
+			ln -rsf "$IMAGE_DIR/security_system.img" \
+				"$RK_FIRMWARE_DIR/rootfs.img"
+		fi
+
+
+
 	else
 		ln -rsf "$IMAGE_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi

@@ -90,10 +90,11 @@ config RK_SECURITY_CHECK_SYSTEM_ENCRYPTION
 	help
 	  Check firmwares include loader,uboot,boot or recovery.
 	  And encrypte system image.
+          And system is read-only if RK_ROOTFS_TYPE was ubi type.
 
 config RK_SECURITY_CHECK_SYSTEM_VERITY
 	bool "system-verity"
-	depends on RK_ROOTFS_TYPE = "squashfs"
+	depends on RK_ROOTFS_TYPE = "squashfs" || RK_ROOTFS_TYPE = "ubi"
 	help
 	  Check firmwares include loader,uboot,boot or recovery,system.
 	  And system must be read-only.
