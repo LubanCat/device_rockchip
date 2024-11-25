@@ -28,7 +28,7 @@ do_make_kernel_config()
 		BASIC_CFG_FRAGMENTS="$BASIC_CFG_FRAGMENTS $cfg"
 	done
 
-	run_command $KMAKE $KERNEL_CFG $BASIC_CFG_FRAGMENTS $KERNEL_CFG_FRAGMENTS
+	run_command $KMAKE $KERNEL_CFG $KERNEL_CFG_FRAGMENTS
 }
 
 make_kernel_config()
@@ -59,6 +59,12 @@ do_build_extboot()
 	EXTBOOT_DIR=${RK_SDK_DIR}/kernel/extboot
 	EXTBOOT_DTB_DIR=${EXTBOOT_DIR}/dtb/
 
+	if [ $RK_CHIP_FAMILY == "rk3566_rk3568" ]; then
+		UENV_DIR=rk356x
+	else
+		UENV_DIR=$RK_CHIP_FAMILY
+	fi
+
 	rm -rf $EXTBOOT_DIR
 	mkdir -p $EXTBOOT_DTB_DIR/overlay 
 	mkdir -p $EXTBOOT_DIR/{uEnv,kerneldeb,extlinux}
@@ -74,6 +80,7 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/*.dtb $EXTBOOT_DTB_DIR
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/overlay/*.dtbo $EXTBOOT_DTB_DIR/overlay
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
+	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/$UENV_DIR/*.txt $EXTBOOT_DIR/uEnv
 	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnv.txt
 	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnvLubanCat.txt
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
