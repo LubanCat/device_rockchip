@@ -180,14 +180,10 @@ mkimage_auto_sized()
     MAX_RETRY=20
     RETRY=0
 
-    case $FS_TYPE in
-        ext[234])
-            if [ "$SIZE_KB" -lt 8192 ]; then
-                echo "Increase to 8M for $FS_TYPE"
-                SIZE_KB=8192
-            fi
-            ;;
-    esac
+    if [ "$FS_TYPE" = ext4 ] && [ "$SIZE_KB" -lt 8192 ]; then
+        echo "Start from 8M for ext4."
+        SIZE_KB=8192
+    fi
 
     while true;do
         mkimage && break
