@@ -130,10 +130,6 @@ mkimage()
 
     case $FS_TYPE in
         ext[234])
-            if [ "$SIZE_KB" -lt 16384 ]; then
-                echo "Increase to 16M for $FS_TYPE"
-                SIZE_KB=16384
-            fi
             /sbin/mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR -b 4096 ${SIZE_KB}K \
                 ${LABEL:+-L $LABEL} || return 1
 
@@ -183,6 +179,15 @@ mkimage_auto_sized()
     SIZE_KB="$((SIZE_KB + $SIZE_KB * 10 / 100))" # Start with extra 10%
     MAX_RETRY=20
     RETRY=0
+
+    case $FS_TYPE in
+        ext[234])
+            if [ "$SIZE_KB" -lt 8192 ]; then
+                echo "Increase to 8M for $FS_TYPE"
+                SIZE_KB=8192
+            fi
+            ;;
+    esac
 
     while true;do
         mkimage && break
