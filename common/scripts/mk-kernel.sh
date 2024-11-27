@@ -467,6 +467,10 @@ post_build_hook()
 	make_kernel_config
 	run_command $KMAKE Image modules_prepare
 
+	if [ -z "$DRY_RUN" ]; then
+		"$RK_SCRIPTS_DIR/check-kernel-headers.sh"
+	fi
+
 	if [ "$1" ]; then
 		pack_linux_headers "$1"
 	else
