@@ -9,7 +9,9 @@ if [ "$RK_SUDO_ROOT" ]; then
 fi
 
 # buildroot would fixup owner in its fakeroot script
-[ "$POST_OS" != buildroot ] || exit 0
+case "$POST_OS" in
+	buildroot | ramboot | recovery) exit 0 ;;
+esac
 
 message "Fixing up owner for $TARGET_DIR..."
 
