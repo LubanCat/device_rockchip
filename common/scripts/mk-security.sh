@@ -124,9 +124,9 @@ rk_security_setup_system_encryption()
 	fi
 
 	sectors=$(ls -l "$target_image" | awk '{printf $5}')
-	sectors=$[(sectors + (1 * 1024 * 1024) - 1) / 512] # Align 1M / unit: 512 bytes
+	sectors=$[(sectors + (1 * 1024 * 1024) - 1) / 1024 / 1024 * 2048] # Align 1M / unit: 512 bytes
 
-	loopdevice=$(losetup -f)
+	loopdevice=$(sudo -S losetup -f < $UBOOT/keys/root_passwd)
 	mappername=encfs-$(shuf -i 1-10000000000000000000 -n 1)
 	dd if=/dev/null of="$security_system" seek=$sectors bs=512
 
