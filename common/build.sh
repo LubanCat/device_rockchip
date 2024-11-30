@@ -753,10 +753,9 @@ function build_extboot(){
     fi
     cp -f $EXTBOOT_DTB/${RK_KERNEL_DTS}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
-    if [[ -e ${TOP_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION ]]; then
-        cp ${TOP_DIR}/lubancat-bin/initrd/initrd-$KERNEL_VERSION $EXTBOOT_DIR/initrd-$KERNEL_VERSION
-        # echo -e "\tinitrd /initrd-$KERNEL_VERSION" >> $EXTBOOT_DIR/extlinux/extlinux.conf
-    fi
+	if [[ -e ${TOP_DIR}/lubancat-bin/initrd/$RK_ARCH/initrd-${KERNEL_VERSION%%-*} ]]; then
+		cp -v ${TOP_DIR}/lubancat-bin/initrd/$RK_ARCH/initrd-${KERNEL_VERSION%%-*} $EXTBOOT_DIR/initrd-$KERNEL_VERSION
+	fi
 
     if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
         mkimage -T script -C none -d $EXTBOOT_DIR/boot.cmd $EXTBOOT_DIR/boot.scr
