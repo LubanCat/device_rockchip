@@ -175,6 +175,8 @@ usage_hook()
 	usage_oneline "bconfig[:<config>]" "alias of buildroot-config"
 	usage_oneline "buildroot-make[:<arg1>:<arg2>]" "run buildroot make"
 	usage_oneline "bmake[:<arg1>:<arg2>]" "alias of buildroot-make"
+	usage_oneline "buildroot-sdk" "build the buildroot SDK tarball"
+	usage_oneline "bsdk" "alias of buildroot-sdk"
 	usage_oneline "rootfs[:<rootfs type>]" "build default rootfs"
 	usage_oneline "buildroot" "build buildroot rootfs"
 	usage_oneline "yocto" "build yocto rootfs"
@@ -246,7 +248,6 @@ pre_build_hook()
 			;;
 		buildroot-config | bconfig)
 			BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
-
 			[ "$BUILDROOT_BOARD" ] || return 0
 
 			TEMP_DIR=$(mktemp -d)
@@ -318,10 +319,28 @@ build_hook()
 	finish_build build_rootfs $@
 }
 
+POST_BUILD_CMDS="buildroot-sdk bsdk"
+post_build_hook()
+{
+	check_config RK_ROOTFS || false
+
+	build_hook buildroot
+	pre_build_hook bmake sdk
+
+	BUILDROOT_SDK_TARBALL="$RK_OUTDIR/buildroot/buildroot-sdk.tar.gz"
+	ln -rsf "$RK_OUTDIR/buildroot/images/"*sdk-buildroot.tar.gz \
+		"$BUILDROOT_SDK_TARBALL"
+
+	message "Generated buildroot SDK tarball at: $BUILDROOT_SDK_TARBALL"
+
+	finish_build $@
+}
+
 source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
 
 case "${1:-rootfs}" in
 	buildroot-config | bconfig | buildroot-make | bmake) pre_build_hook $@ ;;
+	buildroot-sdk | bsdk) post_build_hook $@ ;;
 	buildroot | debian | yocto) init_hook $@ ;&
 	*) build_hook $@ ;;
 esac
