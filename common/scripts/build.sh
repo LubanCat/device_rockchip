@@ -14,7 +14,8 @@ fi
 usage_clean()
 {
 	usage_oneline "cleanall" "cleanup all"
-	for s in $(grep -wl clean_hook "$RK_SCRIPTS_DIR"/mk-*.sh | \
+	for s in $(grep -rwl clean_hook "$RK_CHIP_SCRIPTS_DIR" \
+		"$RK_SCRIPTS_DIR" 2>/dev/null | grep "/mk-" | \
 		sed "s/^.*mk-\(.*\).sh/\1/" | grep -v "^all$"); do
 		usage_oneline "clean-$s" "cleanup $s"
 	done
@@ -373,6 +374,7 @@ setup_environments()
 	export RK_DEVICE_DIR="$RK_SDK_DIR/device/rockchip"
 	export RK_CHIPS_DIR="$RK_DEVICE_DIR/.chips"
 	export RK_CHIP_DIR="$RK_DEVICE_DIR/.chip"
+	export RK_CHIP_SCRIPTS_DIR="$RK_CHIP_DIR/scripts"
 
 	export RK_DEFAULT_TARGET="all"
 	export RK_DATA_DIR="$RK_COMMON_DIR/data"
@@ -578,12 +580,12 @@ main()
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
 			clean-*)
-				# Check cleanup modules
-				for m in $(echo ${opt#clean-} | tr '-' ' '); do
-					grep -wq clean_hook \
-						"$RK_SCRIPTS_DIR/mk-$m.sh" \
-						2>/dev/null || usage
-				done
+				# Check cleanup module
+				MODULE="$(echo ${opt#clean-})"
+				grep -wq clean_hook \
+					"$RK_SCRIPTS_DIR/mk-$MODULE.sh" \
+					"$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" \
+					2>/dev/null || usage
 				;&
 			shell | buildroot-shell | bshell | cleanall)
 				# Check single options
@@ -710,11 +712,13 @@ main()
 			finish_build cleanall
 			exit 0 ;;
 		clean-*)
-			MODULES="$(echo ${OPTIONS#clean-} | tr '-' ' ')"
-			for m in $MODULES; do
-				"$RK_SCRIPTS_DIR/mk-$m.sh" clean
-			done
-			finish_build clean - $MODULES
+			MODULE="$(echo ${OPTIONS#clean-})"
+			if [ -x "$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" ]; then
+				"$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" clean
+			else
+				"$RK_SCRIPTS_DIR/mk-$MODULE.sh" clean
+			fi
+			finish_build clean - $MODULE
 			exit 0 ;;
 		post-rootfs)
 			shift
