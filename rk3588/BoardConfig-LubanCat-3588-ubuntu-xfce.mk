@@ -11,7 +11,7 @@ export RK_KERNEL_DEFCONFIG=lubancat_linux_rk3588_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rk3588-lubancat-rk_series
+export RK_KERNEL_DTS=rk3588-lubancat-generic
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
