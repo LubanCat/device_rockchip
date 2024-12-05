@@ -37,25 +37,59 @@ build_yocto()
 
 	cd yocto
 
+	# Overrided configs for Rockchip SDK
+	{
+		echo "include include/rksdk.conf"
+
+		echo "include include/rksdk/kernel.conf"
+		echo "include include/rksdk/rkbin.conf"
+		echo "include include/rksdk/u-boot.conf"
+
+		[ ! -d "$RK_SDK_DIR/external/alsa-config" ] || \
+			echo "include include/rksdk/alsa-config.conf"
+		[ ! -d "$RK_SDK_DIR/external/gstreamer-rockchip" ] || \
+			echo "include include/rksdk/gstreamer-rockchip.conf"
+		[ ! -d "$RK_SDK_DIR/external/libmali" ] || \
+			echo "include include/rksdk/libmali.conf"
+		[ ! -d "$RK_SDK_DIR/external/linux-rga" ] || \
+			echo "include include/rksdk/librga.conf"
+		[ ! -d "$RK_SDK_DIR/external/mpp" ] || \
+			echo "include include/rksdk/mpp.conf"
+		[ ! -d "$RK_SDK_DIR/external/camera_engine_rkaiq" ] || \
+			echo "include include/rksdk/rkaiq.conf"
+		[ ! -d "$RK_SDK_DIR/external/camera_engine_rkisp" ] || \
+			echo "include include/rksdk/rkisp.conf"
+		[ ! -d "$RK_SDK_DIR/external/rknpu-fw" ] || \
+			echo "include include/rksdk/rknpu.conf"
+		[ ! -d "$RK_SDK_DIR/external/rkwifibt" ] || \
+			echo "include include/rksdk/rkwifibt.conf"
+
+		echo
+
+		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
+		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
+		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
+		echo "USE_DEPMOD := \"0\""
+		case "$RK_CHIP_FAMILY" in
+			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
+				echo "MALI_VERSION := \"g24p0\"" ;;
+		esac
+	} > build/conf/rksdk_override.conf
+
+	rm -f build/conf/local.conf
+
 	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
-		if [ -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
-			ln -rsf "$RK_CHIP_DIR/$RK_YOCTO_CFG" \
-				build/conf/local.conf
-		elif [ -r "build/conf/$RK_YOCTO_CFG" ]; then
-			if [ "$RK_YOCTO_CFG" != local.conf ]; then
-				rm -f build/conf/local.conf
-				ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
-			fi
-		else
-			error "yocto/build/conf/$RK_YOCTO_CFG not exist!"
+		if [ ! -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
+			error "$RK_CHIP_DIR/$RK_YOCTO_CFG not exist!"
 			return 1
 		fi
 
+		echo "include $RK_CHIP_DIR/$RK_YOCTO_CFG" > build/conf/local.conf
+
 		message "=========================================="
-		message "          Start building for $RK_YOCTO_CFG"
+		message "          Start building for custom $RK_YOCTO_CFG"
 		message "=========================================="
 	else
-		rm -f build/conf/local.conf
 		{
 			echo "include include/common.conf"
 			echo "include include/debug.conf"
@@ -87,34 +121,26 @@ build_yocto()
 		message "=========================================="
 	fi
 
+	{
+		echo
+		echo "include rksdk_override.conf"
+	} >> build/conf/local.conf
+
 	if [ "$RK_YOCTO_EXTRA_CFG" ]; then
 		message "=========================================="
 		message "          With extra config:($RK_YOCTO_EXTRA_CFG)"
 		message "=========================================="
+
+		{
+			echo "include $RK_CHIP_DIR/$RK_YOCTO_EXTRA_CFG"
+		} >> build/conf/local.conf
 	fi
 
-	{
-		echo "include include/rksdk.conf"
-		echo
-
-		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
-		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
-		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
-		echo "USE_DEPMOD := \"0\""
-		case "$RK_CHIP_FAMILY" in
-			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
-				echo "MALI_VERSION := \"g24p0\"" ;;
-		esac
-	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
 
-	set -x
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
-		bitbake core-image-minimal -C rootfs \
-		-R conf/rksdk_override.conf \
-		${RK_YOCTO_EXTRA_CFG:+-R $RK_CHIP_DIR/$RK_YOCTO_EXTRA_CFG}
-	set x
+		bitbake core-image-minimal -C rootfs
 
 	ln -rsf "$PWD/latest/rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
