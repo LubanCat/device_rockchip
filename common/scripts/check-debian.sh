@@ -69,20 +69,28 @@ case "$RK_DEBIAN_ARCH" in
 		exit 1 ;;
 esac
 
+"$RK_SCRIPTS_DIR/check-package.sh" "qemu-$QEMU_ARCH-static(qemu-user-static)" \
+	qemu-$QEMU_ARCH-static qemu-user-static
+
+if ! [ -r /proc/sys/fs/binfmt_misc/qemu-$QEMU_ARCH ]; then
+	echo -e "\e[35m"
+	echo "Your qemu-$QEMU_ARCH-static(qemu-user-static) is broken"
+	echo "Please reinstall it:"
+	echo "sudo apt-get install binfmt-support qemu-user-static --reinstall"
+	echo -e "\e[0m"
+	exit 1
+fi
+
 LDCONFIG="$RK_TOOLS_DIR/../tests/debian/$RK_DEBIAN_VERSION/$QEMU_ARCH/ldconfig"
 if [ -e "$LDCONFIG" ] && ! "$LDCONFIG" --version >/dev/null 2>&1; then
 	echo -e "\e[35m"
-	echo "Your qemu-$QEMU_ARCH doesn't work!"
-	echo "Please fix it:"
-	echo "sudo apt-get install binfmt-support qemu-user-static --reinstall"
+	echo "Your qemu-$QEMU_ARCH doesn't work with Debian($RK_DEBIAN_VERSION)!"
+	echo "Please replace it with qemu-8.0:"
 	if [ "$(uname -m)" = x86_64 ]; then
-		echo "sudo update-binfmts --disable qemu-$QEMU_ARCH 2>/dev/null"
-		echo "sudo update-binfmts --unimport qemu-$QEMU_ARCH 2>/dev/null"
 		echo "sudo rm -f /usr/bin/qemu-$QEMU_ARCH-static"
 		echo "# Extracted from qemu-user-static_8.0.3+dfsg-4_amd64.deb"
 		echo "sudo cp $RK_TOOLS_DIR/x86_64/qemu-$QEMU_ARCH-static /usr/bin/"
-		echo "sudo update-binfmts --import qemu-$QEMU_ARCH 2>/dev/null"
-		echo "sudo update-binfmts --enable qemu-$QEMU_ARCH 2>/dev/null"
+		echo "sudo reboot # Reboot to register the new qemu."
 	else
 		echo "https://www.qemu.org/download/"
 	fi
