@@ -517,7 +517,7 @@ rk_extra_part_prepare()
 
 	notice "Preparing partiton $PART_NAME"
 
-	rm -rf "$OUTDIR" "$DST" "$MOUNT_DIR" "$FAKEROOT_SCRIPT" \
+	rm -rf "$OUTDIR" "$DST" "$FAKEROOT_SCRIPT" \
 		"$RK_FIRMWARE_DIR/$(basename "$DST")"
 
 	mkdir -p "$OUTDIR"

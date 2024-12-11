@@ -1,0 +1,1 @@
+../scripts/post-mount-dirs.sh
