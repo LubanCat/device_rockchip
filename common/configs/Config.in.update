@@ -6,6 +6,46 @@ menuconfig RK_UPDATE
 
 if RK_UPDATE
 
+config RK_UPDATE_STORAGE
+        string
+        default "flash" if RK_UPDATE_STORAGE_FLASH
+        default "emmc" if RK_UPDATE_STORAGE_EMMC
+        default "sd" if RK_UPDATE_STORAGE_SDCARD
+        default "spinor" if RK_UPDATE_STORAGE_SPINOR
+        default "spinand" if RK_UPDATE_STORAGE_SPINAND
+        default "sata" if RK_UPDATE_STORAGE_SATA
+        default "pcie" if RK_UPDATE_STORAGE_PCIE
+
+choice
+        prompt "storage type"
+        default RK_UPDATE_STORAGE_DEFAULT
+
+config RK_UPDATE_STORAGE_DEFAULT
+	bool "default"
+
+config RK_UPDATE_STORAGE_FLASH
+	bool "flash"
+
+config RK_UPDATE_STORAGE_EMMC
+	bool "emmc"
+
+config RK_UPDATE_STORAGE_SDCARD
+	bool "sdcard"
+
+config RK_UPDATE_STORAGE_SPINOR
+	bool "spinor"
+
+config RK_UPDATE_STORAGE_SPINAND
+	bool "spinand"
+
+config RK_UPDATE_STORAGE_SATA
+	bool "sata"
+
+config RK_UPDATE_STORAGE_PCIE
+	bool "pcie"
+
+endchoice # storage type
+
 config RK_AB_UPDATE
 	bool "A/B update"
 
