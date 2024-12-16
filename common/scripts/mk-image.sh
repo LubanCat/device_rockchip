@@ -165,7 +165,7 @@ mkimage()
             mkfs.f2fs ${LABEL:+-l $LABEL} $TARGET
             sload.f2fs -f $SRC_DIR $TARGET
             ;;
-        ubi|ubifs) mk_ubi_image ;;
+        ubi|ubifs|ubi-ubifs) mk_ubifs_image ;;
     esac
 }
 
@@ -202,9 +202,34 @@ mk_ubi_image()
 {
     TARGET_DIR="${RK_OUTDIR:-$(dirname "$TARGET")}"
     UBI_VOL_NAME=${LABEL:-ubi}
+    UBI_IMAGE="$1"
 
     # default page size 2KB
     UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
+    UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
+
+    # default block size 128KB
+    UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
+
+    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
+
+    echo "[ubi]" > $UBINIZE_CFG
+    echo "mode=ubi" >> $UBINIZE_CFG
+    echo "vol_id=0" >> $UBINIZE_CFG
+    echo "vol_type=dynamic" >> $UBINIZE_CFG
+    echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
+    echo "vol_alignment=1" >> $UBINIZE_CFG
+    echo "vol_flags=autoresize" >> $UBINIZE_CFG
+    echo "image=$UBI_IMAGE" >> $UBINIZE_CFG
+    ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
+        -v $UBINIZE_CFG
+}
+
+mk_ubifs_image()
+{
+    # default page size 2KB
+    UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
+
     # default block size 128KB
     UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
 
@@ -212,27 +237,13 @@ mk_ubi_image()
     UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
     UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
-    UBIFS_IMAGE="$TARGET_DIR/$UBI_VOL_NAME.ubifs"
-    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
-
     mkfs.ubifs -x lzo -e $UBIFS_LEBSIZE -m $UBIFS_MINIOSIZE \
-        -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $UBIFS_IMAGE || return 1
-
-    echo "[ubifs]" > $UBINIZE_CFG
-    echo "mode=ubi" >> $UBINIZE_CFG
-    echo "vol_id=0" >> $UBINIZE_CFG
-    echo "vol_type=dynamic" >> $UBINIZE_CFG
-    echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
-    echo "vol_alignment=1" >> $UBINIZE_CFG
-    echo "vol_flags=autoresize" >> $UBINIZE_CFG
-    echo "image=$UBIFS_IMAGE" >> $UBINIZE_CFG
-    ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
-        -v $UBINIZE_CFG
+        -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $TARGET || return 1
 }
 
 rm -rf $TARGET
 case $FS_TYPE in
-    ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs)
+    ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs|ubi-ubifs)
         if [ $SIZE_KB -eq 0 ]; then
             mkimage_auto_sized || exit 1
         else
@@ -243,7 +254,7 @@ case $FS_TYPE in
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
         mkfs.erofs -zlz4hc $TARGET $SRC_DIR|| exit 1
         ;;
-    squashfs)
+    squashfs|ubi-squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
         mksquashfs $SRC_DIR $TARGET -noappend -comp lz4 || exit 1
         ;;
@@ -255,6 +266,14 @@ case $FS_TYPE in
     *)
         usage "File system: $FS_TYPE not supported."
         exit 1
+        ;;
+esac
+
+case $FS_TYPE in
+    ubi*)
+        mv $TARGET $TARGET.ubi
+        mk_ubi_image $TARGET.ubi || exit 1
+        rm -f $TARGET.ubi
         ;;
 esac
 
