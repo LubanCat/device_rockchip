@@ -16,15 +16,18 @@ menu "Extra partitions (oem, userdata, etc.)"
 EOF
 
 for i in $(seq 1 $RK_EXTRA_PARTITION_MAX_NUM); do
+	if [ $i -eq 1 ]; then
+		echo "if RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
+	else
+		echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
+	fi
+
 	case $i in
-		1)
-			echo "if RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
-			;;
 		$RK_EXTRA_PARTITION_MAX_NUM)
-			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\""
+			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi-squashfs\""
 			;;
 		*)
-			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
+			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi-squashfs\" || \\"
 			;;
 	esac
 done

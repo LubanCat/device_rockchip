@@ -7,10 +7,15 @@ menu "Extra partitions (oem, userdata, etc.)"
 	depends on RK_ROOTFS
 
 if RK_EXTRA_PARTITION_1_FSTYPE = "ubi" || \
+	RK_EXTRA_PARTITION_1_FSTYPE = "ubi-squashfs" || \
 	RK_EXTRA_PARTITION_2_FSTYPE = "ubi" || \
+	RK_EXTRA_PARTITION_2_FSTYPE = "ubi-squashfs" || \
 	RK_EXTRA_PARTITION_3_FSTYPE = "ubi" || \
+	RK_EXTRA_PARTITION_3_FSTYPE = "ubi-squashfs" || \
 	RK_EXTRA_PARTITION_4_FSTYPE = "ubi" || \
-	RK_EXTRA_PARTITION_5_FSTYPE = "ubi"
+	RK_EXTRA_PARTITION_4_FSTYPE = "ubi-squashfs" || \
+	RK_EXTRA_PARTITION_5_FSTYPE = "ubi" || \
+	RK_EXTRA_PARTITION_5_FSTYPE = "ubi-squashfs"
 
 config RK_UBI_PAGE_SIZE
 	hex "ubi image page size (B)"
