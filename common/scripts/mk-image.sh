@@ -200,7 +200,7 @@ mkimage_auto_sized()
 
 mk_ubi_image()
 {
-    TARGET_DIR="${RK_OUTDIR:-$(dirname "$TARGET")}"
+    TARGET_DIR="$(dirname "$TARGET")"
     UBI_VOL_NAME=${LABEL:-ubi}
     UBI_IMAGE="$1"
 
