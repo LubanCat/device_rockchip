@@ -52,6 +52,9 @@ post_build_hook()
 			notice "Using maxium size($SIZE) for $PART_NAME"
 		fi
 
+		echo "find \"$OUTDIR\" -user $RK_OWNER_UID \
+			-exec chown -ch 0:0 {} \\;" >> "$FAKEROOT_SCRIPT"
+
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
 		echo "\"$RK_SCRIPTS_DIR/mk-image.sh\" \
 			-t \"$FS_TYPE\" -s \"$SIZE\" -l \"$PART_NAME\" \
