@@ -1,9 +1,8 @@
+RK_UBOOT_CFG_FRAGMENTS="rk-amp"
 RK_AMP=y
 RK_AMP_FIT_ITS="smp.its"
-RK_UBOOT_CFG_FRAGMENTS="rk-amp"
-RK_UBOOT_SPL=y
-RK_USE_FIT_IMG=y
+RK_AMP_RTT_ROOT_DATA="../../../applications/lvgl_demo/rk_demo/resource"
 # RK_KERNEL is not set
 RK_PARAMETER="parameter-128M-smp.txt"
-RK_AMP_RTT_ROOT_DATA="../../../applications/lvgl_demo/rk_demo/resource"
+RK_USE_FIT_IMG=y
 RK_UPDATE=y
