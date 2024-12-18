@@ -202,8 +202,6 @@ mk_ubi_image()
 {
     TARGET_DIR="$(dirname "$TARGET")"
     UBI_VOL_NAME=${LABEL:-ubi}
-    UBI_IMAGE="$1"
-
     # default page size 2KB
     UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
     UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
@@ -220,7 +218,7 @@ mk_ubi_image()
     echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
     echo "vol_alignment=1" >> $UBINIZE_CFG
     echo "vol_flags=autoresize" >> $UBINIZE_CFG
-    echo "image=$UBI_IMAGE" >> $UBINIZE_CFG
+    echo "image=$TARGET.$FS_TYPE" >> $UBINIZE_CFG
     ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
         -v $UBINIZE_CFG
 }
@@ -242,8 +240,16 @@ mk_ubifs_image()
 }
 
 rm -rf $TARGET
+
 case $FS_TYPE in
-    ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs|ubi-ubifs)
+	ubi*)
+		IS_UBI=1
+		FS_TYPE=${FS_TYPE##ubi-}
+		;;
+esac
+
+case $FS_TYPE in
+    ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs)
         if [ $SIZE_KB -eq 0 ]; then
             mkimage_auto_sized || exit 1
         else
@@ -254,7 +260,7 @@ case $FS_TYPE in
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
         mkfs.erofs -zlz4hc $TARGET $SRC_DIR|| exit 1
         ;;
-    squashfs|ubi-squashfs)
+    squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
         mksquashfs $SRC_DIR $TARGET -noappend -comp lz4 || exit 1
         ;;
@@ -269,12 +275,9 @@ case $FS_TYPE in
         ;;
 esac
 
-case $FS_TYPE in
-    ubi*)
-        mv $TARGET $TARGET.ubi
-        mk_ubi_image $TARGET.ubi || exit 1
-        rm -f $TARGET.ubi
-        ;;
-esac
+if [ "$IS_UBI" ]; then
+    mv $TARGET $TARGET.$FS_TYPE
+    mk_ubi_image || exit 1
+fi
 
 echo "Generated $TARGET"
