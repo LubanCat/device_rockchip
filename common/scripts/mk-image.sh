@@ -262,7 +262,21 @@ case $FS_TYPE in
         ;;
     squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mksquashfs $SRC_DIR $TARGET -noappend -comp lz4 || exit 1
+
+        KERNEL_CONFIG="$RK_SDK_DIR/kernel/.config"
+        if [ -z "$SQUASHFS_COMP" ] && [ -r "$KERNEL_CONFIG" ]; then
+            if grep -wq "CONFIG_SQUASHFS_LZ4=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp lz4"
+            elif grep -wq "CONFIG_SQUASHFS_XZ=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp xz"
+            elif grep -wq "CONFIG_SQUASHFS_ZSTD=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp zstd"
+            elif grep -wq "CONFIG_SQUASHFS_LZO=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp lzo"
+            fi
+        fi
+
+        mksquashfs $SRC_DIR $TARGET -noappend $SQUASHFS_COMP || exit 1
         ;;
     jffs2)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
