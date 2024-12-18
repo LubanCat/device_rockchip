@@ -81,6 +81,7 @@ config RK_ROOTFS_F2FS
 
 config RK_ROOTFS_UBI
 	bool "ubi"
+	select RK_UBI
 
 config RK_ROOTFS_EROFS
 	bool "erofs"

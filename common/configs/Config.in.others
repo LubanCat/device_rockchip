@@ -2,6 +2,9 @@
 
 menu "Others configurations"
 
+config RK_UBI
+	bool
+
 config RK_OVERLAY
 	bool "overlays for rootfs, recovery, etc."
 	depends on RK_KERNEL
