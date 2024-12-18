@@ -53,6 +53,7 @@ if RK_USE_FIT_IMG
 
 config RK_RECOVERY_FIT_ITS_NAME
 	string "its script for FIT recovery image"
+	default "zboot4recovery.its" if RK_BOOT_COMPRESSED
 	default "boot4recovery.its"
 
 config RK_RECOVERY_FIT_ITS
