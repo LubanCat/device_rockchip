@@ -6,4 +6,4 @@ RK_UBOOT_TRUST_INI="RK3128TOS.ini"
 RK_UBOOT_SPL=y
 RK_KERNEL_CFG_FRAGMENTS="rk3128_linux_spi_nand.config"
 RK_KERNEL_DTS_NAME="rk3128-evb-ddr3-v10-linux-spi-nand"
-RK_PARAMETER="parameter-buildroot-rk3128-spi-nand.txt"
+RK_PARAMETER="parameter-rk3128-spi-nand.txt"
