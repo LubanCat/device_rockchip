@@ -722,23 +722,21 @@ main()
 			exit 0 ;;
 		post-rootfs)
 			shift
-			TARGET_DIR="$1"
 
+			touch "$RK_LOG_DIR/.stamp_post_start"
+			run_post_hooks "$@"
+
+			TARGET_DIR="$1"
 			source "$RK_POST_HELPER"
 			POST_DIR="$RK_OUTDIR/$POST_OS"
 			mkdir -p "$POST_DIR"
-
-			touch "$POST_DIR/.stamp_post_start"
-			run_post_hooks "$TARGET_DIR"
-			touch "$POST_DIR/.stamp_post_finish"
-
 			ln -rsf "$TARGET_DIR" "$POST_DIR/target"
 			finish_build post-rootfs
 
 			notice "Files changed in post-rootfs stage:"
 			cd "$TARGET_DIR"
 			find . \( -type f -o -type l \) \
-				-cnewer "$POST_DIR/.stamp_post_start" | \
+				-cnewer "$RK_LOG_DIR/.stamp_post_start" | \
 				tee "$POST_DIR/.files_post.txt"
 			exit 0 ;;
 	esac
