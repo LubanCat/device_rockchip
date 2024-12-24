@@ -47,6 +47,6 @@ pre_build_hook()
 	warning "Exit from $BASH_SOURCE ${@:-shell}."
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 pre_build_hook $@

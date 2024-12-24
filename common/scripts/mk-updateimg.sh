@@ -236,7 +236,7 @@ post_build_hook()
 	esac
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 case "$@" in
 	edit-*package-file)

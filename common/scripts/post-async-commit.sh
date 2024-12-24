@@ -2,7 +2,7 @@
 
 POST_ROOTFS_ONLY=1
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/post-helper}"
 
 [ "$RK_ROOTFS_ASYNC_COMMIT" ] || exit 0
 

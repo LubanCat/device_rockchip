@@ -399,7 +399,7 @@ post_build_hook()
 	finish_build $@
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 case "${1:-rootfs}" in
 	buildroot-config | bconfig | buildroot-make | bmake) pre_build_hook $@ ;;

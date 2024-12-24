@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/post-helper}"
 
 if [ "$RK_SUDO_ROOT" ]; then
 	message "Fixing up owner for $RK_OUTDIR..."

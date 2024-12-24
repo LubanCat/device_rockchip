@@ -305,27 +305,39 @@ hook_check()
 }
 
 # Run specific hook scripts
-run_hooks()
+do_run_hooks()
 {
-	DIR="$1"
+	HOOK_DIR="$1"
 	shift
 
-	# Prefer chips' hooks than the common ones
-	for dir in "$RK_CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
-		[ -d "$dir" ] || continue
+	[ -d "$HOOK_DIR" ] || return 0
 
-		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
-			# Ignore unrelated hooks
-			hook_check "$hook" "$1" "$2" || continue
+	for hook in $(find "$HOOK_DIR" -maxdepth 1 -name "*.sh" | sort); do
+		# Ignore unrelated hooks
+		hook_check "$hook" "$@" || continue
 
-			if ! "$hook" $@; then
-				HOOK_RET=$?
-				err_handler $HOOK_RET \
-					"${FUNCNAME[0]} $*" "$hook $*"
-				exit $HOOK_RET
-			fi
-		done
+		if ! "$hook" "$@"; then
+			HOOK_RET=$?
+			err_handler $HOOK_RET \
+				"${FUNCNAME[0]} $*" "$hook $*"
+			exit $HOOK_RET
+		fi
 	done
+}
+
+run_hooks()
+{
+	case "${2:-usage}" in
+		usage)
+			do_run_hooks "$RK_COMMON_DIR/$1" "${@:2}"
+			do_run_hooks "$RK_CHIP_DIR/$1" "${@:2}"
+			;;
+		*)
+			# Prefer chips' hooks than the common ones
+			do_run_hooks "$RK_CHIP_DIR/$1" "${@:2}"
+			do_run_hooks "$RK_COMMON_DIR/$1" "${@:2}"
+			;;
+	esac
 }
 
 # Run build hook scripts for normal stages
@@ -334,7 +346,7 @@ run_build_hooks()
 	# Don't log these stages (either interactive or with useless logs)
 	case "$1" in
 		init | pre-build | make-* | usage | parse-cmds)
-			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
+			run_hooks "$RK_BUILD_HOOK_DIR" "$@" || true
 			return 0
 			;;
 	esac
@@ -342,7 +354,7 @@ run_build_hooks()
 	LOG_FILE="$(start_log "$1")"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	run_hooks "$RK_BUILD_HOOK_DIR" "$@" 2>&1 | tee -a "$LOG_FILE"
 	HOOK_RET=${PIPESTATUS[0]}
 	if [ $HOOK_RET -ne 0 ]; then
 		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
@@ -356,7 +368,7 @@ run_post_hooks()
 	LOG_FILE="$(start_log post-rootfs)"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	run_hooks "$RK_POST_HOOK_DIR" "$@" 2>&1 | tee -a "$LOG_FILE"
 	HOOK_RET=${PIPESTATUS[0]}
 	if [ $HOOK_RET -ne 0 ]; then
 		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
@@ -383,11 +395,11 @@ setup_environments()
 	export RK_KBUILD_DIR="$RK_COMMON_DIR/linux-kbuild"
 	export RK_CONFIG_IN="$RK_COMMON_DIR/configs/Config.in"
 
-	export RK_BUILD_HOOK_DIR="$RK_COMMON_DIR/build-hooks"
-	export RK_BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
-	export RK_POST_HOOK_DIR="$RK_COMMON_DIR/post-hooks"
-	export RK_POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
+	export RK_BUILD_HOOK_DIR="build-hooks"
+	export RK_POST_HOOK_DIR="post-hooks"
 
+	export RK_BUILD_HELPER="$RK_SCRIPTS_DIR/build-helper"
+	export RK_POST_HELPER="$RK_SCRIPTS_DIR/post-helper"
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
