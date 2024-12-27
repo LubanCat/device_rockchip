@@ -1,4 +1,5 @@
 # RK_BUILDROOT is not set
+RK_DEBIAN_BULLSEYE=y
 RK_ROOTFS_TARGET_LITE=y
 RK_KERNEL_CFG="lubancat_linux_rk3528_defconfig"
 RK_KERNEL_VERSION="5.10"
