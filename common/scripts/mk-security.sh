@@ -134,7 +134,26 @@ rk_security_setup_system_encryption()
 	sudo -S dmsetup create $mappername --table "0 $sectors crypt $cipher $key 0 $loopdevice 0 1 allow_discards" < $UBOOT/keys/root_passwd
 	sudo -S dd if="$target_image" of=/dev/mapper/$mappername conv=fsync < $UBOOT/keys/root_passwd
 	if sync; then
-		sudo -S dmsetup remove $mappername < $UBOOT/keys/root_passwd
+		cnt=1
+		while true; do
+			if [ -b "/dev/mapper/$mappername" ]; then
+				if [ "$cnt" -lt 10 ]; then
+					echo "Try to remove mapper ... $cnt"
+					sudo -S dmsetup remove $mappername < $UBOOT/keys/root_passwd || true
+					cnt=$((cnt + 1))
+					sleep 1
+				else
+					echo "Timeout for remove mapper:$mappername"
+					echo "Please remove mapper manually"
+					echo "    sudo dmsetup remove $mappername"
+					echo "    sudo losetup -d $loopdevice"
+					return -1;
+				fi
+			else
+				echo "Removed mapper"
+				break;
+			fi
+		done
 	fi
 	sudo -S losetup -d $loopdevice < $UBOOT/keys/root_passwd
 
