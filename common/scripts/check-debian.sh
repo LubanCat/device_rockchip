@@ -6,7 +6,7 @@ RK_TOOLS_DIR="${RK_TOOLS_DIR:-$(realpath "$RK_SCRIPTS_DIR/../tools")}"
 RK_DEBIAN_ARCH="${RK_DEBIAN_ARCH:-arm64}"
 RK_DEBIAN_VERSION="${RK_DEBIAN_VERSION:-bookworm}"
 
-if ! ls $RK_SDK_DIR/debian/ubuntu-build-service/$RK_DEBIAN_VERSION-desktop-$RK_DEBIAN_ARCH >/dev/null 2>&1; then
+if ! ls $RK_SDK_DIR/$RK_DEBIAN_NUMBER/ubuntu-build-service/$RK_DEBIAN_VERSION-desktop-$RK_DEBIAN_ARCH >/dev/null 2>&1; then
 	echo -e "\e[35m"
 	echo "Current SDK doesn't support Debian($RK_DEBIAN_VERSION) for $RK_DEBIAN_ARCH"
 	echo "Please try other Debian version."

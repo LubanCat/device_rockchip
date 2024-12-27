@@ -142,7 +142,7 @@ build_debian()
 	message "          Start building $RK_DEBIAN_VERSION($ARCH)"
 	message "=========================================="
 
-	cd debian
+	cd "$RK_DEBIAN_NUMBER"
 
 	## Not always using full build
 	if [ -f $RK_ROOTFS_IMAGE ]; then
