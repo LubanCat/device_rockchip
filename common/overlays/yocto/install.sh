@@ -77,3 +77,11 @@ if [ -x "$TARGET_DIR/usr/bin/pulseaudio" ]; then
 	install -m 0755 "$OVERLAY_DIR/pulseaudio/etc/rcS.d/S50pulseaudio" \
 		"$TARGET_DIR/etc/rcS.d/"
 fi
+
+if [ -r "$TARGET_DIR/lib/systemd/system/dhcpcd.service" ]; then
+	message "Enabling dhcpcd service..."
+
+	WANTS_DIR="$TARGET_DIR/etc/systemd/system/multi-user.target.wants"
+	mkdir -p "$WANTS_DIR"
+	ln -rsf "$TARGET_DIR/lib/systemd/system/dhcpcd.service" "$WANTS_DIR/"
+fi
