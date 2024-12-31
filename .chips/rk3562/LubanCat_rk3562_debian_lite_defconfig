@@ -1,9 +1,8 @@
 # RK_BUILDROOT is not set
 # RK_YOCTO is not set
-RK_DEBIAN_BULLSEYE=y
 RK_ROOTFS_TARGET_LITE=y
+RK_KERNEL_PREFERRED="6.1"
 RK_KERNEL_CFG="lubancat_linux_rk3562_defconfig"
-RK_KERNEL_VERSION="5.10"
 RK_KERNEL_DTS_NAME="rk3562-lubancat-generic"
 RK_KERNEL_EXTBOOT=y
 # RK_RECOVERY is not set
