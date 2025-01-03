@@ -51,7 +51,7 @@ git add -f .
 git stash &>/dev/null
 
 # Drop other libraries
-find "$GPU_DIR" -name "*.so" -print0 | grep -wv "$GPU_CHIP" | xargs rm -f
+find "$GPU_DIR" -name "*.so" -print | grep -wv "$GPU_CHIP" | xargs rm -f
 
 # Checkout branch
 if ! git branch | grep -wq "$GPU_CHIP"; then
