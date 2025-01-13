@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/post-helper}"
 
 RK_RSYNC="rsync -av --chmod=u=rwX,go=rX --copy-unsafe-links --exclude .empty --exclude .git"
 RK_OVERLAY_ALLOWED="$@"

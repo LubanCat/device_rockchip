@@ -124,9 +124,9 @@ rk_security_setup_system_encryption()
 	fi
 
 	sectors=$(ls -l "$target_image" | awk '{printf $5}')
-	sectors=$[(sectors + (1 * 1024 * 1024) - 1) / 512] # Align 1M / unit: 512 bytes
+	sectors=$[(sectors + (1 * 1024 * 1024) - 1) / 1024 / 1024 * 2048] # Align 1M / unit: 512 bytes
 
-	loopdevice=$(losetup -f)
+	loopdevice=$(sudo -S losetup -f < $UBOOT/keys/root_passwd)
 	mappername=encfs-$(shuf -i 1-10000000000000000000 -n 1)
 	dd if=/dev/null of="$security_system" seek=$sectors bs=512
 
@@ -134,7 +134,26 @@ rk_security_setup_system_encryption()
 	sudo -S dmsetup create $mappername --table "0 $sectors crypt $cipher $key 0 $loopdevice 0 1 allow_discards" < $UBOOT/keys/root_passwd
 	sudo -S dd if="$target_image" of=/dev/mapper/$mappername conv=fsync < $UBOOT/keys/root_passwd
 	if sync; then
-		sudo -S dmsetup remove $mappername < $UBOOT/keys/root_passwd
+		cnt=1
+		while true; do
+			if [ -b "/dev/mapper/$mappername" ]; then
+				if [ "$cnt" -lt 10 ]; then
+					echo "Try to remove mapper ... $cnt"
+					sudo -S dmsetup remove $mappername < $UBOOT/keys/root_passwd || true
+					cnt=$((cnt + 1))
+					sleep 1
+				else
+					echo "Timeout for remove mapper:$mappername"
+					echo "Please remove mapper manually"
+					echo "    sudo dmsetup remove $mappername"
+					echo "    sudo losetup -d $loopdevice"
+					return -1;
+				fi
+			else
+				echo "Removed mapper"
+				break;
+			fi
+		done
 	fi
 	sudo -S losetup -d $loopdevice < $UBOOT/keys/root_passwd
 
@@ -187,7 +206,7 @@ rk_security_setup_ramboot_prebuild()
 	else
 		source "$security_file"
 		sed -i "s/ENC_EN=/ENC_EN=false/" "$init_file"
-		sed -i "s/OFFSET=/OFFSET=$hash_offset/" "$init_file"
+		sed -i "s/^OFFSET=/OFFSET=$hash_offset/" "$init_file"
 		sed -i "s/HASH=/HASH=$root_hash/" "$init_file"
 	fi
 
@@ -282,12 +301,23 @@ rk_security_setup_sign()
 # -----------------------------------
 build_security_system()
 {
-	[ "$RK_ROOTFS_SYSTEM_BUILDROOT" ] || warning "rootfs is not buildroot!"
-	"$RK_SCRIPTS_DIR/mk-rootfs.sh"
-	[ -z "$RK_SECURITY_CHECK_SYSTEM_VERITY" ] ||
-		"$RK_SCRIPTS_DIR/mk-security.sh" security-ramboot
+	if [ -z "$1" ]; then
+		[ "$RK_ROOTFS_SYSTEM_BUILDROOT" ] || warning "rootfs is not buildroot!"
+		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	else
+		image=$(readlink -f $(pwd)/$1)
+		if [ ! -f "$image" ]; then
+			error "No found $image"
+			return -1
+		fi
 
-	notice "Security rootfs.img has update in output/firmware/rootfs.img"
+		"$RK_SCRIPTS_DIR/mk-security.sh" system $RK_SECURITY_CHECK_METHOD $image
+	fi
+
+	[ -z "$RK_SECURITY_CHECK_SYSTEM_VERITY" ] ||
+		"$RK_SCRIPTS_DIR/mk-security.sh" security-ramboot $@
+
+	notice "Security system has updated"
 	finish_build $@
 }
 
@@ -296,12 +326,22 @@ build_security_ramboot()
 	check_config RK_SECURITY_INITRD_CFG || false
 
 	message "=========================================="
-	message "          Start building security ramboot(buildroot)"
+	message "          Start building security ramboot(buildroot) $1"
 	message "=========================================="
 
-	if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
-		notice "Rootfs is not ready, building it for security..."
-		"$RK_SCRIPTS_DIR/mk-rootfs.sh"
+	if [ -z "$1" ]; then
+		if [ ! -r "$RK_FIRMWARE_DIR/rootfs.img" ]; then
+			notice "Rootfs is not ready, building it for security..."
+			"$RK_SCRIPTS_DIR/mk-rootfs.sh"
+		fi
+		security_info=$RK_OUTDIR/buildroot/images/security.info
+	else
+		image=$(readlink -f $(pwd)/$1)
+		if [ ! -f "$image" ]; then
+			error "No found $image"
+			return -1
+		fi
+		security_info=$(dirname "$image")/security.info
 	fi
 
 	if [ "$RK_SECURITY_OPTEE_STORAGE_SECURITY" ]; then
@@ -313,7 +353,7 @@ build_security_ramboot()
 	"$RK_SCRIPTS_DIR/mk-security.sh" ramboot_prebuild \
 		$RK_SECURITY_CHECK_METHOD \
 		$RK_SDK_DIR/buildroot/board/rockchip/common/security-ramdisk-overlay/init.in \
-		$RK_OUTDIR/buildroot/images/security.info $OPTEE_STORAGE
+		$security_info $OPTEE_STORAGE
 
 	DST_DIR="$RK_OUTDIR/security-ramboot"
 	IMAGE_DIR="$DST_DIR/images"
@@ -360,7 +400,10 @@ build_avb_sign()
 
 build_hook()
 {
-	case $1 in
+	item=$1
+	shift
+
+	case $item in
 		security-createkeys)
 			rk_security_setup_createkeys $RK_SECURITY_CHECK_METHOD;;
 		security-misc)
@@ -368,13 +411,12 @@ build_hook()
 				"$RK_SCRIPTS_DIR/mk-misc.sh"
 			fi
 			;;
-		security-ramboot) build_security_ramboot ;;
-		security-system) build_security_system ;;
+		security-ramboot) build_security_ramboot $@;;
+		security-system) build_security_system $@;;
 	esac
 
-	echo $HID_CMDS | fgrep "$1" -wq || return 0
-	append=$1
-	shift
+	echo $HID_CMDS | fgrep "$item" -wq || return 0
+	append=$item
 
 	case $append in
 		sign)
@@ -390,8 +432,8 @@ usage_hook()
 {
 	usage_oneline "security-createkeys" "create keys for security"
 	usage_oneline "security-misc" "build misc with system encryption key"
-	usage_oneline "security-ramboot" "build security ramboot"
-	usage_oneline "security-system" "build security system"
+	usage_oneline "security-ramboot[:system_image]" "build security ramboot"
+	usage_oneline "security-system[:system_image]" "build security system"
 }
 
 clean_hook()
@@ -400,6 +442,6 @@ clean_hook()
 }
 
 [ -z "$RK_SESSION" ] || \
-	source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+	source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 [ -z "$1" ] || build_hook $@

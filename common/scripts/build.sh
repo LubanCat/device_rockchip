@@ -14,7 +14,8 @@ fi
 usage_clean()
 {
 	usage_oneline "cleanall" "cleanup all"
-	for s in $(grep -wl clean_hook "$RK_SCRIPTS_DIR"/mk-*.sh | \
+	for s in $(grep -rwl clean_hook "$RK_CHIP_SCRIPTS_DIR" \
+		"$RK_SCRIPTS_DIR" 2>/dev/null | grep "/mk-" | \
 		sed "s/^.*mk-\(.*\).sh/\1/" | grep -v "^all$"); do
 		usage_oneline "clean-$s" "cleanup $s"
 	done
@@ -304,27 +305,39 @@ hook_check()
 }
 
 # Run specific hook scripts
-run_hooks()
+do_run_hooks()
 {
-	DIR="$1"
+	HOOK_DIR="$1"
 	shift
 
-	# Prefer chips' hooks than the common ones
-	for dir in "$RK_CHIP_DIR/$(basename "$DIR")/" "$DIR"; do
-		[ -d "$dir" ] || continue
+	[ -d "$HOOK_DIR" ] || return 0
 
-		for hook in $(find "$dir" -maxdepth 1 -name "*.sh" | sort); do
-			# Ignore unrelated hooks
-			hook_check "$hook" "$1" "$2" || continue
+	for hook in $(find "$HOOK_DIR" -maxdepth 1 -name "*.sh" | sort); do
+		# Ignore unrelated hooks
+		hook_check "$hook" "$@" || continue
 
-			if ! "$hook" $@; then
-				HOOK_RET=$?
-				err_handler $HOOK_RET \
-					"${FUNCNAME[0]} $*" "$hook $*"
-				exit $HOOK_RET
-			fi
-		done
+		if ! "$hook" "$@"; then
+			HOOK_RET=$?
+			err_handler $HOOK_RET \
+				"${FUNCNAME[0]} $*" "$hook $*"
+			exit $HOOK_RET
+		fi
 	done
+}
+
+run_hooks()
+{
+	case "${2:-usage}" in
+		usage)
+			do_run_hooks "$RK_COMMON_DIR/$1" "${@:2}"
+			do_run_hooks "$RK_CHIP_DIR/$1" "${@:2}"
+			;;
+		*)
+			# Prefer chips' hooks than the common ones
+			do_run_hooks "$RK_CHIP_DIR/$1" "${@:2}"
+			do_run_hooks "$RK_COMMON_DIR/$1" "${@:2}"
+			;;
+	esac
 }
 
 # Run build hook scripts for normal stages
@@ -333,7 +346,7 @@ run_build_hooks()
 	# Don't log these stages (either interactive or with useless logs)
 	case "$1" in
 		init | pre-build | make-* | usage | parse-cmds)
-			run_hooks "$RK_BUILD_HOOK_DIR" $@ || true
+			run_hooks "$RK_BUILD_HOOK_DIR" "$@" || true
 			return 0
 			;;
 	esac
@@ -341,7 +354,7 @@ run_build_hooks()
 	LOG_FILE="$(start_log "$1")"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	run_hooks "$RK_BUILD_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	run_hooks "$RK_BUILD_HOOK_DIR" "$@" 2>&1 | tee -a "$LOG_FILE"
 	HOOK_RET=${PIPESTATUS[0]}
 	if [ $HOOK_RET -ne 0 ]; then
 		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
@@ -355,7 +368,7 @@ run_post_hooks()
 	LOG_FILE="$(start_log post-rootfs)"
 
 	echo -e "# run hook: $@\n" >> "$LOG_FILE"
-	run_hooks "$RK_POST_HOOK_DIR" $@ 2>&1 | tee -a "$LOG_FILE"
+	run_hooks "$RK_POST_HOOK_DIR" "$@" 2>&1 | tee -a "$LOG_FILE"
 	HOOK_RET=${PIPESTATUS[0]}
 	if [ $HOOK_RET -ne 0 ]; then
 		err_handler $HOOK_RET "${FUNCNAME[0]} $*" "$@"
@@ -373,6 +386,7 @@ setup_environments()
 	export RK_DEVICE_DIR="$RK_SDK_DIR/device/rockchip"
 	export RK_CHIPS_DIR="$RK_DEVICE_DIR/.chips"
 	export RK_CHIP_DIR="$RK_DEVICE_DIR/.chip"
+	export RK_CHIP_SCRIPTS_DIR="$RK_CHIP_DIR/scripts"
 
 	export RK_DEFAULT_TARGET="all"
 	export RK_DATA_DIR="$RK_COMMON_DIR/data"
@@ -381,11 +395,11 @@ setup_environments()
 	export RK_KBUILD_DIR="$RK_COMMON_DIR/linux-kbuild"
 	export RK_CONFIG_IN="$RK_COMMON_DIR/configs/Config.in"
 
-	export RK_BUILD_HOOK_DIR="$RK_COMMON_DIR/build-hooks"
-	export RK_BUILD_HELPER="$RK_BUILD_HOOK_DIR/build-helper"
-	export RK_POST_HOOK_DIR="$RK_COMMON_DIR/post-hooks"
-	export RK_POST_HELPER="$RK_POST_HOOK_DIR/post-helper"
+	export RK_BUILD_HOOK_DIR="build-hooks"
+	export RK_POST_HOOK_DIR="post-hooks"
 
+	export RK_BUILD_HELPER="$RK_SCRIPTS_DIR/build-helper"
+	export RK_POST_HELPER="$RK_SCRIPTS_DIR/post-helper"
 	export RK_PARTITION_HELPER="$RK_SCRIPTS_DIR/partition-helper"
 
 	export RK_OUTDIR="$RK_SDK_DIR/output"
@@ -578,12 +592,12 @@ main()
 		case "$opt" in
 			help | h | -h | --help | usage | \?) usage ;;
 			clean-*)
-				# Check cleanup modules
-				for m in $(echo ${opt#clean-} | tr '-' ' '); do
-					grep -wq clean_hook \
-						"$RK_SCRIPTS_DIR/mk-$m.sh" \
-						2>/dev/null || usage
-				done
+				# Check cleanup module
+				MODULE="$(echo ${opt#clean-})"
+				grep -wq clean_hook \
+					"$RK_SCRIPTS_DIR/mk-$MODULE.sh" \
+					"$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" \
+					2>/dev/null || usage
 				;&
 			shell | buildroot-shell | bshell | cleanall)
 				# Check single options
@@ -710,31 +724,31 @@ main()
 			finish_build cleanall
 			exit 0 ;;
 		clean-*)
-			MODULES="$(echo ${OPTIONS#clean-} | tr '-' ' ')"
-			for m in $MODULES; do
-				"$RK_SCRIPTS_DIR/mk-$m.sh" clean
-			done
-			finish_build clean - $MODULES
+			MODULE="$(echo ${OPTIONS#clean-})"
+			if [ -x "$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" ]; then
+				"$RK_CHIP_SCRIPTS_DIR/mk-$MODULE.sh" clean
+			else
+				"$RK_SCRIPTS_DIR/mk-$MODULE.sh" clean
+			fi
+			finish_build clean - $MODULE
 			exit 0 ;;
 		post-rootfs)
 			shift
-			TARGET_DIR="$1"
 
+			touch "$RK_LOG_DIR/.stamp_post_start"
+			run_post_hooks "$@"
+
+			TARGET_DIR="$1"
 			source "$RK_POST_HELPER"
 			POST_DIR="$RK_OUTDIR/$POST_OS"
 			mkdir -p "$POST_DIR"
-
-			touch "$POST_DIR/.stamp_post_start"
-			run_post_hooks "$TARGET_DIR"
-			touch "$POST_DIR/.stamp_post_finish"
-
 			ln -rsf "$TARGET_DIR" "$POST_DIR/target"
 			finish_build post-rootfs
 
 			notice "Files changed in post-rootfs stage:"
 			cd "$TARGET_DIR"
 			find . \( -type f -o -type l \) \
-				-cnewer "$POST_DIR/.stamp_post_start" | \
+				-cnewer "$RK_LOG_DIR/.stamp_post_start" | \
 				tee "$POST_DIR/.files_post.txt"
 			exit 0 ;;
 	esac

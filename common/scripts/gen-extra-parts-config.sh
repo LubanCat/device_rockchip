@@ -13,23 +13,7 @@ comment "Extra partitions depends on rootfs system"
 menu "Extra partitions (oem, userdata, etc.)"
 	depends on RK_ROOTFS
 
-EOF
-
-for i in $(seq 1 $RK_EXTRA_PARTITION_MAX_NUM); do
-	case $i in
-		1)
-			echo "if RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
-			;;
-		$RK_EXTRA_PARTITION_MAX_NUM)
-			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\""
-			;;
-		*)
-			echo "	RK_EXTRA_PARTITION_${i}_FSTYPE = \"ubi\" || \\"
-			;;
-	esac
-done
-
-cat <<EOF
+if RK_UBI && RK_EXTRA_PARTITION_NUM > 0
 
 config RK_UBI_PAGE_SIZE
 	hex "ubi image page size (B)"
@@ -43,7 +27,7 @@ config RK_FLASH_SIZE
 	int "size of flash storage (M)"
 	default "1024"
 
-endif
+endif # ubi
 
 config RK_EXTRA_PARTITION_NUM
 	int "number of extra partitions"
@@ -83,15 +67,62 @@ config RK_EXTRA_PARTITION_${i}_MOUNTPOINT
 	help
 	  Mountpoint, set "auto" for "/<name>".
 
+if !RK_EXTRA_PARTITION_${i}_BUILTIN
+
 config RK_EXTRA_PARTITION_${i}_FSTYPE
-	string "filesystem type"
-	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
-	default "ext4"
+	string
+	default "ubifs" if RK_EXTRA_PARTITION_${i}_UBIFS
+	default "ext4" if RK_EXTRA_PARTITION_${i}_EXT4
+	default "ext2" if RK_EXTRA_PARTITION_${i}_EXT2
+	default "msdos" if RK_EXTRA_PARTITION_${i}_MSDOS
+	default "ntfs" if RK_EXTRA_PARTITION_${i}_NTFS
+	default "btrfs" if RK_EXTRA_PARTITION_${i}_BTRFS
+	default "f2fs" if RK_EXTRA_PARTITION_${i}_F2FS
+	default "erofs" if RK_EXTRA_PARTITION_${i}_EROFS
+	default "squashfs" if RK_EXTRA_PARTITION_${i}_SQUASHFS
+	default "jffs2" if RK_EXTRA_PARTITION_${i}_JFFS2
+
+choice
+	prompt "filesystem type"
+
+config RK_EXTRA_PARTITION_${i}_UBIFS
+	bool "ubifs"
+	depends on RK_UBI
+
+config RK_EXTRA_PARTITION_${i}_EXT4
+	bool "ext4"
+
+config RK_EXTRA_PARTITION_${i}_EXT2
+	bool "ext2"
+
+config RK_EXTRA_PARTITION_${i}_MSDOS
+	bool "msdos(fat32)"
+
+config RK_EXTRA_PARTITION_${i}_NTFS
+	bool "ntfs"
+
+config RK_EXTRA_PARTITION_${i}_BTRFS
+	bool "btrfs"
+
+config RK_EXTRA_PARTITION_${i}_F2FS
+	bool "f2fs"
+
+config RK_EXTRA_PARTITION_${i}_EROFS
+	bool "erofs"
+
+config RK_EXTRA_PARTITION_${i}_SQUASHFS
+	bool "squashfs"
+
+config RK_EXTRA_PARTITION_${i}_JFFS2
+	bool "jffs2"
+
+endchoice # fstype
 
 config RK_EXTRA_PARTITION_${i}_OPTIONS
 	string "mount options"
-	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
 	default "defaults"
+
+endif # !builtin
 
 config RK_EXTRA_PARTITION_${i}_SRC
 	string "source dirs"
@@ -112,8 +143,6 @@ EOF
 
 config RK_EXTRA_PARTITION_${i}_SIZE
 	string "image size (size(M|K)|auto(0)|max)"
-	depends on !RK_EXTRA_PARTITION_${i}_BUILTIN
-	default "max" if RK_EXTRA_PARTITION_1_FSTYPE = "ubi"
 	default "auto"
 	help
 	  Size of image.

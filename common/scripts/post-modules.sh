@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/post-helper}"
 
 if [ "$RK_ROOTFS_INSTALL_MODULES" ]; then
 	message "Installing kernel modules..."

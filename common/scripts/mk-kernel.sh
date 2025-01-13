@@ -552,6 +552,10 @@ post_build_hook()
 	make_kernel_config
 	run_command $KMAKE Image modules_prepare
 
+	if [ -z "$DRY_RUN" ]; then
+		"$RK_SCRIPTS_DIR/check-kernel-headers.sh"
+	fi
+
 	if [ "$1" ]; then
 		pack_linux_headers "$1"
 	else
@@ -568,7 +572,7 @@ post_build_hook_dry()
 	DRY_RUN=1 post_build_hook $@
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 case "${1:-kernel}" in
 	kernel-config | kconfig | kernel-make | kmake) pre_build_hook "$@" ;;

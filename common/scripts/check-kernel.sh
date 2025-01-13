@@ -102,9 +102,6 @@ fi
 "$RK_SCRIPTS_DIR/check-package.sh" python-is-python3 python
 "$RK_SCRIPTS_DIR/check-package.sh" flex
 
-# For packing linux-headers .deb package
-"$RK_SCRIPTS_DIR/check-package.sh" dpkg
-
 "$RK_SCRIPTS_DIR/check-header.sh" openssl openssl/ssl.h libssl-dev
 "$RK_SCRIPTS_DIR/check-header.sh" gmp gmp.h libgmp-dev
 "$RK_SCRIPTS_DIR/check-header.sh" mpc mpc.h libmpc-dev

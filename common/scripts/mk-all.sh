@@ -64,7 +64,7 @@ if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
 	finish_build
 else
 	shift
-	RELEASE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
+	RELEASE_BASE_DIR="$RK_OUTDIR/releases/${1:+$1/}${2:-$BOARD}"
 	case "$(readlink "$RK_OUTDIR/rootfs")" in
 		buildroot) RELEASE_DIR="$RELEASE_BASE_DIR/BUILDROOT" ;;
 		debian) RELEASE_DIR="$RELEASE_BASE_DIR/DEBIAN" ;;
@@ -146,13 +146,15 @@ build_all_release()
 usage_hook()
 {
 	usage_oneline "all" "build images"
-	usage_oneline "release" "release images and build info"
-	usage_oneline "all-release" "build and release images"
+	usage_oneline "release[:<subdir>[:<name>]]" \
+		"release images and build info"
+	usage_oneline "all-release[:<subdir>[:<name>]]" \
+		"build and release images"
 }
 
 clean_hook()
 {
-	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/$BOARD*
+	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/releases
 }
 
 BUILD_CMDS="all all-release"
@@ -170,7 +172,7 @@ post_build_hook()
 	build_release $@
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 case "${1:-all-release}" in
 	all) build_all ;;

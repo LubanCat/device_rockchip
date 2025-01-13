@@ -21,8 +21,37 @@ build_buildroot()
 		warning "Building without post-rootfs stage!"
 	fi
 
-	[ -z "$RK_SECURITY" ] || "$RK_SCRIPTS_DIR/mk-security.sh" system \
-		$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$RK_ROOTFS_TYPE
+	if [ "$RK_SECURITY" ]; then
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			# UBIFS DOES NOT support R/W block device,
+			# so it only support RO encrypted image.
+			SUFFIX=squashfs
+		else
+			SUFFIX=$RK_ROOTFS_TYPE
+		fi
+
+		"$RK_SCRIPTS_DIR/mk-security.sh" system \
+			$RK_SECURITY_CHECK_METHOD $IMAGE_DIR/rootfs.$SUFFIX
+
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			# Force to using dynamic to faster bootup.
+			sed -e "s;BR2_ROOTFS_UBI_PATH;${IMAGE_DIR}/security_system.img;" \
+			    -e "s;UBI_VOL_TYPE;dynamic;" \
+			    ${RK_SDK_DIR}/buildroot/fs/ubi/ubinize.cfg > \
+				${RK_OUTDIR}/security/ubinize.cfg
+
+			# Repack ubifs, source variables from buildroot configuration
+			(
+				eval $(cat "$RK_SDK_DIR/buildroot/output/$RK_BUILDROOT_CFG/.config" | \
+				       grep ^BR2_TARGET_ROOTFS_UBI_)
+				ubinize -o ${RK_OUTDIR}/security/security-system.ubi \
+					-m ${BR2_TARGET_ROOTFS_UBI_MINIOSIZE} \
+					-p ${BR2_TARGET_ROOTFS_UBI_PEBSIZE} \
+					-s ${BR2_TARGET_ROOTFS_UBI_SUBSIZE} \
+					${RK_OUTDIR}/security/ubinize.cfg
+			)
+		fi
+	fi
 
 	finish_build build_buildroot $@
 }
@@ -37,25 +66,59 @@ build_yocto()
 
 	cd yocto
 
+	# Overrided configs for Rockchip SDK
+	{
+		echo "include include/rksdk.conf"
+
+		echo "include include/rksdk/kernel.conf"
+		echo "include include/rksdk/rkbin.conf"
+		echo "include include/rksdk/u-boot.conf"
+
+		[ ! -d "$RK_SDK_DIR/external/alsa-config" ] || \
+			echo "include include/rksdk/alsa-config.conf"
+		[ ! -d "$RK_SDK_DIR/external/gstreamer-rockchip" ] || \
+			echo "include include/rksdk/gstreamer-rockchip.conf"
+		[ ! -d "$RK_SDK_DIR/external/libmali" ] || \
+			echo "include include/rksdk/libmali.conf"
+		[ ! -d "$RK_SDK_DIR/external/linux-rga" ] || \
+			echo "include include/rksdk/librga.conf"
+		[ ! -d "$RK_SDK_DIR/external/mpp" ] || \
+			echo "include include/rksdk/mpp.conf"
+		[ ! -d "$RK_SDK_DIR/external/camera_engine_rkaiq" ] || \
+			echo "include include/rksdk/rkaiq.conf"
+		[ ! -d "$RK_SDK_DIR/external/camera_engine_rkisp" ] || \
+			echo "include include/rksdk/rkisp.conf"
+		[ ! -d "$RK_SDK_DIR/external/rknpu-fw" ] || \
+			echo "include include/rksdk/rknpu.conf"
+		[ ! -d "$RK_SDK_DIR/external/rkwifibt" ] || \
+			echo "include include/rksdk/rkwifibt.conf"
+
+		echo
+
+		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
+		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
+		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
+		echo "USE_DEPMOD := \"0\""
+		case "$RK_CHIP_FAMILY" in
+			px30|rk3326|rk3562|rk3566_rk3568|rk3576|rk3588)
+				echo "MALI_VERSION := \"g24p0\"" ;;
+		esac
+	} > build/conf/rksdk_override.conf
+
+	rm -f build/conf/local.conf
+
 	if [ "$RK_YOCTO_CFG_CUSTOM" ]; then
-		if [ -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
-			ln -rsf "$RK_CHIP_DIR/$RK_YOCTO_CFG" \
-				build/conf/local.conf
-		elif [ -r "build/conf/$RK_YOCTO_CFG" ]; then
-			if [ "$RK_YOCTO_CFG" != local.conf ]; then
-				rm -f build/conf/local.conf
-				ln -sf "$RK_YOCTO_CFG" build/conf/local.conf
-			fi
-		else
-			error "yocto/build/conf/$RK_YOCTO_CFG not exist!"
+		if [ ! -r "$RK_CHIP_DIR/$RK_YOCTO_CFG" ]; then
+			error "$RK_CHIP_DIR/$RK_YOCTO_CFG not exist!"
 			return 1
 		fi
 
+		echo "include $RK_CHIP_DIR/$RK_YOCTO_CFG" > build/conf/local.conf
+
 		message "=========================================="
-		message "          Start building for $RK_YOCTO_CFG"
+		message "          Start building for custom $RK_YOCTO_CFG"
 		message "=========================================="
 	else
-		rm -f build/conf/local.conf
 		{
 			echo "include include/common.conf"
 			echo "include include/debug.conf"
@@ -87,36 +150,26 @@ build_yocto()
 		message "=========================================="
 	fi
 
+	{
+		echo
+		echo "include rksdk_override.conf"
+	} >> build/conf/local.conf
+
 	if [ "$RK_YOCTO_EXTRA_CFG" ]; then
 		message "=========================================="
 		message "          With extra config:($RK_YOCTO_EXTRA_CFG)"
 		message "=========================================="
+
+		{
+			echo "include $RK_CHIP_DIR/$RK_YOCTO_EXTRA_CFG"
+		} >> build/conf/local.conf
 	fi
 
-	{
-		echo "include include/rksdk.conf"
-		echo
-
-		echo "PREFERRED_PROVIDER_virtual/kernel := \"linux-dummy\""
-		echo "LINUXLIBCVERSION := \"$RK_KERNEL_VERSION_RAW-custom%\""
-		echo "OLDEST_KERNEL := \"$RK_KERNEL_VERSION_RAW\""
-		echo "USE_DEPMOD := \"0\""
-		case "$RK_CHIP_FAMILY" in
-			px30|rk3326|rk3562|rk3566_rk3568|rk3576)
-				echo "MALI_VERSION := \"g13p0\"" ;;
-			rk3588)
-				echo "MALI_VERSION := \"g24p0\"" ;;
-		esac
-	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
 
-	set -x
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
-		bitbake core-image-minimal -C rootfs \
-		-R conf/rksdk_override.conf \
-		${RK_YOCTO_EXTRA_CFG:+-R $RK_CHIP_DIR/$RK_YOCTO_EXTRA_CFG}
-	set x
+		bitbake core-image-minimal -C rootfs
 
 	ln -rsf "$PWD/latest/rootfs.img" "$IMAGE_DIR/rootfs.ext4"
 
@@ -222,6 +275,8 @@ usage_hook()
 	usage_oneline "bconfig[:<config>]" "alias of buildroot-config"
 	usage_oneline "buildroot-make[:<arg1>:<arg2>]" "run buildroot make"
 	usage_oneline "bmake[:<arg1>:<arg2>]" "alias of buildroot-make"
+	usage_oneline "buildroot-sdk" "build the buildroot SDK tarball"
+	usage_oneline "bsdk" "alias of buildroot-sdk"
 	usage_oneline "rootfs[:<rootfs type>]" "build default rootfs"
 	usage_oneline "buildroot" "build buildroot rootfs"
 	usage_oneline "yocto" "build yocto rootfs"
@@ -295,7 +350,6 @@ pre_build_hook()
 			;;
 		buildroot-config | bconfig)
 			BUILDROOT_BOARD="${2:-"$RK_BUILDROOT_CFG"}"
-
 			[ "$BUILDROOT_BOARD" ] || return 0
 
 			TEMP_DIR=$(mktemp -d)
@@ -359,8 +413,16 @@ build_hook()
 		ln -rsf "$ROOTFS_DIR/ramboot.img" "$RK_FIRMWARE_DIR/boot.img"
 	elif [ "$RK_SECURITY_CHECK_SYSTEM_ENCRYPTION" -o \
 		"$RK_SECURITY_CHECK_SYSTEM_VERITY" ]; then
-		ln -rsf "$IMAGE_DIR/security_system.img" \
-			"$RK_FIRMWARE_DIR/rootfs.img"
+		if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+			ln -rsf "${RK_OUTDIR}/security/security-system.ubi" \
+				"$RK_FIRMWARE_DIR/rootfs.img"
+		else
+			ln -rsf "$IMAGE_DIR/security_system.img" \
+				"$RK_FIRMWARE_DIR/rootfs.img"
+		fi
+
+
+
 	else
 		ln -rsf "$IMAGE_DIR/$ROOTFS_IMG" "$RK_FIRMWARE_DIR/rootfs.img"
 	fi
@@ -368,10 +430,28 @@ build_hook()
 	finish_build build_rootfs $@
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+POST_BUILD_CMDS="buildroot-sdk bsdk"
+post_build_hook()
+{
+	check_config RK_ROOTFS || false
+
+	build_hook buildroot
+	pre_build_hook bmake sdk
+
+	BUILDROOT_SDK_TARBALL="$RK_OUTDIR/buildroot/buildroot-sdk.tar.gz"
+	ln -rsf "$RK_OUTDIR/buildroot/images/"*sdk-buildroot.tar.gz \
+		"$BUILDROOT_SDK_TARBALL"
+
+	message "Generated buildroot SDK tarball at: $BUILDROOT_SDK_TARBALL"
+
+	finish_build $@
+}
+
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 case "${1:-rootfs}" in
 	buildroot-config | bconfig | buildroot-make | bmake) pre_build_hook $@ ;;
+	buildroot-sdk | bsdk) post_build_hook $@ ;;
 	buildroot | debian | ubuntu | yocto) init_hook $@ ;&
 	*) build_hook $@ ;;
 esac

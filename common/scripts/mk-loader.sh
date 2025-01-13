@@ -1,26 +1,5 @@
 #!/bin/bash -e
 
-build_uefi()
-{
-	check_config RK_KERNEL_DTS_NAME || false
-
-	if [ "$RK_CHIP" != rk3588 -o ! -d uefi ]; then
-		error "UEFI not supported!"
-		return 1
-	fi
-
-	if [ ! -f "$RK_KERNEL_DTB" ]; then
-		error "$RK_KERNEL_DTB not exists!"
-		return 1
-	fi
-
-	UEFI_DIR=uefi/edk2-platforms/Platform/Rockchip/DeviceTree
-
-	run_command cp "$RK_KERNEL_DTB" $UEFI_DIR/$RK_CHIP.dtb
-	run_command cd uefi
-	run_command $UMAKE $RK_UBOOT_CFG
-}
-
 build_uboot()
 {
 	check_config RK_LOADER RK_UBOOT_CFG || false
@@ -49,12 +28,13 @@ build_uboot()
 			error "\"security\" partition not found in parameter"
 			return 1
 		fi
+	fi
 
+	if [ "$RK_SECUREBOOT_AVB" ]; then
 		if [ -z "$(rk_partition_size vbmeta)" ]; then
 			error "\"vbmeta\" partition not found in parameter"
 			return 1
 		fi
-
 	fi
 
 	if [ "$RK_UBOOT_SPL" ]; then
@@ -98,7 +78,6 @@ usage_hook()
 	usage_oneline "loader[:dry-run]" "build loader (u-boot)"
 	usage_oneline "uboot[:dry-run]" "build u-boot"
 	usage_oneline "u-boot[:dry-run]" "alias of uboot"
-	usage_oneline "uefi[:dry-run]" "build uefi"
 }
 
 clean_hook()
@@ -109,7 +88,7 @@ clean_hook()
 	rm -rf "$RK_FIRMWARE_DIR/MiniLoaderAll.bin"
 }
 
-BUILD_CMDS="loader uboot u-boot uefi"
+BUILD_CMDS="loader uboot u-boot"
 build_hook()
 {
 	if echo $RK_UBOOT_CFG $RK_UBOOT_CFG_FRAGMENTS | grep -q aarch32 && \
@@ -129,24 +108,17 @@ build_hook()
 	export UMAKE="./make.sh CROSS_COMPILE=$RK_UBOOT_TOOLCHAIN"
 
 	if [ "$DRY_RUN" ]; then
-		notice "Commands of building $1:"
+		notice "Commands of building U-Boot:"
 	else
 		message "=========================================="
-		message "          Start building $1"
+		message "          Start building U-Boot"
 		message "=========================================="
 	fi
 
-	TARGET="$1"
-	shift
-
-	case "$TARGET" in
-		uboot | u-boot | loader) build_uboot $@ ;;
-		uefi) build_uefi $@ ;;
-		*) usage ;;
-	esac
+	build_uboot
 
 	if [ -z "$DRY_RUN" ]; then
-		finish_build build_$TARGET $@
+		finish_build build_uboot
 	fi
 }
 
@@ -155,6 +127,6 @@ build_hook_dry()
 	DRY_RUN=1 build_hook $@
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
-build_hook ${@:-loader}
+build_hook $@

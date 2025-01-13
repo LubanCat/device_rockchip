@@ -25,7 +25,8 @@ if RK_USE_FIT_IMG
 config RK_BOOT_FIT_ITS_NAME
 	string "its script for FIT boot image"
 	depends on RK_USE_FIT_IMG
-	default "boot.its" if RK_CHIP_FAMILY = "rv1126_rv1109"
+	default "boot-tb.its" if RK_BOOT_COMPRESSED && \
+		RK_CHIP_FAMILY = "rv1126_rv1109"
 	default "zboot.its" if RK_BOOT_COMPRESSED
 	default "boot.its"
 

@@ -2,5 +2,11 @@
 
 RK_SCRIPTS_DIR="${RK_SCRIPTS_DIR:-$(dirname "$(realpath "$0")")}"
 
-# Lots scripts in u-boot require python2
-"$RK_SCRIPTS_DIR/check-package.sh" python2
+if ! which python2 >/dev/null; then
+	echo -e "\e[35m"
+	echo "Your python2 is missing for U-Boot"
+	echo "Please install it:"
+	"$RK_SCRIPTS_DIR/install-python2.sh"
+	echo -e "\e[0m"
+	exit 1
+fi

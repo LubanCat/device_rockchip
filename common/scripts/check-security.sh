@@ -17,6 +17,9 @@ ROOTFS_AB_FIXED_CONFIGS=" \
 	$ROOTFS_UPDATE_ENGINEBIN_CONFIGS \
 	BR2_PACKAGE_RECOVERY_BOOTCONTROL"
 
+ROOTFS_UBI_FIXED_CONFIGS=" \
+	BR2_TARGET_ROOTFS_UBI_SQUASHFS"
+
 UBOOT_FIT_FIXED_CONFIGS=" \
 	CONFIG_FIT_SIGNATURE \
 	CONFIG_SPL_FIT_SIGNATURE"
@@ -67,7 +70,10 @@ rk_security_check_keys()
 BOOT_FIXED_CONFIGS=" \
 	CONFIG_BLK_DEV_DM \
 	CONFIG_DM_CRYPT \
-	CONFIG_DM_VERITY"
+	CONFIG_DM_VERITY \
+	CONFIG_BLK_DEV_LOOP \
+	CONFIG_CRYPTO_USER \
+	CONFIG_CRYPTO_USER_API_HASH"
 
 BOOT_FIXED_UNDER_6_1_CONFIG="
 	CONFIG_BLK_DEV_CRYPTOLOOP"
@@ -108,7 +114,11 @@ rk_security_match_overlay()
 rk_security_check_system()
 {
 	case $1 in
-		system-encryption|system-verity) rk_security_match_overlay system $2 security-system-overlay;;
+		system-encryption|system-verity)
+			if [ "$RK_ROOTFS_TYPE" == "ubi" ]; then
+				config_check $2 "$ROOTFS_UBI_FIXED_CONFIGS"
+			fi
+			;;
 		base) return 0;;
 		*) exit -1;;
 	esac

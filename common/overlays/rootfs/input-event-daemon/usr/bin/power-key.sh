@@ -9,7 +9,10 @@ LOCK_FILE=/var/run/.power_key.lock
 
 log()
 {
-	logger -t $(basename $0) "[$$]: $@"
+        if which logger >/dev/null; then
+		logger -t $(basename $0) "[$$]: $@"
+	fi
+        echo "$(basename $0): $@"
 }
 
 check_suspend_state()

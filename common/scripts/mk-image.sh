@@ -130,10 +130,6 @@ mkimage()
 
     case $FS_TYPE in
         ext[234])
-            if [ "$SIZE_KB" -lt 16384 ]; then
-                echo "Increase to 16M for $FS_TYPE"
-                SIZE_KB=16384
-            fi
             /sbin/mke2fs -t $FS_TYPE $TARGET -d $SRC_DIR -b 4096 ${SIZE_KB}K \
                 ${LABEL:+-L $LABEL} || return 1
 
@@ -169,7 +165,7 @@ mkimage()
             mkfs.f2fs ${LABEL:+-l $LABEL} $TARGET
             sload.f2fs -f $SRC_DIR $TARGET
             ;;
-        ubi|ubifs) mk_ubi_image ;;
+        ubi|ubifs|ubi-ubifs) mk_ubifs_image ;;
     esac
 }
 
@@ -183,6 +179,11 @@ mkimage_auto_sized()
     SIZE_KB="$((SIZE_KB + $SIZE_KB * 10 / 100))" # Start with extra 10%
     MAX_RETRY=20
     RETRY=0
+
+    if [ "$FS_TYPE" = ext4 ] && [ "$SIZE_KB" -lt 8192 ]; then
+        echo "Start from 8M for ext4."
+        SIZE_KB=8192
+    fi
 
     while true;do
         mkimage && break
@@ -199,11 +200,34 @@ mkimage_auto_sized()
 
 mk_ubi_image()
 {
-    TARGET_DIR="${RK_OUTDIR:-$(dirname "$TARGET")}"
+    TARGET_DIR="$(dirname "$TARGET")"
     UBI_VOL_NAME=${LABEL:-ubi}
-
     # default page size 2KB
     UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
+    UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
+
+    # default block size 128KB
+    UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
+
+    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
+
+    echo "[ubi]" > $UBINIZE_CFG
+    echo "mode=ubi" >> $UBINIZE_CFG
+    echo "vol_id=0" >> $UBINIZE_CFG
+    echo "vol_type=dynamic" >> $UBINIZE_CFG
+    echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
+    echo "vol_alignment=1" >> $UBINIZE_CFG
+    echo "vol_flags=autoresize" >> $UBINIZE_CFG
+    echo "image=$TARGET.$FS_TYPE" >> $UBINIZE_CFG
+    ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
+        -v $UBINIZE_CFG
+}
+
+mk_ubifs_image()
+{
+    # default page size 2KB
+    UBI_PAGE_SIZE=${RK_UBI_PAGE_SIZE:-2048}
+
     # default block size 128KB
     UBI_BLOCK_SIZE=${RK_UBI_BLOCK_SIZE:-0x20000}
 
@@ -211,25 +235,19 @@ mk_ubi_image()
     UBIFS_MINIOSIZE=$UBI_PAGE_SIZE
     UBIFS_MAXLEBCNT=$(( $SIZE_KB * 1024 / $UBIFS_LEBSIZE ))
 
-    UBIFS_IMAGE="$TARGET_DIR/$UBI_VOL_NAME.ubifs"
-    UBINIZE_CFG="$TARGET_DIR/${UBI_VOL_NAME}-ubinize.cfg"
-
     mkfs.ubifs -x lzo -e $UBIFS_LEBSIZE -m $UBIFS_MINIOSIZE \
-        -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $UBIFS_IMAGE || return 1
-
-    echo "[ubifs]" > $UBINIZE_CFG
-    echo "mode=ubi" >> $UBINIZE_CFG
-    echo "vol_id=0" >> $UBINIZE_CFG
-    echo "vol_type=dynamic" >> $UBINIZE_CFG
-    echo "vol_name=$UBI_VOL_NAME" >> $UBINIZE_CFG
-    echo "vol_alignment=1" >> $UBINIZE_CFG
-    echo "vol_flags=autoresize" >> $UBINIZE_CFG
-    echo "image=$UBIFS_IMAGE" >> $UBINIZE_CFG
-    ubinize -o $TARGET -m $UBIFS_MINIOSIZE -p $UBI_BLOCK_SIZE \
-        -v $UBINIZE_CFG
+        -c $UBIFS_MAXLEBCNT -d $SRC_DIR -F -v -o $TARGET || return 1
 }
 
 rm -rf $TARGET
+
+case $FS_TYPE in
+	ubi*)
+		IS_UBI=1
+		FS_TYPE=${FS_TYPE##ubi-}
+		;;
+esac
+
 case $FS_TYPE in
     ext[234]|msdos|fat|vfat|ntfs|btrfs|f2fs|ubi|ubifs)
         if [ $SIZE_KB -eq 0 ]; then
@@ -244,7 +262,21 @@ case $FS_TYPE in
         ;;
     squashfs)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
-        mksquashfs $SRC_DIR $TARGET -noappend -comp lz4 || exit 1
+
+        KERNEL_CONFIG="$RK_SDK_DIR/kernel/.config"
+        if [ -z "$SQUASHFS_COMP" ] && [ -r "$KERNEL_CONFIG" ]; then
+            if grep -wq "CONFIG_SQUASHFS_LZ4=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp lz4"
+            elif grep -wq "CONFIG_SQUASHFS_XZ=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp xz"
+            elif grep -wq "CONFIG_SQUASHFS_ZSTD=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp zstd"
+            elif grep -wq "CONFIG_SQUASHFS_LZO=y" "$KERNEL_CONFIG"; then
+                SQUASHFS_COMP="-comp lzo"
+            fi
+        fi
+
+        mksquashfs $SRC_DIR $TARGET -noappend $SQUASHFS_COMP || exit 1
         ;;
     jffs2)
         [ $SIZE_KB -eq 0 ] || fatal "$FS_TYPE: fixed size not supported."
@@ -256,5 +288,10 @@ case $FS_TYPE in
         exit 1
         ;;
 esac
+
+if [ "$IS_UBI" ]; then
+    mv $TARGET $TARGET.$FS_TYPE
+    mk_ubi_image || exit 1
+fi
 
 echo "Generated $TARGET"

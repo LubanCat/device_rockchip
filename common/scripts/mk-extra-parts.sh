@@ -37,10 +37,14 @@ post_build_hook()
 			continue
 		fi
 
+		if [ "$FS_TYPE" = "ubifs" ] && [ "$SIZE" = auto ]; then
+			SIZE=max
+		fi
+
 		if [ "$SIZE" = max ]; then
 			SIZE="$(rk_partition_size_kb "$PART_NAME")K"
 			if [ "$SIZE" = 0K ]; then
-				if [ "$FS_TYPE" != ubi ]; then
+				if [ "$FS_TYPE" != "ubifs" ]; then
 					error "Unable to detect max size of $PART_NAME"
 					return 1
 				fi
@@ -50,6 +54,14 @@ post_build_hook()
 			fi
 
 			notice "Using maxium size($SIZE) for $PART_NAME"
+		fi
+
+		echo "find \"$OUTDIR\" -user $RK_OWNER_UID \
+			-exec chown -ch 0:0 {} \\;" >> "$FAKEROOT_SCRIPT"
+
+		# The mk-image.sh expects ubi-<type> to pack ubi image.
+		if [ "$RK_UBI" ]; then
+			FS_TYPE="ubi-$FS_TYPE"
 		fi
 
 		sed -i '/mk-image.sh/d' "$FAKEROOT_SCRIPT"
@@ -72,6 +84,6 @@ post_build_hook()
 	finish_build build_extra_part
 }
 
-source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/../build-hooks/build-helper}"
+source "${RK_BUILD_HELPER:-$(dirname "$(realpath "$0")")/build-helper}"
 
 post_build_hook

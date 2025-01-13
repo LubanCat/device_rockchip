@@ -36,10 +36,9 @@ endchoice # yocto local config
 config RK_YOCTO_CFG
 	string "custom local config"
 	depends on RK_YOCTO_CFG_CUSTOM
-	default "local.conf"
+	default "yocto.conf"
 	help
-	  Name of yocto custom local config file under $RK_CHIP_DIR or
-	  yocto/build/conf/.
+	  Name of yocto custom local config file under $RK_CHIP_DIR.
 
 if RK_YOCTO_CFG_DEFAULT
 

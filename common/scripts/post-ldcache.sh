@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/../post-hooks/post-helper}"
+source "${RK_POST_HELPER:-$(dirname "$(realpath "$0")")/post-helper}"
 
 [ "$RK_ROOTFS_LD_CACHE" ] || exit 0
 
