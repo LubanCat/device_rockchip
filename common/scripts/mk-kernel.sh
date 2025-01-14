@@ -55,6 +55,7 @@ do_build_extboot()
 	run_command $KMAKE dtbs
 
 	KERNEL_VER=$(cat $RK_SDK_DIR/kernel/include/config/kernel.release)
+	KERNEL_MAIN_VER=$(echo "${KERNEL_VER}" | cut -d'.' -f1,2)
 	EXTBOOT_IMG=${RK_SDK_DIR}/kernel/extboot.img
 	EXTBOOT_DIR=${RK_SDK_DIR}/kernel/extboot
 	EXTBOOT_DTB_DIR=${EXTBOOT_DIR}/dtb/
@@ -85,8 +86,8 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
 	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
-	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-${KERNEL_VER%%-*} ]]; then
-		cp -v ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-${KERNEL_VER%%-*} $EXTBOOT_DIR/initrd-$KERNEL_VER
+	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_MAIN_VER ]]; then
+		cp -v ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_MAIN_VER $EXTBOOT_DIR/initrd-$KERNEL_VER
 	fi
 
 	if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
