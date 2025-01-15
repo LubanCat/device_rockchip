@@ -445,7 +445,7 @@ init_hook()
 	fi
 
 	# Save the selected version
-	echo "$RK_KERNEL_VERSION" > "$RK_OUTDIR/.kernel"
+	# echo "$RK_KERNEL_VERSION" > "$RK_OUTDIR/.kernel"
 
 	[ "$RK_KERNEL_VERSION" != "$KERNEL_CURRENT" ] || return 0
 
