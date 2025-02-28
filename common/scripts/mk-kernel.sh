@@ -83,11 +83,12 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/$UENV_DIR/*.txt $EXTBOOT_DIR/uEnv
 	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnv*.txt
+	sed -i "/^uname_r=.*/a initrd=initrd-${KERNEL_MAIN_VER}" $EXTBOOT_DIR/uEnv/uEnv*.txt
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
 	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
 	if [[ -e ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_MAIN_VER ]]; then
-		cp -v ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_MAIN_VER $EXTBOOT_DIR/initrd-$KERNEL_VER
+		cp -v ${RK_SDK_DIR}/lubancat-bin/initrd/$RK_KERNEL_ARCH/initrd-$KERNEL_MAIN_VER $EXTBOOT_DIR/initrd-$KERNEL_MAIN_VER
 	fi
 
 	if [[ -e $EXTBOOT_DIR/boot.cmd ]]; then
