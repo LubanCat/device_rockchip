@@ -72,7 +72,6 @@ do_build_extboot()
 
 	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VER
 
-
 	echo -e "label kernel-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 	echo -e "\tkernel /Image-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 	echo -e "\tdevicetreedir /" >> $EXTBOOT_DIR/extlinux/extlinux.conf
@@ -80,10 +79,15 @@ do_build_extboot()
 
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/*.dtb $EXTBOOT_DTB_DIR
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/overlay/*.dtbo $EXTBOOT_DTB_DIR/overlay
+
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/uEnv*.txt $EXTBOOT_DIR/uEnv
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/$UENV_DIR/*.txt $EXTBOOT_DIR/uEnv
 	sed -i "s/^uname_r=.*/uname_r=${KERNEL_VER}/" $EXTBOOT_DIR/uEnv/uEnv*.txt
 	sed -i "/^uname_r=.*/a initrd=initrd-${KERNEL_MAIN_VER}" $EXTBOOT_DIR/uEnv/uEnv*.txt
+	if [ $RK_ROOTFS_SYSTEM == "buildroot" ]; then
+		sed -i '/^cmdline=/s/console=tty1 *//g' $EXTBOOT_DIR/uEnv/uEnv*.txt
+	fi
+
 	cp ${RK_SDK_DIR}/${RK_KERNEL_DTS_DIR}/uEnv/boot.cmd $EXTBOOT_DIR/
 	cp $EXTBOOT_DTB_DIR/${RK_KERNEL_DTS_NAME}.dtb $EXTBOOT_DIR/rk-kernel.dtb
 
@@ -100,8 +104,10 @@ do_build_extboot()
 	cp ${RK_SDK_DIR}/kernel/logo_kernel.bmp $EXTBOOT_DIR/
 	cp ${RK_SDK_DIR}/kernel/logo_boot.bmp $EXTBOOT_DIR/logo.bmp
 
-	cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
-	cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+	if [ $RK_ROOTFS_SYSTEM == "ubuntu" ] || [ $RK_ROOTFS_SYSTEM == "debian" ]; then
+		cp ${RK_SDK_DIR}/linux-headers-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+		cp ${RK_SDK_DIR}/linux-image-"$KERNEL_VER"_"$KERNEL_VER"-*.deb $EXTBOOT_DIR/kerneldeb
+	fi
 
 	rm -rf $EXTBOOT_IMG && truncate -s 128M $EXTBOOT_IMG
 	fakeroot mkfs.ext2 -F -L "boot" -d $EXTBOOT_DIR $EXTBOOT_IMG
@@ -152,7 +158,10 @@ do_build()
 		kernel*)
 		if [ "$RK_KERNEL_EXTBOOT" = "y" ]; then
 			notice "build kerneldeb and extboot"
-			do_build_kerneldeb
+			if [ $RK_ROOTFS_SYSTEM == "ubuntu" ] || [ $RK_ROOTFS_SYSTEM == "debian" ]; then
+				do_build_kerneldeb
+				: # Placeholder when not executing commands
+			fi
 			do_build_extboot
 		else
 			run_command $KMAKE "$RK_KERNEL_DTS_NAME.img"
