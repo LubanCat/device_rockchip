@@ -419,6 +419,13 @@ setup_environments()
 	RK_MAKE_USAGE="$RK_OUTDIR/.make_usage"
 }
 
+setup_developer_environments()
+{
+	if [ -e $RK_SDK_DIR/devenv ]; then
+		source $RK_SDK_DIR/devenv
+	fi
+}
+
 check_sdk() {
 	if ! echo "$RK_SCRIPTS_DIR" | \
 		grep -q "device/rockchip/common/scripts$"; then
@@ -517,6 +524,9 @@ main()
 
 	# Setup basic environments
 	setup_environments
+
+	# Setup developer environments
+	setup_developer_environments
 
 	# Log SDK information
 	MANIFEST="$RK_SDK_DIR/.repo/manifest.xml"
