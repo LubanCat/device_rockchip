@@ -129,6 +129,15 @@ else
 fi
 }
 
+build_manifest()
+{
+	message "=========================================="
+	message "          Start release manifest"
+	message "=========================================="
+	echo Set manifest path : $RK_SDK_DIR/manifest.xml
+	repo manifest -r --suppress-upstream-revision --suppress-dest-branch > $RK_SDK_DIR/manifest.xml
+}
+
 build_all_release()
 {
 	message "=========================================="
@@ -150,11 +159,20 @@ usage_hook()
 		"release images and build info"
 	usage_oneline "all-release[:<subdir>[:<name>]]" \
 		"build and release images"
+	usage_oneline "manifest" "build manifest file"
 }
 
 clean_hook()
 {
 	rm -rf "$RK_OUTDIR" "$RK_OUTDIR"/releases
+}
+
+PRE_BUILD_CMDS="manifest"
+pre_build_hook()
+{
+	case "$1" in
+		manifest) build_manifest $@ ;;
+	esac
 }
 
 BUILD_CMDS="all all-release"
@@ -178,5 +196,6 @@ case "${1:-all-release}" in
 	all) build_all ;;
 	all-release) build_all_release $@ ;;
 	release) build_release $@ ;;
+	manifest) build_manifest $@ ;;
 	*) usage ;;
 esac
