@@ -71,6 +71,7 @@ do_build_extboot()
 	mkdir -p $EXTBOOT_DIR/{uEnv,kerneldeb,extlinux}
 
 	cp ${RK_SDK_DIR}/$RK_KERNEL_IMG $EXTBOOT_DIR/Image-$KERNEL_VER
+	ln -sf Image-$KERNEL_VER $EXTBOOT_DIR/Image
 
 	echo -e "label kernel-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
 	echo -e "\tkernel /Image-$KERNEL_VER" >> $EXTBOOT_DIR/extlinux/extlinux.conf
