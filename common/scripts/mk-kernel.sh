@@ -46,7 +46,7 @@ do_build_kerneldeb()
 {
 	rm -f linux-*.buildinfo linux-*.changes
 	rm -f linux-headers-*.deb linux-image-*.deb linux-libc-dev*.deb
-	run_command $KMAKE bindeb-pkg
+	run_command $KMAKE KDEB_COMPRESS=xz bindeb-pkg
 }
 
 do_build_extboot()
